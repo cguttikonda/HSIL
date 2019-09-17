@@ -2,10 +2,14 @@ package com.ezc.hsil.webapp.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -19,12 +23,18 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ezc.hsil.webapp.dto.RequestDetailDto;
+import com.ezc.hsil.webapp.dto.RequestHeaderDto;
 import com.ezc.hsil.webapp.dto.UserDto;
 import com.ezc.hsil.webapp.error.UserAlreadyExistException;
+import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
 import com.ezc.hsil.webapp.persistance.dao.PasswordResetTokenRepository;
+import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
+import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.RoleRepository;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
 import com.ezc.hsil.webapp.persistance.dao.VerificationTokenRepository;
@@ -50,6 +60,14 @@ public class UserServiceImpl implements IUserService{
 
 	    @Autowired
 	    private SessionRegistry sessionRegistry;
+	    
+	    
+	    @Autowired
+	    private RequestHeaderRepo reqHeaderRepo;
+	    
+	    @Autowired
+	    private RequestDetailsRepo reqDtlRep;
+	    
 
 	    public static final String TOKEN_INVALID = "invalidToken";
 	    public static final String TOKEN_EXPIRED = "expired";
@@ -243,5 +261,114 @@ public class UserServiceImpl implements IUserService{
 			// TODO Auto-generated method stub
 			return userRepository.findByUserIdOrEmail(userId,email);
 		}
+
+		//@Override
+//		public void addReqData(EzcRequestHeader reqHeader) {
+//		
+//			
+//			reqHeaderRepo.save(reqHeader);
+//			
+//
+//		}
+
+		@Override
+		public Optional<EzcRequestHeader> findById_O(int id) {
+			// TODO Auto-generated method stub
+			return reqHeaderRepo.findById(id);
+		}
+
+		@Override
+		public void addReqData(HashSet<EzcRequestItems> ezcRequestItemses) {
+			
+			//System.out.print("reqHeader.get()::::::"+reqHeader.get());
+			//reqHeaderRepo.save(reqHeader); 
+			Optional<EzcRequestHeader> reqHeader = reqHeaderRepo.findById(5);
+			Set<EzcRequestItems> itemSet = new HashSet<EzcRequestItems>();
+			
+			
+			reqHeader.ifPresent(rq->{
+				
+				rq.setErhModifiedBy("ADMIN_2");
+				rq.setErhModifiedOn(new Date());
+				//rq.setEzcRequestItemses(ezcRequestItemses);
+				ezcRequestItemses.stream().forEach(items->{
+					
+					if(!"".equals(items.getEriPlumberName())) {
+						itemSet.add(items);
+						rq.setEzcRequestItemses(itemSet);
+					}
+					
+				});
+				rq.getEzcRequestItemses()
+					.stream()
+						.forEach(rt->{
+								rt.setEzcRequestHeader(rq);
+					
+						});
+				
+				});
+			
+			
+//			if(reqHeader.isPresent()) {
+//				
+//				reqHeader.get().setErhModifiedBy("ADMIN_2");
+//				reqHeader.get().setErhModifiedOn(new Date());
+//				
+//				//reqHeader.map()  
+//	    		
+//	    	//	reqHeaderRepo.save(reqHeader);
+//	    		
+//	    		
+//				Set<EzcRequestItems> dtlSet =   reqHeader.get().getEzcRequestItemses();
+//	//			dtlSet.stream()
+//	//				.forEach(reqItems->System.out.print("reqItems::::::"+reqItems.getEriDoa()));
+//	//			
+//				//System.out.println();
+//				for(EzcRequestItems rt: ezcRequestItemses) {
+//				
+//					rt.setEzcRequestHeader(reqHeader.get());
+//					dtlSet.add(rt);
+//					
+//			//		reqDtlRep.save(rt);
+//				}
+//				reqHeader.get().setEzcRequestItemses(dtlSet);
+//			}
+//			//reqHeaderRepo.save(reqHeader);
+			
+		}
+
+		@Override
+		public void addReqData(EzcRequestItems ezcRequestItemses) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EzcRequestHeader findById(int id) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public EzcRequestHeader findDetailsById(int id) {
+
+			
+			return reqHeaderRepo.getById(id);
+				
+			
+			
+			//return reqHeaderRepo.findById(id).get().getEzcRequestItemses().stream().collect(Collectors.toList())		
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 }

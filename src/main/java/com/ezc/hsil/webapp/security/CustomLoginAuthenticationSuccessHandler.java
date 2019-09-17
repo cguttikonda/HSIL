@@ -30,7 +30,7 @@ public class CustomLoginAuthenticationSuccessHandler implements AuthenticationSu
 	public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response,
 			final Authentication authentication) throws IOException {
 		addWelcomeCookie(gerUserName(authentication), response);
-		redirectStrategy.sendRedirect(request, response, "/homepage.html");//?user=" + authentication.getName()
+		redirectStrategy.sendRedirect(request, response, "dashboard/index.html");//?user=" + authentication.getName()
 
 		final HttpSession session = request.getSession(false);
 		if (session != null) {

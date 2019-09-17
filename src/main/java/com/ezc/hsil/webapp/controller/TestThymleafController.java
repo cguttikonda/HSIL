@@ -7,13 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class TestThymleafController {
 
 	
-	@GetMapping("/thymeleaf")
+	@GetMapping("/dashboard/*")
 	public String showView() {
 		
 		
-		return "layout";
+		return "dashboard/index";
 		
 	}
+	
+	
+	
 	
 	
 	

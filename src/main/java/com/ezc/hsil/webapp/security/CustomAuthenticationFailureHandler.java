@@ -21,8 +21,8 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Autowired
     private MessageSource messages;
 
-    @Autowired
-    private LocaleResolver localeResolver;
+//    @Autowired
+//    private LocaleResolver localeResolver;
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
@@ -30,7 +30,7 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 
         super.onAuthenticationFailure(request, response, exception);
 
-        final Locale locale = localeResolver.resolveLocale(request);
+        final Locale locale = Locale.US;//localeResolver.resolveLocale(request);
 
         String errorMessage = messages.getMessage("message.badCredentials", null, locale);
 

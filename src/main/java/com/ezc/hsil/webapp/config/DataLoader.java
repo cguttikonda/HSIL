@@ -61,7 +61,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         // == create initial user
         createUserIfNotFound("Admin", "test@test.com","Admin", "User", "admin", new ArrayList<Roles>(Arrays.asList(adminRole)));
 
-        alreadySetup = true;
+        alreadySetup = false;
     }
 
     @Transactional

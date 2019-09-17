@@ -1,11 +1,15 @@
 package com.ezc.hsil.webapp.service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import com.ezc.hsil.webapp.dto.RequestDetailDto;
 import com.ezc.hsil.webapp.dto.UserDto;
 import com.ezc.hsil.webapp.error.UserAlreadyExistException;
+import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
@@ -52,5 +56,20 @@ public interface IUserService {
 	Users updateUser2FA(boolean use2FA);
 
 	List<String> getUsersFromSessionRegistry();
+	
+	
+
+	//void addReqData(Optional<EzcRequestHeader> reqHeader);
+	Optional<EzcRequestHeader> findById_O(int id);
+	
+	EzcRequestHeader findById(int id);
+
+	void addReqData(HashSet<EzcRequestItems> hsItems);
+
+	void addReqData(EzcRequestItems ezcRequestItemses);
+	
+	EzcRequestHeader findDetailsById(int id);
+	
+	
 
 }

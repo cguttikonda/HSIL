@@ -77,6 +77,7 @@ public class PersistenceJPAConfig {
 		hibernateProperties.setProperty("hibernate.current_session_context_class",
 				env.getProperty("hibernate.current_session_context_class"));
 		hibernateProperties.setProperty("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
+		hibernateProperties.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
 		return hibernateProperties;
 	}
 	
