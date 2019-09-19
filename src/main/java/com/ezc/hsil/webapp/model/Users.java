@@ -17,8 +17,8 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="EZC_USERS")
-public class Users extends Auditable<String> {
-
+public class Users  {
+//extends Auditable<String>
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -120,12 +120,40 @@ public class Users extends Auditable<String> {
 		this.enabled = enabled;
 	}
 
-	@Override
-	public String toString() {
-		return "Users [id=" + id + ", userId=" + userId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", email=" + email + ", password=" + password + ", enabled=" + enabled + "]";
-	}
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = (prime * result) + ((email == null) ? 0 : email.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Users user = (Users) obj;
+        if (!email.equals(user.email)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append("User [id=").append(id).append(", firstName=").append(firstName).append(", lastName=").append(lastName).append(", email=").append(email).append(", password=").append(password).append(", enabled=").append(enabled)
+               .append(", roles=").append(roles).append("]");
+        return builder.toString();
+    }
 	public Users(String userId, String firstName, String lastName, String email, String password, boolean enabled) {
 		super();
 		this.userId = userId;

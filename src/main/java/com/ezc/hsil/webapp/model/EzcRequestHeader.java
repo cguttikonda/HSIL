@@ -5,8 +5,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,7 +38,12 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private String erhModifiedBy;
 	private Date erhModifiedOn;
 	private Integer erhNoOfAttendee;
-	private Set<EzcRequestItems> ezcRequestItemses = new HashSet<EzcRequestItems>(0);
+	private Set<EzcRequestItems> ezcRequestItems = new HashSet<EzcRequestItems>(0);
+	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
+	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);
+	
+
+
 
 	public EzcRequestHeader() {
 	}
@@ -49,7 +54,9 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public EzcRequestHeader( String erhReqType, String erhCreatedGroup, String erhState, String erhRequestedBy,
 			Date erhRequestedOn, String erhStatus, Date erhConductedOn, String erhModifiedBy, Date erhModifiedOn,
-			Integer erhNoOfAttendee, Set<EzcRequestItems> ezcRequestItemses) {
+			Integer erhNoOfAttendee, Set<EzcRequestItems> ezcRequestItemses,
+			Set<EzcRetailerSales> ezcRetailerSaleses,
+			Set<EzcRequestDealers> ezcRequestDealersess) {
 		//this.id = id;
 		this.erhReqType = erhReqType;
 		this.erhCreatedGroup = erhCreatedGroup;
@@ -61,7 +68,10 @@ public class EzcRequestHeader implements java.io.Serializable {
 		this.erhModifiedBy = erhModifiedBy;
 		this.erhModifiedOn = erhModifiedOn;
 		this.erhNoOfAttendee = erhNoOfAttendee;
-		this.ezcRequestItemses = ezcRequestItemses;
+		this.ezcRequestItems = ezcRequestItemses;
+		this.ezcRetailerSales = ezcRetailerSaleses;
+		this.ezcRequestDealers = ezcRequestDealersess;
+		
 	}
 
 	@Id
@@ -170,12 +180,38 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ezcRequestHeader") 
 	@Cascade({CascadeType.ALL})
-	public Set<EzcRequestItems> getEzcRequestItemses() {
-		return this.ezcRequestItemses;
+	public Set<EzcRequestItems> getEzcRequestItems() {
+		return this.ezcRequestItems;
 	}
 
-	public void setEzcRequestItemses(Set<EzcRequestItems> ezcRequestItemses) {
-		this.ezcRequestItemses = ezcRequestItemses;
+	public void setEzcRequestItems(Set<EzcRequestItems> ezcRequestItemses) {
+		this.ezcRequestItems = ezcRequestItemses;
 	}
+	
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ezcRequestHeader")
+	@Cascade({CascadeType.ALL})
+	public Set<EzcRetailerSales> getEzcRetailerSales() {
+		return this.ezcRetailerSales;
+	}
+
+	public void setEzcRetailerSales(Set<EzcRetailerSales> ezcRetailerSaleses) {
+		this.ezcRetailerSales = ezcRetailerSaleses;
+	}
+
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ezcRequestHeader")
+	@Cascade({CascadeType.ALL})
+	public Set<EzcRequestDealers> getEzcRequestDealers() {
+		return this.ezcRequestDealers;
+	}
+
+	public void setEzcRequestDealers(Set<EzcRequestDealers> ezcRequestDealerses) {
+		this.ezcRequestDealers = ezcRequestDealerses;
+	}
+
+	
+	
+	
 
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorate="layout">
 <head>
     <title>Dashboard</title>
@@ -17,6 +18,10 @@
     </ol>
 </section>
 <div layout:fragment="content">
+
+Roles: <span sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_USER')" >[ROLE_USER, ROLE_ADMIN]</span>
+Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
+
     <!-- Small boxes (Stat box) -->
     <div class="row">
         <div class="col-lg-3 col-xs-6">
@@ -24,7 +29,7 @@
             <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3>150</h3>
-
+					
                     <p>New Orders</p>
                 </div>
                 <div class="icon">

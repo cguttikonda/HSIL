@@ -2,13 +2,16 @@ package com.ezc.hsil.webapp.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +22,7 @@ import com.ezc.hsil.webapp.model.Privilages;
 import com.ezc.hsil.webapp.model.Roles;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
+
 
 
 @Service("userDetailsService")
@@ -57,7 +61,7 @@ public class CustomUserServiceImpl implements UserDetailsService  {
 	            }
 
 //	            user.getEmail()
-	            return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), user.isEnabled(), true, true, true, getAuthorities(user.getRoles()));
+	            return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), user.isEnabled(), true, true, true, getAuthorities(user)); //user.getRoles()
 	        } catch (final Exception e) {
 	            throw new RuntimeException(e);
 	        }
@@ -89,7 +93,24 @@ public class CustomUserServiceImpl implements UserDetailsService  {
 
 	    // UTIL
 
-	    private final Collection<? extends GrantedAuthority> getAuthorities(final Collection<Roles> roles) {
+	    private static Collection<? extends GrantedAuthority> getAuthorities(Users user)
+		{
+			Set<String> roleAndPermissions = new HashSet<>();
+			List<Roles> roles = (List<Roles>) user.getRoles();
+			
+			for (Roles role : roles)
+			{
+				roleAndPermissions.add(role.getName());
+			}
+			String[] roleNames = new String[roleAndPermissions.size()];
+			Collection<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(roleAndPermissions.toArray(roleNames));
+			return authorities;
+		}
+	    
+	    
+	    
+	    @SuppressWarnings("unused")
+		private final Collection<? extends GrantedAuthority> getAuthorities(final Collection<Roles> roles) {
 	        return getGrantedAuthorities(getPrivileges(roles));
 	    }
 
@@ -102,7 +123,7 @@ public class CustomUserServiceImpl implements UserDetailsService  {
 	        for (final Privilages item : collection) {
 	            privileges.add(item.getName());
 	        }
-
+	        	
 	        return privileges;
 	    }
 

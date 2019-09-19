@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="~{Layout}">
+  layout:decorate="layout">
 <head>
   <title>Content page 2</title>
   
@@ -19,7 +19,7 @@
                     <th>Registration Date</th>
                     <th>Action</th>
                 </tr>
-                <tr th:each="row,stat : ${list.ezcRequestItemses}">
+                <tr th:each="row,stat : ${list.ezcRequestItems}">
                     <td th:text="${row.id}"></td>
                     <td th:text="${row.eriPlumberName}"></td>
 <!-- 

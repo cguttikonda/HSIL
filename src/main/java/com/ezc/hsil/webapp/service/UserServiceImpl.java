@@ -2,7 +2,6 @@ package com.ezc.hsil.webapp.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,9 +22,8 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.ezc.hsil.webapp.dto.RequestDetailDto;
-import com.ezc.hsil.webapp.dto.RequestHeaderDto;
 import com.ezc.hsil.webapp.dto.UserDto;
+import com.ezc.hsil.webapp.error.RequestNotFound;
 import com.ezc.hsil.webapp.error.UserAlreadyExistException;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -39,6 +37,9 @@ import com.ezc.hsil.webapp.persistance.dao.RoleRepository;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
 import com.ezc.hsil.webapp.persistance.dao.VerificationTokenRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @Transactional
 public class UserServiceImpl implements IUserService{
@@ -295,11 +296,11 @@ public class UserServiceImpl implements IUserService{
 					
 					if(!"".equals(items.getEriPlumberName())) {
 						itemSet.add(items);
-						rq.setEzcRequestItemses(itemSet);
+						rq.setEzcRequestItems(itemSet);
 					}
 					
 				});
-				rq.getEzcRequestItemses()
+				rq.getEzcRequestItems()
 					.stream()
 						.forEach(rt->{
 								rt.setEzcRequestHeader(rq);
@@ -307,6 +308,10 @@ public class UserServiceImpl implements IUserService{
 						});
 				
 				});
+			reqHeader.orElseThrow(()->new RequestNotFound("No request Exist"));
+		
+			
+			
 			
 			
 //			if(reqHeader.isPresent()) {
@@ -354,7 +359,14 @@ public class UserServiceImpl implements IUserService{
 		public EzcRequestHeader findDetailsById(int id) {
 
 			
-			return reqHeaderRepo.getById(id);
+			EzcRequestHeader reqH = reqHeaderRepo.getById(id);
+			
+			if(reqH !=null)
+					return reqH;
+			else {
+					log.error("Error for req id "+id);
+					throw new RequestNotFound("No req Found for id "+ id);
+			}
 				
 			
 			

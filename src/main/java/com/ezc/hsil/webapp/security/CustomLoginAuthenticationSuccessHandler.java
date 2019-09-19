@@ -36,9 +36,11 @@ public class CustomLoginAuthenticationSuccessHandler implements AuthenticationSu
 		if (session != null) {
 			session.setMaxInactiveInterval(30 * 60);
 			String username;
+			
 			if (authentication.getPrincipal() instanceof Users) {
 //				.getEmail()
-				username = ((Users) authentication.getPrincipal()).getUserId();
+				//username = (authentication.getName());
+				username = ((Users)authentication.getPrincipal()).getFirstName();
 			} else {
 				username = authentication.getName();
 			}
@@ -50,14 +52,15 @@ public class CustomLoginAuthenticationSuccessHandler implements AuthenticationSu
 	}
 
 	private String gerUserName(final Authentication authentication) {
-		return ((Users) authentication.getPrincipal()).getFirstName();
+		//return authentication.getName();
+		return ((Users)authentication.getPrincipal()).getFirstName();
 	}
 
 	private void addWelcomeCookie(final String user, final HttpServletResponse response) {
 		Cookie welcomeCookie = getWelcomeCookie(user);
 		response.addCookie(welcomeCookie);
 	}
-
+	
 	private Cookie getWelcomeCookie(final String user) {
 		Cookie welcomeCookie = new Cookie("welcome", user);
 		welcomeCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ezc.hsil.webapp.dto.RequestDetailDto;
+import com.ezc.hsil.webapp.error.RequestNotFound;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.security.ActiveUserStore;
@@ -109,10 +110,10 @@ public class UserController {
     	
     }
     
-    
+//    https://stackoverflow.com/questions/29082749/spring-data-jpa-map-the-native-query-result-to-non-entity-pojo
     
     @GetMapping("/details")
-    public String detailsPage(Model model) {
+    public String detailsPage(Model model) throws RequestNotFound {
     	
     	EzcRequestHeader list = userService.findDetailsById(3);
 //    	List<EzcRequestItems> list2 = new ArrayList<>();
@@ -133,7 +134,7 @@ public class UserController {
     
     @GetMapping("/tpsForm")
     
-    public String showForm(Model model) {
+    public String showForm(Model model) throws RequestNotFound  {
     	
     	  log.info("Simple log statement with inputs {}, {} and {}", 1, 2, 3);
     	
@@ -149,16 +150,16 @@ public class UserController {
     	
     }
     
-//@GetMapping("/")
+//@GetMapping("error/500")
 //    
-//    public String login(Model model) {
+//    public String display500Error(Model model) {
 //    	
 //    	  log.info("Login Form {}, {} and {}", 1, 2, 3);
 //    	
 //    	
-//    	return "login";
+//    	return "error/500";
 //    	
 //    }
-    
+//    
     
 }
