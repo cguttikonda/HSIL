@@ -41,7 +41,6 @@ public class MasterDataController {
 	
 	@PostMapping("/add")
 	public String saveDistData(@Valid @ModelAttribute("distributorDto") DistributorDto disDto, final BindingResult bindingResult) {
-
 	
 		if(bindingResult.hasErrors()) {
 		
@@ -53,11 +52,17 @@ public class MasterDataController {
 			log.info("In the class {}", disDto.toString());
 		
 			masterService.addNewDistributor(disDto);
-			
-		
-			
-			return "redirect:/master/addDis";
+				return "redirect:/master/addDis";
 		}
+	}
+	
+	
+	@GetMapping("/listDis")
+	public String listDistributors(Model model) {
+		
+		model.addAttribute("distList", masterService.findAll());
+
+		return "master/distributorList";
 	}
 
 

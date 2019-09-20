@@ -1,5 +1,8 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +40,24 @@ public class DistributorServiceImpl implements IMasterService {
 			
 			distMastRepo.save(dm);
 			
+		}else {
+			
+			throw new RuntimeException();
 		}
 		
-		
 		return null;
+	}
+
+
+	@Override
+	public List<DistributorMaster> findAll() {
+	
+		
+		List<DistributorMaster> distList = new ArrayList<DistributorMaster>();
+		
+		distList.addAll(distMastRepo.findAll());
+		
+		return distList;
 	}
 
 }
