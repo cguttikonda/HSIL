@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.service;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
@@ -12,6 +13,14 @@ public interface IMasterService {
 	DistributorMaster addNewDistributor(DistributorDto distDto);
 	
 	List<DistributorMaster> findAll();
+	
+	DistributorDto getDistributorDetails(int id);
+	
+	
+	String updateDistributor(DistributorDto distDto) throws SQLException;
+	
+	String deleteDistributor(int id);
+	
 	
 	
 	

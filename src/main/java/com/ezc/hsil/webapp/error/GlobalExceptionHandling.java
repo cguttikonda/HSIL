@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.error;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -57,5 +58,26 @@ public class GlobalExceptionHandling {
 		
 	}
 
+	@ExceptionHandler(SQLException.class)
+	public String sqlError(Exception exception, Model mav,HttpServletRequest  req) {
+		// Nothing to do. Return value 'databaseError' used as logical view name
+		// of an error page, passed to view-resolver(s) in usual way.
+		log.error("Request raised " + exception.getClass().getSimpleName());
+		//model.add
+		log.error("Request: " + req.getRequestURI() + " raised " + exception);
+
+		
+		mav.addAttribute("exception", exception);
+		mav.addAttribute("url", req.getRequestURL());
+		mav.addAttribute("timestamp", new Date().toString());
+		mav.addAttribute("status", 500);
+
+		
+		return "error/500";
+		
+	}
+
+		
+	
 
 }
