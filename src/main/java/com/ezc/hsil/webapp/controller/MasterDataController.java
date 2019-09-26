@@ -97,8 +97,6 @@ public class MasterDataController {
 	@PostMapping("/delete-dist/{id}")
 	public String deleteDistributor(@PathVariable("id") int id) {
 		
-		
-		
 			masterService.deleteDistributor(id);
 			return "redirect:/master/listDis";
 	}
@@ -119,12 +117,9 @@ public class MasterDataController {
 			return "master/addMaterial";
 		}else {
 			
-			
 			ra.addFlashAttribute("success", "Material added successfully.");
 			masterService.addNewMaterial(mDto);
 		}
-		
-		
 		
 		return "redirect:/master/addMaterial"; //html
 	}
