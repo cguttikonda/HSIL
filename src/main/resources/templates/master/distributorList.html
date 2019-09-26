@@ -103,10 +103,10 @@
 						
 				
 			});	
-			$( window ).on("unload",function() {
+/* 			$( window ).on("unload",function() {
 					Pace.restart();
 			})
-			
+ */			
 			function openModal(modelType,distId){
 				
 				if(modelType === "edit"){
@@ -120,7 +120,6 @@
 							});
 						}
 					});
-					
 					
 				}
 				if(modelType === "delete"){
@@ -140,11 +139,7 @@
 				
 			}
 			function validate(event){
-				
-				
-					
 					event.preventDefault();
-					
 					var formdata = $('edit-dist-form').serialize();
 					
 					debugger;
@@ -166,15 +161,9 @@
 							console.log(ex);
 						}
 					});
-			
-		
-				
-				
 			}
 						
 		</script>
-
 	</div>
-
 </body>
 </html>

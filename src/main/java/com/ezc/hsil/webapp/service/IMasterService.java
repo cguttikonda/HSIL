@@ -4,7 +4,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
+import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.MaterialMaster;
 
 public interface IMasterService {
 
@@ -22,6 +24,11 @@ public interface IMasterService {
 	String deleteDistributor(int id);
 	
 	
+	
+//	Material Master Processing
+	
+	
+	MaterialMaster addNewMaterial(MaterialDto mDto);
 	
 	
 	

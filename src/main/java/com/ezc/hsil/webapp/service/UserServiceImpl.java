@@ -2,17 +2,17 @@ package com.ezc.hsil.webapp.service;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
+import com.ezc.hsil.webapp.model.EzStates;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,23 +23,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.UserDto;
-import com.ezc.hsil.webapp.error.RequestNotFound;
 import com.ezc.hsil.webapp.error.UserAlreadyExistException;
-import com.ezc.hsil.webapp.model.EzcRequestHeader;
-import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
+import com.ezc.hsil.webapp.model.Privilages;
+import com.ezc.hsil.webapp.model.Roles;
+import com.ezc.hsil.webapp.model.UserRoles;
+import com.ezc.hsil.webapp.model.UserZones;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
+import com.ezc.hsil.webapp.model.WorkGroup_Users;
+import com.ezc.hsil.webapp.model.Work_Groups;
 import com.ezc.hsil.webapp.persistance.dao.PasswordResetTokenRepository;
-import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
-import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
+import com.ezc.hsil.webapp.persistance.dao.PrivilegeRepository;
 import com.ezc.hsil.webapp.persistance.dao.RoleRepository;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
+import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
+import com.ezc.hsil.webapp.persistance.dao.GroupRepository;
 import com.ezc.hsil.webapp.persistance.dao.VerificationTokenRepository;
+import com.ezc.hsil.webapp.persistance.dao.WorkGroupUsersRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 @Service
 @Transactional
 public class UserServiceImpl implements IUserService{
@@ -58,17 +60,21 @@ public class UserServiceImpl implements IUserService{
 
 	    @Autowired
 	    private RoleRepository roleRepository;
+	    
+	    @Autowired
+	    private GroupRepository groupRepository;
+	    
+	    @Autowired
+	    private WorkGroupUsersRepository groupUsersRepository;
 
 	    @Autowired
+	    private PrivilegeRepository privilegeRepository;
+	    
+	    @Autowired
+	    EzUserCreationDefaults userDefaults;
+	    
+	    @Autowired
 	    private SessionRegistry sessionRegistry;
-	    
-	    
-	    @Autowired
-	    private RequestHeaderRepo reqHeaderRepo;
-	    
-	    @Autowired
-	    private RequestDetailsRepo reqDtlRep;
-	    
 
 	    public static final String TOKEN_INVALID = "invalidToken";
 	    public static final String TOKEN_EXPIRED = "expired";
@@ -85,15 +91,89 @@ public class UserServiceImpl implements IUserService{
 	            throw new UserAlreadyExistException("There is an account with that email adress: " + accountDto.getEmail());
 	        }
 	        final Users user = new Users();
+	        
+	        
+	        final Privilages readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
+	        final Privilages writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+	        final Privilages passwordPrivilege = createPrivilegeIfNotFound("CHANGE_PASSWORD_PRIVILEGE");
+	        
+	        final List<Privilages> adminPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, writePrivilege, passwordPrivilege));
+	        final List<Privilages> userPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, passwordPrivilege));
+	        final Roles userRole = createRoleIfNotFound(accountDto.getRole(), adminPrivileges);
 
 	        user.setFirstName(accountDto.getFirstName());
 	        user.setLastName(accountDto.getLastName());
 	        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
 	        user.setEmail(accountDto.getEmail());
 	//        user.setUsing2FA(accountDto.isUsing2FA());
-	        user.setRoles(Arrays.asList(roleRepository.findByName("ROLE_USER")));
+	        user.setRoles(new ArrayList<Roles>(Arrays.asList(userRole)));
+	        user.setUserId(accountDto.getUserId()); 
+	        user.setEnabled(true);
+	        
+	        
+	        System.out.println(":::::::accountDto:::::"+accountDto.getUserId());
+	        
+	        if(userRepository.save(user)!=null)
+	        {	
+	        	String userGrp = accountDto.getGroup();
+	        	String stHDGrp = "";
+	        	String zonalUserGrp = "";
+	        	
+	        	if("REQ_CR".equals(accountDto.getRole()))
+	        	{
+	        		//userGrp = 	accountDto.getState()+"_GRP";
+	        		stHDGrp =   userGrp+"_HD_GRP";
+	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        	}else if("ST_HEAD".equals(accountDto.getRole())){
+	        		//userGrp = 	accountDto.getState()+"_HD_GRP";
+	        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
+	        	}else if("ZN_HEAD".equals(accountDto.getRole())){
+	        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        	}
+	        	
+	        	
+   	
+		        //createGroupIfNotFound(userGrp,groupDesc,role);
+	        	insertUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp,"","");
+	        }	
+	        
 	        return userRepository.save(user);
 	    }
+	    
+	    @Override
+	    public List<Users> getUsersList() {    
+	    	List<Users> usersList = userRepository.findAll();
+	    	return usersList;
+	    }
+	    
+
+	    @Override
+	    public List<Work_Groups> getAllGroups() {    
+	    	List<Work_Groups> wfGroups = groupRepository.findAll();
+	    	System.out.println(":::::::getAllGroups-wfGroups:::::"+wfGroups);
+	    	return wfGroups;
+	    }
+	    
+	    @Override
+	    public List<Work_Groups> getGroupsByRole(String role) {    
+	    	List<Work_Groups> wfGroups = groupRepository.findByRole(role);
+	    	System.out.println(":::::::getGroupsByRole-wfGroups:::::"+wfGroups);
+	    	return wfGroups;
+	    }
+	    
+	    @Override
+	    public WorkGroup_Users getGroupsByUserId(String userId) {    
+	    	
+	    	//System.out.println(":::::::userId:::::"+userId);
+	    	
+	    	WorkGroup_Users userGroup = groupUsersRepository.getGroupByUserId(userId);
+	    	
+	    	//System.out.println(":::::::userGroups-getGroupId:::::"+userGroup.getGroupId());
+	    	
+	    	return userGroup;
+	    }
+	    
 
 	    @Override
 	    public Users getUser(final String verificationToken) {
@@ -101,7 +181,7 @@ public class UserServiceImpl implements IUserService{
 	        if (token != null) {
 	            return token.getUser();
 	        }
-	        return null;
+	        return null; 
 	    }
 
 	    @Override
@@ -110,7 +190,46 @@ public class UserServiceImpl implements IUserService{
 	    }
 
 	    @Override
-	    public void saveRegisteredUser(final Users user) {
+	    public void editUser(final UserDto accountDto) {
+	    	
+	    	
+	    	System.out.println("::::::::111111111111:::::::::::::;");
+	    	
+	    	final Privilages readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
+	        final Privilages writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+	        final Privilages passwordPrivilege = createPrivilegeIfNotFound("CHANGE_PASSWORD_PRIVILEGE");
+	        
+	        final List<Privilages> adminPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, writePrivilege, passwordPrivilege));
+	        final List<Privilages> userPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, passwordPrivilege));
+	        final Roles userRole = createRoleIfNotFound(accountDto.getRole(), adminPrivileges);
+     
+	    	Users user = new Users();   	
+	    	user.setId(accountDto.getId());
+	    	user.setUserId(accountDto.getUserId());
+	    	user.setFirstName(accountDto.getFirstName());
+	    	user.setLastName(accountDto.getLastName());
+	    	user.setEmail(accountDto.getEmail());
+	    	user.setRoles(new ArrayList<Roles>(Arrays.asList(userRole)));
+	    	
+	    	String userGrp = accountDto.getGroup();
+        	String stHDGrp = "";
+        	String zonalUserGrp = "";
+        	
+        	if("REQ_CR".equals(accountDto.getRole()))
+        	{
+        		//userGrp = 	accountDto.getState()+"_GRP";
+        		stHDGrp =   userGrp+"_HD_GRP";
+        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+        	}else if("ST_HEAD".equals(accountDto.getRole())){
+        		//userGrp = 	accountDto.getState()+"_HD_GRP";
+        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
+        	}else if("ZN_HEAD".equals(accountDto.getRole())){
+        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
+        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
+        	}
+	    	
+        	updateUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp);
+        	
 	        userRepository.save(user);
 	    }
 
@@ -127,8 +246,10 @@ public class UserServiceImpl implements IUserService{
 	        if (passwordToken != null) {
 	            passwordTokenRepository.delete(passwordToken);
 	        }
-
+	        
+	        groupUsersRepository.deleteUserGroups(user.getUserId());
 	        userRepository.delete(user);
+ 
 	    }
 
 	    @Override
@@ -169,6 +290,20 @@ public class UserServiceImpl implements IUserService{
 	    }
 
 	    
+	    @Override
+	    public List<WorkGroup_Users> getStateHeadSubGroups(String stateHDGrp) {
+	    	
+	    	System.out.println("::::stateHDGrp:::::::"+stateHDGrp);
+	    	
+	        return groupUsersRepository.getStateHeadSubGroups(stateHDGrp);
+	    }
+	    
+	    @Override
+	    public List<WorkGroup_Users> getZonalHeadSubGroups(String zonalGrp) {
+	    	
+	    	System.out.println("::::zonalGrp:::::::"+zonalGrp);
+	        return groupUsersRepository.getZonalHeadSubGroups(zonalGrp);
+	    }
 	    
 	    @Override
 	    public Optional<Users> getUserByID(final long id) {
@@ -262,125 +397,60 @@ public class UserServiceImpl implements IUserService{
 			// TODO Auto-generated method stub
 			return userRepository.findByUserIdOrEmail(userId,email);
 		}
-
-		//@Override
-//		public void addReqData(EzcRequestHeader reqHeader) {
-//		
-//			
-//			reqHeaderRepo.save(reqHeader);
-//			
-//
-//		}
-
-		@Override
-		public Optional<EzcRequestHeader> findById_O(int id) {
-			// TODO Auto-generated method stub
-			return reqHeaderRepo.findById(id);
-		}
-
-		@Override
-		public void addReqData(HashSet<EzcRequestItems> ezcRequestItemses) {
-			
-			//System.out.print("reqHeader.get()::::::"+reqHeader.get());
-			//reqHeaderRepo.save(reqHeader); 
-			Optional<EzcRequestHeader> reqHeader = reqHeaderRepo.findById(5);
-			Set<EzcRequestItems> itemSet = new HashSet<EzcRequestItems>();
-			
-			
-			reqHeader.ifPresent(rq->{
-				
-				rq.setErhModifiedBy("ADMIN_2");
-				rq.setErhModifiedOn(new Date());
-				//rq.setEzcRequestItemses(ezcRequestItemses);
-				ezcRequestItemses.stream().forEach(items->{
-					
-					if(!"".equals(items.getEriPlumberName())) {
-						itemSet.add(items);
-						rq.setEzcRequestItems(itemSet);
-					}
-					
-				});
-				rq.getEzcRequestItems()
-					.stream()
-						.forEach(rt->{
-								rt.setEzcRequestHeader(rq);
-					
-						});
-				
-				});
-			reqHeader.orElseThrow(()->new RequestNotFound("No request Exist"));
 		
-			
-			
-			
-			
-//			if(reqHeader.isPresent()) {
-//				
-//				reqHeader.get().setErhModifiedBy("ADMIN_2");
-//				reqHeader.get().setErhModifiedOn(new Date());
-//				
-//				//reqHeader.map()  
-//	    		
-//	    	//	reqHeaderRepo.save(reqHeader);
-//	    		
-//	    		
-//				Set<EzcRequestItems> dtlSet =   reqHeader.get().getEzcRequestItemses();
-//	//			dtlSet.stream()
-//	//				.forEach(reqItems->System.out.print("reqItems::::::"+reqItems.getEriDoa()));
-//	//			
-//				//System.out.println();
-//				for(EzcRequestItems rt: ezcRequestItemses) {
-//				
-//					rt.setEzcRequestHeader(reqHeader.get());
-//					dtlSet.add(rt);
-//					
-//			//		reqDtlRep.save(rt);
-//				}
-//				reqHeader.get().setEzcRequestItemses(dtlSet);
-//			}
-//			//reqHeaderRepo.save(reqHeader);
-			
-		}
-
-		@Override
-		public void addReqData(EzcRequestItems ezcRequestItemses) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public EzcRequestHeader findById(int id) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@SuppressWarnings("unchecked")
-		@Override
-		public EzcRequestHeader findDetailsById(int id) {
-
-			
-			EzcRequestHeader reqH = reqHeaderRepo.getById(id);
-			
-			if(reqH !=null)
-					return reqH;
-			else {
-					log.error("Error for req id "+id);
-					throw new RequestNotFound("No req Found for id "+ id);
-			}
-				
-			
-			
-			//return reqHeaderRepo.findById(id).get().getEzcRequestItemses().stream().collect(Collectors.toList())		
-			
-		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-
+		 @Transactional
+		    private final Privilages createPrivilegeIfNotFound(final String name) {
+		    	Privilages privilege = privilegeRepository.findByName(name);
+		        if (privilege == null) {
+		            privilege = new Privilages(name);
+		            privilege = privilegeRepository.save(privilege);
+		        }
+		        return privilege;
+		    }
+		 
+		 @Transactional
+		    private final Roles createRoleIfNotFound(final String name, final Collection<Privilages> privileges) {
+		        Roles role = roleRepository.findByName(name);
+		        if (role == null) {
+		            role = new Roles(name);
+		        }
+		        role.setPrivileges(privileges);
+		        role = roleRepository.save(role);
+		        return role;
+		    }
+		 
+		 @Transactional
+		    private void createGroupIfNotFound(final String name,String desc,String role) {
+			 Work_Groups groups = groupRepository.findByGroup(name);
+			 
+		        if (groups == null) {
+		        	groups = new Work_Groups(name,desc,role);
+		        }
+		        groups = groupRepository.save(groups);
+		        System.out.println("::::getId:::::::::;"+groups.getId());
+		        System.out.println("::::Name:::::::::;"+groups.getName());
+		        System.out.println("::::Desc:::::::::;"+groups.getDesc());
+		        //return groups;
+		    }
+		 
+		 @Transactional
+		    private void insertUserToGroupIfNotFound(final String groupId,final String userId,final String stateGrp,final String zonalGrp,final String ext1,final String ext2) {
+			 WorkGroup_Users groupUsers = groupUsersRepository.findByUserANDGroup(groupId,userId);
+			 
+		        if (groupUsers == null) {
+		        	groupUsers = new WorkGroup_Users(groupId,userId,stateGrp,zonalGrp,ext1,ext2);
+		        }
+		        groupUsers = groupUsersRepository.save(groupUsers);
+		        
+		        //System.out.println("::::getId:::::::::;"+groups.getId());
+		       // System.out.println("::::Name:::::::::;"+groups.getName());
+		      //  System.out.println("::::Desc:::::::::;"+groups.getDesc());
+		        //return groups;
+		    }
+		 
+		 
+		 @Transactional
+		    private void updateUserToGroupIfNotFound(final String groupId,final String userId,final String stateGrp,final String zonalGrp) {
+			 	groupUsersRepository.updateUserGroups(groupId,userId,stateGrp,zonalGrp);
+		    }
 }

@@ -24,12 +24,12 @@
     <!-- sidebar menu: : style can be found in sidebar.less -->
     <ul class="sidebar-menu">
         <li class="header">MAIN NAVIGATION</li>
-        <li class="active treeview"  sec:authorize="hasRole('ADMIN')">
+        <!-- <li class="active treeview"  sec:authorize="hasRole('ADMIN')">
             <a href="#">
                 <i class="fa fa-dashboard"></i> <span>Master data</span>
                 <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
+          			<i class="fa fa-angle-left pull-right"></i>
+        	   </span>
             </a>
             <ul class="treeview-menu">
                 <li class="active">
@@ -43,8 +43,60 @@
             </ul>
             
             
-        </li>
+        </li> -->
        
+     	<li class="treeview" sec:authorize="hasRole('ADMIN')">
+          <a href="#">
+            <i class="fa fa-share"></i> <span>Master data</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li class="treeview">
+              <a href="#"><i class="fa fa-circle-o"></i> Distributor
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li>
+                	<a href="#"  th:href="@{/master/addDis}"><i class="fa fa-circle-o"></i> Add Distributor</a>
+                </li>
+                <li class="treeview">
+                	<a href="#"  th:href="@{/master/listDis}"><i class="fa fa-circle-o"></i> List Distributors</a>
+                </li>
+              </ul>
+            </li> <!-- End OF Distribuor li -->
+
+
+            <li class="treeview">
+              <a href="#"><i class="fa fa-circle-o"></i> Material
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              </a>
+              <ul class="treeview-menu">
+                <li>
+                	<a href="#"  th:href="@{/master/addMaterial}"><i class="fa fa-circle-o"></i> Add Material</a>
+                </li>
+                <li class="treeview">
+                	<a href="#"  th:href="@{/master/listMaterial}"><i class="fa fa-circle-o"></i> List Materials</a>
+                </li>
+              </ul>
+            </li> <!-- End OF Distribuor li -->
+
+
+
+
+          </ul>
+        </li>
+    
+    
     </ul>
+    
+    
+    
+    
 </section>
 <!-- /.sidebar -->

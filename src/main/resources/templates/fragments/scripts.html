@@ -35,25 +35,53 @@
 
 
 
-<script th:inline="javascript">
+<script th:inline="javascript" >
 	
 	
 	
 	
-	//$(document).ready(function() {
+	$(document).ready(function() {
 
- 		const anchortags = document.querySelectorAll(".sidebar-menu a")
+ 		const anchortags = document.querySelectorAll(".sidebar-menu a");
+ 		const submitBtns = document.querySelectorAll(".btn-primary");
+ 		
 		const paceObj = Pace;
 		for (const anchortag of anchortags) {
 				
 				anchortag.addEventListener('click', function(event) {
 		    	//	event.preventDefault();
 		    		Pace.restart();
+		    		anchortag.classList.add("active");
 		  
 				})
-			}  
+			} 
+		for(const submitBtn of submitBtns){
+			submitBtn.addEventListener("click",(e)=>{
+				
+				setTimeout(()=>{
+					Pace.restart()
+					},300); 
+			})
+			
+		}
+		
+		 /** add active class and stay opened when selected */
+        var url = window.location;
+        // for sidebar menu entirely but not cover treeview
+        $('ul.sidebar-menu a').filter(function() {
+             return this.href == url;
+        }).parent().addClass('active');
 
-	//	});
+        // for treeview
+        $('ul.treeview-menu a').filter(function() {
+             return this.href == url;
+        }).parentsUntil(".sidebar-menu > .treeview-menu").addClass('active');
+		
+
+        $('form').trigger("reset");
+	});
+	
+	
 
 //	});
 

@@ -4,27 +4,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
-import com.ezc.hsil.webapp.error.RequestNotFound;
+import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.persistance.dao.DistributorMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @Transactional
-public class DistributorServiceImpl implements IMasterService {
+public class MaterialServiceImpl implements IMasterService {
 
 	@Autowired
 	DistributorMasterRepo distMastRepo;
+	
+	@Autowired
+	MaterialMasterRepo matMastRep;
 
 	@Override
 	public DistributorMaster addNewDistributor(final DistributorDto distDto) {
@@ -80,7 +85,7 @@ public class DistributorServiceImpl implements IMasterService {
 		} else {
 
 			log.error("Unable to find the Distributor id {}", distId);
-			throw new RequestNotFound("Distributor not found for the id " + distId);
+			throw new EntityNotFoundException("Distributor not found for the id " + distId);
 
 		}
 
@@ -108,7 +113,7 @@ public class DistributorServiceImpl implements IMasterService {
 		if (id > 0) {
 
 			Optional<DistributorMaster> ODisMaster = distMastRepo.findById(id);
-
+			
 			if (ODisMaster.isPresent()) {
 
 				distMastRepo.deleteById(id);
@@ -117,10 +122,33 @@ public class DistributorServiceImpl implements IMasterService {
 		} else {
 
 			log.error("Unable to find the request id {}", id);
-			throw new RequestNotFound("Distributor not found for the id " + id);
+			throw new EntityNotFoundException("Distributor not found for the id " + id);
 		}
 
 		return "";
+	}
+
+	@Override
+	public MaterialMaster addNewMaterial(final MaterialDto mDto) {
+
+		if(mDto!=null) {
+			
+			MaterialMaster mm = new MaterialMaster(); 
+			mm.setMaterialCode(mDto.getMaterialCode());
+			mm.setMaterialDesc(mDto.getMaterialDesc());
+			mm.setQuantity(mDto.getQuantity());
+			mm.setIsActive("Y");
+			
+			matMastRep.save(mm);	
+			
+		}else
+		{
+			
+			throw new RuntimeException();
+		}
+		
+		
+		return null;
 	}
 	
 	
