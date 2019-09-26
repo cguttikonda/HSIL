@@ -21,7 +21,7 @@ public class TestThymleafController {
 		if(auth!= null && auth.isAuthenticated()) {
 			
 			log.info("Principal:::::::::{}",principal.getName());
-			log.info("Authentication:::::::::{}",auth.isAuthenticated());
+		log.info("Authentication:::::::::{}",auth.isAuthenticated());
 			return "dashboard/index";
 		}
 		else

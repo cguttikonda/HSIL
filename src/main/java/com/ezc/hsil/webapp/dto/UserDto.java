@@ -10,6 +10,11 @@ import com.ezc.hsil.webapp.validation.ValidPassword;
 
 @PasswordMatches
 public class UserDto {
+	
+	@NotNull
+    @Size(min = 1)
+    private Long id;
+	
     @NotNull
     @Size(min = 1, message = "{Size.userDto.firstName}")
     private String firstName;
@@ -17,6 +22,10 @@ public class UserDto {
     @NotNull
     @Size(min = 1, message = "{Size.userDto.lastName}")
     private String lastName;
+    
+    @NotNull
+    @Size(min = 1, message = "{Size.userDto.userId}")
+    private String userId;
 
     @ValidPassword
     private String password;
@@ -29,8 +38,18 @@ public class UserDto {
     @NotNull
     @Size(min = 1, message = "{Size.userDto.email}")
     private String email;
+    
+    public Long getId() {
+		return id;
+	}
 
-    private boolean isUsing2FA;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	private boolean isUsing2FA;
+    
+    private boolean enabled;
 
     public String getEmail() {
         return email;
@@ -40,15 +59,57 @@ public class UserDto {
         this.email = email;
     }
 
-    private Integer role;
+/*    private Integer role;
 
     public Integer getRole() {
         return role;
     }
-
-    public void setRole(final Integer role) {
+     public void setRole(final Integer role) {
         this.role = role;
     }
+*/
+    
+    private String state;
+    private String zone;
+    private String group;
+    
+    
+    
+    
+    public String getGroup() {
+		return group;
+	}
+
+	public void setGroup(String group) {
+		this.group = group;
+	}
+
+	public String getZone() {
+		return zone;
+	}
+
+	public void setZone(String zone) {
+		this.zone = zone;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(final String role) {
+        this.role = role;
+    }
+   
 
     public String getFirstName() {
         return firstName;
@@ -66,7 +127,15 @@ public class UserDto {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
+    public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getPassword() {
         return password;
     }
 
@@ -90,10 +159,19 @@ public class UserDto {
         this.isUsing2FA = isUsing2FA;
     }
 
+    
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("UserDto [firstName=").append(firstName).append(", lastName=").append(lastName).append(", password=").append(password).append(", matchingPassword=").append(matchingPassword).append(", email=").append(email).append(", isUsing2FA=")
+        builder.append("UserDto [firstName=").append(firstName).append(", lastName=").append(lastName).append(", password=").append(password).append(", matchingPassword=").append(matchingPassword).append(", userId=").append(userId).append(", email=").append(email).append(", isEnabled=").append(enabled).append(", isUsing2FA=")
                 .append(isUsing2FA).append(", role=").append(role).append("]");
         return builder.toString();
     }

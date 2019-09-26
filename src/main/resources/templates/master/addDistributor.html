@@ -26,7 +26,11 @@
 		</ol>
 	</section>
 	<div layout:fragment="content">
-
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	
+    	</div>
 		<form role="form" th:action="@{/master/add}"
 			th:object="${distributorDto}" th:method="post">
 			<div class="box-body">
@@ -60,7 +64,7 @@
 						th:field="*{city}"  th:errorclass="has-error" required>
 
 						<option value="">---Select---</option>
-						<option th:each="citi : ${#lists.sort(distributorDto.getCities())}"
+						<option th:each="citi : ${#lists.sort(city)}"
 							th:value="${citi}" th:text="${citi}">Hyderabad</option>
 
 					</select>
@@ -74,7 +78,19 @@
 			</div>
 		</form>
 
+	
+	</div>
+<!-- 	<div layout:fragment="scriptContent">
+	<script th:inline="javascript">
+	
+
+	$( window ).trigger("unload",function() {
+
+			Pace.restart();
+		})
+	</script>
 	</div>
 
+ -->
 </body>
 </html>

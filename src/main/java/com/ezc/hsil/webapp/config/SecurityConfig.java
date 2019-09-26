@@ -78,16 +78,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
         	.csrf().disable()
         	     .authorizeRequests()
-          //  .antMatchers("/bootstrap/**", "/dist/**", "/plugins/**").permitAll()
+        	     .antMatchers("/bootstrap/**", "/dist/**", "/plugins/**").permitAll()
                 .antMatchers("/login*","/login*", "/logout*", "/signin/**", "/signup/**", "/customLogin",
                         "/user/registration*", "/registrationConfirm*", "/expiredAccount*", "/registration*",
                         "/badUser*", "/user/resendRegistrationToken*" ,"/forgetPassword*", "/user/resetPassword*",
-                        "/user/changePassword*", "/emailError*", "/resources/**","/old/user/registration*","/successRegister*","/qrcode*")
+                        "/user/changePassword*", "/emailError*", "/resources/**","/old/user/registration*","/successRegister*","/qrcode*"
+                       )
                 .permitAll()
                 .antMatchers("/invalidSession*").anonymous()
                 .antMatchers("/user/updatePassword*","/user/savePassword*","/updatePassword*")
                 .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
-                //.anyRequest()
+                .antMatchers("/master/**","/modals/**","/modal/**").fullyAuthenticated()	
                 
                 //.hasAuthority("READ_PRIVILEGE")
                 .and()

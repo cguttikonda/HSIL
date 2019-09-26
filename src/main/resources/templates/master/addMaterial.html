@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Material Master</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Material <small>Creation</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="@{/dashboard/index.html}"><i class="fa fa-dashboard"></i> Material</a></li>
+			
+			<li class="active">add</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	</div>
+		<form role="form" th:action="@{/master/addMaterial}"
+			th:object="${materialDto}" th:method="post">
+			<div class="box-body">
+				<div class="form-group">
+					<label for="materialName">Material</label>
+					 <input
+						th:field="*{materialCode}" type="text" class="form-control"
+						placeholder="Enter Material Code" th:errorclass="has-error" />
+						<span th:if="${#fields.hasErrors('materialCode')}" th:errors="*{materialCode}"  th:errorclass="has-error">Name Error</span>
+						
+				</div>
+				<div class="form-group">
+					<label for="materialDescription">Material Description</label>
+					 <input
+						th:field="*{materialDesc}" type="text" class="form-control"
+						placeholder="Enter Material description"  th:errorclass="has-error" required/>
+						<span th:if="${#fields.hasErrors('materialDesc')}" th:errors="*{materialDesc}" th:errorclass="has-error">Contact Error</span>
+				</div>
+
+				<div class="form-group">
+					<label for="materialQuantity">Quantity</label>
+					<input
+						th:field="*{quantity}" type="number" class="form-control"
+						placeholder="Enter Quantity"  th:errorclass="has-error" required/>
+					<span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" th:errorclass="has-error">Business Unit Error</span>
+				</div>
+
+			</div>
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="submit" class="btn btn-primary">Submit</button>
+			</div>
+		</form>
+
+	
+	</div>
+</body>
+</html>

@@ -1,18 +1,16 @@
 package com.ezc.hsil.webapp.service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import com.ezc.hsil.webapp.dto.RequestDetailDto;
 import com.ezc.hsil.webapp.dto.UserDto;
 import com.ezc.hsil.webapp.error.UserAlreadyExistException;
-import com.ezc.hsil.webapp.model.EzcRequestHeader;
-import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
+import com.ezc.hsil.webapp.model.WorkGroup_Users;
+import com.ezc.hsil.webapp.model.Work_Groups;
 
 public interface IUserService {
 
@@ -20,7 +18,7 @@ public interface IUserService {
 
 	Users getUser(String verificationToken);
 
-	void saveRegisteredUser(Users user);
+	void editUser(UserDto accountDto);
 
 	void deleteUser(Users user);
 
@@ -57,19 +55,17 @@ public interface IUserService {
 
 	List<String> getUsersFromSessionRegistry();
 	
+	List<Users> getUsersList();
 	
+	WorkGroup_Users getGroupsByUserId(String userId);
+	
+	List<Work_Groups> getAllGroups();
+	
+	List<Work_Groups> getGroupsByRole(String role);
+	
+	//List<WorkGroup_Users> getStateHeadSubGroups(String stateHeadGrp);
+	
+	List<WorkGroup_Users> getZonalHeadSubGroups(String zonalHeadGrp);
 
-	//void addReqData(Optional<EzcRequestHeader> reqHeader);
-	Optional<EzcRequestHeader> findById_O(int id);
-	
-	EzcRequestHeader findById(int id);
-
-	void addReqData(HashSet<EzcRequestItems> hsItems);
-
-	void addReqData(EzcRequestItems ezcRequestItemses);
-	
-	EzcRequestHeader findDetailsById(int id);
-	
-	
-
+	List<WorkGroup_Users> getStateHeadSubGroups(String stateHDGrp);
 }
