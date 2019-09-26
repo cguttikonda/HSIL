@@ -27,33 +27,14 @@
 	<!-- sidebar menu: : style can be found in sidebar.less -->
 	<ul class="sidebar-menu">
 		<li class="header">MAIN NAVIGATION</li>
-		<!-- <li class="active treeview"  sec:authorize="hasRole('ADMIN')">
-            <a href="#">
-                <i class="fa fa-dashboard"></i> <span>Master data</span>
-                <span class="pull-right-container">
-          			<i class="fa fa-angle-left pull-right"></i>
-        	   </span>
-            </a>
-            <ul class="treeview-menu">
-                <li class="active">
-                <a href="#"  th:href="@{/master/addDis}"><i class="fa fa-circle-o"></i> Add Distributor</a></li>
-                
-            </ul>
-            <ul class="treeview-menu">
-                <li class="active">
-                <a href="#"  th:href="@{/master/listDis}"><i class="fa fa-circle-o"></i> List Distributors</a></li>
-                
-            </ul>
-            
-            
-        </li> -->
 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+		<li class="treeview" sec:authorize="hasRole('ADMIN')">
+			<a href="#">
 				<i class="fa fa-share"></i> <span>Master data</span> <span
-				class="pull-right-container"> <i
-					class="fa fa-angle-left pull-right"></i>
-			</span>
-		</a>
+						class="pull-right-container"> <i
+						class="fa fa-angle-left pull-right"></i>
+				</span>
+			</a>
 			<ul class="treeview-menu">
 				<li class="treeview"><a href="#"><i class="fa fa-circle-o"></i>
 						Distributor <span class="pull-right-container"> <i
@@ -64,7 +45,8 @@
 								class="fa fa-circle-o"></i> Add Distributor</a></li>
 						<li class="treeview"><a href="#" th:href="@{/master/listDis}"><i
 								class="fa fa-circle-o"></i> List Distributors</a></li>
-					</ul></li>
+					</ul>
+				</li>
 				<!-- End OF Distribuor li -->
 
 
@@ -78,31 +60,38 @@
 						<li class="treeview"><a href="#"
 							th:href="@{/master/listMaterial}"><i class="fa fa-circle-o"></i>
 								List Materials</a></li>
-					</ul></li>
-				<!-- End OF Distribuor li -->
-				<!-- TPM/TPS menu Option -->
-				<li class="treeview" sec:authorize="hasRole('ADMIN')"><a
-					href="#"> <i class="fa fa-dashboard"></i> <span>TPM/TPS Creation</span> <span
-						class="pull-right-container"> <i
-							class="fa fa-angle-left pull-right"></i>
-						</span>
-					</a>
-					<ul class="treeview-menu">
-						<li class="active"><a href="#" th:href="@{/tpm/add}"><i
-								class="fa fa-circle-o"></i> Create</a></li>
-
 					</ul>
-					<ul class="treeview-menu">
-						<li class="active"><a href="#"
-							th:href="@{/tpm/tpmRequestList/ALL}"><i
-								class="fa fa-circle-o"></i> List</a></li>
+				</li>
+				<!-- End OF Material li -->
 
-					</ul>			
+			</ul>
+		</li> <!-- Master Data End-->
+		<!-- TPM/TPS menu Option -->
+
+		<li class="treeview" sec:authorize="hasRole('ADMIN')">
+			<a href="#">
+				<i class="fa fa-dashboard"></i> <span>TPM Creation</span> <span
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+				</span>
+			</a>
+			<ul class="treeview-menu">
+				<li class="treeview">
+					<li class="active"><a href="#" th:href="@{/tpm/add}"><i
+							class="fa fa-circle-o"></i> Create</a>
+					</li>
 
 				</li>
-				<!-- TPS/TPM End -->
+				<li class="treeview-menu">
+					<li><a href="#" th:href="@{/tpm/tpmRequestList/ALL}"><i
+							class="fa fa-circle-o"></i> List</a></li>
+
+				</li>
 			</ul>
 		</li>
+		<!-- TPS/TPM End -->
+	</ul>
+	</li>
 	</ul>
 
 
