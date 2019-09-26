@@ -68,34 +68,23 @@
 		</li> <!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')">
-			<a href="#">
+		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa-dashboard"></i> <span>TPM Creation</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
-				</span>
-			</a>
+			</span>
+		</a>
 			<ul class="treeview-menu">
-				<li class="treeview">
-					<li class="active"><a href="#" th:href="@{/tpm/add}"><i
-							class="fa fa-circle-o"></i> Create</a>
-					</li>
-
-				</li>
-				<li class="treeview-menu">
-					<li><a href="#" th:href="@{/tpm/tpmRequestList/ALL}"><i
-							class="fa fa-circle-o"></i> List</a></li>
-
+				<li class=""><a href="#" th:href="@{/tpm/add}"><i
+						class="fa fa-circle-o"></i> Create</a></li>
+				<li ><a href="#"
+					th:href="@{/tpm/tpmRequestList/ALL}"><i class="fa fa-circle-o"></i>
+						List</a>
 				</li>
 			</ul>
 		</li>
 		<!-- TPS/TPM End -->
+	
 	</ul>
-	</li>
-	</ul>
-
-
-
-
 </section>
 <!-- /.sidebar -->
