@@ -3,11 +3,14 @@
 	<!-- Sidebar user panel -->
 	<div class="user-panel">
 		<div class="pull-left image">
-			<img src="dist/img/user2-160x160.jpg" class="img-circle"
+			<img th:src="@{/resources/images/toplogo.png}" class="img-circle"
 				alt="User Image" />
 		</div>
 		<div class="pull-left info">
-			<p>Alexander Pierce</p>
+			<p sec:authorize="isAuthenticated()" > 
+				
+				<span  sec:authentication="principal.firstName"> &nbsp; </span>
+				<!-- <span sec:authentication="principal.lastName"> --></span>User</p>
 			<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 		</div>
 	</div>

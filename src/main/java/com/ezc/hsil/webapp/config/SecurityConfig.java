@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.config;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 import com.ezc.hsil.webapp.security.CustomAuthenticationProvider;
 import com.ezc.hsil.webapp.security.CustomRememberMeServices;
@@ -28,7 +32,11 @@ import com.ezc.hsil.webapp.security.CustomRememberMeServices;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	    
+	 @Autowired
+	 PersistenceJPAConfig pJPAConfig;
+	 //private DataSource dataSource;;
+	 
+	
    // private CustomUserServiceImpl userDetailsService;
 	@Autowired
     private UserDetailsService userDetailsService;
@@ -76,10 +84,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
        // @formatter:off
         http
-        	.csrf().disable()
+//        	.csrf().disable() 
         	     .authorizeRequests()
         	     .antMatchers("/bootstrap/**", "/dist/**", "/plugins/**").permitAll()
-                .antMatchers("/login*","/login*", "/logout*", "/signin/**", "/signup/**", "/customLogin",
+                .antMatchers("/login*","/login*", 
+                		//"/logout*",
+                		"/signin/**", "/signup/**", "/customLogin",
                         "/user/registration*", "/registrationConfirm*", "/expiredAccount*", "/registration*",
                         "/badUser*", "/user/resendRegistrationToken*" ,"/forgetPassword*", "/user/resetPassword*",
                         "/user/changePassword*", "/emailError*", "/resources/**","/old/user/registration*","/successRegister*","/qrcode*"
@@ -113,12 +123,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .permitAll()
              .and()
-                .rememberMe().rememberMeServices(rememberMeServices()).key("theKey");
+                .rememberMe()
+                .rememberMeServices(rememberMeServices()).key("theKey");
+                
+//             .rememberMe().rememberMeParameter("remember-me").
+//             tokenRepository(tokenRepository()); 
     // @formatter:on
     }
 
     // beans
 
+    
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+      JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl=new JdbcTokenRepositoryImpl();
+      jdbcTokenRepositoryImpl.setDataSource(pJPAConfig.dataSource());
+      return jdbcTokenRepositoryImpl;
+    }
+    
     @Bean
     public DaoAuthenticationProvider authProvider() {
         final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider();
@@ -139,7 +161,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public RememberMeServices rememberMeServices() {
-        CustomRememberMeServices rememberMeServices = new CustomRememberMeServices("theKey", userDetailsService, new InMemoryTokenRepositoryImpl());
+        CustomRememberMeServices rememberMeServices = new CustomRememberMeServices("theKey", userDetailsService, tokenRepository()); //new InMemoryTokenRepositoryImpl()
         return rememberMeServices;
     }
 }

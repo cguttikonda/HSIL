@@ -1,8 +1,7 @@
 package com.ezc.hsil.webapp.dto;
 
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
@@ -21,12 +20,12 @@ public class MaterialDto {
 	private int id;
 	
 	@NonNull
-	@Pattern(regexp="(^([0-9]*)$)" ,message="Please provide a valid material code" )
+	@Pattern(regexp="(^([0-9]*)${50})" ,message="{Pattern.materialDto.materialCode}" )
 	//@Range(min=3,max=50, message="Please provide a valid material code")
 	private String materialCode;
 	@NonNull
 	@NotNull
-	@Size(max=50, message="")
+	@Size(max=50, message="{Size.materialDto.materialDesc}")
 	private String materialDesc;
 	
 	@NonNull
@@ -34,7 +33,8 @@ public class MaterialDto {
 	//@Pattern(regexp="(^$|[0-9])")
 	@Positive 
 	@NotNull
-	@Max(3)
+	@Min(1)
+	@Range(max=1000)
 	private int quantity;
 	
 	@NonNull

@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.security;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,11 +15,13 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.rememberme.CookieTheftException;
 import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
@@ -42,7 +45,7 @@ public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServ
 
     @Override
     protected void onLoginSuccess(HttpServletRequest request, HttpServletResponse response, Authentication successfulAuthentication) {
-        String username = ((Users) successfulAuthentication.getPrincipal()).getEmail();
+        String username = ((Users) successfulAuthentication.getPrincipal()).getUserId();//.getEmail();
         logger.debug("Creating new persistent login for user " + username);
         PersistentRememberMeToken persistentToken = new PersistentRememberMeToken(username, generateSeriesData(), generateTokenData(), new Date());
         try {
@@ -55,7 +58,8 @@ public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServ
 
     @Override
     protected Authentication createSuccessfulAuthentication(HttpServletRequest request, UserDetails user) {
-        Users auser = userRepository.findByEmail(user.getUsername());
+       // Users auser = userRepository.findByEmail(user.getUsername());
+    	Users auser = userRepository.findByUserId(user.getUsername());
         RememberMeAuthenticationToken auth = new RememberMeAuthenticationToken(key, auser, authoritiesMapper.mapAuthorities(user.getAuthorities()));
         auth.setDetails(authenticationDetailsSource.buildDetails(request));
         return auth;
@@ -64,4 +68,25 @@ public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServ
     private void addCookie(PersistentRememberMeToken token, HttpServletRequest request, HttpServletResponse response) {
         setCookie(new String[] { token.getSeries(), token.getTokenValue() }, getTokenValiditySeconds(), request, response);
     }
+
+//	@Override
+//	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request,
+//			HttpServletResponse response) {
+//		// TODO Auto-generated method stub
+//		return super.processAutoLoginCookie(cookieTokens, request, response);
+//		
+//		
+//
+//		
+//	}
+
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+		// TODO Auto-generated method stub
+		super.logout(request, response, authentication);
+		
+	}
+	
+    
+    
 }

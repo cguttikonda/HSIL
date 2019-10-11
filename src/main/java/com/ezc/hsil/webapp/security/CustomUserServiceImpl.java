@@ -69,7 +69,7 @@ public class CustomUserServiceImpl implements UserDetailsService  {
 
 	    
 	    
-	    
+//	    
 	    
 	    //	    @Override
 //	    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
