@@ -386,7 +386,11 @@ public class UserServiceImpl implements IUserService{
 		@Override
 		public Users findUserByUserId(String userId) {
 
-		
+			
+			System.out.println(":findUserByUserId:::userId:::::::"+userId);
+			
+			System.out.println(":return userRepository:::findByUserId:::::::"+userRepository.findByUserId(userId));
+			
 			return userRepository.findByUserId(userId);
 		
 		

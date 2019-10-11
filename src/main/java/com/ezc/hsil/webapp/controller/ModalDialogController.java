@@ -1,6 +1,7 @@
 package com.ezc.hsil.webapp.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,13 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ezc.hsil.webapp.service.IMasterService;
+import com.ezc.hsil.webapp.service.IUserService;
 
 @Controller
 @RequestMapping("/modal")
 public class ModalDialogController {
 
 	@Autowired
-	IMasterService masterService;	
+	IMasterService masterService;
+	
+	@Autowired
+    private IUserService iUserService;
 	
 	@Value("#{'${city}'.split(',')}")
 	private List<String> city;
@@ -36,7 +41,11 @@ public class ModalDialogController {
 		return "modals/deleteDistributor" ;
 	}
 	
-	
+	@GetMapping(value = "/delete-user/{id}") 
+    public String getUserById(@PathVariable("id") long id, Model model) {   	    	
+    	model.addAttribute("user", ((Optional)iUserService.getUserByID(id)).get());
+		return "modals/deleteUser" ;
+    }
 	
 	
 	

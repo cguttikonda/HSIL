@@ -5,6 +5,8 @@ import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
 
 import java.util.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +20,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.security.ActiveUserStore;
 import com.ezc.hsil.webapp.service.IUserService;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.ezc.hsil.webapp.dto.UserDto;
 
+@Slf4j
 @Controller
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -59,26 +67,28 @@ public class UserController {
     }
     
     @RequestMapping(value = "/UserCreation", method = RequestMethod.GET) //@GetMapping("/UserCreation")
-    public String test(final Locale locale, final Model model) {   	
+    public String test(final Locale locale, final Model model) {
+    	
+    	System.out.println(":UserCreation GET:::::::");
+    	
     	 List<EzStates> states = userDefaults.getStates();
     	 List<UserRoles> roles = userDefaults.getRoles();
     	 List<UserZones> zones = userDefaults.getZones();
-    	 
+    	    	 
     	 model.addAttribute("userForm", new UserForm());
 	     model.addAttribute("states", states);
 	     model.addAttribute("roles", roles);
 	     model.addAttribute("zones", zones);
 
-        return "ezUserCreationForm";
+        return "user/ezUserCreationForm";
     }
     
     @RequestMapping(value = "/UserCreation", method = RequestMethod.POST) //@PostMapping("/UserCreation")
     public String saveUser(@Valid @ModelAttribute UserForm userForm, BindingResult bindingResult, final Model model) {
-
+   	
+    	System.out.println(":UserCreation POST:::::::");
     	
-    	System.out.println(":::::::userForm:::::"+userForm.getUserId());
-    	
-    	 if (bindingResult.hasErrors()) {
+    	 if (bindingResult.hasErrors()) { 
     		 
     		 List<EzStates> states = userDefaults.getStates();
         	 List<UserRoles> roles = userDefaults.getRoles();
@@ -88,7 +98,7 @@ public class UserController {
     	     model.addAttribute("roles", roles);
     	     model.addAttribute("zones", zones);
     		 
-             return "ezUserCreationForm";
+             return "user/ezUserCreationForm";
          }
     	
     	List<EzStates> list = userDefaults.getStates();
@@ -109,7 +119,7 @@ public class UserController {
     	
     	List<Users> usersList = iUserService.getUsersList();
    	 	model.addAttribute("usersList", usersList);
-       return "ezUsersList";
+       return "user/ezUsersList";
     }
  
     @RequestMapping(value = "/usersList", method = RequestMethod.GET) //@GetMapping("/UserCreation")
@@ -117,10 +127,10 @@ public class UserController {
     	List<Users> usersList = iUserService.getUsersList();
     	 model.addAttribute("usersList", usersList);
     	//System.out.println(":::::::usersList:::::"+usersList);
-        return "ezUsersList";
+        return "user/ezUsersList";
     }
     
-    @GetMapping(value = "/deleteUser/{id}")
+    @PostMapping(value = "/deleteUser/{id}")
     public String deleteUser(@PathVariable("id") Long id,final Locale locale, final Model model) {   
     	
     	Optional<Users> lv_user = iUserService.getUserByID(id); 
@@ -134,7 +144,7 @@ public class UserController {
     	
     	List<Users> usersList = iUserService.getUsersList();
    	 	model.addAttribute("usersList", usersList);
-       return "ezUsersList";
+       return "user/ezUsersList";
     }
     
     @GetMapping(value = "/editUser/{id}")
@@ -145,9 +155,7 @@ public class UserController {
     	 Optional<Users> user = iUserService.getUserByID(id); 
 		 Users lv_User = (Users)user.get();
 		 List<Roles> userRoles = (List<Roles>)lv_User.getRoles();
-		
-		 System.out.println(":::::::getUserId:::::"+lv_User.getUserId());
-		 
+ 
 		 Roles userRole = null;
     	 
     	 WorkGroup_Users userGroups = (WorkGroup_Users) iUserService.getGroupsByUserId(lv_User.getUserId());
@@ -173,8 +181,9 @@ public class UserController {
       	    System.out.println(lv_wgu.getUserId()+":::::"+lv_wgu.getGroupId()+":::::"+lv_wgu.getStateGrp()+"::::"+lv_wgu.getZonalGrp());
       	 }
       	
-      	
-      	userZone = userZone.substring(0,userZone.indexOf("_"));
+      	try{
+      		userZone = userZone.substring(0,userZone.indexOf("_"));
+      	}catch(Exception e){}	
       	
       	
       	
@@ -196,7 +205,7 @@ public class UserController {
 	     //model.addAttribute("userForm", user);
 	     //model.addAttribute("formFields", new UserForm());
 
-        return "ezEditUser";
+        return "user/ezEditUser";
     }
     
     @RequestMapping(value = "/editSave", method = RequestMethod.POST) //@PostMapping("/UserCreation")
@@ -216,14 +225,24 @@ public class UserController {
     	userDto.setGroup(userForm.getGroup());
     	userDto.setZone(userForm.getZone());
     	
-  
-    	
     	iUserService.editUser(userDto);
-    	
-    	
-    	
+     	
     	List<Users> usersList = iUserService.getUsersList();
    	 	model.addAttribute("usersList", usersList);
-       return "ezUsersList";
+       return "user/ezUsersList";
+    }
+    
+    
+    @RequestMapping(value = "/userByUserId/{userId}", method = RequestMethod.POST)
+    public @ResponseBody String getUserByUserId(@PathVariable("userId") String userId) {   	    	
+    	Users user = iUserService.findUserByUserId(userId); 
+    	
+    	System.out.println(":UsersUsersUsersUsers:::::::"+user);
+    	System.out.println(":getUserByUserId:::userId:::::::"+user.getId());
+    	
+    	if(user==null)
+    		return "N";	
+    	else
+            return "Y";
     }
 }
