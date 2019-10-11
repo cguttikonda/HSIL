@@ -7,10 +7,12 @@
 				alt="User Image" />
 		</div>
 		<div class="pull-left info">
-			<p sec:authorize="isAuthenticated()" > 
-				
-				<span  sec:authentication="principal.firstName"> &nbsp; </span>
-				<!-- <span sec:authentication="principal.lastName"> --></span>User</p>
+			<p sec:authorize="isAuthenticated()">
+
+				<span sec:authentication="principal.firstName"> &nbsp; </span>
+				<!-- <span sec:authentication="principal.lastName"> -->
+				</span>User
+			</p>
 			<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
 		</div>
 	</div>
@@ -31,13 +33,12 @@
 	<ul class="sidebar-menu">
 		<li class="header">MAIN NAVIGATION</li>
 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')">
-			<a href="#">
+		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa-share"></i> <span>Master data</span> <span
-						class="pull-right-container"> <i
-						class="fa fa-angle-left pull-right"></i>
-				</span>
-			</a>
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+			</span>
+		</a>
 			<ul class="treeview-menu">
 				<li class="treeview"><a href="#"><i class="fa fa-circle-o"></i>
 						Distributor <span class="pull-right-container"> <i
@@ -48,8 +49,7 @@
 								class="fa fa-circle-o"></i> Add Distributor</a></li>
 						<li class="treeview"><a href="#" th:href="@{/master/listDis}"><i
 								class="fa fa-circle-o"></i> List Distributors</a></li>
-					</ul>
-				</li>
+					</ul></li>
 				<!-- End OF Distribuor li -->
 
 
@@ -63,12 +63,28 @@
 						<li class="treeview"><a href="#"
 							th:href="@{/master/listMaterial}"><i class="fa fa-circle-o"></i>
 								List Materials</a></li>
-					</ul>
-				</li>
+					</ul></li>
+
+
+				<li class="treeview" ><a
+					href="#"> <i class="fa fa-circle-o"></i> <span>User
+							Creation</span> <span class="pull-right-container"> <i
+							class="fa fa-angle-left pull-right"></i>
+					</span>
+				</a>
+					<ul class="treeview-menu">
+						<li class=""><a href="#" th:href="@{/user/UserCreation}"><i
+								class="fa fa-circle-o"></i> Add</a></li>
+						<li><a href="#" th:href="@{/user/usersList}"><i
+								class="fa fa-circle-o"></i> List</a></li>
+					</ul></li>
+
+
+
 				<!-- End OF Material li -->
 
-			</ul>
-		</li> <!-- Master Data End-->
+			</ul></li>
+		<!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
 
 		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
@@ -80,14 +96,12 @@
 			<ul class="treeview-menu">
 				<li class=""><a href="#" th:href="@{/tpm/add}"><i
 						class="fa fa-circle-o"></i> Create</a></li>
-				<li ><a href="#"
-					th:href="@{/tpm/tpmRequestList/ALL}"><i class="fa fa-circle-o"></i>
-						List</a>
-				</li>
-			</ul>
-		</li>
+				<li><a href="#" th:href="@{/tpm/tpmRequestList/ALL}"><i
+						class="fa fa-circle-o"></i> List</a></li>
+			</ul></li>
 		<!-- TPS/TPM End -->
-	
+
+
 	</ul>
 </section>
 <!-- /.sidebar -->
