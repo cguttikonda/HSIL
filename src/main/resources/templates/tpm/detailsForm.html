@@ -23,13 +23,13 @@
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
-            	<!-- <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}"> -->
+            	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
                 <table  class="table table-bordered">
                 	<tr>
                 		<th>User Name</th>
                 		<td th:text="*{reqHeader.id}"></td>
                 		<th>Date of TPM</th>
-                		<td th:text="*{reqHeader.erhConductedOn}"></td>
+                		<td th:text="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}"></td>
                 	</tr>
                 	<tr>
                 		<th>Distributor Code</th>
@@ -43,7 +43,7 @@
                 	</tr>
                 </table>
                 <!-- <textarea th:field="*{recordedText}" cols=100 placeholder="click on speak icon"></textarea> -->
-                <textarea cols=100 th:field="*{recordedText}" id="note-textarea" placeholder="Create a new note by typing or using voice recognition." rows="6"></textarea>
+                <textarea cols=100 th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
                 <p id="recording-instructions"></p>
                 
                 <i id="start-record-btn" class="fa fa-microphone" style="color: white;padding: 10px;background: #87bf54;border-radius: 50%;"></i>
@@ -54,6 +54,7 @@
                 		<th>Contact No</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
+                		<th></th>
                 	</tr>
                 	 <tr th:if="${reqDto.ezcRequestItems.empty}">
             			<td colspan="2"> No Items Added </td>
@@ -77,14 +78,16 @@
 							<input type="text"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
 							</div>
 						</td>
-                	
+                		<td>
+                			<i class="fa fa-trash deleteItem"></i>
+                		</td>
                 	</tr>
                 </table>
             </div>
             <div class="box-footer">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Save</button>
-                <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Save Item</button>
-                
+                <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
+                <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -95,11 +98,22 @@
       autoclose: true,
       format: 'dd/mm/yyyy'
     })
+    $('.deleteItem').click(function(){
+    	$(this).closest("tr").remove();
+    })
+     				
+
     function addItem()
     {
 	 	document.myForm.action ="/tpm/processSpeech";
 	 	document.myForm.submit();
     }
+	 function addNewItem()
+	 {
+		 	document.myForm.action ="/tpm/addNewItem";
+		 	document.myForm.submit();
+	 }
+ 
  try {
 	  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 	  var recognition = new SpeechRecognition();
@@ -185,7 +199,7 @@
 	  noteContent = $(this).val();
 	})
 
-
+ 
 
 	</script>
 </div>

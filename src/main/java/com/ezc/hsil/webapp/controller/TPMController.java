@@ -4,6 +4,8 @@ package com.ezc.hsil.webapp.controller;
 
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,7 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
-import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.service.ITPMService;
@@ -81,7 +82,7 @@ public class TPMController {
     }
     
     @RequestMapping(value = "/tpm/processSpeech", method = RequestMethod.POST)
-    public String addTPMItem(TpmRequestDetailDto reqDto, Model model) {
+    public String processSpeechData(TpmRequestDetailDto reqDto, Model model) {
 		/*
 		 * EzcRequestHeader ezcRequestHeader = tpmService.getTPMRequest(docId);
 		 * TpmRequestDetailDto reqDto = new TpmRequestDetailDto();
@@ -100,12 +101,28 @@ public class TPMController {
         return "tpm/detailsForm";
 
     }
+    
+    @RequestMapping(value = "/tpm/addNewItem", method = RequestMethod.POST)
+    public String addNewTPMItem(TpmRequestDetailDto reqDto, Model model) {
+        List<EzcRequestItems> ezcRequestItems=null;
+        if(reqDto.getEzcRequestItems() == null)
+        	ezcRequestItems = new ArrayList<EzcRequestItems>();
+        else
+        	ezcRequestItems = reqDto.getEzcRequestItems();
+        ezcRequestItems.add(new EzcRequestItems());
+        reqDto.setEzcRequestItems(ezcRequestItems);
+		reqDto.setReqHeader(reqDto.getReqHeader());
+		
+        model.addAttribute("reqDto", reqDto); 
+        return "tpm/detailsForm";
+
+    }
 
     @RequestMapping(value = "/tpm/saveDetails", method = RequestMethod.POST)
     public String saveDetails(TpmRequestDetailDto tpmRequestDetailDto, final RedirectAttributes ra) {
     	tpmService.createTPMDetails(tpmRequestDetailDto);
         ra.addFlashAttribute("successFlash", "Success");
-        return "redirect:/tpm/list";
+        return "redirect:/tpm/tpmRequestList/ALL";
 
     }
     
@@ -115,11 +132,82 @@ public class TPMController {
     	{
 	    	text = text.toUpperCase();
 	    	String [] requestArr = text.split("NEXT");
-	    	for(String requestTxt :requestArr)
+	    	for(String string :requestArr)
 	    	{
-	    		
+	    		//System.out.print("::"""+retTxt(string));
+	    		String name="",mobile="";
+				Date dob=null,doa=null;
+	    		int i=0;
+	    		int cnt = 0;
+	    	    boolean nameFound = false;
+	            boolean mobileFound = false;
+	    	    while (i < string.length())
+	            {
+	                //System.out.print(":::"+string.charAt(i)+"::"+Character.isDigit(string.charAt(i)));
+	                if(!nameFound)
+	                {
+	                    if(!Character.isDigit(string.charAt(i)))
+	                    {
+	                        name += string.charAt(i);
+	                    }
+	                    else
+	                    {
+	                        nameFound = true;
+	                        i--;
+	                    }
+	                    //System.out.print("nameFound:::"+mobileFound);
+	                }
+	                else if(!mobileFound)
+	                {
+	                    
+	                    //System.out.print(cnt);    
+	                    if(Character.isDigit(string.charAt(i)))
+	                    {
+	                        cnt++;
+	                        mobile+=string.charAt(i);
+	                        if(cnt == 10)
+	                        {
+	                            mobileFound = true;
+	                        }
+	                    }
+	                }
+	                else if(nameFound && mobileFound)
+	                {
+	                    break;
+	                }
+	                
+	                i++; 
+	            }
+				  int dateCnt =0;
+				  SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); 
+				  String mobStr = string.substring(i,string.length()); 
+				  mobStr = mobStr.trim();
+				  String [] mobStrArr = mobStr.split(" ");
+				  if(mobStrArr != null && mobStrArr.length > 0) {
+					  try {
+						dob= sdf.parse(mobStrArr[dateCnt++].replace("TH","")+"-"+mobStrArr[dateCnt++].substring(0,3)+"-"+mobStrArr[dateCnt++]);
+					} catch (ParseException e) {
+						log.info("parse exception dob::"+e);
+					}
+				  catch (NullPointerException e) {
+					}
+					  log.info("dob::"+dob);
+					  try {
+							doa= sdf.parse(mobStrArr[dateCnt++].replace("TH","")+"-"+mobStrArr[dateCnt++].substring(0,3)+"-"+mobStrArr[dateCnt++]);
+						} catch (ParseException e) {
+							log.info("parse exception doa::"+e);
+						}
+					  catch (NullPointerException e) {
+						}
+					  log.info("doa::"+doa);
+				  }
+				 
+	            
 	    		EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
-	    		ezcRequestItemsObj.setEriPlumberName("test name");
+	    		ezcRequestItemsObj.setEriPlumberName(name);
+	    		ezcRequestItemsObj.setEriContact(mobile);
+	    		ezcRequestItemsObj.setEriDob(dob);
+	    		ezcRequestItemsObj.setEriDoa(doa);
 	    		ezcRequestItems.add(ezcRequestItemsObj);
 	    	}
     	}	
