@@ -30,7 +30,9 @@ public class EzcRequestItems implements java.io.Serializable {
 	private String eriPartType;
 	private String eriPartName;
 	private String eriPlumberName;
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date eriDob;
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date eriDoa;
 	private String eriContact;
 
