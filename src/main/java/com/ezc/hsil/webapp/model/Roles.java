@@ -22,7 +22,7 @@ public class Roles {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles") ////Referencing it from Users.java --private Collection<Roles> roles;
     private Collection<Users> users;
 
     @ManyToMany

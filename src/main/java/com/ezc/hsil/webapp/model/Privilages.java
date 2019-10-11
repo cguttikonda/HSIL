@@ -20,7 +20,7 @@ public class Privilages {
 
 	    private String name;
 
-	    @ManyToMany(mappedBy = "privileges")
+	    @ManyToMany(mappedBy = "privileges") //Referencing it from Roles.java --private Collection<Privilages> privileges
 	    private Collection<Roles> roles;
 
 	    protected Privilages() {
