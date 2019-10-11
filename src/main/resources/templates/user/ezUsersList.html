@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="ISO-8859-1">
+<title>List Users</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>Users List</h1>
+		<ol class="breadcrumb">
+			<li><a th:href="@{/dashboard/index.html}"><i
+					class="fa fa-dashboard"></i> Users</a></li>
+			<li class="active">list</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+	<form name='userForm' id='userForm'>
+		<div class="box">
+			<div class="box-header">
+				<!-- <h3 class="box-title">Data Table With Full Features</h3> -->
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<table id="example" class="table table-striped table-bordered"
+					style="width: 100%">
+					<thead>
+						<tr>
+			                <th>User Id</th>
+			                <th>Fist Name</th>
+			                <th>Last Name</th>
+			                <th>Email</th>
+			                <th>Role</th>
+			                <th>&nbsp;</th>
+			            </tr>
+			       </thead>  
+				   <tbody>
+			        <tr th:each="user, stat : ${usersList}">
+			            <td><span th:text="${user.userId}"> User Id </span></td>
+			            <td><span th:text="${user.firstName}"> firstName </span></td>
+			            <td><span th:text="${user.lastName}"> lastName </span></td>
+			            <td><span th:text="${user.email}"> email </span></td>
+			            <td>
+			             <div th:each="role, stat1 : ${user.roles}">
+					        <span th:text="${user.roles[__${stat1.index}__].name}"></span>
+					     </div>   
+			            </td>
+			            <td>
+
+			            	<a href="#"
+								th:onclick="'javascript:ezSubmit(\'edit\',\''+ ${user.id} + '\');'"
+								class="btn btn-success btn-xs"> <span
+									class="glyphicon glyphicon-pencil"></span>
+								</a>
+			            	 
+							<a href="#"
+								th:onclick="'javascript:ezSubmit(\'delete\',\''+ ${user.id} + '\');'"
+								class="btn btn-danger btn-xs"> <span
+									class="glyphicon glyphicon-trash"></span>
+								</a>
+			            	
+			            	
+			            </td>
+			      	</tr>
+					</tbody>
+				   </table>
+   		         </div>	
+	            </div>
+	            </form>
+	<!-- Modals -->
+	<div th:fragment="delete-user" id="deleteUserModalHolder"></div>
+	
+	<!-- Models End -->	            
+	            
+			</div>
+
+<div layout:fragment="scriptContent">
+
+<script th:inline="javascript">
+	$(document).ready(function() {
+		$('#example').DataTable({
+
+				"dom" : 'T<"clear">lfrtip'
+
+			}
+		);
+	});	
+	
+	function ezSubmit(transType,userId){
+		if(transType == 'delete')
+		{
+			$.ajax({
+				url: "/modal/delete-user/" + userId,
+				success: function(data){
+					$("#deleteUserModalHolder").html(data);
+					$('#deleteUserModal').modal({
+						backdrop: 'static'
+					});
+				}
+			});
+			
+			 /*$('#userForm').attr('action', "/user/deleteUser/" + userId);
+			 $("#userForm").attr("method", "POST");
+			 $("#userForm").submit();
+			 */
+		}
+		if(transType == 'edit')
+		{
+			 $('#userForm').attr('action', "/user/editUser/" + userId);
+			 $("#userForm").attr("method", "GET");
+			 $("#userForm").submit();
+		}
+	}
+
+	</script>
+	</div>
+</body>
+</html>
