@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @Transactional
-public class MaterialServiceImpl implements IMasterService {
+public class MasterServiceImpl implements IMasterService {
 
 	@Autowired
 	DistributorMasterRepo distMastRepo;
@@ -149,6 +150,49 @@ public class MaterialServiceImpl implements IMasterService {
 		
 		
 		return null;
+	}
+
+	@Override
+	public List<MaterialMaster> getAllMaterials() {
+		return matMastRep.findAllActiveMaterials();		
+	}
+
+	@Override
+	public MaterialDto getMaterialDetails(int id) {
+		MaterialDto matDto = matMastRep.materialDetails(id);
+		return matDto;
+
+ 	}
+
+	@Override
+	public String updateMaterial(MaterialDto matDto) throws SQLException {
+
+		int matId = matDto.getId();
+
+		if (matId > 0) {
+
+			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matId);
+			OMatMaster.ifPresent(processMaterial(matDto, matId));
+			OMatMaster.orElseThrow(()->{ return new SQLException();});
+		} else {
+
+			log.error("Unable to find the Material id {}", matId);
+			throw new EntityNotFoundException("Material not found for the id " + matId);
+
+		}
+
+		return "";
+	}
+
+	private Consumer<? super MaterialMaster> processMaterial(MaterialDto matDto, int matId) {
+		return matMaster ->{
+			matMaster.setId(matId);
+			matMaster.setMaterialCode(matDto.getMaterialCode());
+			matMaster.setMaterialDesc(matDto.getMaterialDesc());
+			matMaster.setQuantity(matDto.getQuantity());
+			matMaster.setIsActive(matDto.getIsActive());
+			
+		};
 	}
 	
 	

@@ -47,8 +47,18 @@ public class ModalDialogController {
 		return "modals/deleteUser" ;
     }
 	
-	
-	
+
+	@GetMapping(value="/edit-material/{id}")
+	public String editMaterialModal(@PathVariable("id") int id, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(id));
+		model.addAttribute("city", city);
+		return "modals/editMaterial" ;
+	}
+	@GetMapping(value="/delete-material/{id}")
+	public String deleteMaterialModal(@PathVariable("id") int id, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(id));
+		return "modals/deleteMaterial" ;
+	}
 	
 	
 }

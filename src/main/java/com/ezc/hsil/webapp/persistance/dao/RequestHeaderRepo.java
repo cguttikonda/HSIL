@@ -13,7 +13,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 
 	//EzcRequestHeader findById(int i);
 	
-	Optional<EzcRequestHeader> findById(int i);
+	Optional<EzcRequestHeader> findById(String string);
 	
 	EzcRequestHeader getById(int i);
 		

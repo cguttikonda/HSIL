@@ -1,8 +1,6 @@
 package com.ezc.hsil.webapp.model;
 // Generated Sep 10, 2019 2:12:43 PM by Hibernate Tools 5.2.10.Final
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -19,6 +18,8 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Parameter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -28,7 +29,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "ezc_request_header", catalog = "hsil")
 public class EzcRequestHeader implements java.io.Serializable {
 
-	private int id;
+	private String id;
 	private String erhReqType;
 	private String erhCreatedGroup;
 	private String erhState;
@@ -53,7 +54,7 @@ public class EzcRequestHeader implements java.io.Serializable {
 	public EzcRequestHeader() {
 	}
 
-	public EzcRequestHeader(int id) {
+	public EzcRequestHeader(String id) {
 		this.id = id;
 	}
 
@@ -80,13 +81,21 @@ public class EzcRequestHeader implements java.io.Serializable {
 	}
 
 	@Id
-	@GeneratedValue(strategy = IDENTITY)
+	//@GeneratedValue(strategy = IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpm_seq")
+    @GenericGenerator(
+        name = "tpm_seq", 
+        strategy = "com.ezc.hsil.webapp.model.TpmSequenceGenerator", 
+        parameters = {
+	            @Parameter(name = TpmSequenceGenerator.INCREMENT_PARAM, value = "50"),
+	            @Parameter(name = TpmSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "TPM-"),
+            })
 	@Column(name = "id", unique = true, nullable = false)
-	public int getId() {
+	public String getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

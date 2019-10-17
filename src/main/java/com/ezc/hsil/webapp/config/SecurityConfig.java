@@ -98,7 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/invalidSession*").anonymous()
                 .antMatchers("/user/updatePassword*","/user/savePassword*","/updatePassword*")
                 .hasAuthority("CHANGE_PASSWORD_PRIVILEGE")
-                .antMatchers("/master/**","/modals/**","/modal/**").fullyAuthenticated()	
+//                .antMatchers("/master/**","/modals/**","/modal/**").fullyAuthenticated()	
                 
                 //.hasAuthority("READ_PRIVILEGE")
                 .and()
@@ -146,7 +146,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         final CustomAuthenticationProvider authProvider = new CustomAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(encoder());
-        return authProvider;
+        return authProvider; 
     }
 
     @Bean

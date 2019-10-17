@@ -124,6 +124,32 @@ public class MasterDataController {
 		return "redirect:/master/addMaterial"; //html
 	}
 
+	@GetMapping("/listMaterial") 
+	public String listMaterials(Model model) {
+		
+		model.addAttribute("matList", masterService.getAllMaterials());
+
+		return "master/materialList";
+	}
+	@PostMapping("/edit-material" )
+	public String updateMaterial(@Valid @ModelAttribute("materialDto") MaterialDto matDto,
+			final BindingResult bindingResult) throws SQLException {
+		
+		if(bindingResult.hasErrors()) {
+			
+			log.info("Binding Results::updateMaterial:: {}", bindingResult);
+			return "master/listMaterial :: edit-mat"; 
+		}
+		else {
+		
+			log.info("In the class {}", matDto.toString());
+		
+			masterService.updateMaterial(matDto);
+			return "redirect:/master/listMaterial";
+		}
+		
+	}
+	
 	
 	
 }

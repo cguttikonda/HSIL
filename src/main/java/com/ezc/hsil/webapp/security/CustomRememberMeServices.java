@@ -1,6 +1,5 @@
 package com.ezc.hsil.webapp.security;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,18 +14,17 @@ import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.security.web.authentication.rememberme.CookieTheftException;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationException;
 
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServices {
 
     @Autowired
@@ -34,7 +32,8 @@ public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServ
 
     private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
     private AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
-    private PersistentTokenRepository tokenRepository = new InMemoryTokenRepositoryImpl();
+//    private PersistentTokenRepository tokenRepository = new InMemoryTokenRepositoryImpl();
+    private PersistentTokenRepository tokenRepository = new JdbcTokenRepositoryImpl() ;
     private String key;
 
     public CustomRememberMeServices(String key, UserDetailsService userDetailsService, PersistentTokenRepository tokenRepository) {
@@ -69,23 +68,26 @@ public class CustomRememberMeServices extends PersistentTokenBasedRememberMeServ
         setCookie(new String[] { token.getSeries(), token.getTokenValue() }, getTokenValiditySeconds(), request, response);
     }
 
-//	@Override
-//	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request,
-//			HttpServletResponse response) {
-//		// TODO Auto-generated method stub
-//		return super.processAutoLoginCookie(cookieTokens, request, response);
-//		
-//		
-//
-//		
-//	}
+	@Override
+	protected UserDetails processAutoLoginCookie(String[] cookieTokens, HttpServletRequest request,
+			HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		return super.processAutoLoginCookie(cookieTokens, request, response);
+			}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		// TODO Auto-generated method stub
-		super.logout(request, response, authentication);
+			//super.logout(request, response, authentication);
+			cancelCookie(request, response);
+			if (authentication != null) {
+				//log.info("authentication:::::{}", authentication.getName());	
+				
+				tokenRepository.removeUserTokens(((Users)authentication.getPrincipal()).getUserId());
+			}
+		}
+
 		
-	}
+	
 	
     
     

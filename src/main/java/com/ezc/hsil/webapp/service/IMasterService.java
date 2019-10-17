@@ -30,6 +30,11 @@ public interface IMasterService {
 	
 	MaterialMaster addNewMaterial(MaterialDto mDto);
 	
+	List<MaterialMaster> getAllMaterials();
 	
+	
+	MaterialDto getMaterialDetails(int id);
+	
+	String updateMaterial(MaterialDto matDto)  throws SQLException;
 	
 }

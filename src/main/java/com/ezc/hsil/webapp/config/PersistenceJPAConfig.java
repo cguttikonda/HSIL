@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.health.HealthIndicatorRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+
 //import com.ezc.hsil.webapp.model
 @Configuration
 @EnableTransactionManagement
@@ -30,7 +36,7 @@ public class PersistenceJPAConfig {
 
 	@Autowired
 	private Environment env;
-
+ 
 	public PersistenceJPAConfig() {
 		super();
 	}
@@ -50,11 +56,42 @@ public class PersistenceJPAConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		//final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		
+		
+		
+		HikariDataSource dataSource = new HikariDataSource();
+		HikariConfig config = new HikariConfig();
+	
 		dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
-		dataSource.setUrl(env.getProperty("jdbc.url"));
+		dataSource.setJdbcUrl(env.getProperty("jdbc.url"));
 		dataSource.setUsername(env.getProperty("jdbc.user"));
 		dataSource.setPassword(env.getProperty("jdbc.pass"));
+		
+		dataSource.setPoolName("HSIL_POOL");
+		dataSource.setMaximumPoolSize(10);
+		dataSource.setAutoCommit(true);
+		dataSource.setCatalog("HSIL");
+		dataSource.setConnectionTimeout(Integer.parseInt(env.getProperty("hikari.connection-timeout")));
+		dataSource.setMaximumPoolSize(2);
+		dataSource.setMinimumIdle(Integer.parseInt(env.getProperty("hikari.minimum-idle")));
+		dataSource.setIdleTimeout(Integer.parseInt(env.getProperty("hikari.idle-timeout")));
+		dataSource.setMaxLifetime(Integer.parseInt(env.getProperty("hikari.max-lifetime")));
+		
+		dataSource.addDataSourceProperty("dataSource.cachePrepStmts", true);
+		dataSource.addDataSourceProperty("dataSource.prepStmtCacheSize", 250);
+		dataSource.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", 2048);
+		dataSource.addDataSourceProperty("dataSource.useServerPrepStmts", true);
+		dataSource.addDataSourceProperty("dataSource.useLocalSessionState", true);
+		dataSource.addDataSourceProperty("dataSource.rewriteBatchedStatements", true);
+		dataSource.addDataSourceProperty("dataSource.cacheResultSetMetadata", true);
+		dataSource.addDataSourceProperty("dataSource.cacheServerConfiguration", true);
+		dataSource.addDataSourceProperty("dataSource.elideSetAutoCommits", true);
+		dataSource.addDataSourceProperty("dataSource.maintainTimeStats", false);
+		
+		//config.setDataSource(dataSource);
+		//config.setMetricRegistry(new MetricRegistry());
+	
 		return dataSource;
 	}
 

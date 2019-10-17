@@ -1,0 +1,42 @@
+<div id="editMatModal"  class="modal fade" role="dialog" th:fragment="edit-mat" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold">Edit Material</span></h4>
+			</div>
+		
+				<form th:action="@{/master/edit-material}" th:object="${materialDto}" th:method="post" id="edit-dist-form">
+				<div class="modal-body">
+					<input type="hidden" th:field="${materialDto.id}" />
+						<!--<span style="font-weight:bold">Id: </span><span th:text="${student.id}"></span><br>-->
+					<div class="form-group">
+						<label >Material Code</label>
+						<input type="text" th:field="${materialDto.materialCode}" class="form-control"  />
+						<span th:if="${#fields.hasErrors('materialCode')}" th:errors="*{materialCode}"  th:errorclass="has-error">Name Error</span>
+					</div>
+					<div class="form-group">
+						<label>Description</label>
+						
+						<input type="text" th:field="${materialDto.materialDesc}" class="form-control" required 
+						
+						oninvalid="this.setCustomValidity('Should be a valid text')" oninput="setCustomValidity('')"
+						/>
+						<span th:if="${#fields.hasErrors('materialDesc')}" th:errors="*{materialDesc}"  th:errorclass="has-error">Name Error</span>
+					</div>	
+					<div class="form-group">
+						<label >Quantity</label>
+						
+						<input type="number" th:field="${materialDto.quantity}" class="form-control"></input>
+						<span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  th:errorclass="has-error">Name Error</span> 
+					</div>
+					
+					
+				</div>
+				<div class="modal-footer">
+					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,65 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPM</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>TPM/h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Tpm</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">Create</h3>
+            <div class="box-tools pull-right">
+                <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
+            </div>
+        </div>
+        <form data-toggle="validator" role="form" th:object="${tpmRequestDto}" th:action="@{/tpm/saveRequest}" method="post">
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="erhDistrubutor">Distributor</label>
+                    <input type="text" required="true" class="form-control" th:field="*{erhDistrubutor}" id="erhDistrubutor" />
+                </div>
+                <div class="form-group">
+                    <label for="erhCity">City</label>
+                    <input type="text" required="true" class="form-control" th:field="*{erhCity}" id="erhCity" />
+                </div>
+                <div class="form-group">
+                    <label for="erhConductedOn">Conducted On</label>
+					    <div class="input-group date">
+					  <div class="input-group-addon">
+					    <i class="fa fa-calendar"></i>
+					  </div>
+					  <input type="text" required="true" class="form-control pull-right" th:field="*{erhConductedOn}" id="erhConductedOn">
+					</div>
+                </div>
+                <div class="form-group">
+                    <label for="erhNoOfAttendee">Attendance</label>
+                    <input type="text" required="true" class="form-control" th:field="*{erhNoOfAttendee}" id="erhNoOfAttendee" />
+                </div>
+                <div class="form-group">
+                    <label for="erhInstructions">Instructions</label>
+                    <textarea required="true" class="form-control" th:field="*{erhInstructions}" id="erhInstructions"></textarea>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+ $('#erhConductedOn').datepicker({
+      autoclose: true,
+      format: 'dd/mm/yyyy'
+    })
+   </script>
+</div>
+</body>
+</html>
