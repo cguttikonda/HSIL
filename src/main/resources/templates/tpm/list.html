@@ -5,7 +5,7 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>Clients</h1>
+    <h1>TPM List</h1>
 <ol class="breadcrumb">
     <li><a href="/"><i class="fa fa-dashboard"></i> TPM</a></li>
     <li class="active">List</li>
@@ -13,14 +13,50 @@
 </section>
 <div layout:fragment="content">
     <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">Lists</h3>
-            <div class="box-tools pull-right">
-                <a href="/tpm/add" type="button" class="btn btn-box-tool"><i class="fa fa-plus"></i></a>
-                <br clear="all" />
-            </div>
-        </div>
         <div class="box-body no-padding">
+        
+ <form role="form"  th:object="${listSelector}" th:action="@{/tpm/tpmRequestList}" method="get" name="myForm">
+<table class="table table-striped" style="margin-bottom: 1%;">
+  <tbody><tr>  
+	<td>
+		<label>From Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
+                </div>
+                <!-- /.input group -->
+	</td>
+	<td>
+                <label>To Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{toDate}">
+                </div>
+                <!-- /.input group -->
+  	</td>
+  	<td>	
+  		 <label for="listType">Status</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
+				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
+				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
+			 </select>
+		  </div>
+  	</td>
+ 
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
+  	</td>
+  </tr>
+  
+  </tbody></table>
+  </form>
                    <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                        <thead>			
                 <tr>
@@ -29,6 +65,8 @@
                     <th>City</th>
                     <th>Meeting Date</th>
                     <th>No Of Attendance</th>
+                    <th>Status</th>
+                    <th></th>
                 </tr>
                     </thead>
            		<tbody>	
@@ -36,20 +74,88 @@
                     <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
-                    <td th:text="${row.erhConductedOn}"></td>
+                    <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
+                    <td th:text="${row.erhStatus}"></td>
+                    <td>
+                    	<span th:if="${row.erhStatus == 'APPROVED'}">
+							<a th:href="${'/tpm/addDetails/' + {row.id}}"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">SUBMIT</span>
+							</a>
+						</span>
+						<span th:if="${row.erhStatus == 'NEW'}">
+							<a href="#"
+							th:data-id="${row.id}"
+							onclick="javascript:openModal('approve',this.getAttribute('data-id'))"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">APPROVE</span>
+							</a>
+						</span>
+						
+                    </td>
                 </tr>
             	</tbody>
             </table>
         </div>
     </div>
+    <div th:fragment="appr-tpm" id="apprTPMModalHolder"></div>
 </div>
 <div layout:fragment="scriptContent">
 
 <script type="text/javascript">
-
+function openModal(modelType,distId){
+	
+	if(modelType === "approve"){
+		
+	
+		$.ajax({
+			url: "/modal/appr-tpm/" + distId,
+			success: function(data){
+				$("#apprTPMModalHolder").html(data);
+				$('#apprTPMModal').modal({
+					backdrop: 'static'
+				});
+				$('#tpmReqTable').hide();
+				$("#addMatRow").click(function(){
+					$('#tpmReqTable').show();
+					$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+					$('.deleteItem').click(function(){
+				    	$(this).closest("tr").remove();
+				    });
+					});
+				$('#selMat').select2({
+			         placeholder: 'Select Material',
+			         ajax: {
+			           url: '/modal/mat-autocomp?type=text',
+			           dataType: 'json',
+			           delay: 250,
+			           processResults: function (data) {
+			             return {
+	 	    	                       results: $.map(data, function (item) {
+	 	    	                          return {
+	 	    	                              text: item.materialCode+"-"+item.materialDesc,
+	 	    	                              id: item.materialCode+"#"+item.materialDesc
+	 	    	                          }
+	 	    	                      }) 
+			 	                  };
+			           },
+			           cache: true
+			         }
+			    });
+			}
+		});
+		
+	}
+}
 
 $(document).ready(function() {
+		
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
 	
 	$('#example').DataTable({
 					
@@ -58,8 +164,24 @@ $(document).ready(function() {
 		}
 			
 	);
+	 
 });
-
+function approveTPMReq(event){
+	var formdata = $('#appr-tpm-form').serialize();
+	$.ajax({
+			
+		type : "POST",
+		url : "/tpm/appr-tpm-post", 
+		data : formdata,
+		success : function(response) {
+				//$('#apprTPMModal  :first-child').find('div.modal-confirm').html("TPM Request approved successfully");
+				location.href="/tpm/tpmRequestList"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+}
 
 
 

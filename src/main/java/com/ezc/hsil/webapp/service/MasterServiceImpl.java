@@ -194,6 +194,11 @@ public class MasterServiceImpl implements IMasterService {
 			
 		};
 	}
+
+	@Override
+	public List<MaterialMaster> findAllMaterialsLike(String q) {
+		return matMastRep.findAllMaterialsLike(q);
+	}
 	
 	
 	

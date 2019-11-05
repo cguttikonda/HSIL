@@ -3,16 +3,6 @@
 <head>
     <title>TPM</title>
     <style type="text/css">
-    .boxLabel
-	{
-		    background-color: #3c8dbc;
-		    color:white;
-		    border: 1px solid green;
-	}
-	.boxElement
-	{
-		    border: 1px solid green;
-	}
     @media only screen and (max-width: 800px) {
         /* Force table to not be like tables anymore */
         #no-more-tables table,
@@ -79,8 +69,8 @@
                 <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tpm/saveDetails}" method="post" name="myForm">
             <div class="box-body">
+            	<form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tpm/close-tpm-post}" method="post" name="myForm">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
@@ -101,15 +91,16 @@
               </div>
               <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control" required="true"  type="number"></div>
+                 <div class="input-group"><span th:text="*{reqHeader.erhCostIncured}"></span></div>
               </div>
-           </div>
-      <div id="no-more-tables">
+           	</div>
+           <div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
                 		<th>Material</th>
                 		<th>Approved Qty</th>
+                		<th>Used Qty</th> 
                 	</tr>
                 	</thead>
                 	<tbody>
@@ -117,24 +108,22 @@
             			<td colspan="2"> No Data </td>
        			   </tr>
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
-						<td data-title="Material">
-							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matCode}">
-							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode}"></span>
-						</td>
-						<td data-title="Approved Qty">
-							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
-							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
-						</td>
+						<td data-title="Material" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></td>
+						<td data-title="Approved Qty" th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></td>
+						<td data-title="Used Qty">
+							<span th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">
+								<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].id}">
+								<input type="number"  class="form-control" th:field="*{ezReqMatList[__${itemStat.index}__].usedQty}" />
+							</span>
+							<span th:if="*{reqHeader.erhStatus != 'SUBMITTED'}">
+								<span th:text="*{ezReqMatList[__${itemStat.index}__].usedQty}"></span>		
+							</span>
+						</td> 
                 	</tr>
                 	</tbody>
                 </table>
                 </div>
-    
-                <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
-                <p id="recording-instructions"></p>
-                
-                <i id="start-record-btn" class="fa fa-microphone" style="color: white;padding: 10px;background: #87bf54;border-radius: 50%;"></i>
-                <i id="pause-record-btn" class="fa fa-pause" style="color: white;padding: 10px;background: #de8d5d;border-radius: 50%;"></i>
+            
     			<div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
@@ -143,7 +132,6 @@
                 		<th>Contact No</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
-                		<th></th>
                 	</tr>
                 	</thead>
                 	<tbody>
@@ -151,39 +139,19 @@
             			<td colspan="2"> No Items Added </td>
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Plumber"><input type="text"  class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
-						<td data-title="Contact No"><input type="text"  class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
-						<td data-title="D.O.B">
-							<div class="input-group date">
-							<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-							</div>
-							<input type="text" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
-							</div>
-						</td>
-						<td data-title="D.O.A">
-							<div class="input-group date">
-							<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-							</div>
-							<input type="text"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
-							</div>
-						</td>
-                		<td data-title="">
-                			<i class="fa fa-trash deleteItem"></i>
-                		</td>
+						<td data-title="Name Of Plumber" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}"></td>
+						<td data-title="Contact No" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}"></td>
+						<td data-title="D.O.B" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDob, 'dd/MM/yyyy')}"></td>
+						<td data-title="D.O.A" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa, 'dd/MM/yyyy')}"></td>
                 	</tr>
                 	</tbody>
                 </table>
                 </div>
-            </div>
-            <div class="box-footer">
-                <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
-                <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
-                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
-            </div>
         </form>
     </div>
+    <div class="box-footer" th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">
+                <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>
+            </div>
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
@@ -194,8 +162,11 @@
     $('.deleteItem').click(function(){
     	$(this).closest("tr").remove();
     });
-     				
-
+     		
+	function closeRequest()
+	{
+		document.myForm.submit();
+	}
     function addItem()
     {
 	 	document.myForm.action ="/tpm/processSpeech";

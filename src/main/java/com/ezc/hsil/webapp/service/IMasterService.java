@@ -36,5 +36,7 @@ public interface IMasterService {
 	MaterialDto getMaterialDetails(int id);
 	
 	String updateMaterial(MaterialDto matDto)  throws SQLException;
+
+	List<MaterialMaster> findAllMaterialsLike(String q);
 	
 }

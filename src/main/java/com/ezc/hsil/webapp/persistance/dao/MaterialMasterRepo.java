@@ -17,6 +17,9 @@ public interface MaterialMasterRepo extends JpaRepository<MaterialMaster, Intege
 
 	@Query(nativeQuery = true,value="SELECT * FROM EZC_MATERIAL_MASTER WHERE EMM_MAT_ISACTIVE='Y'")
 	List<MaterialMaster> findAllActiveMaterials();
+	
+	@Query(nativeQuery = true,value="SELECT * FROM EZC_MATERIAL_MASTER WHERE EMM_MAT_DESC LIKE %:desc%")
+	List<MaterialMaster> findAllMaterialsLike(@Param("desc") String desc);
 
 	
 }

@@ -1,84 +1,560 @@
+
+
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
- xmlns:th="http://www.thymeleaf.org">
+<html>
+
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Login</title>
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport" />
-    <!-- Bootstrap 3.3.6 -->
-    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" th:href="@{/resources/bootstrap/css/bootstrap.min.css}"/>
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"/>
-    <!-- Ionicons -->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
-    <!-- Theme style -->
-    <link rel="stylesheet" type="text/css" th:href="@{/resources/dist/css/AdminLTE.min.css}"/>
-    <!-- iCheck -->
-    <link rel="stylesheet" type="text/css" th:href="@{/resources/plugins/iCheck/square/blue.css}"/>
-	<link rel="stylesheet" th:href="@{/resources/plugins/pace/pace.loading-bar.css}"/>
+	<title>HSIL</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<style type="text/css">
+.cb-slideshow,
+.cb-slideshow:after { 
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 0; 
+}
+.cb-slideshow:after { 
+    content: '';
+    background: transparent url(resources/images/pattern.png) repeat top left; 
+}
+.cb-slideshow li span { 
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: transparent;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: none;
+    opacity: 0;
+    z-index: 0;
+	-webkit-backface-visibility: hidden;
+    -webkit-animation: imageAnimation 36s linear infinite 0s;
+    -moz-animation: imageAnimation 36s linear infinite 0s;
+    -o-animation: imageAnimation 36s linear infinite 0s;
+    -ms-animation: imageAnimation 36s linear infinite 0s;
+    animation: imageAnimation 36s linear infinite 0s; 
+}
+.cb-slideshow li div { 
+    z-index: 1000;
+    position: absolute;
+    bottom: 30px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+    opacity: 0;
+    color: #fff;
+    -webkit-animation: titleAnimation 36s linear infinite 0s;
+    -moz-animation: titleAnimation 36s linear infinite 0s;
+    -o-animation: titleAnimation 36s linear infinite 0s;
+    -ms-animation: titleAnimation 36s linear infinite 0s;
+    animation: titleAnimation 36s linear infinite 0s; 
+}
+.cb-slideshow li div h3 { 
+    font-family: 'BebasNeueRegular', 'Arial Narrow', Arial, sans-serif;
+    font-size: 240px;
+    padding: 0;
+    line-height: 200px; 
+}
+.cb-slideshow li:nth-child(1) span { 
+    background-image: url(resources/images/6.jpg) 
+}
+.cb-slideshow li:nth-child(2) span { 
+    background-image: url(resources/images/New-Project.png);
+    -webkit-animation-delay: 6s;
+    -moz-animation-delay: 6s;
+    -o-animation-delay: 6s;
+    -ms-animation-delay: 6s;
+    animation-delay: 6s; 
+}
+.cb-slideshow li:nth-child(3) span { 
+    background-image: url(resources/images/New-Project-1.png);
+    -webkit-animation-delay: 12s;
+    -moz-animation-delay: 12s;
+    -o-animation-delay: 12s;
+    -ms-animation-delay: 12s;
+    animation-delay: 12s; 
+}
+.cb-slideshow li:nth-child(4) span { 
+    background-image: url(resources/images/4.jpg);
+    -webkit-animation-delay: 18s;
+    -moz-animation-delay: 18s;
+    -o-animation-delay: 18s;
+    -ms-animation-delay: 18s;
+    animation-delay: 18s; 
+}
+.cb-slideshow li:nth-child(2) div { 
+    -webkit-animation-delay: 6s;
+    -moz-animation-delay: 6s;
+    -o-animation-delay: 6s;
+    -ms-animation-delay: 6s;
+    animation-delay: 6s; 
+}
+.cb-slideshow li:nth-child(3) div { 
+    -webkit-animation-delay: 12s;
+    -moz-animation-delay: 12s;
+    -o-animation-delay: 12s;
+    -ms-animation-delay: 12s;
+    animation-delay: 12s; 
+}
+.cb-slideshow li:nth-child(4) div { 
+    -webkit-animation-delay: 18s;
+    -moz-animation-delay: 18s;
+    -o-animation-delay: 18s;
+    -ms-animation-delay: 18s;
+    animation-delay: 18s; 
+}
+/* Animation for the slideshow images */
+@-webkit-keyframes imageAnimation { 
+    0% { opacity: 0;
+    -webkit-animation-timing-function: ease-in; }
+    8% { opacity: 1;
+         -webkit-animation-timing-function: ease-out; }
+    17% { opacity: 1 }
+    25% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-moz-keyframes imageAnimation { 
+    0% { opacity: 0;
+    -moz-animation-timing-function: ease-in; }
+    8% { opacity: 1;
+         -moz-animation-timing-function: ease-out; }
+    17% { opacity: 1 }
+    25% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-o-keyframes imageAnimation { 
+    0% { opacity: 0;
+    -o-animation-timing-function: ease-in; }
+    8% { opacity: 1;
+         -o-animation-timing-function: ease-out; }
+    17% { opacity: 1 }
+    25% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-ms-keyframes imageAnimation { 
+    0% { opacity: 0;
+    -ms-animation-timing-function: ease-in; }
+    8% { opacity: 1;
+         -ms-animation-timing-function: ease-out; }
+    17% { opacity: 1 }
+    25% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@keyframes imageAnimation { 
+    0% { opacity: 0;
+    animation-timing-function: ease-in; }
+    8% { opacity: 1;
+         animation-timing-function: ease-out; }
+    17% { opacity: 1 }
+    25% { opacity: 0 }
+    100% { opacity: 0 }
+}
+/* Animation for the title */
+@-webkit-keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-moz-keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-o-keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@-ms-keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+@keyframes titleAnimation { 
+    0% { opacity: 0 }
+    8% { opacity: 1 }
+    17% { opacity: 1 }
+    19% { opacity: 0 }
+    100% { opacity: 0 }
+}
+/* Show at least something when animations not supported */
+.no-cssanimations .cb-slideshow li span{
+	opacity: 1;
+}
 
-	<link rel="shortcut icon" type="image/png" th:href="@{/resources/images/favicon.ico}"/>
+@media screen and (max-width: 1140px) { 
+    .cb-slideshow li div h3 { font-size: 140px }
+}
+@media screen and (max-width: 600px) { 
+    .cb-slideshow li div h3 { font-size: 80px }
+}
+	body,
+html {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	background: #60a3bc !important;
+}
+.user_card {
+	height: 400px;
+	width: 350px;
+	margin-top: 100px;
+	margin-bottom: auto;
+	background-color: rgba(0, 0, 0, 0.42);
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	border-radius: 5px;
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+}
+
+
+
+.form_container {
+	margin-top: 100px;
+}
+
+.login_btn {
+	width: 100%;
+	background: #c0392b !important;
+	color: white !important;
+}
+.login_btn:focus {
+	box-shadow: none !important;
+	outline: 0px !important;
+}
+.login_container {
+	padding: 0 2rem;
+}
+.input-group-text {
+	background: #c0392b !important;
+	color: white !important;
+	border: 0 !important;
+	border-radius: 0.25rem 0 0 0.25rem !important;
+}
+.input_user,
+.input_pass:focus {
+	box-shadow: none !important;
+	outline: 0px !important;
+	color: #b3b3b3;
+}
+.custom-checkbox .custom-control-input:checked~.custom-control-label::before {
+	background-color: #c0392b !important;
+}
+a
+{
+	color: #b3b3b3;
+}
+a:hover
+{
+	color: #182c7b;
+}
+h6
+{
+	color: #b3b3b3;
+}
+.custom-control-label
+{
+	color: #b3b3b3;
+}
+.headerImg {
+	border: 0;
+	height: 90px;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	background: none;
+}
+.flip {
+    -webkit-perspective: 800;
+
+    position: relative;
+}
+.flip .card.flipped {
+    -webkit-transform: rotatey(-180deg);
+}
+.flip .card {
+    width: 100%;
+    height: 100%;
+    -webkit-transform-style: preserve-3d;
+    -webkit-transition: 0.2s;
+}
+.flip .card .face {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    -webkit-backface-visibility: hidden;
+    z-index: 2;
+
+}
+.flip .card .front {
+    position: absolute;
+    z-index: 1;
+
+}
+.flip .card .back {
+    -webkit-transform: rotatey(-180deg);
+
+}
+.card {
+	border: 0px;
+}
+ol,ul {
+	list-style:none;
+}
+.main-body
+{
+	height: 100%!important;
+}
+.input-user-envelop
+{
+	margin-bottom: 1rem!important;
+}
+.input-key
+{
+	margin-bottom: .5rem!important;
+}
+.butDiv
+{
+	margin-top: 1rem!important;
+}
+
+@media screen and (max-device-width: 640px){
+	body
+	{
+		background: #000;
+	}
+	.main-body
+	{
+		height: 100%!important;
+		min-height: 100%;
+		margin: 0;
+		padding: 0;
+		position: relative;
+		z-index: 0;
+		background-color: #000;
+		color: #fff;
+	}
+	.cb-slideshow
+	{
+		display:none;
+	}
+	.headerImg {
+		width: 100%;
+		height: 200px;
+		position: relative;
+	}
+	.logoDiv
+	{
+
+		padding-top: 25px;
+		padding-left: 20px;
+		width: 55%;
+		height: 100%;
+	}
+	.login-body{
+		color: #333;
+		margin: 0 auto;
+		padding: 10% 5%;
+	}
+	.user_card{
+		min-height: 700px;
+		margin: 0;
+		padding: 20px 5% 30px;
+		width: 100%;
+		background-color:#000;
+	}
+	.login-form
+	{
+		width: 100%;
+	}
+	.input-group .form-control
+	{
+
+		height: 120px;
+		font-size: 3rem;
+
+	}
+	.input-group-text
+	{
+		padding: 0.375rem 2.75rem;
+		font-size: 3rem;
+	}
+	.input-user-envelop {
+	    margin-bottom: 5rem!important;
+	}
+	.input-key
+	{
+		margin-bottom: 4rem!important;
+	}
+	.form-group 
+	{
+		margin-bottom: 4rem;
+		/*transform: scale(3);*/
+		padding-left: 8.2%;
+	}
+	.butDiv {
+	    margin-top: 2rem!important;
+	}
+	.login_container
+	{
+		padding: 0;
+		height: 100px;
+	}
+	.login_btn
+	{
+		font-size: 50px;
+		font-weight: bold;
+	}
+	.remCheck
+	{
+		display:none;
+	}
+	.registerLinks
+	{
+		font-size: 3rem;
+		margin-top: 10rem !important;
+	}
+	.forgPassLink			
+	{
+		font-size: 2rem;
+		justify-content: flex-end !important;
+	}
+	a
+	{
+		color: #fff;
+	}
+	a:hover
+	{
+		color: #fff;
+	}
+	.registLabel
+	{
+		color: #b3b3b3;
+	}
+
+
+
+}
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px){
+
+
+
+}
+	
+	</style>
 </head>
-<body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <b>HSIL</b>
-    </div>
-    <!-- /.login-logo -->
-    <div class="login-box-body">
-        <p class="login-box-msg">Login</p>
+<body>
+	<ul class="cb-slideshow">
+		<li><span>Image 01</span></li>
+		<li><span>Image 02</span></li>
+		<li><span>Image 03</span></li>
+		<li><span>Image 04</span></li>
+	</ul>
+	<div class="main-body">
+		<div class="headerImg">
+				<img class="logoDiv" src="resources/images/trulogo.png" alt="TRUFLO"/>
+		</div>
+		<div class="login-body">
+			<div class="d-flex justify-content-center">
+				<div class="user_card">
+					<div class="flip">
+						<div class="card">
+							<div class="face front">
+								<div class="d-flex justify-content-center form_container">
+									<form name='f' th:action="login" th:method='POST' onsubmit="return validate();" class="login-form">
+										<div class="input-group input-user-envelop">
+											<div class="input-group-append">
+												<span class="input-group-text"><i class="fa fa-user"></i></span>
+											</div>
+											<input type="text" name="username" class="form-control input_user" value="" placeholder="username">
+										</div>
+										<div class="input-group input-key">
+											<div class="input-group-append">
+												<span class="input-group-text"><i class="fa fa-key"></i></span>
+											</div>
+											<input type="password" name="password" class="form-control input_pass" value="" placeholder="password">
+										</div>
+										<div class="form-group remCheck" style="float: left;">
+											<div class="custom-control custom-checkbox">
+												<input type="checkbox" name="remember-me" class="custom-control-input">
+												<label class="custom-control-label" for="customControlInline">Remember me</label>
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="d-flex justify-content-center butDiv login_container">
+									<button type="button" onclick="funSubmit()" name="login" class="btn login_btn">Login</button>
+								</div>
+								<div class="mt-4">
+									<div class="d-flex justify-content-center links forgPassLink">
+										<a href="#" class="forgPass">Forgot your password?</a>
+									</div>
+									<div class="d-flex justify-content-center links registerLinks">
+										<label class="registLabel">Don't have an account?</label> <a href="#" class="ml-2">Register</a>
+									</div>
+									<div class="d-flex justify-content-center links registerLinks">
+										<div th:if="${param.error}">
+							            <div class="callout callout-danger">
+							                <p>Username or password invalid!</p>
+							            </div>
+							        </div>
+        							<div th:if="${param.message != null}" class="callout callout-danger" th:text="${param.message[0]}">message</div>
+									<div th:if="${param.error != null}" class="callout callout-dangerr" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
+									</div>
 
-        <div th:if="${param.error}">
-            <div class="callout callout-danger">
-                <p>Username or password invalid!</p>
-            </div>
-        </div>
-        <div th:if="${param.message != null}" class="callout callout-danger" th:text="${param.message[0]}">message</div>
+								</div>
+							</div>
+							<div class="face back">
+									<div class="d-flex justify-content-center form_container">
+										<form name="forgPassForm" class="login-form">
+											<div class="input-group input-user-envelop">
+												<div class="input-group-append">
+													<span class="input-group-text"><i class="fa fa-envelope"></i></span>
+												</div>
+												<input type="text" name="email" class="form-control input_user" value="" placeholder="Enter Email">
+											</div>
 
+										</form>
+									</div>
+									<div class="d-flex justify-content-center butDiv login_container">
+										<button type="button" name="resetPassw" class="btn login_btn">Reset</button>
+									</div>
+									<div class="d-flex justify-content-center butDiv login_container">
+										<button type="button" class="btn login_btn forgPass">Sign In</button>
+									</div>
 
-		<div th:if="${param.error != null}" class="callout callout-dangerr" th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}">error</div>
-
-     <form name='f' th:action="login" th:method='POST' onsubmit="return validate();">
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" name="username" placeholder="username"/>
-                <span class="glyphicon glyphicon-user form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-                <input type="password" class="form-control" name="password" placeholder="password"/>
-                <span class="glyphicon glyphicon-lock form-control-feedback"></span>
-            </div>
-             <div class="form-group has-feedback">
-              	<label  th:text="#{label.form.rememberMe}"> Remember Me</label>
-                <input type="checkbox" name="remember-me" />
-               </div>
-    		
-            <div class="row">
-                <div class="col-xs-4">
-                    <button type="submit" name="submit" class="btn btn-primary btn-block btn-flat">Login</button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- jQuery 2.2.0 -->
-<script th:href="@{/resources/plugins/jQuery/jQuery-2.2.0.min.js}"></script>
-<!-- Bootstrap 3.3.6 -->
-<script th:href="@{/resources/bootstrap/js/bootstrap.min.js}"></script>
-<!-- iCheck -->
-<script th:href="@{/resources/plugins/iCheck/icheck.min.js}"></script>
-<script th:src="@{/resources/plugins/pace/pace.min.js}"></script>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
 
 <script th:inline="javascript">
+$('.forgPass').on('click', function() {
+    $('.flip .card').toggleClass('flipped');
+});
 	function validate() {
         if (document.f.username.value == "" && document.f.password.value == "") {
             alert(/*[[#{message.username} + #{message.password}]]*/);
@@ -109,6 +585,9 @@
       increaseArea: '20%' // optional
     });
   });
-</script>
-</body>
+  function funSubmit()
+  {
+  	document.f.submit();
+  }
+  </script>
 </html>

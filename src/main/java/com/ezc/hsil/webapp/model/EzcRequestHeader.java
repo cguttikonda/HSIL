@@ -29,6 +29,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "ezc_request_header", catalog = "hsil")
 public class EzcRequestHeader implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private String erhReqType;
 	private String erhCreatedGroup;
@@ -40,17 +44,19 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private String erhModifiedBy;
 	private Date erhModifiedOn;
 	private Integer erhNoOfAttendee;
-	private String erhDistrubutor;
+	private String erhDistrubutor; 
 	private String erhCity;
 	private String erhInstructions;
+	private Double erhCostIncured;
 	
 	private Set<EzcRequestItems> ezcRequestItems = new HashSet<EzcRequestItems>(0);
 	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
 	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);
+	private Set<RequestMaterials> requestMaterials = new HashSet<RequestMaterials>(0);
 	
 
 
-
+	 
 	public EzcRequestHeader() {
 	}
 
@@ -87,16 +93,16 @@ public class EzcRequestHeader implements java.io.Serializable {
         name = "tpm_seq", 
         strategy = "com.ezc.hsil.webapp.model.TpmSequenceGenerator", 
         parameters = {
-	            @Parameter(name = TpmSequenceGenerator.INCREMENT_PARAM, value = "50"),
+	            @Parameter(name = TpmSequenceGenerator.INCREMENT_PARAM, value = "20"),
 	            @Parameter(name = TpmSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "TPM-"),
             })
-	@Column(name = "id", unique = true, nullable = false)
+	@Column(name = "id", unique = true, nullable = false,length=20)
 	public String getId() {
 		return this.id;
 	}
 
 	public void setId(String id) {
-		this.id = id;
+		this.id = id; 
 	}
 
 	@Column(name = "ERH_REQ_TYPE", length = 5)
@@ -135,7 +141,7 @@ public class EzcRequestHeader implements java.io.Serializable {
 		this.erhRequestedBy = erhRequestedBy;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ERH_REQUESTED_ON", length = 19)
 	public Date getErhRequestedOn() {
 		return this.erhRequestedOn;
@@ -155,9 +161,9 @@ public class EzcRequestHeader implements java.io.Serializable {
 	}
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ERH_CONDUCTED_ON", length = 19)
-	public Date getErhConductedOn() {
+	public Date getErhConductedOn() { 
 		return this.erhConductedOn;
 	}
 
@@ -174,7 +180,7 @@ public class EzcRequestHeader implements java.io.Serializable {
 		this.erhModifiedBy = erhModifiedBy;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ERH_MODIFIED_ON", length = 19)
 	public Date getErhModifiedOn() {
 		return this.erhModifiedOn;
@@ -250,6 +256,25 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setErhInstructions(String erhInstructions) {
 		this.erhInstructions = erhInstructions;
+	}
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ezcRequestHeader") 
+	@Cascade({CascadeType.ALL})
+	public Set<RequestMaterials> getRequestMaterials() {
+		return requestMaterials;
+	}
+
+	public void setRequestMaterials(Set<RequestMaterials> requestMaterials) {
+		this.requestMaterials = requestMaterials; 
+	}
+
+	@Column(name = "ERH_COST_INCURED")
+	public Double getErhCostIncured() {
+		return erhCostIncured;
+	}
+
+	public void setErhCostIncured(Double erhCostIncured) {
+		this.erhCostIncured = erhCostIncured;
 	}
 
 	

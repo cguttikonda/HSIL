@@ -7,11 +7,14 @@ import java.util.Set;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
+import com.ezc.hsil.webapp.model.RequestMaterials;
 
 public class TpmRequestDetailDto {
 
 	EzcRequestHeader reqHeader = new EzcRequestHeader();
 	List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
+//	Set<RequestMaterials> ezReqMatList = new HashSet<RequestMaterials>();
+	List<RequestMaterials> ezReqMatList = null;
 	Set<EzcRequestDealers> ezcRequestDealers = null;
 	private String costIncured="";
 	private String avgSales="";
@@ -27,6 +30,14 @@ public class TpmRequestDetailDto {
 
 	public void setReqHeader(EzcRequestHeader reqHeader) {
 		this.reqHeader = reqHeader;
+	}
+
+	public List<RequestMaterials> getEzReqMatList() {
+		return ezReqMatList;
+	}
+
+	public void setEzReqMatList(List<RequestMaterials> ezReqMatList) {
+		this.ezReqMatList = ezReqMatList;
 	}
 
 	public List<EzcRequestItems> getEzcRequestItems() {

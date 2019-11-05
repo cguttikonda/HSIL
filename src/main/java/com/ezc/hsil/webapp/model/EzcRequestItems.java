@@ -52,12 +52,11 @@ public class EzcRequestItems implements java.io.Serializable {
 
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
-
 	@Column(name = "id", unique = true, nullable = false)
 	public Integer getId() {
 		return this.id;
 	}
-
+ 
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -100,7 +99,7 @@ public class EzcRequestItems implements java.io.Serializable {
 		this.eriPlumberName = eriPlumberName;
 	}
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ERI_DOB", length = 19)
 	public Date getEriDob() {
 		return this.eriDob;
@@ -110,7 +109,7 @@ public class EzcRequestItems implements java.io.Serializable {
 		this.eriDob = eriDob;
 	}
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	@Column(name = "ERI_DOA", length = 19)
 	public Date getEriDoa() {
 		return this.eriDoa;

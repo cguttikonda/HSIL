@@ -5,25 +5,30 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>TPM/h1>
+    <h1>TPM</h1>
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> Tpm</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> TPM</a></li>
         <li class="active">Create</li>
     </ol>
 </section>
 <div layout:fragment="content">
+	<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${success}" ></span>
+   	</div>
     <div class="box">
-        <div class="box-header with-border">
-            <h3 class="box-title">Create</h3>
-            <div class="box-tools pull-right">
-                <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
-            </div>
-        </div>
-        <form data-toggle="validator" role="form" th:object="${tpmRequestDto}" th:action="@{/tpm/saveRequest}" method="post">
+    	     <form data-toggle="validator" role="form" th:object="${tpmRequestDto}" th:action="@{/tpm/saveRequest}" method="post">
             <div class="box-body">
                 <div class="form-group">
                     <label for="erhDistrubutor">Distributor</label>
-                    <input type="text" required="true" class="form-control" th:field="*{erhDistrubutor}" id="erhDistrubutor" />
+                      <select class="form-control select2" th:field="*{erhDistrubutor}" id="erhDistrubutor">
+						<option selected value="">---select distributor---</option>
+						<option th:value="1001-RKAgencies" th:text="1001-RKAgencies"></option>
+						<option th:value="1002-MythriDistributor" th:text="1002-MythriDistributor"></option>
+						<option th:value="1003-KRDistributor" th:text="1003-KRDistributor"></option>
+						<option th:value="1004-GKDistributor" th:text="1004-MythriDistributor"></option>
+						<option th:value="1005-FTDistributor" th:text="1005-FTDistributor"></option>
+	                </select>
                 </div>
                 <div class="form-group">
                     <label for="erhCity">City</label>
@@ -40,7 +45,7 @@
                 </div>
                 <div class="form-group">
                     <label for="erhNoOfAttendee">Attendance</label>
-                    <input type="text" required="true" class="form-control" th:field="*{erhNoOfAttendee}" id="erhNoOfAttendee" />
+                    <input type="number" required="true" class="form-control" th:field="*{erhNoOfAttendee}" id="erhNoOfAttendee" />
                 </div>
                 <div class="form-group">
                     <label for="erhInstructions">Instructions</label>
@@ -48,7 +53,7 @@
                 </div>
             </div>
             <div class="box-footer">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Save</button>
+                <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -59,6 +64,9 @@
       autoclose: true,
       format: 'dd/mm/yyyy'
     })
+    $(function () {
+		$('.select2').select2()
+	 });
    </script>
 </div>
 </body>
