@@ -1,0 +1,58 @@
+
+<div id="apprTPSModal"  class="modal fade" role="dialog" th:fragment="appr-tps">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold">Approve TPS</span></h4>
+			</div>
+				<form  th:object="${tpsDetails}" th:method="post" id="appr-tps-form">
+				<div class="modal-body">
+					<input type="hidden" th:field="*{id}" />
+					<input type="hidden" th:name="_csrf" th:value="${_csrf.token}">
+					<table class="table table-bordered">
+					<tr>
+					<th>Request Id</th>
+					<td th:text="*{id}"></td>	
+					<th>Distributor</th>
+					<td th:text="*{erhDistrubutor}"></td>	
+					</tr>
+					<tr>
+					<th>Material</th>
+					<td colspan=3>						
+						<select name="selMat" id="selMat" class="select2 form-control" style="width:100%">
+						</select>
+					</td>	
+					</tr>
+					<tr>
+					<th>Quantity</th>
+					<td colspan=2>						
+						<input type="text" name="selQty" id="selQty" class="form-control">
+					</td>
+					<td>						
+						<button type="button" class="btn btn-primary" id="addMatRow"  style="margin-right: 5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</button>
+					</td>	
+					</tr>
+
+					</table>
+					<table class="table table-bordered" id="tpsReqTable">
+					<thead>
+						<tr>
+							<th>Material</th>
+							<th>Quantity</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+					</table>
+				    <div class="modal-confirm" style="margin-left: 25px;">
+				</div>
+						
+				<div class="modal-footer">
+					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="button" class="btn btn-primary" onclick="approveTPSReq()">Save</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

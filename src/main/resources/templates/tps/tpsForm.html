@@ -1,0 +1,95 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPS</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>TPS</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> TPS</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${success}" ></span>
+   	</div>
+    <div class="box">
+    	     <form name="myForm" data-toggle="validator" role="form" th:object="${tpsRequestDto}" th:action="@{/tps/saveRequest}" method="post">
+            <div class="box-body">
+                <div class="form-group">
+                    <label for="distrubutor">Distributor</label>
+                      <select class="form-control select2" th:field="*{distrubutor}" id="distrubutor">
+						<option selected value="">---select distributor---</option>
+						<option th:value="1001-RKAgencies" th:text="1001-RKAgencies"></option>
+						<option th:value="1002-MythriDistributor" th:text="1002-MythriDistributor"></option>
+						<option th:value="1003-KRDistributor" th:text="1003-KRDistributor"></option>
+						<option th:value="1004-GKDistributor" th:text="1004-MythriDistributor"></option>
+						<option th:value="1005-FTDistributor" th:text="1005-FTDistributor"></option>
+	                </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input type="text" required="true" class="form-control" th:field="*{city}" id="city" />
+                </div>
+                <div class="form-group">
+                    <label for="noOfRetailers">No of Retailers</label>
+                    <input type="text" required="true" class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
+                </div>
+                 <div class="form-group">
+                  <label for="retailers">Retailers</label>
+                   <table>
+                   <tr th:each="row, itemStat : ${tpsRequestDto.dealerName}">
+                   	<td>
+							<input type="text" th:field="${tpsRequestDto.dealerName[__${itemStat.index}__].erdDealerName}" >
+							
+						</td>
+					</tr>
+					
+                   </table>
+                   </div>
+                  
+                <div class="form-group">
+                    <label for="plannedOn">Planned On</label>
+					    <div class="input-group date">
+					  <div class="input-group-addon">
+					    <i class="fa fa-calendar"></i>
+					  </div>
+					  <input type="text" required="true" class="form-control pull-right" th:field="*{plannedOn}" id="plannedOn">
+					</div>
+                </div>
+                <div class="form-group">
+                    <label for="noOfAttendee">Attendance</label>
+                    <input type="number" required="true" class="form-control" th:field="*{noOfAttendee}" id="noOfAttendee" />
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea required="true" class="form-control" th:field="*{instructions}" id="instructions"></textarea>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+ $('#plannedOn').datepicker({
+      autoclose: true,
+      format: 'dd/mm/yyyy'
+    })
+    $(function () {
+		$('.select2').select2()
+	 });
+ function loadRetailers(val)
+ {
+	 document.myForm.action ="/tps/addretrows";
+	 document.myForm.submit();	
+ }
+   </script>
+</div>
+</body>
+</html>
