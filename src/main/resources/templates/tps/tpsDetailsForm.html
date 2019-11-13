@@ -87,8 +87,8 @@
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
              
-            <th:block th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}"> 
-            		<input hidden="hidden" th:field="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}">
+            <th:block th:each="row, itemStat1 : *{ezcRequestDealers}"> 
+            		<input hidden="hidden" th:field="*{ezcRequestDealers[__${itemStat1.index}__].erdDealerName}">
             </th:block>	
             	
             <div class=row>	
@@ -177,8 +177,7 @@
              		
 		   			<select> 
                          <option value=""> --Select Retailer-- </option>
-                         <option th:each="row, itemStat1 : ${reqDto.ezcRequestDealers"
-                                           th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></option>
+                         <option th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}" th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></option>
                  	 </select>
 					  </td>
 						<td data-title="Name Of Plumber"><input type="text"  class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>

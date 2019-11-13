@@ -3,6 +3,9 @@ package com.ezc.hsil.webapp.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 public class TpmRequestDto implements java.io.Serializable {
@@ -16,7 +19,10 @@ public class TpmRequestDto implements java.io.Serializable {
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date erhConductedOn;
 	private Integer erhNoOfAttendee;
+	@NotNull
 	private String erhDistrubutor;
+	@NotNull
+	@Size(min=0, max=40)
 	private String erhCity;
 	private String erhInstructions;
 

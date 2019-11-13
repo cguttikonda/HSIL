@@ -36,10 +36,10 @@ public class TpmSequenceGenerator extends SequenceStyleGenerator {
 	ServiceRegistry serviceRegistry) throws MappingException {
 		super.configure(LongType.INSTANCE, params, serviceRegistry);
 
-		String valuePrefix = ConfigurationHelper.getString(VALUE_PREFIX_PARAMETER, params, VALUE_PREFIX_DEFAULT);
+		//String valuePrefix = ConfigurationHelper.getString(VALUE_PREFIX_PARAMETER, params, VALUE_PREFIX_DEFAULT);
 		String dateFormat = ConfigurationHelper.getString(DATE_FORMAT_PARAMETER, params, DATE_FORMAT_DEFAULT).replace("%", "%1$");
 		String numberFormat = ConfigurationHelper.getString(NUMBER_FORMAT_PARAMETER, params, NUMBER_FORMAT_DEFAULT).replace("%", "%2$");;
 		String dateNumberSeparator = ConfigurationHelper.getString(DATE_NUMBER_SEPARATOR_PARAMETER, params, DATE_NUMBER_SEPARATOR_DEFAULT);
-		this.format = valuePrefix+dateFormat+dateNumberSeparator+numberFormat;
+		this.format = dateFormat+dateNumberSeparator+numberFormat;
 	}
 }

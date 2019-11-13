@@ -28,9 +28,11 @@ public class EzUserCreationDefaults {
     private static void initData() {
     	
     	ROLES.add(new UserRoles("ADMIN", "Admin"));
-    	ROLES.add(new UserRoles("REQ_CR", "Request Creator"));
-    	ROLES.add(new UserRoles("ST_HEAD", "State Head"));
-    	ROLES.add(new UserRoles("ZN_HEAD", "Zonal Head"));
+    	ROLES.add(new UserRoles("ROLE_REQ_CR", "Sales Front Line"));
+    	ROLES.add(new UserRoles("ROLE_ST_HEAD", "Sales State Head"));
+    	ROLES.add(new UserRoles("ROLE_ZN_HEAD", "Sales Zonal Head"));
+    	ROLES.add(new UserRoles("ROLE_IN_STOR", "In Store"));
+    	ROLES.add(new UserRoles("ROLE_OUT_STOR", "Out Store"));
 
     	STATES.add(new EzStates("AN", "Andaman and Nicobar Islands","REQ_CR"));
     	STATES.add(new EzStates("AP", "Andhra Pradesh","REQ_CR"));

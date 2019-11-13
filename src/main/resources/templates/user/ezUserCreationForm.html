@@ -24,7 +24,7 @@
 		</h1>
 	</section>
 	<div layout:fragment="content">
-	<form  id= "userForm" name='userForm' th:action="@{/user/UserCreation}" th:object="${userForm}" method="POST">
+	<form  id= "userForm" name="userForm" th:action="@{/user/UserCreation}" th:object="${userForm}" th:method="POST">
 		<div id="errorDIV"></div>
 		
 			<div class="box-body">
@@ -125,7 +125,7 @@ $(document).ready(function(){
 		event.preventDefault();
 		  $.ajax({
 			  url: "/user/userByUserId/" + document.getElementById('userId').value,
-			  type: "POST",
+			  type: "GET",
 			  contentType : "application/json",
 				success: function(result){
 					event.preventDefault();

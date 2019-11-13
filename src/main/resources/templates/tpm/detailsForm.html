@@ -135,6 +135,7 @@
                 
                 <i id="start-record-btn" class="fa fa-microphone" style="color: white;padding: 10px;background: #87bf54;border-radius: 50%;"></i>
                 <i id="pause-record-btn" class="fa fa-pause" style="color: white;padding: 10px;background: #de8d5d;border-radius: 50%;"></i>
+                <button type="button" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal" class="btn btn-warning"><i class="fa fa-play"></i>&nbsp;Sample Voice Format</button>
     			<div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
@@ -184,6 +185,26 @@
             </div>
         </form>
     </div>
+        <div class="modal fade" id="recordModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Audio Format</h4>
+              </div>
+              <div class="modal-body">
+	        	<span id="sampleTxt">Kiran 9290303030 12th august 1980 26th august 2015 next Rahim 9790303030 26th august 1986 26th august 2009</span>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
@@ -195,7 +216,18 @@
     	$(this).closest("tr").remove();
     });
      				
+    function readOutLoud() {
+     	var message = $("#sampleTxt").text();
+    	var speech = new SpeechSynthesisUtterance();
 
+      // Set the text and voice attributes.
+    	speech.text = message;
+    	speech.volume = 1;
+    	speech.rate = 1;
+    	speech.pitch = 1;
+      
+    	window.speechSynthesis.speak(speech); 
+    }
     function addItem()
     {
 	 	document.myForm.action ="/tpm/processSpeech";

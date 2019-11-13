@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Layout}"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Content page 1</title>
+<script src="content-script.js"></script>
+</head>
+<body>
+	<section layout:fragment="content">
+		<p>This is a paragraph from content page 1</p>
+		<a href="/next">Click </a>
+
+		<form th:method="POST" th:action="@{/addDetails}"
+			th:object="${DetailForm}">
+			<table>
+				<thead>
+					<tr>
+						<th>Sl No</th>
+						<th>Name</th>
+						<th>Contact</th>
+						<th>DOB</th>
+						<th>DOA</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="details,iteration : *{items}">
+					  
+					 	<td th:text="${iteration.index+1}"></td>
+					  
+						<td><input type="text"
+							th:field="*{items[__${iteration.index}__].eriPlumberName}"></td>
+						<td><input type="text"
+							th:field="*{items[__${iteration.index}__].eriContact}"></td>
+						<td><input type="date"
+							th:field="*{items[__${iteration.index}__].eriDob}"></td>
+						<td><input type="date"
+							th:field="*{items[__${iteration.index}__].eriDoa}"></td>		
+					</tr>
+					
+				</tbody>
+			</table>
+			<br> <input type="submit" value="Update All">
+		</form>
+
+
+
+	</section>
+	<footer>
+		<p layout:fragment="custom-footer">This is some footer content
+			from content page 1</p>
+	</footer>
+</body>
+</html>

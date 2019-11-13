@@ -11,9 +11,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +33,7 @@ import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.ITPMService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +47,13 @@ public class TPMController {
 
     @RequestMapping("/tpm/add")
     public String add(Model model) {
-
+    	try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			model.addAttribute("matList", tpmService.getLastRequestDet(userObj.getUserId()));
+		} catch (Exception e) {
+			
+		}
         model.addAttribute("tpmRequestDto", new TpmRequestDto());
         return "tpm/form";
 
@@ -97,7 +110,15 @@ public class TPMController {
     } 
     
     @RequestMapping(value = "/tpm/saveRequest", method = RequestMethod.POST)
-    public String save(TpmRequestDto tpmRequestDto, final RedirectAttributes ra) {
+    public String save(@ModelAttribute @Valid TpmRequestDto tpmRequestDto,BindingResult bindingResult, final RedirectAttributes ra) {
+    	if(bindingResult.hasErrors())
+    	{
+    		return "tpm/form";
+    	}
+    	else
+    	{
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    	Users userObj = (Users)authentication.getPrincipal();
     	EzcRequestHeader ezRequestHeader = new EzcRequestHeader();
     	ezRequestHeader.setErhCity(tpmRequestDto.getErhCity());
     	ezRequestHeader.setErhConductedOn(tpmRequestDto.getErhConductedOn());
@@ -108,11 +129,12 @@ public class TPMController {
     	ezRequestHeader.setErhRequestedOn(new Date());
     	ezRequestHeader.setErhState("TEST"); 
     	ezRequestHeader.setErhStatus("NEW"); 
-    	
+    	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
+  
     	tpmService.createTPMRequest(ezRequestHeader);
         ra.addFlashAttribute("success","TPM request details saved sucessfully.");
         return "redirect:/tpm/add";
-
+    	}
     }
     
     @RequestMapping(value = "/tpm/addDetails/{docId}", method = RequestMethod.GET)

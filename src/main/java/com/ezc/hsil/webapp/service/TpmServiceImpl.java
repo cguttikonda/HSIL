@@ -107,6 +107,19 @@ public class TpmServiceImpl implements ITPMService{
 		  
 		}
 
+		@Override
+		public Set<RequestMaterials> getLastRequestDet(String requestedBy) {
+			EzcRequestHeader ezRequestHeader =reqHeaderRepo.findTopByErhCreatedGroupAndErhRequestedByAndErhStatusOrderByErhConductedOnDesc("TPM",requestedBy,"CLOSED");
+			if(ezRequestHeader != null)
+			{
+				return reqMatRep.findByRequest(ezRequestHeader.getId());
+			}
+			else
+			{
+				return null;
+			}
+		}
+
 		
 
 }

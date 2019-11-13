@@ -25,6 +25,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Table(name = "ezc_request_items", catalog = "hsil")
 public class EzcRequestItems implements java.io.Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private EzcRequestHeader ezcRequestHeader;
 	private String eriPartType;
@@ -35,12 +39,15 @@ public class EzcRequestItems implements java.io.Serializable {
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date eriDoa;
 	private String eriContact;
+	private String eriDealer;
+
+
 
 	public EzcRequestItems() {
 	}
 
 	public EzcRequestItems(EzcRequestHeader ezcRequestHeader, String eriPartType, String eriPartName,
-			String eriPlumberName, Date eriDob, Date eriDoa, String eriContact) {
+			String eriPlumberName, Date eriDob, Date eriDoa, String eriContact,String eriDealer) {
 		this.ezcRequestHeader = ezcRequestHeader;
 		this.eriPartType = eriPartType;
 		this.eriPartName = eriPartName;
@@ -48,6 +55,7 @@ public class EzcRequestItems implements java.io.Serializable {
 		this.eriDob = eriDob;
 		this.eriDoa = eriDoa;
 		this.eriContact = eriContact;
+		this.eriDealer = eriDealer;
 	}
 
 	@Id
@@ -127,5 +135,13 @@ public class EzcRequestItems implements java.io.Serializable {
 	public void setEriContact(String eriContact) {
 		this.eriContact = eriContact;
 	}
+	
+	@Column(name = "ERI_DEALER_NAME", length = 50)
+	public String getEriDealer() {
+		return eriDealer;
+	}
 
+	public void setEriDealer(String eriDealer) {
+		this.eriDealer = eriDealer;
+	}
 }

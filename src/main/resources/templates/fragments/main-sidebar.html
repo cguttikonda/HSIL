@@ -10,7 +10,7 @@
 			<p sec:authorize="isAuthenticated()">
 
 				<span sec:authentication="principal.firstName"> &nbsp; </span>
-				<!-- <span sec:authentication="principal.lastName"> -->
+				 <!-- <span sec:authentication="principal.roles"> --> 
 				</span>User
 			</p>
 			<a href="#"><i class="fa fa-circle text-success"></i> Online</a>
@@ -33,7 +33,7 @@
 	<ul class="sidebar-menu">
 		<li class="header">MAIN NAVIGATION</li>
 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+		<li class="treeview"sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa-share"></i> <span>Master data</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -87,19 +87,49 @@
 		<!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
-				<i class="fa fa-dashboard"></i> <span>TPM Creation</span> <span
+		<li class="treeview"><a href="#">
+				<i class="fa fa-edit"></i> <span>TPM Creation</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
 			</span>
 		</a>
 			<ul class="treeview-menu">
-				<li class=""><a href="#" th:href="@{/tpm/add}"><i
+				<li class="" sec:authorize="hasRole('REQ_CR')"><a href="#" th:href="@{/tpm/add}"><i
 						class="fa fa-circle-o"></i> Create</a></li>
 				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
 		<!-- TPS/TPM End -->
-
+		 
+		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+				<i class="fa fa-edit"></i> <span>TPS Creation</span> <span
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+			</span>
+		</a>
+			<ul class="treeview-menu">
+				<li class=""><a href="#" th:href="@{/tps/add}"><i
+						class="fa fa-circle-o"></i> Create</a></li>
+				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
+			</ul></li>
+		
+		
+		
+				<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+			</span>
+		</a>
+			<ul class="treeview-menu">
+				<li class=""><a href="#" th:href="@{/reports/requeststatus}"><i class="fa fa-circle-o"></i>Request Status</a></li>
+				<li><a href="#" th:href="@{/reports/stockavailablity}"><i class="fa fa-circle-o"></i>Available Stock</a></li>
+				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i>TPS History</a></li>
+				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i>Scheduled TPS</a></li>
+			</ul></li>
+		
+		
+		
+		
 
 	</ul>
 </section>

@@ -158,11 +158,6 @@ public class TPSController {
 	    public String addNewTPSItem(TpsRequestDetailDto reqDto, Model model) {
 	        List<EzcRequestItems> ezcRequestItems=null;
 	        List<EzcRequestDealers> ezcRequestDealers=null;
-	      //  EzcRequestHeader ezcRequestHeader = tpsService.getTPSRequest(docId);
-	      
-	      //  Set<EzcRequestDealers> reqDealSet =ezcRequestHeader.getEzcRequestDealers();
-	    	
-	    	
 	       	ezcRequestDealers = reqDto.getEzcRequestDealers();
 	        
 	        if(reqDto.getEzcRequestItems() == null)

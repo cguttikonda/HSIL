@@ -233,7 +233,7 @@ public class UserController {
     }
     
     
-    @RequestMapping(value = "/userByUserId/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/userByUserId/{userId}", method = RequestMethod.GET)
     public @ResponseBody String getUserByUserId(@PathVariable("userId") String userId) {   	    	
     	Users user = iUserService.findUserByUserId(userId); 
     	

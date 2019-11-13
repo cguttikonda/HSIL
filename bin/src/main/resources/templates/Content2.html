@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="layout">
+<head>
+  <title>Content page 2</title>
+  
+</head>
+<body>
+  <section layout:fragment="content">
+    <p>This is a paragraph from content page 2</p>
+    
+    
+      <div class="box-body no-padding">
+            <table class="table table-striped">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Registration Date</th>
+                    <th>Action</th>
+                </tr>
+                <tr th:each="row,stat : ${list.ezcRequestItems}">
+                    <td th:text="${row.id}"></td>
+                    <td th:text="${row.eriPlumberName}"></td>
+<!-- 
+                    <td th:text="${row.email}"></td>
+                     -->
+                    <td th:text="${#dates.format(row.eriDob, 'dd/MM/yyyy')}"></td>
+                    
+                    <td>
+                        <a th:href="${'/customers/edit/' + row.id}">edit</a> -
+                        <a th:href="${'/customers/delete/' + row.id}">delete</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    
+    
+    
+    
+  </section>
+  <footer>
+    <p layout:fragment="custom-footer">This is some footer content from content page 2</p>
+  </footer>
+</body>
+</html>

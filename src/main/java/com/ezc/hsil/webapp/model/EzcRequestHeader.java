@@ -90,11 +90,11 @@ public class EzcRequestHeader implements java.io.Serializable {
 	//@GeneratedValue(strategy = IDENTITY)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tpm_seq")
     @GenericGenerator(
-        name = "tpm_seq", 
+        name = "tpm_seq",  
         strategy = "com.ezc.hsil.webapp.model.TpmSequenceGenerator", 
         parameters = {
-	            @Parameter(name = TpmSequenceGenerator.INCREMENT_PARAM, value = "20"),
-	            @Parameter(name = TpmSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "TPM-"),
+	            @Parameter(name = TpmSequenceGenerator.INCREMENT_PARAM, value = "1")
+	            //@Parameter(name = TpmSequenceGenerator.VALUE_PREFIX_PARAMETER, value = "TPM-"),
             })
 	@Column(name = "id", unique = true, nullable = false,length=20)
 	public String getId() {
