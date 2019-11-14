@@ -9,17 +9,20 @@ import org.springframework.data.repository.query.Param;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 
-public interface MaterialMasterRepo extends JpaRepository<MaterialMaster, Integer> {
+public interface MaterialMasterRepo extends JpaRepository<MaterialMaster, String> {
 
 	
 	@Query(nativeQuery = true)
-	MaterialDto materialDetails(@Param("id") int id);
+	MaterialDto materialDetails(@Param("materialCode") String materialCode);
 
 	@Query(nativeQuery = true,value="SELECT * FROM EZC_MATERIAL_MASTER WHERE EMM_MAT_ISACTIVE='Y'")
 	List<MaterialMaster> findAllActiveMaterials();
 	
 	@Query(nativeQuery = true,value="SELECT * FROM EZC_MATERIAL_MASTER WHERE EMM_MAT_DESC LIKE %:desc%")
 	List<MaterialMaster> findAllMaterialsLike(@Param("desc") String desc);
+	
+	
+	MaterialMaster findByMaterialCode(@Param("materialCode") String materialCode);
 
 	
 }

@@ -1,11 +1,15 @@
 package com.ezc.hsil.webapp.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +30,9 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.service.ITPSService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Controller
 public class TPSController {
 	 @Autowired
@@ -171,6 +177,87 @@ public class TPSController {
 			
 	        model.addAttribute("reqDto", reqDto);  
 	        return "tps/tpsDetailsForm";
+
+	    }
+	  public List<EzcRequestItems> processText(List<EzcRequestItems> ezcRequestItems,String text)
+	    {
+	    	if(text != null && !"null".equals(text) && !"".equals(text))
+	    	{
+		    	text = text.toUpperCase();
+		    	String [] requestArr = text.split("NEXT");
+		    	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		    	for(String str :requestArr)
+		    	{
+		              String [] tokens = new String[5];
+		              str = str.replaceAll("\\s+","");
+		              //Pattern p = Pattern.compile("(\\d+)|([a-zA-Z]+)"); //(\\d+)([a-zA-Z]+)(\\d+)
+		              Pattern p = Pattern.compile("([a-zA-Z]+)|([6789][0-9]{9})|([0-9[TH]|[ST]|[ND]|[RD]]{3,4}[a-zA-Z]+[0-9]{4})|([0-9]{1,2}[a-zA-Z]+[0-9]{4})");
+		              Matcher m = p.matcher(str);
+		              int strCnt=0;
+		              while(m.find())
+		              {
+		                String token = m.group(0); //group 0 is always the entire match   
+		                tokens[strCnt]=parseDate(token);
+		                strCnt++;
+		              }
+		              
+		    		EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
+		    		ezcRequestItemsObj.setEriDealer(tokens[0]);
+		    		ezcRequestItemsObj.setEriPlumberName(tokens[1]);
+		    		ezcRequestItemsObj.setEriContact(tokens[2]);
+		    		try {
+						ezcRequestItemsObj.setEriDob(sdf.parse(tokens[3]));
+						ezcRequestItemsObj.setEriDoa(sdf.parse(tokens[4]));
+					} catch (ParseException e) {
+						
+					}
+		    		ezcRequestItems.add(ezcRequestItemsObj);
+		    	}
+	    	}	
+	    	return ezcRequestItems;
+	    }
+	  public static String parseDate(String str){
+	        String parsedDate="";
+	  Date d = null;
+	  String[] formats = {"d'ST'MMMMyyyy","d'ND'MMMMyyyy","d'RD'MMMMyyyy","d'TH'MMMMyyyy","ddMMMMyyyy"};
+	  for (String format : formats) {
+	      try {
+	          d = new SimpleDateFormat(format).parse(str);
+	          if (d != null) {
+	              SimpleDateFormat date_formatter = new SimpleDateFormat("dd/MM/yyyy");
+	              parsedDate = date_formatter.format(d);
+	          }
+	          return parsedDate;
+	      }
+	      catch (Exception e){
+	      parsedDate = str;
+	      }        
+	  }
+	  return parsedDate;
+	}
+
+	  @RequestMapping(value = "/tps/processSpeech", method = RequestMethod.POST)
+	    public String processSpeechData(TpmRequestDetailDto reqDto, Model model) {
+			
+	        List<EzcRequestItems> ezcRequestItems=null;
+	        if(reqDto.getEzcRequestItems() == null)
+	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
+	        else
+	        	ezcRequestItems = reqDto.getEzcRequestItems();
+	        
+	        log.info("reqDto.getRecordedText()::::::",reqDto.getRecordedText());
+	        reqDto.setEzcRequestItems(processText(ezcRequestItems,reqDto.getRecordedText()));
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setEzReqMatList(reqDto.getEzReqMatList());
+	        model.addAttribute("reqDto", reqDto); 
+	        return "tps/tpsDetailsForm";
+
+	    }
+	  @RequestMapping(value = "/tps/saveDetails", method = RequestMethod.POST)
+	    public String saveDetails(TpsRequestDetailDto tpsRequestDetailDto, final RedirectAttributes ra) {
+	    	tpsService.createTPSDetails(tpsRequestDetailDto);
+	        ra.addFlashAttribute("successFlash", "Success");
+	        return "redirect:/tpm/tpmRequestList";
 
 	    }
         

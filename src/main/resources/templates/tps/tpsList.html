@@ -117,6 +117,8 @@ function openModal(modelType,distId){
 				$('#tpsReqTable').hide();
 				$("#addMatRow").click(function(){
 					$('#tpsReqTable').show();
+				//	var mat=$("#selMat").val().replace("#","-");
+					
 					$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
 					$('.deleteItem').click(function(){
 				    	$(this).closest("tr").remove();
@@ -133,20 +135,29 @@ function openModal(modelType,distId){
 	 	    	                       results: $.map(data, function (item) {
 	 	    	                          return {
 	 	    	                              text: item.materialCode+"-"+item.materialDesc,
-	 	    	                              id: item.materialCode+"#"+item.materialDesc
+	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
 	 	    	                          }
 	 	    	                      }) 
 			 	                  };
+			 	               
 			           },
 			           cache: true
 			         }
+				
 			    });
+				
 			}
 		});
 		
 	}
 }
-
+$(document.body).on("change","#selMat",function(){
+	// alert(this.value);
+	var totVal=this.value;
+	var stkAvaQty=totVal.split("#")[2];
+	alert(stkAvaQty);
+	document.getElementById("stkAva").value=stkAvaQty;
+	});
 
 $(document).ready(function() {
 		
@@ -165,6 +176,15 @@ $(document).ready(function() {
 	);
 	 
 });
+function funCheckQty()
+{
+	if(document.getElementById("stkAva").value<document.getElementById("selQty").value)
+		{
+		alert("provided Quantity is greater than available Quantity.");
+		
+		}
+	
+}
 function approveTPSReq(event){
 	var formdata = $('#appr-tps-form').serialize();
 	//alert("ok1");

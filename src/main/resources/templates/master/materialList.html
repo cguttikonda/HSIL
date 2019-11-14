@@ -41,12 +41,14 @@
 							<td th:text="${material.quantity}">0</td>
 							<td>
 								<a href="#"
-								th:onclick="'javascript:openModal(\'edit\',\''+ ${material.id} + '\');'"
+								th:data-id="${material.materialCode}"
+								th:onclick="javascript:openModal('edit',this.getAttribute('data-id'));"
 								class="btn btn-success btn-xs"> <span
 									class="glyphicon glyphicon-pencil"></span>
 								</a>
 								<a href="#"
-								th:onclick="'javascript:openModal(\'delete\',\''+ ${material.id} + '\');'"
+								th:data-id="${material.materialCode}"
+								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
 								class="btn btn-danger btn-xs"> <span
 									class="glyphicon glyphicon-trash"></span>
 								</a>
@@ -105,7 +107,7 @@
 			})
  */			
 			function openModal(modelType,matId){
-				
+				alert(matId);
 				if(modelType === "edit"){
 					
 					$.ajax({

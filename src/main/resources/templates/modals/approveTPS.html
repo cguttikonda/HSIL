@@ -14,19 +14,23 @@
 					<th>Request Id</th>
 					<td th:text="*{id}"></td>	
 					<th>Distributor</th>
-					<td th:text="*{erhDistrubutor}"></td>	
+					<td colspan=2 th:text="*{erhDistrubutor}"></td>	
 					</tr>
 					<tr>
 					<th>Material</th>
-					<td colspan=3>						
+					<td colspan=4>						
 						<select name="selMat" id="selMat" class="select2 form-control" style="width:100%">
 						</select>
 					</td>	
 					</tr>
 					<tr>
 					<th>Quantity</th>
-					<td colspan=2>						
-						<input type="text" name="selQty" id="selQty" class="form-control">
+					<td >						
+						<input type="text" name="selQty" id="selQty" class="form-control" onchange="funCheckQty()">
+					</td>
+					<th>Stock Availablity</th>
+					<td>						
+						<input type="text" name="stkAva" id="stkAva" class="form-control">
 					</td>
 					<td>						
 						<button type="button" class="btn btn-primary" id="addMatRow"  style="margin-right: 5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</button>

@@ -19,9 +19,6 @@ public class MaterialDto {
 
 	
 	@NonNull
-	private int id;
-	
-	@NonNull
 	@Pattern(regexp="(^([0-9]*)${50})" ,message="{Pattern.materialDto.materialCode}" )
 	//@Range(min=3,max=50, message="Please provide a valid material code")
 	private String materialCode;

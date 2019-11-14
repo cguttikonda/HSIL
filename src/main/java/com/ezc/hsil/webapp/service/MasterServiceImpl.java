@@ -143,8 +143,8 @@ public class MasterServiceImpl implements IMasterService {
 	}
 
 	@Override
-	public MaterialDto getMaterialDetails(int id) {
-		MaterialDto matDto = matMastRep.materialDetails(id);
+	public MaterialDto getMaterialDetails(String materialCode) {
+		MaterialDto matDto = matMastRep.materialDetails(materialCode);
 		return matDto;
 
  	}
@@ -152,26 +152,18 @@ public class MasterServiceImpl implements IMasterService {
 	@Override
 	public String updateMaterial(MaterialDto matDto) throws SQLException {
 
-		int matId = matDto.getId();
+		String materialCode = matDto.getMaterialCode();
 
-		if (matId > 0) {
+		
 
-			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matId);
-			OMatMaster.ifPresent(processMaterial(matDto, matId));
+			Optional<MaterialMaster> OMatMaster = matMastRep.findById(materialCode);
+			OMatMaster.ifPresent(processMaterial(matDto));
 			OMatMaster.orElseThrow(()->{ return new SQLException();});
-		} else {
-
-			log.error("Unable to find the Material id {}", matId);
-			throw new EntityNotFoundException("Material not found for the id " + matId);
-
-		}
-
-		return "";
+			return "";
 	}
 
-	private Consumer<? super MaterialMaster> processMaterial(MaterialDto matDto, int matId) {
+	private Consumer<? super MaterialMaster> processMaterial(MaterialDto matDto) {
 		return matMaster ->{
-			matMaster.setId(matId);
 			matMaster.setMaterialCode(matDto.getMaterialCode());
 			matMaster.setMaterialDesc(matDto.getMaterialDesc());
 			matMaster.setQuantity(matDto.getQuantity());

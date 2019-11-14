@@ -7,11 +7,12 @@
 		
 				<form th:action="@{/master/edit-material}" th:object="${materialDto}" th:method="post" id="edit-dist-form">
 				<div class="modal-body">
-					<input type="hidden" th:field="${materialDto.id}" />
+					<input type="hidden" th:field="${materialDto.isActive}" th:value="Y" />
+					<!-- <input type="hidden" th:field="${materialDto.id}" /> -->
 						<!--<span style="font-weight:bold">Id: </span><span th:text="${student.id}"></span><br>-->
 					<div class="form-group">
 						<label >Material Code</label>
-						<input type="text" th:field="${materialDto.materialCode}" class="form-control"  />
+						<input type="text" readonly th:field="${materialDto.materialCode}" class="form-control"  />
 						<span th:if="${#fields.hasErrors('materialCode')}" th:errors="*{materialCode}"  th:errorclass="has-error">Name Error</span>
 					</div>
 					<div class="form-group">

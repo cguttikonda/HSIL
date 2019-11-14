@@ -21,11 +21,10 @@ import lombok.NonNull;
 
 @SqlResultSetMapping(
 	    name="MaterialDtoMapping",
-	    classes={
+	    classes={ 
 	        @ConstructorResult(
 	            targetClass=MaterialDto.class,
 	            columns={
-	            	@ColumnResult(name="id"),
 	            	@ColumnResult(name="EMM_MAT_CODE"),
 	                @ColumnResult(name="EMM_MAT_DESC"),
 	                @ColumnResult(name="EMM_MAT_QUANTITY"),
@@ -36,7 +35,7 @@ import lombok.NonNull;
 	)
 
 @NamedNativeQuery(name="MaterialMaster.materialDetails", query="SELECT * FROM EZC_MATERIAL_MASTER mm " 
-							+  " WHERE mm.id = :id and mm.emm_mat_isactive='Y'",  
+							+  " WHERE mm.EMM_MAT_CODE = :materialCode and mm.emm_mat_isactive='Y'",  
 							resultSetMapping="MaterialDtoMapping")
 
 
@@ -49,9 +48,6 @@ public class MaterialMaster {
 
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
-	
 	@NonNull
 	@Column(name="EMM_MAT_CODE",length=20)
 	private String materialCode;
