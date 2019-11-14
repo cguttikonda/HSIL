@@ -14,12 +14,12 @@ import com.ezc.hsil.webapp.model.DistributorMaster;
  * @author cguttikonda
  *
  */
-public interface DistributorMasterRepo extends JpaRepository<DistributorMaster, Integer> {
+public interface DistributorMasterRepo extends JpaRepository<DistributorMaster, String> {
 	
 	
 	
 	@Query(nativeQuery = true)
-	DistributorDto distributorDetails(@Param("id") int id);
+	DistributorDto distributorDetails(@Param("code") String code);
 	
 	
 

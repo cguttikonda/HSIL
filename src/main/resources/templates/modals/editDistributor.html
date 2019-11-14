@@ -7,7 +7,7 @@
 			<!-- <form th:action="@{/master/edit-dist}" th:object="${distributorDto}" th:method="post" id="edit-dist-form"> -->
 				<form th:action="@{/master/edit-dist}" th:object="${distributorDto}" th:method="post" id="edit-dist-form">
 				<div class="modal-body">
-					<input type="hidden" th:field="${distributorDto.id}" />
+					<input type="hidden" th:field="${distributorDto.code}" />
 						<!--<span style="font-weight:bold">Id: </span><span th:text="${student.id}"></span><br>-->
 					<div class="form-group">
 						<label >Name</label>
@@ -31,13 +31,7 @@
 					
 					<div class="form-group">
 						<label>City</label>
-						<select th:field="${distributorDto.city}">
-							
-							<option value="">---Select---</option>
-							<option th:each="citi : ${#lists.sort(city)}"
-									th:value="${citi}" th:text="${citi}"
-									>Hyderabad</option>
-						</select>
+						<input type="text" th:field="${distributorDto.city}" class="form-control"></input>
 						<span th:if="${#fields.hasErrors('city')}" th:errors="*{city}"  th:errorclass="has-error">Name Error</span>
 						
 					</div>	

@@ -14,11 +14,14 @@ import java.util.regex.Pattern;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +37,7 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +48,15 @@ public class TPMController {
 
     @Autowired
     ITPMService tpmService;
-
+    
+    @Autowired
+    IMasterService masterService;
+    
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    }
+    
     @RequestMapping("/tpm/add")
     public String add(Model model) {
     	try {
@@ -54,6 +66,7 @@ public class TPMController {
 		} catch (Exception e) {
 			
 		}
+    	model.addAttribute("distList",masterService.findAll());
         model.addAttribute("tpmRequestDto", new TpmRequestDto());
         return "tpm/form";
 

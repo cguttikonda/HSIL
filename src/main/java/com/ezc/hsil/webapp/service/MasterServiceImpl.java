@@ -38,7 +38,7 @@ public class MasterServiceImpl implements IMasterService {
 		if (distDto != null) {
 
 			DistributorMaster dm = new DistributorMaster();
-
+			dm.setCode(distDto.getCode());
 			dm.setName(distDto.getName());
 			dm.setContact(distDto.getPhone());
 			dm.setOrganisation(distDto.getOrganisation());
@@ -65,9 +65,9 @@ public class MasterServiceImpl implements IMasterService {
 	}
 
 	@Override
-	public DistributorDto getDistributorDetails(int id) {
+	public DistributorDto getDistributorDetails(String code) {
 
-		DistributorDto distDto = distMastRepo.distributorDetails(id);
+		DistributorDto distDto = distMastRepo.distributorDetails(code);
 
 		return distDto;
 
@@ -76,21 +76,14 @@ public class MasterServiceImpl implements IMasterService {
 	@Override
 	public String updateDistributor(DistributorDto distDto) throws SQLException {
 
-		int distId = distDto.getId();
+		String distId = distDto.getCode();
 
-		if (distId > 0) {
 
 			Optional<DistributorMaster> ODisMaster = distMastRepo.findById(distId);
 			ODisMaster.ifPresent(disMaster ->processTheMaster(disMaster,distDto));
 			ODisMaster.orElseThrow(()->{ return new SQLException();});
-		} else {
 
-			log.error("Unable to find the Distributor id {}", distId);
-			throw new EntityNotFoundException("Distributor not found for the id " + distId);
-
-		}
-
-		return "";
+			return "";
 	}
 
 
@@ -98,7 +91,7 @@ public class MasterServiceImpl implements IMasterService {
 	private void processTheMaster(DistributorMaster disMaster,  DistributorDto distDto) {
 		// TODO Auto-generated method stub
 		
-		disMaster.setId(distDto.getId());
+		disMaster.setCode(distDto.getCode());
 		disMaster.setName(distDto.getName());
 		disMaster.setOrganisation(distDto.getOrganisation());
 		disMaster.setContact(distDto.getPhone());
@@ -109,23 +102,15 @@ public class MasterServiceImpl implements IMasterService {
 	}
 
 	@Override
-	public String deleteDistributor(int id) {
+	public String deleteDistributor(String code) {
 
-		if (id > 0) {
 
-			Optional<DistributorMaster> ODisMaster = distMastRepo.findById(id);
+			Optional<DistributorMaster> ODisMaster = distMastRepo.findById(code);
 			
 			if (ODisMaster.isPresent()) {
 
-				distMastRepo.deleteById(id);
+				distMastRepo.deleteById(code);
 			}
-
-		} else {
-
-			log.error("Unable to find the request id {}", id);
-			throw new EntityNotFoundException("Distributor not found for the id " + id);
-		}
-
 		return "";
 	}
 

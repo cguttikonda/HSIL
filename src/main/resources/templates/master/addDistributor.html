@@ -35,10 +35,18 @@
 			th:object="${distributorDto}" th:method="post">
 			<div class="box-body">
 				<div class="form-group">
+					<label for="distributorName">Distributor Code</label>
+					 <input
+						th:field="*{code}" type="text" class="form-control"
+						placeholder="Enter code" th:errorclass="has-error" />
+						<span th:if="${#fields.hasErrors('code')}" th:errors="*{code}"  th:errorclass="has-error">Code Error</span>
+						
+				</div>
+				<div class="form-group">
 					<label for="distributorName">Distributor Name</label>
 					 <input
 						th:field="*{name}" type="text" class="form-control"
-						placeholder="Enter name" th:errorclass="has-error" required/>
+						placeholder="Enter name" th:errorclass="has-error" />
 						<span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"  th:errorclass="has-error">Name Error</span>
 						
 				</div>
@@ -46,7 +54,7 @@
 					<label for="distributorContact">Contact No.</label>
 					 <input
 						th:field="*{phone}" type="tel" class="form-control"
-						placeholder="Enter Contact No."  th:errorclass="has-error" required/>
+						placeholder="Enter Contact No."  th:errorclass="has-error" />
 						<span th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" th:errorclass="has-error">Contact Error</span>
 				</div>
 
@@ -54,21 +62,16 @@
 					<label for="distributorOrganisation">Business Unit Name</label>
 					<input
 						th:field="*{organisation}" type="text" class="form-control"
-						placeholder="Enter Business Unit" th:errorclass="has-error" required/>
+						placeholder="Enter Business Unit" th:errorclass="has-error" />
 					<span th:if="${#fields.hasErrors('organisation')}" th:errors="*{organisation}" th:errorclass="has-error">Business Unit Error</span>
 				</div>
 
 				<div class="form-group">
 					<label for="distributorCity">City</label> 
-					<select
-						th:field="*{city}"  th:errorclass="has-error" required>
-
-						<option value="">---Select---</option>
-						<option th:each="citi : ${#lists.sort(city)}"
-							th:value="${citi}" th:text="${citi}">Hyderabad</option>
-
-					</select>
-					<span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" th:errorclass="has-error">City Error</span>
+						<input
+						th:field="*{city}" type="text" class="form-control"
+						placeholder="Enter City" th:errorclass="has-error"/>
+					<span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" th:errorclass="has-error">Business Unit Error</span>
 				</div>
 			</div>
 			<!-- /.box-body -->

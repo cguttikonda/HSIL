@@ -45,16 +45,16 @@ public class ModalDialogController {
 	private List<String> city;
 	
 	
-	@GetMapping(value="/edit-dist/{id}")
-	public String editDistModal(@PathVariable("id") int id, Model model) {
-		model.addAttribute("distributorDto", masterService.getDistributorDetails(id));
-		model.addAttribute("city", city);
+	@GetMapping(value="/edit-dist/{code}")
+	public String editDistModal(@PathVariable("code") String code, Model model) {
+		model.addAttribute("distributorDto", masterService.getDistributorDetails(code));
+		//model.addAttribute("city", city);
 		return "modals/editDistributor" ;
 	}
 	
-	@GetMapping(value="/delete-dist/{id}")
-	public String deleteDistModal(@PathVariable("id") int id, Model model) {
-		model.addAttribute("distributorDto", masterService.getDistributorDetails(id));
+	@GetMapping(value="/delete-dist/{code}")
+	public String deleteDistModal(@PathVariable("code") String code, Model model) {
+		model.addAttribute("distributorDto", masterService.getDistributorDetails(code));
 		return "modals/deleteDistributor" ;
 	}
 	

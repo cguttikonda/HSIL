@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.model;
 
+import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ import lombok.NonNull;
 	        @ConstructorResult(
 	            targetClass=DistributorDto.class,
 	            columns={
-	            	@ColumnResult(name="id"),
+	            	@ColumnResult(name="code"),
 	            	@ColumnResult(name="name"),
 	                @ColumnResult(name="contact"),
 	                @ColumnResult(name="organisation"),
@@ -35,20 +36,17 @@ import lombok.NonNull;
 	)
 
 @NamedNativeQuery(name="DistributorMaster.distributorDetails", query="SELECT * FROM EZC_DISTRIBUTORS d " 
-							+  " WHERE d.id = :id",  
-							resultSetMapping="DistributorDtoMapping")
+		+  " WHERE d.code = :code",  
+		resultSetMapping="DistributorDtoMapping")
+
 @Entity
 @Table(name="EZC_DISTRIBUTORS", catalog="hsil")
 @Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class DistributorMaster { 
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@NonNull
-	private int id;
-	
+	@NonNull 
+	private String code;
 	@NonNull
 	private String name;
 	@NonNull

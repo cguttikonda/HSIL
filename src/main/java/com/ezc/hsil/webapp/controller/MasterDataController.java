@@ -95,9 +95,9 @@ public class MasterDataController {
 		
 	}
 	@PostMapping("/delete-dist/{id}")
-	public String deleteDistributor(@PathVariable("id") int id) {
+	public String deleteDistributor(@PathVariable("code") String code) {
 		
-			masterService.deleteDistributor(id);
+			masterService.deleteDistributor(code);
 			return "redirect:/master/listDis";
 	}
 	

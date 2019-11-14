@@ -19,45 +19,43 @@
     <div class="box">
     	     <form data-toggle="validator" role="form" th:object="${tpmRequestDto}" th:action="@{/tpm/saveRequest}" method="post">
             <div class="box-body">
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="erhDistrubutor">Distributor</label>
-                      <select class="form-control select2" th:field="*{erhDistrubutor}" id="erhDistrubutor">
+                      <select class="form-control select2" th:field="*{erhDistrubutor}">
 						<option selected value="">---select distributor---</option>
-						<option th:value="1001-RKAgencies" th:text="1001-RKAgencies"></option>
-						<option th:value="1002-MythriDistributor" th:text="1002-MythriDistributor"></option>
-						<option th:value="1003-KRDistributor" th:text="1003-KRDistributor"></option>
-						<option th:value="1004-GKDistributor" th:text="1004-MythriDistributor"></option>
-						<option th:value="1005-FTDistributor" th:text="1005-FTDistributor"></option>
+						<option th:each="dist : ${distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
-	                <p th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}">Invalid Distributor</p>
+	                <span class="help-block" th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}"></span>
                 </div>
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('erhCity')}? 'form-group has-error' : 'form-group'">
                     <label for="erhCity">City</label>
-                    <input type="text" required="true" class="form-control" th:field="*{erhCity}" id="erhCity" />
-                    <span class="help-block" th:if="${#fields.hasErrors('erhCity')}" th:errors="*{erhCity}">Invalid City</span>
+                    <input type="text"  class="form-control" th:field="*{erhCity}" id="erhCity" />
+                    <span class="help-block" th:if="${#fields.hasErrors('erhCity')}" th:errors="*{erhCity}"></span>
                 </div>
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('erhConductedOn')}? 'form-group has-error' : 'form-group'">
                     <label for="erhConductedOn">Conducted On</label>
 					    <div class="input-group date">
 					  <div class="input-group-addon">
 					    <i class="fa fa-calendar"></i>
 					  </div>
-					  <input type="text" required="true" class="form-control pull-right" th:field="*{erhConductedOn}" id="erhConductedOn">
+					  <input type="text"  class="form-control pull-right" th:field="*{erhConductedOn}" id="erhConductedOn">
 					</div>
+					<span class="help-block" th:if="${#fields.hasErrors('erhConductedOn')}" th:errors="*{erhConductedOn}"></span>
                 </div>
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('erhNoOfAttendee')}? 'form-group has-error' : 'form-group'">
                     <label for="erhNoOfAttendee">Attendance</label>
-                    <input type="number" required="true" class="form-control" th:field="*{erhNoOfAttendee}" id="erhNoOfAttendee" />
+                    <input type="number"  class="form-control" th:field="*{erhNoOfAttendee}" id="erhNoOfAttendee" />
+                    <span class="help-block" th:if="${#fields.hasErrors('erhNoOfAttendee')}" th:errors="*{erhNoOfAttendee}"></span>
                 </div>
                 <div class="form-group">
                     <label for="erhInstructions">Instructions</label>
-                    <textarea required="true" class="form-control" th:field="*{erhInstructions}" id="erhInstructions"></textarea>
+                    <textarea  class="form-control" th:field="*{erhInstructions}" id="erhInstructions"></textarea>
                 </div>
             </div>
             <div class="box-footer">
                 <button type="submit" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Save</button>
                 <button type="button" id="dispStock" class="btn btn-primary pull-right" style="margin-left:5px" data-toggle="modal" data-target="#stockModal"><i class="fa fa-search"></i>&nbsp;Available Stock</button>
-            </div>
+            </div> 
         </form>
     </div>
     

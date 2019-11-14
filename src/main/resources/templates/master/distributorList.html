@@ -27,6 +27,7 @@
 					style="width: 100%">
 					<thead>
 						<tr>
+							<th>Code</th>
 							<th>Name</th>
 							<th>Contact</th>
 							<th>Organisation</th>
@@ -37,18 +38,21 @@
 					</thead>
 					<tbody>
 						<tr th:each="dist:${distList}">
+							<td th:text="${dist.code}">Code</td>
 							<td th:text="${dist.name}">Name</td>
 							<td th:text="${dist.contact}">Contact</td>
 							<td th:text="${dist.organisation}">Organisation</td>
 							<td th:text="${dist.city}">City</td>
 							<td>
 								<a href="#"
-								th:onclick="'javascript:openModal(\'edit\',\''+ ${dist.id} + '\');'"
+								th:data-id="${dist.code}"
+								th:onclick="javascript:openModal('edit',this.getAttribute('data-id'));"
 								class="btn btn-success btn-xs"> <span
 									class="glyphicon glyphicon-pencil"></span>
 								</a>
 								<a href="#"
-								th:onclick="'javascript:openModal(\'delete\',\''+ ${dist.id} + '\');'"
+								th:data-id="${dist.code}"
+								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
 								class="btn btn-danger btn-xs"> <span
 									class="glyphicon glyphicon-trash"></span>
 								</a>
@@ -57,6 +61,7 @@
 					</tbody>
 					<tfoot>
 						<tr>
+							<th>Code</th>
 							<th>Name</th>
 							<th>Contact</th>
 							<th>Organisation</th>

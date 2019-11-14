@@ -16,12 +16,12 @@ public interface IMasterService {
 	
 	List<DistributorMaster> findAll();
 	
-	DistributorDto getDistributorDetails(int id);
+	DistributorDto getDistributorDetails(String code);
 	
 	
 	String updateDistributor(DistributorDto distDto) throws SQLException;
 	
-	String deleteDistributor(int id);
+	String deleteDistributor(String code);
 	
 	
 	

@@ -16,8 +16,10 @@ public class TpmRequestDto implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	private String erhState;
 	private String erhRequestedBy;
+	@NotNull
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date erhConductedOn;
+	@NotNull 
 	private Integer erhNoOfAttendee;
 	@NotNull
 	private String erhDistrubutor;
