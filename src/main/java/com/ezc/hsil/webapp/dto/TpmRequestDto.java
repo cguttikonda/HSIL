@@ -1,12 +1,16 @@
 package com.ezc.hsil.webapp.dto;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.ezc.hsil.webapp.model.DistributorMaster;
 
 public class TpmRequestDto implements java.io.Serializable {
 
@@ -28,6 +32,8 @@ public class TpmRequestDto implements java.io.Serializable {
 	private String erhCity;
 	private String erhInstructions;
 
+	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
+	
 	public TpmRequestDto() {
 	}
 
@@ -85,6 +91,14 @@ public class TpmRequestDto implements java.io.Serializable {
 
 	public void setErhInstructions(String erhInstructions) {
 		this.erhInstructions = erhInstructions;
+	}
+
+	public List<DistributorMaster> getDistList() {
+		return distList;
+	}
+
+	public void setDistList(List<DistributorMaster> distList) {
+		this.distList = distList;
 	}
 
 	

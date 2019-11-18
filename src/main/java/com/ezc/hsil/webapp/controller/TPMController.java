@@ -33,6 +33,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
+import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
@@ -66,14 +67,16 @@ public class TPMController {
 		} catch (Exception e) {
 			
 		}
-    	model.addAttribute("distList",masterService.findAll());
-        model.addAttribute("tpmRequestDto", new TpmRequestDto());
+    	TpmRequestDto tpmRequestDto = new TpmRequestDto();
+    	List<DistributorMaster> distList = masterService.findAll();
+    	tpmRequestDto.setDistList(distList); 
+        model.addAttribute("tpmRequestDto", tpmRequestDto);
         return "tpm/form";
 
     } 
   
     @RequestMapping(value = "/tpm/appr-tpm-post", method = RequestMethod.POST)
-	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam String [] apprMat,@RequestParam Integer [] apprQty) {
+	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
 		EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 		ezcRequestHeader.setId(id);
 		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
@@ -83,7 +86,25 @@ public class TPMController {
 			reqMat.setMatCode(apprMat[i].split("#")[0]);
 			reqMat.setMatDesc(apprMat[i].split("#")[1]);
 			reqMat.setApprQty(apprQty[i]);
+			reqMat.setIsNew('Y');
 			reqMatSet.add(reqMat);
+		}
+		if(leftOverId != null && leftOverId.length > 0)
+		{
+			for(int i=0;i<leftOverId.length;i++)
+			{
+				if(allocQty[i] != null && allocQty[i] > 0)
+				{
+					RequestMaterials reqMat = new RequestMaterials();
+					reqMat.setMatCode(apprMat[i].split("#")[0]);
+					reqMat.setMatDesc(apprMat[i].split("#")[1]);
+					reqMat.setApprQty(allocQty[i]);
+					reqMat.setIsNew('N');
+					reqMat.setAllocId(leftOverId[i]);
+					reqMatSet.add(reqMat);
+				}
+			}
+			
 		}
 		ezcRequestHeader.setRequestMaterials(reqMatSet);
 		tpmService.approveTPMRequest(ezcRequestHeader);
@@ -128,7 +149,7 @@ public class TPMController {
     	{
     		return "tpm/form";
     	}
-    	else
+    	else 
     	{
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	Users userObj = (Users)authentication.getPrincipal();

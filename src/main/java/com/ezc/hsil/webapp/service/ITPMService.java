@@ -18,4 +18,5 @@ public interface ITPMService {
 	public void approveTPMRequest(EzcRequestHeader ezcRequestHeader);
 	public void closeTPMRequest(TpmRequestDetailDto tpmRequestDetailDto);
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
+	public List<Object[]> getLeftOverStock(String requestedBy);
 }

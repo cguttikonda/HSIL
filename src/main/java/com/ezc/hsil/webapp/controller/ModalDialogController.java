@@ -66,14 +66,14 @@ public class ModalDialogController {
 	
 
 	@GetMapping(value="/edit-material/{id}")
-	public String editMaterialModal(@PathVariable("id") int id, Model model) {
-		model.addAttribute("materialDto", masterService.getMaterialDetails(id));
+	public String editMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
 		model.addAttribute("city", city);
 		return "modals/editMaterial" ;
 	}
 	@GetMapping(value="/delete-material/{id}")
-	public String deleteMaterialModal(@PathVariable("id") int id, Model model) {
-		model.addAttribute("materialDto", masterService.getMaterialDetails(id));
+	public String deleteMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
 		return "modals/deleteMaterial" ;
 	}
 	
@@ -86,7 +86,7 @@ public class ModalDialogController {
 			 * SecurityContextHolder.getContext().getAuthentication(); Users userObj =
 			 * (Users)authentication.getPrincipal();
 			 */
-			model.addAttribute("matList", iTPMService.getLastRequestDet(ezReqHead.getErhRequestedBy()));
+			model.addAttribute("matList", iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
 		} catch (Exception e) {
 			 
 		}

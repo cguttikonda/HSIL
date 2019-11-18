@@ -46,21 +46,19 @@ public class RequestMaterials  extends Auditable<String> {
 	@Column(name="ERM_USED_QTY",length=5)
 	private int usedQty;
 	
-	//@NonNull
-	//@Column(name="ERM_ENTERED_BY",length=20)
-	//private String enteredBy;
+	@Column(name="ERM_LEFTOVER_QTY",length=5)
+	private int leftOverQty;
 	
-	//@NonNull
-	//@Column(name="ERM_ENTERED_ON")
-	//private Timestamp enteredOn;
+	@Column(name="ERM_FREE_QTY",length=5)
+	private int freeQty;
 	
-	//@NonNull
-	//@Column(name="ERM_MODIFIED_BY",length=20)
-	//private String modifiedBy;
+	@Column(name="ERM_IS_NEW",length=1)
+	private char isNew;
 	
-	//@NonNull
-	//@Column(name="ERM_MODIFIED_ON")
-	//private Timestamp modifiedOn;
+	@Column(name="ERM_ALLOC_ID")
+	private int allocId;
+	 
+	
 	
 	public RequestMaterials() {
 		

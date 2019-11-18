@@ -2,6 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPM List</title>
+    <style type="text/css">
+.modal-dialog {
+    width: 90%;
+    height: 90%;
+    margin-left: 5%;
+    padding: 0;
+}
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
 </head>
 <body>
 <section layout:fragment="header">
@@ -71,7 +84,7 @@
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.id}"></a></td>
+                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
@@ -104,6 +117,12 @@
 <div layout:fragment="scriptContent">
 
 <script type="text/javascript">
+function geThan(field, rules, i, options){
+	 var a=rules[i+2];
+	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
+	   return "Quantity entered is greater than available stock"
+	 }
+	}
 function openModal(modelType,distId){
 	
 	if(modelType === "approve"){
@@ -118,11 +137,14 @@ function openModal(modelType,distId){
 				});
 				$('#tpmReqTable').hide();
 				$("#addMatRow").click(function(){
-					$('#tpmReqTable').show();
-					$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
-					$('.deleteItem').click(function(){
-				    	$(this).closest("tr").remove();
-				    });
+						if($("#appr-tpm-form").validationEngine('validate'))
+						{
+							$('#tpmReqTable').show();
+							$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+							$('.deleteItem').click(function(){
+						    	$(this).closest("tr").remove();
+						    });
+						}
 					});
 				$('#selMat').select2({
 			         placeholder: 'Select Material',
@@ -135,7 +157,7 @@ function openModal(modelType,distId){
 	 	    	                       results: $.map(data, function (item) {
 	 	    	                          return {
 	 	    	                              text: item.materialCode+"-"+item.materialDesc,
-	 	    	                              id: item.materialCode+"#"+item.materialDesc
+	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
 	 	    	                          }
 	 	    	                      }) 
 			 	                  };
@@ -148,7 +170,12 @@ function openModal(modelType,distId){
 		
 	}
 }
-
+$(document.body).on("change","#selMat",function(){
+	// alert(this.value);
+	var totVal=this.value;
+	var stkAvaQty=totVal.split("#")[2];
+	document.getElementById("stkAva").value=stkAvaQty;
+	});
 $(document).ready(function() {
 		
 	  
@@ -167,7 +194,37 @@ $(document).ready(function() {
 	 
 });
 function approveTPMReq(event){
-	var formdata = $('#appr-tpm-form').serialize();
+	var leftOverCnt=parseInt($("#leftOverCnt").val());
+	var qtyEntered = false;
+	for(i=0;i<leftOverCnt;i++)
+	{
+			if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
+			{
+				qtyEntered = true;
+			}
+			else
+			{
+				continue;
+			}
+			if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
+			{
+				$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
+				return ;
+			}
+	}
+	if(!qtyEntered)
+	{
+		if($(".apprMat").size() > 0)
+		{
+			qtyEntered =true;
+		}
+	}
+	if(!qtyEntered)
+	{
+		$('#selQty').validationEngine('showPrompt', 'Allocate atleast one material', '');
+		return ;
+	}
+	var formdata = $('#appr-tpm-form').serialize(); 
 	$.ajax({
 			
 		type : "POST",
@@ -181,6 +238,8 @@ function approveTPMReq(event){
 			console.log(ex);
 		}
 	});
+	
+	
 }
 
 

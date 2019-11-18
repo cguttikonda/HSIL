@@ -19,11 +19,15 @@
     <div class="box">
     	     <form data-toggle="validator" role="form" th:object="${tpmRequestDto}" th:action="@{/tpm/saveRequest}" method="post">
             <div class="box-body">
+            	 <th:block th:each="row, dist : *{distList}">
+                	<input type="hidden" th:field="*{distList[__${dist.index}__].code}"/>
+                	<input type="hidden" th:field="*{distList[__${dist.index}__].name}"/>
+                </th:block> 
                 <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="erhDistrubutor">Distributor</label>
                       <select class="form-control select2" th:field="*{erhDistrubutor}">
 						<option selected value="">---select distributor---</option>
-						<option th:each="dist : ${distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
+						<option th:selected="${erhDistrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
 	                <span class="help-block" th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}"></span>
                 </div>
