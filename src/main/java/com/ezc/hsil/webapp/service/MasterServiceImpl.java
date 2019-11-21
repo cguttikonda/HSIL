@@ -140,7 +140,7 @@ public class MasterServiceImpl implements IMasterService {
 	@Override
 	public List<MaterialMaster> getAllMaterials() {
 		return matMastRep.findAllActiveMaterials();		
-	}
+	} 
 
 	@Override
 	public MaterialDto getMaterialDetails(String materialCode) {

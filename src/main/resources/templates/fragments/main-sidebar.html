@@ -86,7 +86,17 @@
 			</ul></li>
 		<!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
-
+	<li class="treeview"><a href="#">
+				<i class="fa fa-edit"></i> <span>BD Creation</span> <span
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+			</span>
+		</a>
+			<ul class="treeview-menu">
+				<li class="" sec:authorize="hasRole('ADMIN')"><a href="#" th:href="@{/bd/add}"><i
+						class="fa fa-circle-o"></i> Create</a></li>
+				<li><a href="#" th:href="@{/bd/bdRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
+			</ul></li>
 		<li class="treeview"><a href="#">
 				<i class="fa fa-edit"></i> <span>TPM Creation</span> <span
 				class="pull-right-container"> <i

@@ -1,10 +1,12 @@
 package com.ezc.hsil.webapp.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.RequestMaterials;
 
 public interface ITPSService {
 	
@@ -13,5 +15,6 @@ public interface ITPSService {
 	public void approveTPSRequest(EzcRequestHeader ezcRequestHeader);
 	public EzcRequestHeader getTPSRequest(String docId);
 	public void createTPSDetails(TpsRequestDetailDto tpsRequestDetailDto);
-
+	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
+	public List<Object[]> getLeftOverStock(String requestedBy);
 }

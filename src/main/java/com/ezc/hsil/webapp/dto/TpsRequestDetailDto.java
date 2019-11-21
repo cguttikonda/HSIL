@@ -20,7 +20,7 @@ public class TpsRequestDetailDto {
 	private String avgSales="";
 	private String recordedText="";
 	private String cityOfMeet="";
-
+	private String venue="";
 	
 	
 	public String getCityOfMeet() {
@@ -39,7 +39,7 @@ public class TpsRequestDetailDto {
 		this.venue = venue;
 	}
 
-	private String venue="";
+	
 	
 	public TpsRequestDetailDto()
 	{

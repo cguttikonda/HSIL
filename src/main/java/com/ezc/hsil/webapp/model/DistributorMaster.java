@@ -36,7 +36,7 @@ import lombok.NonNull;
 	)
 
 @NamedNativeQuery(name="DistributorMaster.distributorDetails", query="SELECT * FROM EZC_DISTRIBUTORS d " 
-		+  " WHERE d.code = :code",  
+		+  " WHERE d.code = :code",   
 		resultSetMapping="DistributorDtoMapping")
 
 @Entity

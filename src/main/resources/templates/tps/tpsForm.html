@@ -19,58 +19,65 @@
     <div class="box">
     	     <form name="myForm" data-toggle="validator" role="form" th:object="${tpsRequestDto}" th:action="@{/tps/saveRequest}" method="post">
             <div class="box-body">
-                <div class="form-group">
+                 <div th:class="${#fields.hasErrors('distrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="distrubutor">Distributor</label>
                       <select class="form-control select2" th:field="*{distrubutor}" id="distrubutor">
 						<option selected value="">---select distributor---</option>
-						<option th:value="1001-RKAgencies" th:text="1001-RKAgencies"></option>
-						<option th:value="1002-MythriDistributor" th:text="1002-MythriDistributor"></option>
-						<option th:value="1003-KRDistributor" th:text="1003-KRDistributor"></option>
-						<option th:value="1004-GKDistributor" th:text="1004-MythriDistributor"></option>
-						<option th:value="1005-FTDistributor" th:text="1005-FTDistributor"></option>
+						<option th:each="dist : ${distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
+	              <span class="help-block" th:if="${#fields.hasErrors('distrubutor')}" th:errors="*{distrubutor}"></span>
+	                
                 </div>
-                <div class="form-group">
+                 <div th:class="${#fields.hasErrors('city')}? 'form-group has-error' : 'form-group'">
                     <label for="city">City</label>
-                    <input type="text" required="true" class="form-control" th:field="*{city}" id="city" />
+                    <input type="text"  class="form-control" th:field="*{city}" id="city" />
+                   <span class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
                 </div>
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('noOfRetailers')}? 'form-group has-error' : 'form-group'">
                     <label for="noOfRetailers">No of Retailers</label>
-                    <input type="text" required="true" class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
+                    <input type="text" class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
+                      <span class="help-block" th:if="${#fields.hasErrors('noOfRetailers')}" th:errors="*{noOfRetailers}"></span>
                 </div>
-                 <div class="form-group">
+                   <div  class="form-group">
                   <label for="retailers">Retailers</label>
                    <table>
                    <tr th:each="row, itemStat : ${tpsRequestDto.dealerName}">
+                  
                    	<td>
-							<input type="text" th:field="${tpsRequestDto.dealerName[__${itemStat.index}__].erdDealerName}" >
-							
+                   	 <div th:class="${#fields.hasErrors('dealerName')}? 'form-group has-error' : 'form-group'">
+							<input type="text"  th:field="${tpsRequestDto.dealerName[__${itemStat.index}__].erdDealerName}" id="dealerName[__${itemStat.index}__].erdDealerName">
+						 <span class="help-block" th:if="${#fields.hasErrors('dealerName')}" th:errors="*{dealerName}"></span>
+						</div>	
 						</td>
+						 
 					</tr>
 					
                    </table>
                    </div>
                   
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('plannedOn')}? 'form-group has-error' : 'form-group'">
                     <label for="plannedOn">Planned On</label>
 					    <div class="input-group date">
 					  <div class="input-group-addon">
 					    <i class="fa fa-calendar"></i>
 					  </div>
-					  <input type="text" required="true" class="form-control pull-right" th:field="*{plannedOn}" id="plannedOn">
+					  <input type="text"  class="form-control pull-right" th:field="*{plannedOn}" id="plannedOn">
+					  <span class="help-block" th:if="${#fields.hasErrors('plannedOn')}" th:errors="*{plannedOn}"></span>
 					</div>
                 </div>
-                <div class="form-group">
+                <div th:class="${#fields.hasErrors('noOfAttendee')}? 'form-group has-error' : 'form-group'">
                     <label for="noOfAttendee">Attendance</label>
-                    <input type="number" required="true" class="form-control" th:field="*{noOfAttendee}" id="noOfAttendee" />
+                    <input type="number"  class="form-control" th:field="*{noOfAttendee}" id="noOfAttendee" />
+                      <span class="help-block" th:if="${#fields.hasErrors('noOfAttendee')}" th:errors="*{noOfAttendee}"></span>
                 </div>
                 <div class="form-group">
                     <label for="instructions">Instructions</label>
-                    <textarea required="true" class="form-control" th:field="*{instructions}" id="instructions"></textarea>
+                    <textarea  class="form-control" th:field="*{instructions}" id="instructions"></textarea>
                 </div>
             </div>
             <div class="box-footer">
-                <button type="submit" class="btn btn-primary pull-right"><i class="fa fa-plus"></i>&nbsp;Save</button>
+                
+                 <button type="submit" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>

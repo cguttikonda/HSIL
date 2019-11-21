@@ -11,9 +11,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,26 +31,43 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
-import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDto;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPSService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 public class TPSController {
+	
 	 @Autowired
 	 ITPSService tpsService;
-	
+	 
+	 @Autowired
+	 IMasterService masterService;
+	    
+	 
+	 @InitBinder
+	    public void initBinder(WebDataBinder binder) {
+	        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+	    }
 	@RequestMapping("/tps/add")
 	public String add(Model model) {
 		TpsRequestDto tpsRequestDto = new TpsRequestDto();
-		
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			model.addAttribute("matList", tpsService.getLastRequestDet(userObj.getUserId()));
+		} catch (Exception e) {
+			
+		}
+    	model.addAttribute("distList",masterService.findAll());
         model.addAttribute("tpsRequestDto",tpsRequestDto);
         return "tps/tpsForm";
 
@@ -58,11 +84,25 @@ public class TPSController {
 		arrTempList.add(new EzcRequestDealers());
 		}
 		reqDto.setDealerName(arrTempList);
+	   model.addAttribute("distList",masterService.findAll());
        model.addAttribute("tpsRequestDto",reqDto);
        return "tps/tpsForm";
 	}
 	  @RequestMapping(value = "/tps/saveRequest", method = RequestMethod.POST)
-	    public String save(TpsRequestDto reqDto, final RedirectAttributes ra) {
+	    
+		  public String save(@ModelAttribute @Valid TpsRequestDto reqDto,BindingResult bindingResult, final RedirectAttributes ra, Model model)
+	  {
+		  
+		  if(bindingResult.hasErrors())
+	    	{
+			  model.addAttribute("distList",masterService.findAll());
+	    		return "tps/tpsForm";
+	    	}
+	    	else
+	    	{
+    		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        	Users userObj = (Users)authentication.getPrincipal();
+	    	
 	    	EzcRequestHeader ezRequestHeader = new EzcRequestHeader();
 	    	List<EzcRequestDealers> arrTempList =reqDto.getDealerName();
 	    	
@@ -74,10 +114,11 @@ public class TPSController {
 	    	ezRequestHeader.setErhCreatedGroup("TPS");
 	    	ezRequestHeader.setErhDistrubutor(reqDto.getDistrubutor());
 	    	ezRequestHeader.setErhNoOfAttendee(reqDto.getNoOfRetailers());
-	    	ezRequestHeader.setErhReqType("TYP");
+	    	ezRequestHeader.setErhReqType("TPS");
 	    	ezRequestHeader.setErhRequestedOn(new Date());
 	    	ezRequestHeader.setErhState("TEST"); 
 	    	ezRequestHeader.setErhStatus("NEW"); 
+	    	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
 	    	
 	    	Set<EzcRequestDealers> reqDealSet = new HashSet<EzcRequestDealers>(arrTempList);
 	    	for(EzcRequestDealers reqDealer : reqDealSet)
@@ -89,20 +130,42 @@ public class TPSController {
 	    	tpsService.createTPSRequest(ezRequestHeader);
 	        ra.addFlashAttribute("success","TPS request details saved sucessfully.");
 	        return "redirect:/tps/add";
-
+	    	}
 	    }
 	   @RequestMapping(value = "/tps/appr-tps-post", method = RequestMethod.POST)
-		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam String [] apprMat,@RequestParam Integer [] apprQty) {
+		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
+		
 			EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
 			Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
-			for(int i=0;i<apprMat.length;i++)
+			if(apprMat!=null)
+			{	
+				for(int i=0;i<apprMat.length;i++)
+				{
+					RequestMaterials reqMat = new RequestMaterials();
+					reqMat.setMatCode(apprMat[i].split("#")[0]);
+					reqMat.setMatDesc(apprMat[i].split("#")[1]);
+					reqMat.setApprQty(apprQty[i]);
+					reqMat.setIsNew('Y');
+					reqMatSet.add(reqMat);
+				}
+			}
+			if(leftOverId != null && leftOverId.length > 0)
 			{
-				RequestMaterials reqMat = new RequestMaterials();
-				reqMat.setMatCode(apprMat[i].split("#")[0]);
-				reqMat.setMatDesc(apprMat[i].split("#")[1]);
-				reqMat.setApprQty(apprQty[i]);
-				reqMatSet.add(reqMat);
+				for(int i=0;i<leftOverId.length;i++)
+				{
+					if(allocQty[i] != null && allocQty[i] > 0)
+					{
+						RequestMaterials reqMat = new RequestMaterials();
+						reqMat.setMatCode(apprMat[i].split("#")[0]);
+						reqMat.setMatDesc(apprMat[i].split("#")[1]);
+						reqMat.setApprQty(allocQty[i]);
+						reqMat.setIsNew('N');
+						reqMat.setAllocId(leftOverId[i]);
+						reqMatSet.add(reqMat);
+					}
+				}
+				
 			}
 			ezcRequestHeader.setRequestMaterials(reqMatSet);
 			tpsService.approveTPSRequest(ezcRequestHeader);
@@ -151,7 +214,8 @@ public class TPSController {
 	    		listSelector = new ListSelector();
 	    		listSelector.setStatus("ALL");
 	    		listSelector.setFromDate(c.getTime());
-	    		listSelector.setToDate(todayDate); 
+	    		listSelector.setToDate(todayDate);
+	    		listSelector.setType("TPS"); 
 	    	}
 	        //List<EzcRequestHeader> list = tpmService.getTPMRequestList("NEW"); 
 	    	List<EzcRequestHeader> list = tpsService.getTPSRequestListByDate(listSelector);
@@ -210,7 +274,7 @@ public class TPSController {
 						ezcRequestItemsObj.setEriDoa(sdf.parse(tokens[4]));
 					} catch (ParseException e) {
 						
-					}
+					} 
 		    		ezcRequestItems.add(ezcRequestItemsObj);
 		    	}
 	    	}	
@@ -237,9 +301,9 @@ public class TPSController {
 	}
 
 	  @RequestMapping(value = "/tps/processSpeech", method = RequestMethod.POST)
-	    public String processSpeechData(TpmRequestDetailDto reqDto, Model model) {
+	    public String processSpeechData(TpsRequestDetailDto reqDto, Model model) {
 			
-	        List<EzcRequestItems> ezcRequestItems=null;
+	        List<EzcRequestItems> ezcRequestItems=null; 
 	        if(reqDto.getEzcRequestItems() == null)
 	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
 	        else
@@ -257,7 +321,7 @@ public class TPSController {
 	    public String saveDetails(TpsRequestDetailDto tpsRequestDetailDto, final RedirectAttributes ra) {
 	    	tpsService.createTPSDetails(tpsRequestDetailDto);
 	        ra.addFlashAttribute("successFlash", "Success");
-	        return "redirect:/tpm/tpmRequestList";
+	        return "redirect:/tps/tpsRequestList";
 
 	    }
         

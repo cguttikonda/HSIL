@@ -176,7 +176,7 @@
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
                 	<td>
              		
-		   			<select> 
+		   			<select   class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erdDealerName}"> 
                          <option value=""> --Select Retailer-- </option>
                          <option th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}" th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></option>
                  	 </select>

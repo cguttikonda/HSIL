@@ -3,6 +3,10 @@ package com.ezc.hsil.webapp.dto;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
@@ -13,13 +17,21 @@ public class TpsRequestDto implements java.io.Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	private String requestedBy;
+	
+	@NotNull
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date plannedOn;
+	@NotNull
 	private Integer noOfAttendee;
+	@NotNull
 	private Integer noOfRetailers;
+	@NotNull
 	private String distrubutor;
+	@NotNull
+	@Size(min=0, max=40)
 	private String city;
 	private String instructions;
+	@NotEmpty
 	private List<EzcRequestDealers> dealerName;
 	
 	public TpsRequestDto() {

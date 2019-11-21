@@ -104,7 +104,16 @@ public class ModalDialogController {
 	@GetMapping(value="/appr-tps/{id}")
 	public String approveTPSModal(@PathVariable("id") String id, Model model) {
 		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
-		
+		try {
+			/*
+			 * Authentication authentication =
+			 * SecurityContextHolder.getContext().getAuthentication(); Users userObj =
+			 * (Users)authentication.getPrincipal();
+			 */
+			model.addAttribute("matList", iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
+		} catch (Exception e) {
+			 
+		}
 		model.addAttribute("tpsDetails", ezReqHead);
 		return "modals/approveTPS" ; 
 	}

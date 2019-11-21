@@ -2,6 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPS List</title>
+    <style type="text/css">
+.modal-dialog {
+    width: 90%;
+    height: 90%;
+    margin-left: 5%;
+    padding: 0;
+}
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
 </head>
 <body>
 <section layout:fragment="header">
@@ -42,7 +55,9 @@
   		 <label for="listType">Status</label><br>	
 		  <div class="input-group">
 			 <select class="form-control input-sm"  th:field="*{status}">  
-				
+				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
+				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
 				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
 			 </select>
 		  </div>
@@ -69,7 +84,8 @@
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    <td th:text="${row.id}"></td>
+                    
+                     <td><a th:href="${'/tps/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
@@ -84,10 +100,10 @@
 						</span>
 						<span th:if="${row.erhStatus == 'NEW'}">
 							<a href="#"
-							th:data-id="${row.id}"
-							onclick="javascript:openModal('approve',this.getAttribute('data-id'))"
+								th:data-id="${row.id}"	
+								onclick="javascript:openModal('approve',this.getAttribute('data-id'))"
 							class="btn btn-success btn-xs"> <span
-								class="glyphicon glyphicon-ok">APPROVE</span>
+							class="glyphicon glyphicon-ok">APPROVE</span>
 							</a>
 						</span>
 						
@@ -102,10 +118,16 @@
 <div layout:fragment="scriptContent">
 
 <script type="text/javascript">
+function geThan(field, rules, i, options){
+	 var a=rules[i+2];
+	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
+	   return "Quantity entered is greater than available stock"
+	 }
+	}
 function openModal(modelType,distId){
 	
 	if(modelType === "approve"){
-		
+	
 	
 		$.ajax({
 			url: "/modal/appr-tps/" + distId,
@@ -116,14 +138,15 @@ function openModal(modelType,distId){
 				});
 				$('#tpsReqTable').hide();
 				$("#addMatRow").click(function(){
-					$('#tpsReqTable').show();
-				//	var mat=$("#selMat").val().replace("#","-");
-					
-					$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
-					$('.deleteItem').click(function(){
-				    	$(this).closest("tr").remove();
-				    });
-					});
+					if($("#appr-tps-form").validationEngine('validate'))
+					{
+						$('#tpsReqTable').show();
+						$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+						$('.deleteItem').click(function(){
+					    	$(this).closest("tr").remove();
+					    });
+					}
+				});
 				$('#selMat').select2({
 			         placeholder: 'Select Material',
 			         ajax: {
@@ -155,7 +178,7 @@ $(document.body).on("change","#selMat",function(){
 	// alert(this.value);
 	var totVal=this.value;
 	var stkAvaQty=totVal.split("#")[2];
-	alert(stkAvaQty);
+	
 	document.getElementById("stkAva").value=stkAvaQty;
 	});
 
@@ -176,16 +199,39 @@ $(document).ready(function() {
 	);
 	 
 });
-function funCheckQty()
-{
-	if(document.getElementById("stkAva").value<document.getElementById("selQty").value)
-		{
-		alert("provided Quantity is greater than available Quantity.");
-		
-		}
-	
-}
+
 function approveTPSReq(event){
+	var leftOverCnt=parseInt($("#leftOverCnt").val());
+	var qtyEntered = false;
+	for(i=0;i<leftOverCnt;i++)
+	{
+			if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
+			{
+				qtyEntered = true;
+			}
+			else
+			{
+				continue;
+			}
+			if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
+			{
+				$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
+				return ;
+			}
+	}
+	if(!qtyEntered)
+	{
+		if($(".apprMat").size() > 0)
+		{
+			qtyEntered =true;
+		}
+	}
+	if(!qtyEntered)
+	{
+		$('#selQty').validationEngine('showPrompt', 'Allocate atleast one material', '');
+		return ;
+	}
+
 	var formdata = $('#appr-tps-form').serialize();
 	//alert("ok1");
 	$.ajax({

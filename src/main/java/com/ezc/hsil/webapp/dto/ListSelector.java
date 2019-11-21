@@ -13,10 +13,21 @@ public class ListSelector {
 	private Date toDate;
 	
 	private String status;
+	private String type;
 
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 	public Date getFromDate() {
 		return fromDate;
 	}
+
+	
 
 	public void setFromDate(Date fromDate) {
 		this.fromDate = fromDate;

@@ -46,6 +46,9 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private Integer erhNoOfAttendee;
 	private String erhDistrubutor; 
 	private String erhCity;
+	
+
+	private String erhVenue;
 	private String erhInstructions;
 	private Double erhCostIncured;
 	
@@ -276,6 +279,16 @@ public class EzcRequestHeader implements java.io.Serializable {
 	public void setErhCostIncured(Double erhCostIncured) {
 		this.erhCostIncured = erhCostIncured;
 	}
+	
+	@Column(name = "ERH_VENUE",length=50)
+	public String getErhVenue() {
+		return erhVenue;
+	}
+
+	public void setErhVenue(String erhVenue) {
+		this.erhVenue = erhVenue;
+	}
+	
 
 	
 	
