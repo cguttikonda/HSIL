@@ -45,15 +45,18 @@
          
         #no-more-tables td:before {
         /* Now like a table header */
+        background-color: #3c8dbc;
+	    color:white;
         position: absolute;
         /* Top/left values mimic padding */
-        top: 6px;
+        /* top: 6px; */
         left: 6px;
         width: 45%;
-        padding-right: 10px;
+        /* padding-right: 10px; */
         white-space: nowrap;
         text-align:left;
         font-weight: bold;
+        padding:5px;
         }
          
         /*
@@ -79,7 +82,7 @@
                 <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tpm/saveDetails}" method="post" name="myForm">
+        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tpm/saveDetails}" method="post" name="myForm" id="myForm">
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
@@ -101,7 +104,7 @@
               </div>
               <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control" required="true"  type="number"></div>
+                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]"  type="number"></div>
               </div>
            </div>
       <div id="no-more-tables">
@@ -119,7 +122,8 @@
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
 						<td data-title="Material">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matCode}">
-							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode}"></span>
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}">
+							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
 						</td>
 						<td data-title="Approved Qty">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
@@ -129,13 +133,21 @@
                 	</tbody>
                 </table>
                 </div>
-    
+    			<div class="input-group">
                 <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
+                
+                	<span class="input-group-addon btn-group-vertical">
+					  <button type="button" class="btn btn-success" id="start-record-btn"><i class="fa fa-microphone" id="start-record-btn"></i>&nbsp;&nbsp;Record</button>
+					  <button type="button" class="btn btn-danger" id="pause-record-btn"><i class="fa fa-pause"></i>&nbsp;&nbsp;Pause</button>
+					  <button type="button" class="btn btn-warning" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal"><i class="fa fa-play"></i>&nbsp;&nbsp;Sample</button>
+					</span>
+                
+                </div>
                 <p id="recording-instructions"></p>
                 
-                <i id="start-record-btn" class="fa fa-microphone" style="color: white;padding: 10px;background: #87bf54;border-radius: 50%;"></i>
+                <!-- <i id="start-record-btn" class="fa fa-microphone" style="color: white;padding: 10px;background: #87bf54;border-radius: 50%;"></i>
                 <i id="pause-record-btn" class="fa fa-pause" style="color: white;padding: 10px;background: #de8d5d;border-radius: 50%;"></i>
-                <button type="button" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal" class="btn btn-warning"><i class="fa fa-play"></i>&nbsp;Sample Voice Format</button>
+                <button type="button" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal" class="btn btn-warning"><i class="fa fa-play"></i>&nbsp;Sample Voice Format</button> -->
     			<div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
@@ -152,8 +164,8 @@
             			<td colspan="2"> No Items Added </td>
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Plumber"><input type="text"  class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
-						<td data-title="Contact No"><input type="text"  class="form-control" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+						<td data-title="Name Of Plumber"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
+						<td data-title="Contact No"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">
@@ -181,7 +193,7 @@
             <div class="box-footer">
                 <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
                 <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
-                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" onclick="onSaveClick()"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -208,6 +220,7 @@
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
+
  $('.datePickObj').datepicker({
       autoclose: true,
       format: 'dd/mm/yyyy'
@@ -216,6 +229,15 @@
     	$(this).closest("tr").remove();
     });
      				
+    function onSaveClick()
+    {
+		if($("#myForm").validationEngine('validate'))
+		{
+		
+			document.myForm.submit();
+		}
+
+    }
     function readOutLoud() {
      	var message = $("#sampleTxt").text();
     	var speech = new SpeechSynthesisUtterance();

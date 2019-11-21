@@ -68,11 +68,16 @@ public class TpmServiceImpl implements ITPMService{
 		  ezReqHeader.setErhStatus("SUBMITTED");
 		  ezReqHeader.setErhCostIncured(tpmRequestDetailDto.getReqHeader().getErhCostIncured());
 		  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
-		  for(EzcRequestItems tempItem : ezReqItemList) { 
-			  tempItem.setEzcRequestHeader(ezReqHeader);	
-			  reqDtlRep.save(tempItem); 
+		  int matCnt = 0;
+		  for(EzcRequestItems tempItem : ezReqItemList) {
+			  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
+			  {
+				  matCnt++;
+				  tempItem.setEzcRequestHeader(ezReqHeader);	
+				  reqDtlRep.save(tempItem);
+			  }
 			}
-		   int matCnt = ezReqItemList.size();
+		  
 		   for(RequestMaterials requestMaterials : reqMatSet) { 
 			   int apprQty =requestMaterials.getApprQty();
 			   if(apprQty > matCnt)
@@ -92,9 +97,9 @@ public class TpmServiceImpl implements ITPMService{
 		@Override
 		public List<EzcRequestHeader> getTPMRequestListByDate(ListSelector listSelector) {
 			if("ALL".equals(listSelector.getStatus()))
-				return reqHeaderRepo.findByErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getToDate(),listSelector.getFromDate());	
+				return reqHeaderRepo.findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());	
 			else	
-				return reqHeaderRepo.findByErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+				return reqHeaderRepo.findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
 		}
 
 		@Override
