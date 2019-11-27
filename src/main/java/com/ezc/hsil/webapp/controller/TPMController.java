@@ -63,7 +63,7 @@ public class TPMController {
     	try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
-			model.addAttribute("matList", tpmService.getLastRequestDet(userObj.getUserId()));
+			model.addAttribute("matList", tpmService.getLeftOverStock(userObj.getUserId()));
 		} catch (Exception e) {
 			
 		}

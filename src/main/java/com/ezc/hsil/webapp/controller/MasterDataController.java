@@ -1,8 +1,13 @@
 package com.ezc.hsil.webapp.controller;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +20,17 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
+import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.service.IMasterService;
+import com.ezc.hsil.webapp.util.EzExcelUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +40,11 @@ import lombok.extern.slf4j.Slf4j;
 public class MasterDataController {
 
 	@Autowired
+    private EzExcelUtil ezExcelUtil;
+
+	@Autowired
 	IMasterService masterService;
+
 	@Value("#{'${city}'.split(',')}")
 	private List<String> city;
 	
@@ -150,6 +165,73 @@ public class MasterDataController {
 		
 	}
 	
+	@RequestMapping(value = "/distSamp", method = RequestMethod.GET)
+    public StreamingResponseBody getDistSample(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.ms-excel"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","Business Unit Name","City"};
+        return ezExcelUtil.writeExcel(distCodeArr,null,"distributors"); 
+    }
 	
+	@RequestMapping(value = "/distDown", method = RequestMethod.GET)
+    public StreamingResponseBody getDistDownload(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.ms-excel"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","Business Unit Name","City"};
+
+        List<DistributorMaster> distMastList= masterService.findAll();
+        List<Object[]> objArrList=null;
+		try {
+			objArrList = getObjectArray(distMastList);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return ezExcelUtil.writeExcel(distCodeArr,objArrList,"distributors"); 
+    }
 	
+	@PostMapping("/distUpload")
+	public void uploadDistributor(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+		List<DistributorMaster> distList = new ArrayList<DistributorMaster>();
+		List<Object[]> lisObjArr= ezExcelUtil.readExcel(reapExcelDataFile.getInputStream(),reapExcelDataFile.getOriginalFilename());
+		 for(Object[] objArr:lisObjArr)
+		 {
+				 DistributorMaster distMaster = new DistributorMaster();
+				 distMaster.setCode((String)objArr[0]);
+				 distMaster.setName((String)objArr[1]);
+				 distMaster.setContact((String)objArr[2]);
+				 distMaster.setOrganisation((String)objArr[3]);
+				 distMaster.setCity((String)objArr[4]);
+				 distList.add(distMaster);
+		 }
+		 masterService.addDistributorMultiple(distList);
+	    }
+	
+	public <T extends Object> List<Object[]> getObjectArray(List<T> objList) throws NoSuchAlgorithmException, IllegalArgumentException, IllegalAccessException {
+		   
+		   List<Object[]> listOutArr = new ArrayList<Object[]>();
+		   for(T obj:objList)
+		   {
+			   Field[] fields = obj.getClass().getDeclaredFields();
+			   int fieldCount = fields.length;
+			   Object[] objArr = new Object[fieldCount];
+	
+			   for (int i = 0; i < objArr.length; i++) {
+			     Field field = fields[i];
+			     field.setAccessible(true);
+	
+			     objArr[i] = field.get(obj);
+			   }
+			   listOutArr.add(objArr);
+		   }
+		   return listOutArr;
+		}
 }

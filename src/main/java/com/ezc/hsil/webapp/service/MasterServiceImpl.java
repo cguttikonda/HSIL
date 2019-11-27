@@ -176,6 +176,12 @@ public class MasterServiceImpl implements IMasterService {
 	public List<MaterialMaster> findAllMaterialsLike(String q) {
 		return matMastRep.findAllMaterialsLike(q);
 	}
+
+	@Override
+	public String addDistributorMultiple(List<DistributorMaster> distList) {
+		distMastRepo.saveAll(distList);
+		return null;
+	}
 	
 	
 	

@@ -1,0 +1,18 @@
+<div id="uploadExcelFrag"  class="modal fade" role="dialog" th:fragment="uploadExcel(action)">
+	<div class="modal-dialog">
+		<form th:action="${action}" method="post" enctype="multipart/form-data">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold" th:text="${title}"></span></h4>
+			</div>
+				<div class="modal-body">
+			    <input type="file" th:name="file">
+				</div>	
+				<div class="modal-footer">
+					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="submit" class="btn btn-primary">Upload</button>
+				</div>
+		</div>
+		</form>
+	</div>
+</div>

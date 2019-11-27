@@ -6,8 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
-import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
 import com.ezc.hsil.webapp.service.ITPSService;
 import com.ezc.hsil.webapp.service.IUserService;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping("/modal")
 public class ModalDialogController {
@@ -40,6 +40,7 @@ public class ModalDialogController {
 	
 	@Autowired
     private ITPSService iTPSService;
+	
 	
 	@Value("#{'${city}'.split(',')}")
 	private List<String> city;
@@ -65,18 +66,18 @@ public class ModalDialogController {
     }
 	
 
-	@GetMapping(value="/edit-material/{id}")
+	@GetMapping(value="/edit-material/{materialCode}")
 	public String editMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
 		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
 		model.addAttribute("city", city);
 		return "modals/editMaterial" ;
 	}
-	@GetMapping(value="/delete-material/{id}")
+	@GetMapping(value="/delete-material/{materialCode}")
 	public String deleteMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
 		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
 		return "modals/deleteMaterial" ;
 	}
-	
+	 
 	@GetMapping(value="/appr-tpm/{id}")
 	public String approveTPMModal(@PathVariable("id") String id, Model model) {
 		EzcRequestHeader ezReqHead = iTPMService.getTPMRequest(id);
@@ -117,4 +118,9 @@ public class ModalDialogController {
 		model.addAttribute("tpsDetails", ezReqHead);
 		return "modals/approveTPS" ; 
 	}
+
+	
 }
+
+
+

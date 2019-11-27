@@ -10,34 +10,20 @@ import com.ezc.hsil.webapp.model.MaterialMaster;
 
 public interface IMasterService {
 
-	
-	
+
+
 	DistributorMaster addNewDistributor(DistributorDto distDto);
-	
 	List<DistributorMaster> findAll();
-	
 	DistributorDto getDistributorDetails(String code);
-	
-	
 	String updateDistributor(DistributorDto distDto) throws SQLException;
-	
 	String deleteDistributor(String code);
-	
-	
-	
-//	Material Master Processing
-	
+	String addDistributorMultiple(List<DistributorMaster> distList);
 	
 	MaterialMaster addNewMaterial(MaterialDto mDto);
-	
 	List<MaterialMaster> getAllMaterials();
-	
-	
 	MaterialDto getMaterialDetails(String materialCode);
-	
 	String updateMaterial(MaterialDto matDto)  throws SQLException;
-
 	List<MaterialMaster> findAllMaterialsLike(String q);
-	
-	
+
+
 }
