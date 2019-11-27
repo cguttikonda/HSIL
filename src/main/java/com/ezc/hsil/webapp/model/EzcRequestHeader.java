@@ -46,12 +46,13 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private Integer erhNoOfAttendee;
 	private String erhDistrubutor; 
 	private String erhCity;
+	private String erhPurpose;
 	
 
 	private String erhVenue;
 	private String erhInstructions;
 	private Double erhCostIncured;
-	
+	private char erhDispatchFlag;
 	private Set<EzcRequestItems> ezcRequestItems = new HashSet<EzcRequestItems>(0);
 	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
 	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);
@@ -106,6 +107,14 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setId(String id) {
 		this.id = id; 
+	}
+	@Column(name = "ERH_DISPATCH_FLAG")
+	public char getErhDispatchFlag() {
+		return erhDispatchFlag;
+	}
+
+	public void setErhDispatchFlag(char erhDispatchFlag) {
+		this.erhDispatchFlag = erhDispatchFlag;
 	}
 
 	@Column(name = "ERH_REQ_TYPE", length = 5)
@@ -287,6 +296,15 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setErhVenue(String erhVenue) {
 		this.erhVenue = erhVenue;
+	}
+
+	@Column(name = "ERH_PURPOSE",length=100)
+	public String getErhPurpose() {
+		return erhPurpose;
+	}
+
+	public void setErhPurpose(String erhPurpose) {
+		this.erhPurpose = erhPurpose;
 	}
 	
 

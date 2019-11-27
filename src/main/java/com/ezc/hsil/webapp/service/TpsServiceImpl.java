@@ -53,10 +53,10 @@ public class TpsServiceImpl implements ITPSService {
 	  ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 	  ezReqHeader.setErhStatus("APPROVED");
 	  
-	  for(RequestMaterials tempItem : ezReqMatList) { 
+	 /* for(RequestMaterials tempItem : ezReqMatList) { 
 		  tempItem.setEzcRequestHeader(ezReqHeader);	
 		  reqMatRep.save(tempItem); 
-		}
+		}*/
 	  for(RequestMaterials tempItem : ezReqMatList) {
 	      Character c1 = new Character('N'); 
 		  if(c1.equals(tempItem.getIsNew()))
@@ -104,11 +104,16 @@ public class TpsServiceImpl implements ITPSService {
 	  ezReqHeader.setErhCostIncured(tpsRequestDetailDto.getReqHeader().getErhCostIncured());
 	  ezReqHeader.setErhVenue(tpsRequestDetailDto.getReqHeader().getErhVenue());
 	  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
-	  for(EzcRequestItems tempItem : ezReqItemList) { 
-		  tempItem.setEzcRequestHeader(ezReqHeader);	
-		  reqDealRep.save(tempItem); 
+	  int matCnt = 0;
+	  for(EzcRequestItems tempItem : ezReqItemList) {
+		  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
+          {
+              matCnt++;
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  reqDealRep.save(tempItem);
+          }
 		}
-	  int matCnt = ezReqItemList.size();
+	  
 	   for(RequestMaterials requestMaterials : reqMatSet) { 
 		   int apprQty =requestMaterials.getApprQty();
 		   if(apprQty > matCnt)

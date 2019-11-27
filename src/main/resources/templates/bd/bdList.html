@@ -2,25 +2,12 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPS List</title>
-    <style type="text/css">
-.modal-dialog {
-    width: 90%;
-    height: 90%;
-    margin-left: 5%;
-    padding: 0;
-}
-.modal-content {
-  height: auto;
-  min-height: 100%;
-  border-radius: 0;
-}
-    </style>
 </head>
 <body>
 <section layout:fragment="header">
     <h1>TPS List</h1>
 <ol class="breadcrumb">
-    <li><a href="/"><i class="fa fa-dashboard"></i> TPS</a></li>
+    <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
     <li class="active">List</li>
 </ol>
 </section>
@@ -28,7 +15,7 @@
     <div class="box">
         <div class="box-body no-padding">
         
- <form role="form"  th:object="${listSelector}" th:action="@{/tps/tpsRequestList}" method="get" name="myForm">
+ <form role="form"  th:object="${listSelector}" th:action="@{/bd/bdRequestList}" method="get" name="myForm">
 <table class="table table-striped" style="margin-bottom: 1%;">
   <tbody><tr>  
 	<td>
@@ -56,7 +43,6 @@
 		  <div class="input-group">
 			 <select class="form-control input-sm"  th:field="*{status}">  
 				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
-				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
 				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
 				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
 			 </select>
@@ -74,36 +60,20 @@
                        <thead>			
                 <tr>
                     <th>ID</th>
-                    <th>Distributor</th>
-                    <th>City</th>
-                    <th>Meeting Date</th>
-                    <th>No Of Retailers</th>
                     <th>Status</th>
                     <th></th>
                 </tr>
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    
-                     <td><a th:href="${'/tps/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
-                    <td th:text="${row.erhDistrubutor}"></td>
-                    <td th:text="${row.erhCity}"></td>
-                    <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
-                    <td th:text="${row.erhNoOfAttendee}"></td>
+                    <td><a th:href="${'/bd/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhStatus}"></td>
                      <td>
-                    	<span th:if="${row.erhStatus == 'APPROVED'}">
-							<a th:href="${'/tps/addDetails/' + {row.id}}"
+                    	
+						<span th:if="${row.erhStatus == 'APPROVED'}">
+							<a th:href="${'/bd/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>
-							</a>
-						</span>
-						<span th:if="${row.erhStatus == 'NEW'}">
-							<a href="#"
-								th:data-id="${row.id}"	
-								onclick="javascript:openModal('approve',this.getAttribute('data-id'))"
-							class="btn btn-success btn-xs"> <span
-							class="glyphicon glyphicon-ok">APPROVE</span>
 							</a>
 						</span>
 						
@@ -118,69 +88,6 @@
 <div layout:fragment="scriptContent">
 
 <script type="text/javascript">
-function geThan(field, rules, i, options){
-	 var a=rules[i+2];
-	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
-	   return "Quantity entered is greater than available stock"
-	 }
-	}
-function openModal(modelType,distId){
-	
-	if(modelType === "approve"){
-	
-	
-		$.ajax({
-			url: "/modal/appr-tps/" + distId,
-			success: function(data){
-				$("#apprTPSModalHolder").html(data);
-				$('#apprTPSModal').modal({
-					backdrop: 'static'
-				});
-				$('#tpsReqTable').hide();
-				$("#addMatRow").click(function(){
-					if($("#appr-tps-form").validationEngine('validate'))
-					{
-						$('#tpsReqTable').show();
-						$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
-						$('.deleteItem').click(function(){
-					    	$(this).closest("tr").remove();
-					    });
-					}
-				});
-				$('#selMat').select2({
-			         placeholder: 'Select Material',
-			         ajax: {
-			           url: '/modal/mat-autocomp?type=text',
-			           dataType: 'json',
-			           delay: 250,
-			           processResults: function (data) {
-			             return {
-	 	    	                       results: $.map(data, function (item) {
-	 	    	                          return {
-	 	    	                              text: item.materialCode+"-"+item.materialDesc,
-	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
-	 	    	                          }
-	 	    	                      }) 
-			 	                  };
-			 	               
-			           },
-			           cache: true
-			         }
-				
-			    });
-				
-			}
-		});
-		
-	}
-}
-$(document.body).on("change","#selMat",function(){
-	// alert(this.value);
-	var totVal=this.value;
-	var stkAvaQty=totVal.split("#")[2];
-	
-	document.getElementById("stkAva").value=stkAvaQty;
-	});
 
 $(document).ready(function() {
 		
@@ -199,7 +106,18 @@ $(document).ready(function() {
 	);
 	 
 });
-
+function funCheckQty()
+{
+	//alert(document.getElementById("stkAva").value);
+	//alert(document.getElementById("selQty").value);
+	document.getElementById("addMatRow").disabled=false;
+	if(parseInt(document.getElementById("stkAva").value)<parseInt(document.getElementById("selQty").value))
+		{
+		alert("provided Quantity is greater than available Quantity.");
+		document.getElementById("addMatRow").disabled=true;
+		}
+	
+}
 function approveTPSReq(event){
 	var leftOverCnt=parseInt($("#leftOverCnt").val());
 	var qtyEntered = false;

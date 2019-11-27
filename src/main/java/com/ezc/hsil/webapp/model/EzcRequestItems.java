@@ -40,6 +40,9 @@ public class EzcRequestItems implements java.io.Serializable {
 	private Date eriDoa;
 	private String eriContact;
 	private String eriDealer;
+	private String erilocation;
+	private String eriGift;
+	private String eriProfDet;
 
 
 
@@ -47,7 +50,7 @@ public class EzcRequestItems implements java.io.Serializable {
 	}
 
 	public EzcRequestItems(EzcRequestHeader ezcRequestHeader, String eriPartType, String eriPartName,
-			String eriPlumberName, Date eriDob, Date eriDoa, String eriContact,String eriDealer) {
+			String eriPlumberName, Date eriDob, Date eriDoa, String eriContact,String eriDealer,String eriGift,String erilocation,String eriProfDet) {
 		this.ezcRequestHeader = ezcRequestHeader;
 		this.eriPartType = eriPartType;
 		this.eriPartName = eriPartName;
@@ -56,6 +59,9 @@ public class EzcRequestItems implements java.io.Serializable {
 		this.eriDoa = eriDoa;
 		this.eriContact = eriContact;
 		this.eriDealer = eriDealer;
+		this.erilocation = erilocation;
+		this.eriGift = eriGift;
+		this.eriGift = eriProfDet;
 	}
 
 	@Id
@@ -144,4 +150,32 @@ public class EzcRequestItems implements java.io.Serializable {
 	public void setEriDealer(String eriDealer) {
 		this.eriDealer = eriDealer;
 	}
+
+	@Column(name = "ERI_LOCATION", length = 100)
+	public String getErilocation() {
+		return erilocation;
+	}
+
+	public void setErilocation(String erilocation) {
+		this.erilocation = erilocation;
+	}
+
+	@Column(name = "ERI_GIFT", length = 100)
+	public String getEriGift() {
+		return eriGift;
+	}
+
+	public void setEriGift(String eriGift) {
+		this.eriGift = eriGift;
+	}
+
+	@Column(name = "ERI_PROF_DET", length = 500)
+	public String getEriProfDet() {
+		return eriProfDet;
+	}
+
+	public void setEriProfDet(String eriProfDet) {
+		this.eriProfDet = eriProfDet;
+	}
+	
 }

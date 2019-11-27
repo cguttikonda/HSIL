@@ -157,8 +157,8 @@ public class TPSController {
 					if(allocQty[i] != null && allocQty[i] > 0)
 					{
 						RequestMaterials reqMat = new RequestMaterials();
-						reqMat.setMatCode(apprMat[i].split("#")[0]);
-						reqMat.setMatDesc(apprMat[i].split("#")[1]);
+						reqMat.setMatCode(leftOverMat[i].split("#")[0]);
+						reqMat.setMatDesc(leftOverMat[i].split("#")[1]);
 						reqMat.setApprQty(allocQty[i]);
 						reqMat.setIsNew('N');
 						reqMat.setAllocId(leftOverId[i]);

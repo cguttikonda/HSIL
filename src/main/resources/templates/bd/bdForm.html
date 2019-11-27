@@ -1,0 +1,104 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>BD</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>BD & Marketing</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${success}" ></span>
+   	</div>
+    <div class="box">
+    	     <form name="myForm" id="myForm" data-toggle="validator" role="form" th:action="@{/bd/saveRequest}" th:object="${bdReqDto}" th:method="post">
+            <div class="box-body">
+            
+            
+            
+
+                     <div th:class="${#fields.hasErrors('bdMatCode')}? 'form-group has-error' : 'form-group'">   
+                    <label for="selMat">Material</label>
+                    <select  id="selMat" class="select2 form-control"  style="width:100%" th:field="*{bdMatCode}">
+                    
+						</select>
+                      <span class="help-block" th:if="${#fields.hasErrors('bdMatCode')}" th:errors="*{bdMatCode}"></span>
+                </div>
+                 <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
+                    <label for="bdQty">Quantity</label>
+                    <input type="number"  class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" th:field="*{bdQty}" id="bdQty" />
+                    <span class="help-block" th:if="${#fields.hasErrors('bdQty')}" th:errors="*{bdQty}"></span>
+                </div>
+               
+               <div>
+                    <label for="stkAva">Stock Availbility</label>
+                      <input type="text" readonly name="stkAva" id="stkAva" class="form-control">
+                   
+                </div>
+              
+                    </div>
+            <div class="box-footer">
+                
+                 <button type="button" id="save" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+function geThan(field, rules, i, options){
+	 var a=rules[i+2];
+	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
+	   return "Quantity entered is greater than available stock"
+	 }
+	}
+$(document.body).on("change","#selMat",function(){
+	// alert(this.value);
+	var totVal=this.value;
+	var stkAvaQty=totVal.split("#")[2];
+	document.getElementById("stkAva").value=stkAvaQty;
+	});
+$(document).ready(function(){
+	$("#save").click(function(){
+		if($("#myForm").validationEngine('validate'))
+		{
+			
+			document.myForm.submit();
+		}
+	});
+	
+	
+	$('#selMat').select2({
+			         placeholder: 'Select Material',
+			         ajax: {
+			           url: '/modal/mat-autocomp?type=text',
+			           dataType: 'json',
+			           delay: 250,
+			           processResults: function (data) {
+			             return {
+	 	    	                       results: $.map(data, function (item) {
+	 	    	                          return {
+	 	    	                              text: item.materialCode+"-"+item.materialDesc,
+	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	 	    	                              
+	 	    	                          }
+	 	    	                      }) 
+			 	                  };
+			           },
+			           cache: true
+			         }
+			    });
+});
+		
+
+
+   </script>
+</div>
+</body>
+</html>
