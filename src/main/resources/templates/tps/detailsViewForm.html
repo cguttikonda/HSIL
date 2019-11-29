@@ -82,7 +82,7 @@
                 <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tps/saveDetails}" method="post" name="myForm" id="myForm">
+        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tps/back}" method="post" name="myForm">
             <div class="box-body">
            
             
@@ -108,11 +108,11 @@
                <div class=row>	
               <label class="col-lg-2 control-label">City of the meet</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><input th:field="*{reqHeader.erhCity}"  placeholder="" class="form-control validate[required]"   type="text"></div>
+                 <div class="input-group"><input th:field="*{reqHeader.erhCity}"  placeholder="" class="form-control validate[required]"   type="text" readonly></div>
               </div>
               <label class="col-lg-2 control-label">Venue</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><input th:field="*{reqHeader.erhVenue}"  placeholder="" class="form-control validate[required]"   type="text"></div>
+                 <div class="input-group"><input th:field="*{reqHeader.erhVenue}"  placeholder="" class="form-control validate[required]"   type="text" readonly></div>
                  
                  
               </div>
@@ -128,7 +128,7 @@
               </div>
            </div>
            
-      <div id="no-more-tables">
+      <div id="no-more-tables" th:if="${not #lists.isEmpty(ezReqMatList)}">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
@@ -153,44 +153,28 @@
                 	</tr>
                 	</tbody>
                 </table>
-                   <table class="col-sm-12 table-bordered table-condensed cf">
-					<thead class="cf">
+                </div>
+    	 <div id="no-more-tables" th:if="${ezcComments!=null}">
+            
+             <table class="table table-bordered" >
+					<thead>
 						<tr>
-							<th colspan='2'>Comments</th>
+							<th>Comments</th>
 						</tr>
 						</thead>
 					<tbody>
-					<tr th:each="row, itemStat : *{ezcComments}">
-					<td>	<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].createdBy}">
-						<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].comments}">
-					<span th:text="*{ezcComments[__${itemStat.index}__].createdBy}"></span></td>
-							<td th:text="*{ezcComments[__${itemStat.index}__].comments}"> </td>
-						</tr>
 						<tr>	
-						<td><span sec:authentication="principal.firstName"> &nbsp; </span></td>
-							<td><textarea class="form-control validate[required]" name="comments" th:field="*{commentReqDto}"></textarea></td>
+							<td><textarea class="form-control" name="comments" th:text="*{ezcComments.comments}" readonly></textarea></td>
 						</tr>	
 							
 					
 					</tbody>
 					</table>
-    
-    
-                </div>
+            
+            
+            </div>
                 
-    	<div class="input-group">
-                <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
-                
-                	<span class="input-group-addon btn-group-vertical">
-					  <button type="button" class="btn btn-success" id="start-record-btn"><i class="fa fa-microphone" id="start-record-btn"></i>&nbsp;&nbsp;Record</button>
-					  <button type="button" class="btn btn-danger" id="pause-record-btn"><i class="fa fa-pause"></i>&nbsp;&nbsp;Pause</button>
-					  <button type="button" class="btn btn-warning" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal"><i class="fa fa-play"></i>&nbsp;&nbsp;Sample</button>
-					</span>
-                
-                </div>
-                <p id="recording-instructions"></p>
-                
-    			<div id="no-more-tables">
+    			<div id="no-more-tables" th:if="${not #lists.isEmpty(reqDto.ezcRequestItems)}">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
@@ -241,9 +225,8 @@
                 </div>
             </div>
             <div class="box-footer">
-                <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
-                <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
-                <button type="button"  onclick="onSaveClick()"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+               
+                <button type="submit"  onclick="funBack()"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Back</button>
             </div>
         </form>
     </div>
@@ -394,7 +377,12 @@
 	  noteContent = $(this).val();
 	})
 
- 
+ function funBack()
+	{
+		
+		
+		
+	}
 
 	</script>
 </div>

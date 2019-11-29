@@ -33,10 +33,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDto;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPSService;
@@ -133,11 +135,20 @@ public class TPSController {
 	    	}
 	    }
 	   @RequestMapping(value = "/tps/appr-tps-post", method = RequestMethod.POST)
-		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
+		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
 		
 			EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
 			Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
+			Set<EzcComments> commSet = new HashSet<EzcComments>();
+			if(comments!= null)
+			{
+				EzcComments comm=new EzcComments();
+				comm.setComments(comments);
+				comm.setType("APPROVE");
+				commSet.add(comm);
+			
+			}
 			if(apprMat!=null)
 			{	
 				for(int i=0;i<apprMat.length;i++)
@@ -168,8 +179,28 @@ public class TPSController {
 				
 			}
 			ezcRequestHeader.setRequestMaterials(reqMatSet);
+			ezcRequestHeader.setEzcComments(commSet);
 			tpsService.approveTPSRequest(ezcRequestHeader);
 			return "ok"; 
+		}
+	   @RequestMapping(value = "/tps/rej-tps-post", method = RequestMethod.POST)
+		public @ResponseBody String rejectTpsRequest(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "rejectComments", required = false) String rejectComments ) {
+			log.debug("rejectComments"+rejectComments);
+	    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
+			ezcRequestHeader.setId(id);
+			Set<EzcComments> comments = new HashSet<EzcComments>();
+			if(rejectComments != null)
+			{
+				
+					EzcComments reqCom = new EzcComments();
+					reqCom.setComments(rejectComments);
+					reqCom.setType("REJECT");
+					comments.add(reqCom);
+				
+			}
+				ezcRequestHeader.setEzcComments(comments);
+			tpsService.rejectTPSRequest(ezcRequestHeader);
+			return "ok";
 		}
 	    
 	   @RequestMapping(value = "/tps/addDetails/{docId}", method = RequestMethod.GET)
@@ -178,7 +209,13 @@ public class TPSController {
 	        TpsRequestDetailDto reqDto = new TpsRequestDetailDto();
 	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
 	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
+	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
 	        List<EzcRequestDealers> ezcRequestDealers=new ArrayList<EzcRequestDealers>();
+	     
+	        for(EzcComments item : ezcRequestHeader.getEzcComments())
+			{
+	        	ezcComm.add(item); 
+			}
 			for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
 			{
 				ezcRequestItems.add(item); 
@@ -194,6 +231,7 @@ public class TPSController {
 	        reqDto.setEzcRequestItems(ezcRequestItems);
 	        reqDto.setReqHeader(ezcRequestHeader);
 	        reqDto.setEzcRequestDealers(ezcRequestDealers);
+	        reqDto.setEzcComments(ezcComm);
 	        reqDto.setEzReqMatList(ezcMatList);
 	        model.addAttribute("reqDto", reqDto);
 	        if("APPROVED".equals(ezcRequestHeader.getErhStatus()))
@@ -202,14 +240,51 @@ public class TPSController {
 	        	return "tps/detailsEditForm";
 
 	    }   
+	   @RequestMapping(value = "/tps/viewDetails/{docId}", method = RequestMethod.GET)
+	    public String viewDetails(@PathVariable String docId, Model model) {
+	        EzcRequestHeader ezcRequestHeader = tpsService.getTPSRequest(docId);
+	        TpsRequestDetailDto reqDto = new TpsRequestDetailDto();
+	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
+	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
+	        List<EzcRequestDealers> ezcRequestDealers=new ArrayList<EzcRequestDealers>();
+	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
+	        ezcComm=tpsService.getTPSCommentRequest(docId);
+			for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
+			{
+				ezcRequestItems.add(item); 
+			}
+			for(RequestMaterials item : ezcRequestHeader.getRequestMaterials())
+			{
+				ezcMatList.add(item); 
+			}
+			for(EzcRequestDealers item : ezcRequestHeader.getEzcRequestDealers())
+			{
+				ezcRequestDealers.add(item); 
+			}
+	        reqDto.setEzcRequestItems(ezcRequestItems);
+	        reqDto.setReqHeader(ezcRequestHeader);
+	        reqDto.setEzcRequestDealers(ezcRequestDealers);
+	        reqDto.setEzcComments(ezcComm);
+	        reqDto.setEzReqMatList(ezcMatList);
+	        model.addAttribute("reqDto", reqDto);
+	        
+	        return "tps/detailsViewForm";
 
-	  @RequestMapping(value = "/tps/tpsRequestList", method = RequestMethod.GET)
+	    }   
+
+
+	   @RequestMapping(value = "/tps/back", method = RequestMethod.POST)
+	   public String list( Model model) {
+		   return "redirect:/tps/tpsRequestList";
+		   
+	   }
+	   @RequestMapping(value = "/tps/tpsRequestList", method = RequestMethod.GET)
 	    public String list(ListSelector listSelector , Model model) {
 	    	if(listSelector == null || listSelector.getFromDate() == null)
 	    	{
 	    		Date todayDate = new Date();
 	    		Calendar c = Calendar.getInstance(); 
-	    		c.setTime(todayDate); 
+	    		c.setTime(todayDate);  
 	    		c.add(Calendar.MONTH, -3);
 	    		listSelector = new ListSelector();
 	    		listSelector.setStatus("ALL");

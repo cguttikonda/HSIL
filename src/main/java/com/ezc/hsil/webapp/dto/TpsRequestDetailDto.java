@@ -8,6 +8,7 @@ import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.EzcComments;
 
 public class TpsRequestDetailDto {
 
@@ -16,13 +17,23 @@ public class TpsRequestDetailDto {
 //	Set<RequestMaterials> ezReqMatList = new HashSet<RequestMaterials>();
 	List<RequestMaterials> ezReqMatList = null;
 	List<EzcRequestDealers> ezcRequestDealers = null;
+	List<EzcComments> ezcComments = new  ArrayList<EzcComments>();
 	private String costIncured="";
 	private String avgSales="";
 	private String recordedText="";
 	private String cityOfMeet="";
 	private String venue="";
+	private String commentReqDto="";
 	
 	
+	public String getCommentReqDto() {
+		return commentReqDto;
+	}
+
+	public void setCommentReqDto(String commentReqDto) {
+		this.commentReqDto = commentReqDto;
+	}
+
 	public String getCityOfMeet() {
 		return cityOfMeet;
 	}
@@ -101,7 +112,15 @@ public class TpsRequestDetailDto {
 		this.recordedText = recordedText;
 	}
 
+	public List<EzcComments>  getEzcComments() {
+		return ezcComments;
+	}
 
+	public void setEzcComments(List<EzcComments> ezcComments) {
+		this.ezcComments = ezcComments;
+	}
+
+	
 	
 	
 }

@@ -94,7 +94,7 @@
                  <div class="input-group"><span th:text="*{reqHeader.erhCostIncured}"></span></div>
               </div>
            	</div>
-           <div id="no-more-tables">
+           <div id="no-more-tables" th:if="${not #lists.isEmpty(ezReqMatList)}">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
@@ -123,8 +123,26 @@
                 	</tbody>
                 </table>
                 </div>
+            <div id="no-more-tables" >
             
-    			<div id="no-more-tables">
+             <table class="table table-bordered" >
+					<thead>
+						<tr>
+							<th>Comments</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr>	
+							<td><textarea class="form-control" name="comments" th:text="*{ezcComments.comments}" readonly></textarea></td>
+						</tr>	
+							
+					
+					</tbody>
+					</table>
+            
+            
+            </div>
+    			<div id="no-more-tables" th:if="${not #lists.isEmpty(reqDto.ezcRequestItems)}">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
@@ -139,7 +157,7 @@
             			<td colspan="2"> No Items Added </td>
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Plumber" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}"></td>
+						<td data-title="Name Of Plumber" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" ></td>
 						<td data-title="Contact No" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}"></td>
 						<td data-title="D.O.B" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDob, 'dd/MM/yyyy')}"></td>
 						<td data-title="D.O.A" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa, 'dd/MM/yyyy')}"></td>

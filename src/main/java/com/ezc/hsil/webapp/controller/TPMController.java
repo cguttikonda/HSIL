@@ -37,6 +37,7 @@ import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
@@ -76,10 +77,19 @@ public class TPMController {
     } 
   
     @RequestMapping(value = "/tpm/appr-tpm-post", method = RequestMethod.POST)
-	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
+	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
 		EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 		ezcRequestHeader.setId(id);
 		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
+		Set<EzcComments> commSet = new HashSet<EzcComments>();
+		if(comments!= null)
+		{
+			EzcComments comm=new EzcComments();
+			comm.setComments(comments);
+			comm.setType("APPROVE");
+			commSet.add(comm);
+		
+		}
 		if(apprMat != null)
 		{
 			for(int i=0;i<apprMat.length;i++)
@@ -110,11 +120,30 @@ public class TPMController {
 			
 		}
 		ezcRequestHeader.setRequestMaterials(reqMatSet);
+		ezcRequestHeader.setEzcComments(commSet);
 		tpmService.approveTPMRequest(ezcRequestHeader);
+		return "ok";
+	} 
+     
+    @RequestMapping(value = "/tpm/rej-tpm-post", method = RequestMethod.POST)
+	public @ResponseBody String rejectTpmRequest(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "rejectComments", required = false) String rejectComments ) {
+		log.debug("rejectComments"+rejectComments);
+    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
+		ezcRequestHeader.setId(id);
+		Set<EzcComments> comments = new HashSet<EzcComments>();
+		if(rejectComments != null)
+		{
+			
+				EzcComments reqCom = new EzcComments();
+				reqCom.setComments(rejectComments);
+				comments.add(reqCom);
+			
+		}
+			ezcRequestHeader.setEzcComments(comments);
+		tpmService.rejectTPMRequest(ezcRequestHeader);
 		return "ok";
 	}
     
-  
 	
     @RequestMapping(value = "/tpm/close-tpm-post", method = RequestMethod.POST)
     public String closeTpmRequest(TpmRequestDetailDto tpmRequestDetailDto, final RedirectAttributes ra) {
@@ -177,10 +206,17 @@ public class TPMController {
     
     @RequestMapping(value = "/tpm/addDetails/{docId}", method = RequestMethod.GET)
     public String addDetails(@PathVariable String docId, Model model) {
+    	
+    	
         EzcRequestHeader ezcRequestHeader = tpmService.getTPMRequest(docId);
         TpmRequestDetailDto reqDto = new TpmRequestDetailDto();
         List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
         List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
+        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
+        for(EzcComments item : ezcRequestHeader.getEzcComments())
+		{
+        	ezcComm.add(item); 
+		}
 		for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
 		{
 			ezcRequestItems.add(item); 
@@ -189,12 +225,14 @@ public class TPMController {
 		{
 			ezcMatList.add(item); 
 		}
+		
         reqDto.setEzcRequestItems(ezcRequestItems);
         reqDto.setReqHeader(ezcRequestHeader);
         reqDto.setEzcRequestDealers(ezcRequestHeader.getEzcRequestDealers());
+        reqDto.setEzcComments(ezcComm);
         reqDto.setEzReqMatList(ezcMatList);
         model.addAttribute("reqDto", reqDto);
-        if("APPROVED".equals(ezcRequestHeader.getErhStatus()))
+        if("APPROVED".equals(ezcRequestHeader.getErhStatus()) )
         	return "tpm/detailsForm";
         else
         	return "tpm/detailsEditForm";
@@ -225,13 +263,23 @@ public class TPMController {
     @RequestMapping(value = "/tpm/addNewItem", method = RequestMethod.POST)
     public String addNewTPMItem(TpmRequestDetailDto reqDto, Model model) {
         List<EzcRequestItems> ezcRequestItems=null;
+        List<EzcComments> ezcComm=null;
         if(reqDto.getEzcRequestItems() == null)
         	ezcRequestItems = new ArrayList<EzcRequestItems>();
         else
         	ezcRequestItems = reqDto.getEzcRequestItems();
+        
+        if(reqDto.getEzcComments() == null)
+        	ezcComm = new ArrayList<EzcComments>();
+        else
+        	ezcComm = reqDto.getEzcComments();
+        
         ezcRequestItems.add(new EzcRequestItems());
+        
         reqDto.setEzcRequestItems(ezcRequestItems);
 		reqDto.setReqHeader(reqDto.getReqHeader());
+		reqDto.setEzcComments(ezcComm);
+		
 		
         model.addAttribute("reqDto", reqDto); 
         return "tpm/detailsForm";

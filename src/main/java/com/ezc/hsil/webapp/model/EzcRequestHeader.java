@@ -57,6 +57,7 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
 	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);
 	private Set<RequestMaterials> requestMaterials = new HashSet<RequestMaterials>(0);
+	private Set<EzcComments> ezcComments = new HashSet<EzcComments>(0);
 	
 
 
@@ -278,6 +279,15 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setRequestMaterials(Set<RequestMaterials> requestMaterials) {
 		this.requestMaterials = requestMaterials; 
+	}
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ezcRequestHeader") 
+	@Cascade({CascadeType.ALL})
+	public Set<EzcComments> getEzcComments() {
+		return ezcComments;
+	}
+
+	public void setEzcComments(Set<EzcComments> ezcComments) {
+		this.ezcComments = ezcComments;
 	}
 
 	@Column(name = "ERH_COST_INCURED")

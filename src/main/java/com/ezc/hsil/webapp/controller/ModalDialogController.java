@@ -94,7 +94,20 @@ public class ModalDialogController {
 		model.addAttribute("tpmDetails", ezReqHead);
 		return "modals/approveTPM" ; 
 	}
-
+	@GetMapping(value="/rej-tpm/{id}")
+	public String rejectTPMModal(@PathVariable("id") String id, Model model) {
+		EzcRequestHeader ezReqHead = iTPMService.getTPMRequest(id);
+		
+		model.addAttribute("tpmDetails", ezReqHead);
+		return "modals/rejectTPM" ; 
+	}
+	@GetMapping(value="/rej-tps/{id}")
+	public String rejectTPSModal(@PathVariable("id") String id, Model model) {
+		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
+		
+		model.addAttribute("tpmDetails", ezReqHead);
+		return "modals/rejectTPM" ; 
+	}
 	@RequestMapping(value = "/mat-autocomp", method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q) {

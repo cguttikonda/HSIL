@@ -1,6 +1,6 @@
 
 <div id="apprTPMModal"  class="modal fade" role="dialog" th:fragment="appr-tpm">
-	<div class="modal-dialog">
+	<div class="modal-dialog" id="apprModal">
 		<div class="modal-content">
 			<div class="modal-header bg-primary">
 				<h4 class="modal-title"><span style="font-weight:bold">Approve TPM</span></h4>
@@ -78,6 +78,21 @@
 						</tr>
 					</thead>
 					<tbody>
+					</tbody>
+					</table>
+					
+					<table class="table table-bordered" >
+					<thead>
+						<tr>
+							<th>Comments</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr>	
+							<td><textarea class="form-control" name="comments"></textarea></td>
+						</tr>	
+							
+					
 					</tbody>
 					</table>
 				    <div class="modal-confirm" style="margin-left: 25px;">

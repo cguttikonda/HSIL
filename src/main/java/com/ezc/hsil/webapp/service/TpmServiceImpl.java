@@ -17,10 +17,12 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestMaterialsRepo;
+import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,6 +43,9 @@ public class TpmServiceImpl implements ITPMService{
 	    @Autowired
 	    private MaterialMasterRepo masterRepo;
 	    
+	    @Autowired
+	    private EzcCommentsRepo commRepo;
+	    
 	    
 
 		@Override
@@ -59,16 +64,36 @@ public class TpmServiceImpl implements ITPMService{
 		public EzcRequestHeader getTPMRequest(String docId) {
 			return reqHeaderRepo.findById(docId).orElseThrow(() -> new EntityNotFoundException());
 		}
-
+		@Override
+		public List<EzcComments> getTPMCommentRequest(String docId) {
+			return commRepo.findByRequest(docId);
+		}
 		@Override
 		public void createTPMDetails(TpmRequestDetailDto tpmRequestDetailDto) {
 			EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpmRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
 			List<EzcRequestItems> ezReqItemList = tpmRequestDetailDto.getEzcRequestItems();
+			List<EzcComments> ezcommList = tpmRequestDetailDto.getEzcComments();
 			Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+			Set<EzcComments> commSet = new HashSet<EzcComments>();
+			String comments=tpmRequestDetailDto.getCommentReqDto();
 		  ezReqHeader.setErhStatus("SUBMITTED");
 		  ezReqHeader.setErhCostIncured(tpmRequestDetailDto.getReqHeader().getErhCostIncured());
 		  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
+		  
 		  int matCnt = 0;
+		  if(comments!= null)
+			{
+				EzcComments comm=new EzcComments();
+				comm.setComments(comments);
+				comm.setType("SUBMIT");
+				commSet.add(comm);
+			
+			}
+		  ezReqHeader.setEzcComments(commSet);
+		  for(EzcComments tempItem : commSet) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  commRepo.save(tempItem); 
+			}
 		  for(EzcRequestItems tempItem : ezReqItemList) {
 			  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
 			  {
@@ -91,6 +116,7 @@ public class TpmServiceImpl implements ITPMService{
 				   matCnt = matCnt-apprQty;
 			   }
 			} 
+		   
 		  
 		}
  
@@ -106,7 +132,9 @@ public class TpmServiceImpl implements ITPMService{
 		public void approveTPMRequest(EzcRequestHeader ezcRequestHeader) {
 		  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
 		  Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
+		  Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
 		  ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
+		  ezReqHeader.getEzcComments().addAll(ezcComments);
 		  ezReqHeader.setErhStatus("APPROVED");
 		  for(RequestMaterials tempItem : ezReqMatList) {
 		      Character c1 = new Character('N'); 
@@ -130,9 +158,24 @@ public class TpmServiceImpl implements ITPMService{
 		  for(RequestMaterials tempItem : ezReqMatList) { 
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  reqMatRep.save(tempItem); 
+			}
+		  for(EzcComments tempItem : ezcComments) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  commRepo.save(tempItem); 
+			}
+		}
+		@Override
+		public void rejectTPMRequest(EzcRequestHeader ezcRequestHeader) {
+		  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
+		  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
+		  ezReqHeader.getEzcComments().addAll(ezComments);
+		  ezReqHeader.setErhStatus("REJECTED");
+		
+		  for(EzcComments tempItem : ezComments) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  commRepo.save(tempItem); 
 			}		
 		}
-
 		@Override
 		public void closeTPMRequest(TpmRequestDetailDto tpmRequestDetailDto) {
 		

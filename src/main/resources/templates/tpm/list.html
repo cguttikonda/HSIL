@@ -3,7 +3,13 @@
 <head>
     <title>TPM List</title>
     <style type="text/css">
-.modal-dialog {
+    #rejectModal {
+    width: 50%;
+    height: 40%;
+    margin-left: 35%;
+    padding: 0;
+}
+#apprModal {
     width: 90%;
     height: 90%;
     margin-left: 5%;
@@ -104,6 +110,12 @@
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">APPROVE</span>
 							</a>
+							<a href="#"
+							th:data-id="${row.id}"
+							onclick="javascript:openModal('reject',this.getAttribute('data-id'))"
+							class="btn btn-danger btn-xs"> <span
+								class="glyphicon glyphicon-ok">REJECT</span>
+							</a>
 						</span>
 						
                     </td>
@@ -113,6 +125,7 @@
         </div>
     </div>
     <div th:fragment="appr-tpm" id="apprTPMModalHolder"></div>
+    <div th:fragment="rej-tpm" id="rejTPMModalHolder"></div>
 </div>
 <div layout:fragment="scriptContent">
 
@@ -169,6 +182,25 @@ function openModal(modelType,distId){
 		});
 		
 	}
+	else
+	{
+		$.ajax({
+			url: "/modal/rej-tpm/" + distId,
+			success: function(data){
+				$("#rejTPMModalHolder").html(data);
+				$('#rejTPMModal').modal({
+					backdrop: 'static'
+				});
+				
+				
+			}
+		});
+	
+		
+		
+		
+		
+	}	
 }
 $(document.body).on("change","#selMat",function(){
 	// alert(this.value);
@@ -193,6 +225,7 @@ $(document).ready(function() {
 	);
 	 
 });
+
 function approveTPMReq(event){
 	var leftOverCnt=parseInt($("#leftOverCnt").val());
 	var qtyEntered = false;
@@ -240,6 +273,27 @@ function approveTPMReq(event){
 	});
 	
 	
+}
+
+function saveRejComment(event){
+	var rejectComments=$("#rejectComments").val();
+	//alert(rejectComments);
+	var formdata = $('#rej-tpm-form').serialize(); 
+	if($("#rej-tpm-form").validationEngine('validate'))
+		{
+	$.ajax({			
+		type : "POST",
+		url : "/tpm/rej-tpm-post", 
+		data : formdata,
+		success : function(response) {
+				
+				location.href="/tpm/tpmRequestList"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+		}
 }
 
 
