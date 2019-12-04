@@ -102,7 +102,7 @@
 			</ul></li>
 		<!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
-	<li class="treeview"><a href="#">
+	<li class="treeview"  sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa-edit"></i> <span>BD Creation</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -126,7 +126,7 @@
 			</ul></li>
 		<!-- TPS/TPM End -->
 		 
-		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+		<li class="treeview" sec:authorize="hasAnyRole('ADMIN','ROLE_ST_HEAD')"><a href="#">
 				<i class="fa fa-edit"></i> <span>TPS Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -142,11 +142,19 @@
 			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
 		</a>
 		</li>
-		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR')">
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD')">
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
-				<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
+		<li  sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
+			<a th:href="@{/reports/stockavailablity}"><i class="fa fa-truck"></i> <span>Available Stock</span> 
+		</a>
+		</li>
+		<li  sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
+			<a th:href="@{/reports/stockavailablity}"><i class="fa fa-list-ul"></i> <span>TPM List</span> 
+		</a>
+		</li>
+				<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">
 				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -157,12 +165,11 @@
 				<li><a href="#" th:href="@{/reports/stockavailablity}"><i class="fa fa-circle-o"></i>Available Stock</a></li>
 				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i>TPS History</a></li>
 				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i>Scheduled TPS</a></li>
+				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i>TPM History</a></li>
+				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i>Scheduled TPM</a></li>
 			</ul></li>
 		
 		
-		
-		
-
-	</ul>
+		</ul>
 </section>
 <!-- /.sidebar -->

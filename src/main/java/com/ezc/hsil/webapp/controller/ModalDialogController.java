@@ -146,6 +146,11 @@ public class ModalDialogController {
 		return "modals/dispatchAckDet" ; 
 	}
 	
+	@GetMapping(value="/att-file")
+	public String attachFileModal( ) {
+			
+		return "modals/attachFile" ; 
+	}
 }
 
 
