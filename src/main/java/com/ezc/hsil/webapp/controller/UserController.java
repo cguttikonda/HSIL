@@ -1,35 +1,37 @@
 package com.ezc.hsil.webapp.controller;
-import com.ezc.hsil.webapp.model.*;
-import com.ezc.hsil.webapp.persistance.dao.*;
-import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ezc.hsil.webapp.dto.UserDto;
+import com.ezc.hsil.webapp.model.EzStates;
+import com.ezc.hsil.webapp.model.Roles;
+import com.ezc.hsil.webapp.model.UserForm;
+import com.ezc.hsil.webapp.model.UserRoles;
+import com.ezc.hsil.webapp.model.UserZones;
+import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.model.WorkGroup_Users;
+import com.ezc.hsil.webapp.model.Work_Groups;
+import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
 import com.ezc.hsil.webapp.security.ActiveUserStore;
 import com.ezc.hsil.webapp.service.IUserService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.ezc.hsil.webapp.dto.UserDto;
 
 @Slf4j
 @Controller
@@ -69,7 +71,7 @@ public class UserController {
     @RequestMapping(value = "/UserCreation", method = RequestMethod.GET) //@GetMapping("/UserCreation")
     public String test(final Locale locale, final Model model) {
     	
-    	System.out.println(":UserCreation GET:::::::");
+    	log.debug(":UserCreation GET:::::::");
     	
     	 List<EzStates> states = userDefaults.getStates();
     	 List<UserRoles> roles = userDefaults.getRoles();
@@ -86,7 +88,7 @@ public class UserController {
     @RequestMapping(value = "/UserCreation", method = RequestMethod.POST) //@PostMapping("/UserCreation")
     public String saveUser(@Valid @ModelAttribute UserForm userForm, BindingResult bindingResult, final Model model) {
    	
-    	System.out.println(":UserCreation POST:::::::");
+    	log.debug(":UserCreation POST:::::::");
     	
     	 if (bindingResult.hasErrors()) { 
     		 
@@ -126,7 +128,7 @@ public class UserController {
     public String getUsrsList(final Locale locale, final Model model) {   	
     	List<Users> usersList = iUserService.getUsersList();
     	 model.addAttribute("usersList", usersList);
-    	//System.out.println(":::::::usersList:::::"+usersList);
+    	//log.debug(":::::::usersList:::::"+usersList);
         return "user/ezUsersList";
     }
     
@@ -173,12 +175,12 @@ public class UserController {
       	
       	List<WorkGroup_Users> zonalHDSubGroups = (List<WorkGroup_Users>) iUserService.getZonalHeadSubGroups(userZone);
       	
-      	System.out.println("::::zonalHDSubGroups:::::::"+zonalHDSubGroups);
+      	log.debug("::::zonalHDSubGroups:::::::"+zonalHDSubGroups);
       	 Iterator iter = zonalHDSubGroups.iterator();
       	 while(iter.hasNext())
       	 {
       		WorkGroup_Users lv_wgu = (WorkGroup_Users)iter.next();
-      	    System.out.println(lv_wgu.getUserId()+":::::"+lv_wgu.getGroupId()+":::::"+lv_wgu.getStateGrp()+"::::"+lv_wgu.getZonalGrp());
+      	    log.debug(lv_wgu.getUserId()+":::::"+lv_wgu.getGroupId()+":::::"+lv_wgu.getStateGrp()+"::::"+lv_wgu.getZonalGrp());
       	 }
       	
       	try{
@@ -212,7 +214,7 @@ public class UserController {
     public String editSave(@ModelAttribute UserForm userForm, final Model model) {	
     	
     	
-    	//System.out.println(":::::::userForm:::::"+userForm);
+    	//log.debug(":::::::userForm:::::"+userForm);
     	
     	UserDto userDto = new UserDto();
     	
@@ -237,8 +239,8 @@ public class UserController {
     public @ResponseBody String getUserByUserId(@PathVariable("userId") String userId) {   	    	
     	Users user = iUserService.findUserByUserId(userId); 
     	
-    	System.out.println(":UsersUsersUsersUsers:::::::"+user);
-    	System.out.println(":getUserByUserId:::userId:::::::"+user.getId());
+    	log.debug(":UsersUsersUsersUsers:::::::"+user);
+    	log.debug(":getUserByUserId:::userId:::::::"+user.getId());
     	
     	if(user==null)
     		return "N";	

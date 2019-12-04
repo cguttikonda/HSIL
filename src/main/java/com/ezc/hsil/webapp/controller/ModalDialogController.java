@@ -132,6 +132,19 @@ public class ModalDialogController {
 		return "modals/approveTPS" ; 
 	}
 
+	@GetMapping(value="/dispmodal/{id}")
+	public String dispatchModal(@PathVariable("id") String id, Model model) {
+		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
+		model.addAttribute("reqDetails", ezReqHead);
+		return "modals/dispatchDet" ; 
+	}
+	
+	@GetMapping(value="/dispackmodal/{id}")
+	public String dispatchAckModal(@PathVariable("id") String id, Model model) {
+		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
+		model.addAttribute("reqDetails", ezReqHead);
+		return "modals/dispatchAckDet" ; 
+	}
 	
 }
 

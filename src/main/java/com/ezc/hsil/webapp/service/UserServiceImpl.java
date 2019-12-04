@@ -12,7 +12,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
-import com.ezc.hsil.webapp.model.EzStates;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,18 +26,16 @@ import com.ezc.hsil.webapp.error.UserAlreadyExistException;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
 import com.ezc.hsil.webapp.model.Privilages;
 import com.ezc.hsil.webapp.model.Roles;
-import com.ezc.hsil.webapp.model.UserRoles;
-import com.ezc.hsil.webapp.model.UserZones;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
 import com.ezc.hsil.webapp.model.WorkGroup_Users;
 import com.ezc.hsil.webapp.model.Work_Groups;
+import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
+import com.ezc.hsil.webapp.persistance.dao.GroupRepository;
 import com.ezc.hsil.webapp.persistance.dao.PasswordResetTokenRepository;
 import com.ezc.hsil.webapp.persistance.dao.PrivilegeRepository;
 import com.ezc.hsil.webapp.persistance.dao.RoleRepository;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
-import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
-import com.ezc.hsil.webapp.persistance.dao.GroupRepository;
 import com.ezc.hsil.webapp.persistance.dao.VerificationTokenRepository;
 import com.ezc.hsil.webapp.persistance.dao.WorkGroupUsersRepository;
 

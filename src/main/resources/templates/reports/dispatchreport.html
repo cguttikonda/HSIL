@@ -1,0 +1,115 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Dispatch Report</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>Dispatch Report</h1>
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-dashboard"></i> Reports</a></li>
+    <li class="active">Dispatch Report</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-body no-padding">
+     	<table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+	                <thead>			
+	                <tr>
+	                	<th>Request Id</th>
+	                	<th>Distributor</th>
+	                	<th>Requested By</th>
+	                    <th>Material</th>
+	                    <th>Approved Qty</th>
+	                    <th></th>
+	                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row, itemStat : ${matList}">
+                    <td th:text="${row[1]+'-'+row[0]}"></td>
+                    <td th:text="${row[2]}"></td>
+                    <td th:text="${row[3]}"></td>
+                    <td th:text="${row[4]+'-'+row[5]}"></td>
+                    <td th:text="${row[6]}"></td>
+                    <td>          	
+                    	<span>
+							<a href="#"
+							th:data-id="${row[0]}"
+							onclick="javascript:openModal('dispatch',this.getAttribute('data-id'))"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">DISPATCH</span>
+							</a>
+						</span></td>
+                </tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+    <div th:fragment="dispatch-det" id="dispatchModalHolder"></div>
+</div>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
+	
+	$('#example').DataTable({
+					
+		 dom: 'lBfrtip',
+         buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'Reports' },{ extend: 'copy', text: 'Copy',title:null }]
+	
+		}
+			
+	);
+	 
+});
+
+function openModal(modelType,distId){
+	
+	if(modelType === "dispatch"){
+		
+	
+		$.ajax({
+			url: "/modal/dispmodal/" + distId,
+			success: function(data){
+				$("#dispatchModalHolder").html(data);
+				$('#dispatchModal').modal({
+					backdrop: 'static'
+				});
+			}
+		});
+		
+	}
+}
+function dispatchReq(event){
+	var formdata = $('#dispatchform').serialize(); 
+	if($("#dispatchform").validationEngine('validate'))
+		{
+	$.ajax({			
+		type : "POST",
+		url : "/reports/dispatchupdate", 
+		data : formdata,
+		success : function(response) {
+				
+				location.href="/reports/disprep/PENDING"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+		}
+}
+</script>
+
+
+</div>
+
+</body>
+</html>

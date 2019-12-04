@@ -61,23 +61,29 @@
                        <thead>			
                 <tr>
                     <th>Request No</th>
-                    <th>Request Type</th>
                     <th>Distributor</th>
                     <th>City</th>
                     <th>Meeting Date</th>
                     <th>No Of Attendance</th>
-                    <th>Status</th>
+                    <th>Approval Status</th>
+                    <th>Dispatch Status</th>
                 </tr>
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.id}"></a></td>
-                    <td th:text="${row.erhCreatedGroup}"></td>
+                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
+                    <td>
+                    	<th:block th:switch="${row.erhDispatchFlag}">
+                    		<span th:case="'Y'" class="label label-success">Shipped</span>
+						    <span th:case="null" class="label label-warning">Pending</span>
+						    <span th:case="S" class="label label-danger">Delivered</span>
+						</th:block>
+                    </td>
                 </tr>
             	</tbody>
             </table>

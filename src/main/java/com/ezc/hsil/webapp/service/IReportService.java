@@ -1,13 +1,18 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
-import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
-import com.ezc.hsil.webapp.model.RequestMaterials;
 
 public interface IReportService {
 	public List<EzcRequestHeader> getRequestStatus(ListSelector listSelector);
+	public List<Object[]> getDispatchReport(String statu);
+	public void dispatchUpdate(EzcRequestHeader ezcRequestHeader);
+	public Map<String,String> getDashBoardValues(ArrayList<String> role,String user);
+	public List<Object[]> getStockAvailabilityForAll();
+	public List<Object[]> getToAckDispReport(String user);
+	public void dispatchAckUpdate(EzcRequestHeader ezcRequestHeader);
 }

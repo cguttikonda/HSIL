@@ -32,7 +32,22 @@
 	<!-- sidebar menu: : style can be found in sidebar.less -->
 	<ul class="sidebar-menu">
 		<li class="header">MAIN NAVIGATION</li>
-
+		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
+			<a th:href="@{/master/listMaterial}"><i class="fa fa-gift"></i> <span>Add Stock</span> 
+		</a>
+		</li>
+		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
+			<a th:href="@{/master/listMaterial}"><i class="fa fa-edit"></i> <span>Update Stock</span> 
+		</a>
+		</li>
+		<li  sec:authorize="hasRole('ROLE_OUT_STOR')">
+			<a th:href="@{/reports/disprep/PENDING}"><i class="fa fa-truck"></i> <span>Pending For Dispatch</span> 
+		</a>
+		</li>
+		<li  sec:authorize="hasRole('ROLE_OUT_STOR')">
+			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>Available Stock</span> 
+		</a>
+		</li>
 		<li class="treeview"sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa-share"></i> <span>Master data</span> <span
 				class="pull-right-container"> <i
@@ -97,21 +112,21 @@
 						class="fa fa-circle-o"></i> Create</a></li>
 				<li><a href="#" th:href="@{/bd/bdRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
-		<li class="treeview"><a href="#">
-				<i class="fa fa-edit"></i> <span>TPM Creation</span> <span
+		<li class="treeview" sec:authorize="hasRole('ROLE_REQ_CR')"><a href="#">
+				<i class="fa fa-edit"></i> <span>TPM Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
 			</span>
 		</a>
 			<ul class="treeview-menu">
-				<li class="" sec:authorize="hasRole('ADMIN')"><a href="#" th:href="@{/tpm/add}"><i
+				<li class=""><a href="#" th:href="@{/tpm/add}"><i
 						class="fa fa-circle-o"></i> Create</a></li>
 				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
 		<!-- TPS/TPM End -->
 		 
 		<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
-				<i class="fa fa-edit"></i> <span>TPS Creation</span> <span
+				<i class="fa fa-edit"></i> <span>TPS Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
 			</span>
@@ -122,8 +137,14 @@
 				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
 		
-		
-		
+		<li  sec:authorize="hasRole('ROLE_REQ_CR')">
+			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
+		</a>
+		</li>
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR')">
+			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
+		</a>
+		</li>
 				<li class="treeview" sec:authorize="hasRole('ADMIN')"><a href="#">
 				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span
 				class="pull-right-container"> <i
