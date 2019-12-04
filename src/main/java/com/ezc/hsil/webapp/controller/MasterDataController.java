@@ -29,6 +29,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.util.EzExcelUtil;
 
@@ -174,6 +175,14 @@ public class MasterDataController {
         return ezExcelUtil.writeExcel(distCodeArr,null,"distributors"); 
     }
 	
+	@RequestMapping(value = "/matSamp", method = RequestMethod.GET)
+    public StreamingResponseBody getMastSample(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.ms-excel"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"material.xls\"");
+        String [] matArr={"Material Code","Material Desc","Quantity"};
+        return ezExcelUtil.writeExcel(matArr,null,"material"); 
+    }
 	@RequestMapping(value = "/distDown", method = RequestMethod.GET)
     public StreamingResponseBody getDistDownload(HttpServletResponse response) throws IOException {
 
@@ -197,7 +206,30 @@ public class MasterDataController {
 		}
         return ezExcelUtil.writeExcel(distCodeArr,objArrList,"distributors"); 
     }
-	
+	@RequestMapping(value = "/matDown", method = RequestMethod.GET)
+    public StreamingResponseBody getMatDownload(HttpServletResponse response) throws IOException {
+
+        response.setContentType("application/vnd.ms-excel"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"material.xls\"");
+        String [] matCodeArr={"Material Code","Material Name","Quantity"};
+
+        List<MaterialMaster> matMastList= masterService.findMatAll();
+        List<Object[]> objArrList=null;
+		try {
+			objArrList = getObjectArray(matMastList);
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return ezExcelUtil.writeExcel(matCodeArr,objArrList,"materials"); 
+    }
+
 	@PostMapping("/distUpload")
 	public void uploadDistributor(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
 		List<DistributorMaster> distList = new ArrayList<DistributorMaster>();
@@ -213,6 +245,22 @@ public class MasterDataController {
 				 distList.add(distMaster);
 		 }
 		 masterService.addDistributorMultiple(distList);
+	    }
+	@PostMapping("/matUpload")
+	public void uploadMaterial(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+		List<MaterialMaster> matList = new ArrayList<MaterialMaster>();
+		List<Object[]> lisObjArr= ezExcelUtil.readExcel(reapExcelDataFile.getInputStream(),reapExcelDataFile.getOriginalFilename());
+		 for(Object[] objArr:lisObjArr)
+		 {
+			 	 MaterialMaster matMaster = new MaterialMaster();
+			 	 String quan=(String)objArr[2];
+			 	int qty=Integer.parseInt(quan); 
+			 	 matMaster.setMaterialCode((String)objArr[0]);
+			 	 matMaster.setMaterialDesc((String)objArr[1]);
+			 	 matMaster.setQuantity(qty);
+			 	 matList.add(matMaster);
+		 }
+		 masterService.addMaterialMultiple(matList);
 	    }
 	
 	public <T extends Object> List<Object[]> getObjectArray(List<T> objList) throws NoSuchAlgorithmException, IllegalArgumentException, IllegalAccessException {

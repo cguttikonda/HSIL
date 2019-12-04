@@ -63,6 +63,15 @@ public class MasterServiceImpl implements IMasterService {
 
 		return distList;
 	}
+	@Override
+	public List<MaterialMaster> findMatAll() {
+
+		List<MaterialMaster> matList = new ArrayList<MaterialMaster>();
+
+		matList.addAll(matMastRep.findAll());
+
+		return matList;
+	}
 
 	@Override
 	public DistributorDto getDistributorDetails(String code) {
@@ -183,7 +192,11 @@ public class MasterServiceImpl implements IMasterService {
 		return null;
 	}
 	
-	
+	@Override
+	public String addMaterialMultiple(List<MaterialMaster> matList) {
+		matMastRep.saveAll(matList);
+		return null;
+	}
 	
 
 }
