@@ -115,16 +115,16 @@ public class UserServiceImpl implements IUserService{
 	        	String userGrp = accountDto.getGroup();
 	        	String stHDGrp = "";
 	        	String zonalUserGrp = "";
-	        	
-	        	if("REQ_CR".equals(accountDto.getRole()))
+	        	 
+	        	if("ROLE_REQ_CR".equals(accountDto.getRole()))
 	        	{
 	        		//userGrp = 	accountDto.getState()+"_GRP";
 	        		stHDGrp =   userGrp+"_HD_GRP";
 	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
-	        	}else if("ST_HEAD".equals(accountDto.getRole())){
+	        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole())){
 	        		//userGrp = 	accountDto.getState()+"_HD_GRP";
 	        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
-	        	}else if("ZN_HEAD".equals(accountDto.getRole())){
+	        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
 	        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
 	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
 	        	}
@@ -212,15 +212,15 @@ public class UserServiceImpl implements IUserService{
         	String stHDGrp = "";
         	String zonalUserGrp = "";
         	
-        	if("REQ_CR".equals(accountDto.getRole()))
+        	if("ROLE_REQ_CR".equals(accountDto.getRole()))
         	{
         		//userGrp = 	accountDto.getState()+"_GRP";
         		stHDGrp =   userGrp+"_HD_GRP";
         		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
-        	}else if("ST_HEAD".equals(accountDto.getRole())){
+        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole())){
         		//userGrp = 	accountDto.getState()+"_HD_GRP";
         		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
-        	}else if("ZN_HEAD".equals(accountDto.getRole())){
+        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
         		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
         		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
         	}
