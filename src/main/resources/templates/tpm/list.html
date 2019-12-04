@@ -295,9 +295,81 @@ function saveRejComment(event){
 	});
 		}
 }
+function uploadFile(file,fileName) {
+	var startIndex = (fileName.indexOf('\\') >= 0 ? fileName.lastIndexOf('\\') : fileName.lastIndexOf('/'));
+    var filenm = fileName.substring(startIndex);
+    if (filenm.indexOf('\\') === 0 || filenm.indexOf('/') === 0) {
+    	filenm = filenm.substring(1);
+    }
+    document.getElementById("attach").value = filenm;
+	 $('#attachFileModal').modal('hide');
+}
+function uploadSingleFile(file,fileName) {
+    var formData = new FormData();
+  
+    
+   // alert(filenm);
+    formData.append("file", file);
+    formData.append("_csrf", $("#csrfToken").val());
 
+    $.ajax({
+            url : '/uploads/doUpload',
+            type : 'POST',
+            method : 'POST',
+            data : formData,
+            contentType : false,
+            cache : false,
+            processData : false,
+            success : function(response) {
+            	
+            	 document.getElementById("attach").value = filenm;
+            	 $('#attachFileModal').modal('hide');
 
+            },
+            error: function(){}    
+         });
+    
 
+   
+}
+
+function funSubmit()
+{
+	var fileAttch = document.getElementById("fileUploadInput").files;
+	var fileName=document.getElementById("fileUploadInput").value;
+	//alert(fileAttch.length);
+//    if(fileAttch.length === 0) {
+        //document.getElementById('fileUploadError').innerHTML = "Please select a file";
+        //document.getElementById('fileUploadError').style.display = "block";
+  //  }
+    
+    uploadFile(fileAttch[0],fileName);
+	
+	
+}
+function delAttach()
+{
+	   document.getElementById("attach").value='';
+	}
+function attachModal(){
+	
+	
+	
+	
+	$.ajax({
+		url: "/modal/att-file",
+		success: function(data){
+			$("#attachFileModalHolder").html(data);
+			$('#attachFileModal').modal({
+				backdrop: 'static'
+			});
+			
+			
+			
+		}
+	});
+	
+}
 </script>
 
 

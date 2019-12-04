@@ -61,11 +61,15 @@
 			<!-- /.box-body -->
 
 			<div class="box-footer">
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="submit"  class="btn btn-primary pull-right" style="margin-left:5px">Submit</button>
+				<button type="button" class="btn btn-primary pull-right" style="margin-left:5px" data-toggle="modal" data-target="#uploadExcelFrag"><i class="fa fa-upload"></i>&nbsp;Upload</button>
+				<a th:href="@{/master/matSamp}" class="btn btn-primary pull-right" style="margin-left:5px"><span class="fa fa-download"></span> Download Sample</a>
+				<a th:href="@{/master/matDown}" class="btn btn-primary pull-right" style="margin-left:5px"><span class="fa fa-cloud-download"></span> Download All</a>
+			
 			</div>
 		</form>
 
-	
+	<div th:replace="modals/uploadExcelModal.html:: uploadExcel(action='/master/matUpload',title='Excel Upload')"></div>
 	</div>
 </body>
 </html>

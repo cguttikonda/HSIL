@@ -95,6 +95,28 @@
 					
 					</tbody>
 					</table>
+					<!-- <table class="table table-bordered" id="attachTable">
+					<thead>
+						<tr>
+							<th>Attachments</th>
+							<th>&nbsp;</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr>	
+							<td> <input type="text"  class="form-control" name="attach" id="attach" required /></td>
+							<td>						
+						<button type="button" class="btn btn-primary" id="addAttach" onclick="attachModal()" style="margin-right: 5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</button>
+											
+						<button type="button" class="btn btn-primary" id="delAttach"  onclick="delAttach()"style="margin-right: 5px;"><i class="fa fa-minus"></i>&nbsp;&nbsp;DEL</button>
+					</td>
+							
+						</tr>	
+							
+					
+					</tbody>
+					</table>
+				   --> 
 				    <div class="modal-confirm" style="margin-left: 25px;">
 				</div>
 						
@@ -106,3 +128,4 @@
 		</div>
 	</div>
 </div>
+<div th:fragment="att-file" id="attachFileModalHolder"></div>

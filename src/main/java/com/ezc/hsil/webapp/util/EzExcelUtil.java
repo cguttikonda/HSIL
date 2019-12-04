@@ -86,6 +86,7 @@ public class EzExcelUtil {
 		int ExtPos 	= fileName.lastIndexOf(".");
 		String fileExt	= fileName.substring(ExtPos+1,fileName.length());
 		List<Object[]> retObjArr = new ArrayList<Object[]>(); 
+		log.debug("fileExt::::"+fileExt);
 		try {
 			if("xlsx".equals(fileExt))
 			{

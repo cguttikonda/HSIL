@@ -14,10 +14,12 @@ public interface IMasterService {
 
 	DistributorMaster addNewDistributor(DistributorDto distDto);
 	List<DistributorMaster> findAll();
+	List<MaterialMaster> findMatAll();
 	DistributorDto getDistributorDetails(String code);
 	String updateDistributor(DistributorDto distDto) throws SQLException;
 	String deleteDistributor(String code);
 	String addDistributorMultiple(List<DistributorMaster> distList);
+	String addMaterialMultiple(List<MaterialMaster> matList);
 	
 	MaterialMaster addNewMaterial(MaterialDto mDto);
 	List<MaterialMaster> getAllMaterials();

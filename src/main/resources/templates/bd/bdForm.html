@@ -2,6 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>BD</title>
+     <style type="text/css">
+    #attachModal {
+    width: 50%;
+    height: 40%;
+    margin-left: 35%;
+    padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
+    
 </head>
 <body>
 <section layout:fragment="header">
@@ -46,10 +61,15 @@
             <div class="box-footer">
                 
                  <button type="button" id="save" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Save</button>
+                 <!--  <button type="button" id="attach" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Attach</button> -->
             </div>
         </form>
     </div>
+    <div th:fragment="att-file" id="attachFileModalHolder"></div>
 </div>
+
+
+
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
 function geThan(field, rules, i, options){
@@ -72,7 +92,10 @@ $(document).ready(function(){
 			document.myForm.submit();
 		}
 	});
-	
+	$("#attach").click(function(){
+		openModal();
+		
+	});
 	
 	$('#selMat').select2({
 			         placeholder: 'Select Material',
@@ -96,6 +119,68 @@ $(document).ready(function(){
 			    });
 });
 		
+function openModal(){
+	
+	
+		
+	
+		$.ajax({
+			url: "/modal/att-file",
+			success: function(data){
+				$("#attachFileModalHolder").html(data);
+				$('#attachFileModal').modal({
+					backdrop: 'static'
+				});
+				
+				
+				
+			}
+		});
+		
+	}
+
+
+
+function uploadSingleFile(file) {
+    var formData = new FormData();
+  
+
+    formData.append("file", file);
+    formData.append("_csrf", $("#csrfToken").val());
+
+    $.ajax({
+            url : '/uploads/doUpload',
+            type : 'POST',
+            method : 'POST',
+            data : formData,
+            contentType : false,
+            cache : false,
+            processData : false,
+            success : function(response) {
+            	
+            	 document.getElementById("fileUploadSuccess").innerHTML = "<p>File Uploaded Successfully.</p><p>DownloadUrl : </p>";
+            },
+            error: function(){}    
+         });
+    
+
+   
+}
+
+function funSubmit()
+{
+	var fileAttch = document.getElementById("fileUploadInput").files;
+	alert(fileAttch.length);
+//    if(fileAttch.length === 0) {
+        //document.getElementById('fileUploadError').innerHTML = "Please select a file";
+        //document.getElementById('fileUploadError').style.display = "block";
+  //  }
+    alert(fileAttch[0]);
+    uploadSingleFile(fileAttch[0]);
+	
+	
+}
+
 
 
    </script>

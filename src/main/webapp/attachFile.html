@@ -1,0 +1,25 @@
+
+<div id="attachFileModal"  class="modal fade" role="dialog" th:fragment="att-file">
+	<div class="modal-dialog" id="attachModal">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold">Attach File</span></h4>
+			</div>
+			 <form id="singleUploadForm" name="singleUploadForm">
+			 <div class="modal-body">
+			  <div class="single-upload">
+                    <h3>Upload Single File</h3>
+                   
+                        <input id="singleFileUploadInput" type="file" name="file" class="file-input" required />
+                        <button type="submit" class="primary submit-btn">Submit</button>
+                    
+                    <div class="upload-response">
+                        <div id="singleFileUploadError"></div>
+                        <div id="singleFileUploadSuccess"></div>
+                    </div>
+				</div>
+				</div>
+				</form>
+			</div>	
+	</div>
+</div>
