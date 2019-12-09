@@ -31,7 +31,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
             </div>
         </div>
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_REQ_CR')">
+         <div class="col-lg-3 col-xs-6" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')">
             <!-- small box -->
             <div class="small-box bg-green">
                 <div class="inner">
@@ -50,8 +50,68 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
             <!-- small box -->
             <div class="small-box bg-green">
                 <div class="inner">
-                    <h3 th:text="${ackDispCnt}"></h3>
-                    <p>Approved Requests</p>
+                    <h3 th:text="${apprTpmCnt}"></h3>
+                    <p>TPM APPROVED</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                <a href="#" th:href="@{/tpm/tpmReqListSts/APPROVED}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_ST_HEAD')">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 th:text="${apprTpsCnt}"></h3>
+                    <p>TPS APPROVED</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 th:text="${toActTpmRequest}"></h3>
+                    <p>TPM TO BE APPROVED</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                <a href="#" th:href="@{/tpm/tpmReqListSts/NEW}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 th:text="${toActTpsRequest}"></h3>
+                    <p>TPS TO BE APPROVED</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                <a href="#" th:href="@{/tps/tpsReqListSts/NEW}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3 th:text="${toActBDRequest}"></h3>
+                    <p>BD TO BE APPROVED</p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>

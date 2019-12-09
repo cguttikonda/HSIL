@@ -1,7 +1,10 @@
 package com.ezc.hsil.webapp.persistance.dao;
 
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.ezc.hsil.webapp.model.Users;
 
@@ -15,7 +18,8 @@ public interface UserRepository extends JpaRepository<Users, Long> {
     
 //    https://www.baeldung.com/spring-data-derived-queries
 
-    @Override
+    @Override 
     void delete(Users user);
-
+    
+    
 }

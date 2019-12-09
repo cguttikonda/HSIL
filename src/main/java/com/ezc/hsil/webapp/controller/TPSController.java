@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -278,27 +279,54 @@ public class TPSController {
 		   return "redirect:/tps/tpsRequestList";
 		   
 	   }
-	   @RequestMapping(value = "/tps/tpsRequestList", method = RequestMethod.GET)
-	    public String list(ListSelector listSelector , Model model) {
+	    @RequestMapping(value = "/tps/tpsRequestList", method = RequestMethod.GET)
+	    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
 	    	if(listSelector == null || listSelector.getFromDate() == null)
 	    	{
 	    		Date todayDate = new Date();
 	    		Calendar c = Calendar.getInstance(); 
-	    		c.setTime(todayDate);  
+	    		c.setTime(todayDate); 
 	    		c.add(Calendar.MONTH, -3);
 	    		listSelector = new ListSelector();
-	    		listSelector.setStatus("ALL");
+	    		listSelector.setType("TPS");
 	    		listSelector.setFromDate(c.getTime());
-	    		listSelector.setToDate(todayDate);
-	    		listSelector.setType("TPS"); 
+	    		listSelector.setToDate(todayDate);    		
 	    	}
-	        //List<EzcRequestHeader> list = tpmService.getTPMRequestList("NEW"); 
+	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			ArrayList<String> userList=new ArrayList<String>();
+	    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+	    	{
+	    		userList.add(userObj.getUserId());
+	    		listSelector.setUser(userList);
+	    	}
+	    	List<EzcRequestHeader> list = tpsService.getTPSRequestListByDate(listSelector);
+	        model.addAttribute("reqList", list);
+	        model.addAttribute("listSelector", listSelector);
+	        return "tps/tpsList";
+
+	    } 
+	    @RequestMapping(value = "/tps/tpsReqListSts/{status}", method = RequestMethod.GET)
+	    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
+	    	ListSelector listSelector = new ListSelector();
+	    	listSelector.setType("TPS");
+	    	listSelector.setStatus(status);
+	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			ArrayList<String> userList=new ArrayList<String>();
+	    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+	    	{
+	    		userList.add(userObj.getUserId());
+	    		listSelector.setUser(userList);
+	    	}
 	    	List<EzcRequestHeader> list = tpsService.getTPSRequestListByDate(listSelector);
 	        model.addAttribute("reqList", list);
 	        model.addAttribute("listSelector", listSelector);
 	        return "tps/tpsList"; 
 
-	    } 
+	    }
+ 
+	    
 	  @RequestMapping(value = "/tps/addNewItem", method = RequestMethod.POST)
 	    public String addNewTPSItem(TpsRequestDetailDto reqDto, Model model) {
 	        List<EzcRequestItems> ezcRequestItems=null;

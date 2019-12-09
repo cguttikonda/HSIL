@@ -142,18 +142,22 @@
 			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
 		</a>
 		</li>
+		
 		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD')">
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
-		<li  sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
-			<a th:href="@{/reports/stockavailablity}"><i class="fa fa-truck"></i> <span>Available Stock</span> 
+		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>Available Stock</a></li>
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD')"><a href="#">
+				<i class="fa fa-list-ul"></i> <span>Team Reports</span> <span
+				class="pull-right-container"> <i
+					class="fa fa-angle-left pull-right"></i>
+			</span>
 		</a>
-		</li>
-		<li  sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
-			<a th:href="@{/reports/stockavailablity}"><i class="fa fa-list-ul"></i> <span>TPM List</span> 
-		</a>
-		</li>
+			<ul class="treeview-menu">
+				<li class=""><a href="#" th:href="@{/reports/teamTPMReport}"><i class="fa fa-circle-o"></i> TPM History</a></li>
+				<li sec:authorize="hasRole('ROLE_ZN_HEAD')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
+			</ul></li>
 				<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">
 				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span
 				class="pull-right-container"> <i

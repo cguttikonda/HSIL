@@ -29,9 +29,9 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getBdRequestList(String erhStatus,String erhReqType);	
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id,a.erhStatus from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and  a.erhReqType=:erhReqType and erhRequestedOn>=:fromdate  AND erhRequestedOn <=:todate")
 	List<Object[]> getBdALLRequestList(String erhReqType,Date fromdate,Date todate);	*/
-	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus='APPROVED' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='')")
+	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='')")
 	List<Object[]> getPendingDispatchDetails();
-	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus='APPROVED' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='')")
+	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='')")
 	Long getPendingDispatchCount();
 	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.leftOverQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and a.erhReqType in ('TPM','TPS') group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityForAll();

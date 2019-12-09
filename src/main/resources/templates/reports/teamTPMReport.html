@@ -1,0 +1,157 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPM List</title>
+    <style type="text/css">
+    #rejectModal {
+    width: 50%;
+    height: 40%;
+    margin-left: 35%;
+    padding: 0;
+}
+#apprModal {
+    width: 90%;
+    height: 90%;
+    margin-left: 5%;
+    padding: 0;
+}
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>TPM REPORT</h1>
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-dashboard"></i> Team Reports</a></li>
+    <li class="active">TPM History</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-body no-padding">
+        
+ <form role="form"  th:object="${reportSelector}" th:action="@{/reports/teamTPMReport}" method="get" name="myForm">
+<table class="table table-striped" style="margin-bottom: 1%;">
+  <tbody><tr>  
+	<td>
+		<label>From Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
+                </div>
+                <!-- /.input group -->
+	</td>
+	<td>
+                <label>To Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{toDate}">
+                </div>
+                <!-- /.input group -->
+  	</td>
+  	<td>	
+  		 <label for="listType">User</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm" th:field="*{selUser}">  
+			 	<option value="">---ALL--</option>
+				<option th:each="row:*{userGrp}" th:text="${row[1]+' '+row[2]}" th:value="${row[0]}" th:selected="(${row[0]} == *{selUser})"></option>
+			 </select>
+		  </div>
+  	</td>
+  	<td>	
+  		 <label for="listType">Status</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="" th:selected="*{status==''}">--ALL--</option>
+				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Completed</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Scheduled</option> 
+			 </select>
+		  </div>
+  	</td>
+ 
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
+  	</td>
+  </tr>
+  
+  </tbody></table>
+  </form>
+                   <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+                    <th>ID</th>
+                    <th>Distributor</th>
+                    <th>City</th>
+                    <th>Requested By</th>
+                    <th>Meeting Date</th>
+                    <th>No Of Attendance</th>
+                    <th>Status</th>
+                    <th>Dispatch Status</th>
+                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row : ${reqList}">
+                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
+                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhCity}"></td>
+                    <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row.erhNoOfAttendee}"></td>
+                   <td>
+                    	<th:block th:switch="${row.erhStatus}">
+                    		<span th:case="APPROVED" class="label label-warning">SCHEDULED</span>
+						    <span th:case="SUBMITTED" class="label label-success">COMPLETED</span>
+						    <span th:case="NEW" class="label label-danger">NEW</span>
+						</th:block>
+                    </td>
+                   <td>
+                    	<th:block th:switch="${row.erhDispatchFlag}">
+                    		<span th:case="'Y'" class="label label-success">Shipped</span>
+						    <span th:case="null" class="label label-warning">Pending</span>
+						    <span th:case="S" class="label label-danger">Delivered</span>
+						</th:block>
+                    </td>
+                </tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+    <div th:fragment="appr-tpm" id="apprTPMModalHolder"></div>
+    <div th:fragment="rej-tpm" id="rejTPMModalHolder"></div>
+</div>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+$(document).ready(function() {
+		
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
+	
+	$('#example').DataTable({
+					
+		"dom": 'T<"clear">lfrtip'
+	
+		}
+			
+	);
+	 
+});
+
+</script>
+
+
+</div>
+
+</body>
+</html>

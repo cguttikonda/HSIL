@@ -38,6 +38,7 @@ public class TestThymleafController {
 			for(SimpleGrantedAuthority authObj:authorities)
 			{
 				userRoles.add(authObj.getAuthority().trim());
+				log.debug("role:::"+authObj.getAuthority());
 			}
 			Map<String, String> htMap = repService.getDashBoardValues(userRoles,userObj.getUserId());
 			model.addAllAttributes(htMap);

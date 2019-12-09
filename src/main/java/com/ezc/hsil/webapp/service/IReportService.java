@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.ReportSelector;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
 public interface IReportService {
@@ -15,4 +16,7 @@ public interface IReportService {
 	public List<Object[]> getStockAvailabilityForAll();
 	public List<Object[]> getToAckDispReport(String user);
 	public void dispatchAckUpdate(EzcRequestHeader ezcRequestHeader);
+	public List<Object[]> getUsersByHead(String userId);
+	public List<EzcRequestHeader> getTeamTPMReport(ReportSelector reportSelector);
+	public List<Object[]> getUsersByZoneHd(String userId);
 }

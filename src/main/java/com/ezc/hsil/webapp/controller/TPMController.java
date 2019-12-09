@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -37,6 +39,7 @@ import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.Roles;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMasterService;
@@ -155,7 +158,7 @@ public class TPMController {
 
 
     @RequestMapping(value = "/tpm/tpmRequestList", method = RequestMethod.GET)
-    public String list(ListSelector listSelector , Model model) {
+    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
     	if(listSelector == null || listSelector.getFromDate() == null)
     	{
     		Date todayDate = new Date();
@@ -166,15 +169,43 @@ public class TPMController {
     		listSelector.setStatus("ALL");
     		listSelector.setType("TPM");
     		listSelector.setFromDate(c.getTime());
-    		listSelector.setToDate(todayDate); 
+    		listSelector.setToDate(todayDate);    		
     	}
-        //List<EzcRequestHeader> list = tpmService.getTPMRequestList("NEW"); 
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		ArrayList<String> userList=new ArrayList<String>();
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
+    	{
+    		userList.add(userObj.getUserId());
+    		listSelector.setUser(userList);
+    	}
     	List<EzcRequestHeader> list = tpmService.getTPMRequestListByDate(listSelector);
         model.addAttribute("reqList", list);
         model.addAttribute("listSelector", listSelector);
         return "tpm/list"; 
 
-    } 
+    }
+    
+    @RequestMapping(value = "/tpm/tpmReqListSts/{status}", method = RequestMethod.GET)
+    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
+    	ListSelector listSelector = new ListSelector();
+    	listSelector.setType("TPM");
+    	listSelector.setStatus(status);
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		ArrayList<String> userList=new ArrayList<String>();
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
+    	{
+    		userList.add(userObj.getUserId());
+    		listSelector.setUser(userList);
+    	}
+    	List<EzcRequestHeader> list = tpmService.getTPMRequestListByDate(listSelector);
+        model.addAttribute("reqList", list);
+        model.addAttribute("listSelector", listSelector);
+        return "tpm/list"; 
+
+    }
+    
     
     @RequestMapping(value = "/tpm/saveRequest", method = RequestMethod.POST)
     public String save(@ModelAttribute @Valid TpmRequestDto tpmRequestDto,BindingResult bindingResult, final RedirectAttributes ra) {
@@ -205,7 +236,7 @@ public class TPMController {
     }
     
     @RequestMapping(value = "/tpm/addDetails/{docId}", method = RequestMethod.GET)
-    public String addDetails(@PathVariable String docId, Model model) {
+    public String addDetails(@PathVariable String docId, Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
     	
     	
         EzcRequestHeader ezcRequestHeader = tpmService.getTPMRequest(docId);
@@ -232,7 +263,8 @@ public class TPMController {
         reqDto.setEzcComments(ezcComm);
         reqDto.setEzReqMatList(ezcMatList);
         model.addAttribute("reqDto", reqDto);
-        if("APPROVED".equals(ezcRequestHeader.getErhStatus()) )
+        
+        if("APPROVED".equals(ezcRequestHeader.getErhStatus()) && requestWrapper.isUserInRole("ROLE_REQ_CR"))
         	return "tpm/detailsForm";
         else
         	return "tpm/detailsEditForm";

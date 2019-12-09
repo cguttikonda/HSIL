@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -45,6 +46,9 @@ public class TpmServiceImpl implements ITPMService{
 	    
 	    @Autowired
 	    private EzcCommentsRepo commRepo;
+	    
+	    @Autowired
+	    private RequestCustomDto requestCustomDto;
 	    
 	    
 
@@ -122,10 +126,14 @@ public class TpmServiceImpl implements ITPMService{
  
 		@Override
 		public List<EzcRequestHeader> getTPMRequestListByDate(ListSelector listSelector) {
+			/*
 			if("ALL".equals(listSelector.getStatus()))
 				return reqHeaderRepo.findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());	
 			else	
 				return reqHeaderRepo.findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+			*/
+			log.debug("type in getTPMRequestListByDate::::"+listSelector.getType()); 
+			return requestCustomDto.findRequestList(listSelector);
 		}
 
 		@Override

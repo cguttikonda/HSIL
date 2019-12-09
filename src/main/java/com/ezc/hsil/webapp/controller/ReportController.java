@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.ReportSelector;
+import com.ezc.hsil.webapp.dto.TpmRequestDto;
+import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IReportService;
+import com.ezc.hsil.webapp.service.ITPMService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -33,21 +39,30 @@ public class ReportController {
 
     @Autowired
     IReportService repService;
+    
+    @Autowired
+    ITPMService tpmService;
 
     @RequestMapping(value = "/requeststatus", method = RequestMethod.GET)
-    public String requestStatus(ListSelector listSelector , Model model) {
-    	if(listSelector == null || listSelector.getFromDate() == null)
+    public String requestStatus(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+
+    	Date todayDate = new Date();
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(todayDate); 
+		c.add(Calendar.MONTH, -3);
+		listSelector = new ListSelector();
+		listSelector.setFromDate(c.getTime());
+		listSelector.setToDate(todayDate);
+		
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		ArrayList<String> userList=new ArrayList<String>();
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
     	{
-    		Date todayDate = new Date();
-    		Calendar c = Calendar.getInstance(); 
-    		c.setTime(todayDate); 
-    		c.add(Calendar.MONTH, -3);
-    		listSelector = new ListSelector();
-    		listSelector.setStatus("ALL");
-    		listSelector.setFromDate(c.getTime());
-    		listSelector.setToDate(todayDate); 
+    		userList.add(userObj.getUserId());
+    		listSelector.setUser(userList);
     	}
-        //List<EzcRequestHeader> list = tpmService.getTPMRequestList("NEW"); 
+
     	List<EzcRequestHeader> list = repService.getRequestStatus(listSelector);
         model.addAttribute("reqList", list); 
         model.addAttribute("listSelector", listSelector);
@@ -108,6 +123,19 @@ public class ReportController {
     	return "/reports/stockforallrep"; 
 	}
 
+    @RequestMapping("/stockavailuser")
+    public String add(Model model) {
+    	try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			model.addAttribute("reqList", tpmService.getLeftOverStock(userObj.getUserId()));
+		} catch (Exception e) {
+			
+		}
+    	return "/reports/stockavailability"; 
+
+    }
+    
     @RequestMapping(value = "/dispack", method = RequestMethod.GET)
     public String dispatchAckReport(Model model) {
     	log.debug("in dispack");
@@ -134,5 +162,61 @@ public class ReportController {
 			repService.dispatchAckUpdate(ezcRequestHeader);
 		return "ok";
 	}
+    
+    @RequestMapping(value = "/teamTPMReport", method = RequestMethod.GET)
+    public String teamTPMReport(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -3);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setType("TPM");
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();		
+    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+    	{
+    		List<Object[]> userList=repService.getUsersByHead(userObj.getUserId());
+    		reportSelector.setUserGrp(userList); 
+    	}
+    	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
+    	{
+    		List<Object[]> userList=repService.getUsersByZoneHd(userObj.getUserId());
+    		List<Object[]> stateHdGrp=new ArrayList<Object[]>();
+    		for(Object[] obj : userList)
+    		{
+    			String stateGrp = (String)obj[3];
+    			if(stateGrp == null || "null".equals(stateGrp)  || "".equals(stateGrp))
+    			{
+    				stateHdGrp.add(obj);
+    				userList.remove(obj);
+    			}
+    		}
+    		reportSelector.setHdGrp(stateHdGrp);
+    		reportSelector.setUserGrp(userList); 
+    	}
+    	
+    	String selUser = reportSelector.getSelUser();
+    	if(selUser != null && !"null".equals(selUser) && !"".equals(selUser))
+    	{
+    		List<Object[]> userList= new ArrayList<Object[]>();
+    		userList.add(new Object[]{selUser});
+    		reportSelector.setUserGrp(userList);
+    	}
+        List<EzcRequestHeader> list = repService.getTeamTPMReport(reportSelector);
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", list);
+        return "reports/teamTPMReport"; 
+
+    }
+    
 }
  

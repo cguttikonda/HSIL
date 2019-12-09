@@ -13,10 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.ReportSelector;
+import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
+import com.ezc.hsil.webapp.persistance.dao.WorkGroupUsersRepository;
 
 @Service
 @Transactional
@@ -28,12 +32,24 @@ public class ReportService implements IReportService {
     @Autowired
     private EzcCommentsRepo commRepo;
     
+    @Autowired
+    private RequestCustomDto customDto;
+    
+    @Autowired
+    private WorkGroupUsersRepository workGrpUserRepo;
+    
 	@Override
 	public List<EzcRequestHeader> getRequestStatus(ListSelector listSelector) {
-		if("ALL".equals(listSelector.getStatus()))
-			return reqHeaderRepo.findByErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getToDate(),listSelector.getFromDate());
-		else
-			return reqHeaderRepo.findByErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+		return customDto.findRequestList(listSelector);
+		/*
+		 * if("ALL".equals(listSelector.getStatus())) return reqHeaderRepo.
+		 * findByErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(
+		 * listSelector.getToDate(),listSelector.getFromDate()); else return
+		 * reqHeaderRepo.
+		 * findByErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
+		 * (listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate()
+		 * );
+		 */
 	}
 
 	@Override
@@ -63,7 +79,8 @@ public class ReportService implements IReportService {
 	@Override
 	public Map<String, String> getDashBoardValues(ArrayList<String> role,String user) {
 		Map<String, String> htMap = new HashMap<String, String>();
-		
+		ArrayList<String> userList = new ArrayList<String>(); 
+		userList.add(user);
 		if(role.contains("ROLE_OUT_STOR"))
 		{
 			long dispCnt = reqHeaderRepo.getPendingDispatchCount();
@@ -73,6 +90,41 @@ public class ReportService implements IReportService {
 		{
 			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
 			htMap.put("ackDispCnt",dispCnt+"");
+			ListSelector listSelector = new ListSelector();
+			listSelector.setStatus("APPROVED");
+			listSelector.setType("TPM");
+			listSelector.setUser(userList);
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("apprTpmCnt",dispCnt+"");
+		}
+		if(role.contains("ROLE_ST_HEAD"))
+		{
+			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
+			htMap.put("ackDispCnt",dispCnt+"");
+			ListSelector listSelector = new ListSelector();
+			listSelector.setStatus("APPROVED");
+			listSelector.setType("TPS");
+			listSelector.setUser(userList);
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("apprTpsCnt",dispCnt+"");
+		}
+		if(role.contains("ROLE_ADMIN"))
+		{
+			ListSelector listSelector = new ListSelector();
+			listSelector.setStatus("NEW");
+			listSelector.setType("TPM");
+			long dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("toActTpmRequest",dispCnt+"");
+			listSelector = new ListSelector();
+			listSelector.setStatus("NEW");
+			listSelector.setType("TPS");
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("toActTpsRequest",dispCnt+"");
+			listSelector = new ListSelector();
+			listSelector.setStatus("NEW");
+			listSelector.setType("BD");
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("toActBDRequest",dispCnt+""); 
 		}
 		return htMap;
 	}
@@ -98,5 +150,21 @@ public class ReportService implements IReportService {
 			  commRepo.save(tempItem); 
 			}
 		}
+
+	@Override
+	public List<Object[]> getUsersByHead(String userId) {
+		return workGrpUserRepo.getUsersByHead(userId);
+	}
+
+	@Override
+	public List<EzcRequestHeader> getTeamTPMReport(ReportSelector reportSelector) {
+		return customDto.findRequestList(reportSelector);
+	}
+
+	@Override
+	public List<Object[]> getUsersByZoneHd(String userId) {
+		
+		return workGrpUserRepo.getUsersByZoneHd(userId);
+	}
 
 }

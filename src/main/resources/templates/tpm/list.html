@@ -61,10 +61,10 @@
   		 <label for="listType">Status</label><br>	
 		  <div class="input-group">
 			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="" th:selected="*{status==''}">All</option>
 				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
 				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
 				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
-				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
 			 </select>
 		  </div>
   	</td>
@@ -97,13 +97,13 @@
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
                     <td>
-                    	<span th:if="${row.erhStatus == 'APPROVED'}">
+                    	<span sec:authorize="hasRole('ROLE_REQ_CR')" th:if="${row.erhStatus == 'APPROVED'}">
 							<a th:href="${'/tpm/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>
 							</a>
 						</span>
-						<span th:if="${row.erhStatus == 'NEW'}">
+						<span sec:authorize="hasRole('ADMIN')" th:if="${row.erhStatus == 'NEW'}">
 							<a href="#"
 							th:data-id="${row.id}"
 							onclick="javascript:openModal('approve',this.getAttribute('data-id'))"

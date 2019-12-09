@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -43,6 +44,9 @@ public class TpsServiceImpl implements ITPSService {
 	 MaterialMasterRepo masterRepo; 
 	 @Autowired
 	 private EzcCommentsRepo commRepo;
+	 @Autowired
+	 private RequestCustomDto requestCustomDto;
+	    
 	 
 	@Override
 	public void createTPSRequest(EzcRequestHeader ezcRequestHeader) {
@@ -97,10 +101,17 @@ public class TpsServiceImpl implements ITPSService {
 	}
 	@Override
 	public List<EzcRequestHeader> getTPSRequestListByDate(ListSelector listSelector) {
-		if("ALL".equals(listSelector.getStatus()))
-			return reqHeaderRepo.findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());	
-		else	
-			return reqHeaderRepo.findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+		/*
+		 * if("ALL".equals(listSelector.getStatus())) return reqHeaderRepo.
+		 * findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
+		 * (listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());
+		 * else return reqHeaderRepo.
+		 * findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
+		 * (listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),
+		 * listSelector.getFromDate());
+		 */
+		return requestCustomDto.findRequestList(listSelector);
+		
 	}
 	@Override
 	public EzcRequestHeader getTPSRequest(String docId) {

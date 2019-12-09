@@ -1,5 +1,5 @@
 package com.ezc.hsil.webapp.persistance.dao;
-
+ 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,4 +29,11 @@ public interface WorkGroupUsersRepository extends JpaRepository<WorkGroup_Users,
 	@Modifying
 	@Query("DELETE FROM WorkGroup_Users wgu WHERE wgu.userId = ?1")	
 	void deleteUserGroups(String userId);
+	
+	@Query(value="select a.userId,b.firstName,b.lastName from WorkGroup_Users a,Users b where a.userId=b.userId and  a.stateGrp in (select CONCAT(b.groupId,'_HD_GRP') from WorkGroup_Users b where b.userId=:userId)")
+    List<Object[]> getUsersByHead(String userId);
+    
+    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b where a.userId=b.userId and  a.zonalGrp in (select b.zonalGrp from WorkGroup_Users b where b.userId=:userId)")
+    List<Object[]> getUsersByZoneHd(String userId);
+
 }
