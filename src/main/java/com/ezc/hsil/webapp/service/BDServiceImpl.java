@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -29,13 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 public class BDServiceImpl implements IBDService{
 	 @Autowired
 	    private RequestHeaderRepo reqHeaderRepo;
-	 @Autowired
-	    private RequestMaterialsRepo reqMatRep;
+	 
 	 @Autowired
 	 private RequestDetailsRepo reqDealRep;
 	 @Autowired
 	 MaterialMasterRepo masterRepo; 
-	 
+    @Autowired
+    private RequestCustomDto requestCustomDto;
+
 	 
 	@Override
 	public void createBDRequest(EzcRequestHeader ezcRequestHeader) {
@@ -69,10 +71,16 @@ public class BDServiceImpl implements IBDService{
 			return reqHeaderRepo.getBdALLRequestList(listSelector.getType(),listSelector.getFromDate(),listSelector.getToDate()); 
 		else	
 			return reqHeaderRepo.getBdRequestList(listSelector.getStatus(),listSelector.getType()); */
-		if("ALL".equals(listSelector.getStatus()))
-			return reqHeaderRepo.findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());	
-		else	
-			return reqHeaderRepo.findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+		/*
+		 * if("ALL".equals(listSelector.getStatus())) return reqHeaderRepo.
+		 * findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
+		 * (listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());
+		 * else return reqHeaderRepo.
+		 * findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
+		 * (listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),
+		 * listSelector.getFromDate());
+		 */
+		return requestCustomDto.findRequestList(listSelector);
 	}
 	
 	@Override

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -111,8 +112,8 @@ public class BDController {
 	    	}
    }
 	 
-	  @RequestMapping(value = "/bd/bdRequestList", method = RequestMethod.GET)
-	    public String list(ListSelector listSelector , Model model) {
+	    @RequestMapping(value = "/bd/bdRequestList", method = RequestMethod.GET)
+	    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
 	    	if(listSelector == null || listSelector.getFromDate() == null)
 	    	{
 	    		Date todayDate = new Date();
@@ -120,20 +121,63 @@ public class BDController {
 	    		c.setTime(todayDate); 
 	    		c.add(Calendar.MONTH, -3);
 	    		listSelector = new ListSelector();
-	    		listSelector.setStatus("ALL");
-	    		listSelector.setType("BD");
 	    		listSelector.setFromDate(c.getTime());
-	    		listSelector.setToDate(todayDate); 
+	    		listSelector.setToDate(todayDate);    		
 	    	}
-	        
+	    	listSelector.setType("BD");
+	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			ArrayList<String> userList=new ArrayList<String>();
+	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT"))
+	    	{
+	    		userList.add(userObj.getUserId());
+	    		listSelector.setUser(userList);
+	    	}
 	    	List<EzcRequestHeader> list = bdService.getBDRequestListByDate(listSelector);
-	    	
-	    	
-	        model.addAttribute("reqList",list);
+	        model.addAttribute("reqList", list);
 	        model.addAttribute("listSelector", listSelector);
-	        return "bd/bdlist";  
+	        return "bd/bdlist"; 
 
-	    } 
+	    }
+	    
+	    @RequestMapping(value = "/bd/bdRequestList/{status}", method = RequestMethod.GET)
+	    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
+	    	ListSelector listSelector = new ListSelector();
+	    	listSelector.setType("BD");
+	    	listSelector.setStatus(status);
+	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			ArrayList<String> userList=new ArrayList<String>();
+	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT"))
+	    	{
+	    		userList.add(userObj.getUserId());
+	    		listSelector.setUser(userList);
+	    	}
+	    	List<EzcRequestHeader> list = bdService.getBDRequestListByDate(listSelector);
+	        model.addAttribute("reqList", list);
+	        model.addAttribute("listSelector", listSelector);
+	        return "bd/bdlist"; 
+
+	    }
+
+	 
+	/*
+	 * @RequestMapping(value = "/bd/bdRequestList", method = RequestMethod.GET)
+	 * public String list(ListSelector listSelector , Model model) { if(listSelector
+	 * == null || listSelector.getFromDate() == null) { Date todayDate = new Date();
+	 * Calendar c = Calendar.getInstance(); c.setTime(todayDate);
+	 * c.add(Calendar.MONTH, -3); listSelector = new ListSelector();
+	 * listSelector.setStatus("ALL"); listSelector.setType("BD");
+	 * listSelector.setFromDate(c.getTime()); listSelector.setToDate(todayDate); }
+	 * 
+	 * List<EzcRequestHeader> list = bdService.getBDRequestListByDate(listSelector);
+	 * 
+	 * 
+	 * model.addAttribute("reqList",list); model.addAttribute("listSelector",
+	 * listSelector); return "bd/bdlist";
+	 * 
+	 * }
+	 */ 
 	  @RequestMapping(value = "/bd/addDetails/{docId}", method = RequestMethod.GET)
 	    public String addDetails(@PathVariable String docId, Model model) {
 	        EzcRequestHeader ezcRequestHeader = bdService.getBDRequest(docId);

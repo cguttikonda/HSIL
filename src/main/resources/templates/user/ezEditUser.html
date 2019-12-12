@@ -77,7 +77,7 @@
   
    <div class="form-group">
       <label>Role</label>
-    <select th:field="*{role}" onChange='changeRole()'>
+    <select class="form-control select2" th:field="*{role}" onChange='changeRole()'>
                          <option value=""> --Select-- </option>
                          <option th:each="role : ${roles}"
                         	th:value="${role.roleId}"
@@ -86,16 +86,16 @@
                             />
                   </select>
       <label>Group</label>
-   <select th:field="*{group}">
+   <select class="form-control select2" multiple="multiple" th:field="*{group}">
                          <option value=""> --Select-- </option>
                          <option th:each="groups : ${wfGroups}"
                             th:value="${groups.name}"
                             th:utext="${groups.desc}"
-                            th:selected="${groups.name == userForm.group}"
+                            th:selected="${groups.name == userForm.group[0]}"
                             />
                   </select>
       <label>Zone</label>
-              <select th:field="*{zone}">
+              <select class="form-control select2" th:field="*{zone}">
                          <option value=""> --Select-- </option>
                          <option th:each="zone : ${zones}"
                             th:value="${zone.zonalId}"
@@ -112,5 +112,32 @@
 		</form>
 
 	</div>      
+ <div layout:fragment="scriptContent">
+<script th:inline="javascript">
+function changeRole()
+{
+	  if(document.userForm.role.value=='ADMIN')
+	  {
+		  //document.getElementById('group_div').style.visibility = 'hidden';
+		  //document.getElementById('zone_div').style.visibility = 'hidden';
+		  
+		  document.getElementById('group').disabled = true;
+		  document.getElementById('zone').disabled = true;
+	  }	  
+	  else if(document.userForm.role.value=='ZN_HEAD')
+		  document.getElementById('group').disabled = true;
+	  else
+	  {
+		  document.getElementById('group').disabled = false;
+		  document.getElementById('zone').disabled = false;
+	  }	
+}
+$(document).ready(function(){
+    $('.select2').select2();
+});
+  
+</script>
+</div>
+ 
    </body>
 </html>

@@ -33,6 +33,7 @@ public class EzUserCreationDefaults {
     	ROLES.add(new UserRoles("ROLE_ZN_HEAD", "Sales Zonal Head"));
     	ROLES.add(new UserRoles("ROLE_IN_STOR", "In Store"));
     	ROLES.add(new UserRoles("ROLE_OUT_STOR", "Out Store"));
+    	ROLES.add(new UserRoles("ROLE_BD_MKT", "BD/Marketing"));
 
     	STATES.add(new EzStates("AN", "Andaman and Nicobar Islands","REQ_CR"));
     	STATES.add(new EzStates("AP", "Andhra Pradesh","REQ_CR"));

@@ -1,4 +1,5 @@
 package com.ezc.hsil.webapp.controller;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -160,34 +161,40 @@ public class UserController {
  
 		 Roles userRole = null;
     	 
-    	 WorkGroup_Users userGroups = (WorkGroup_Users) iUserService.getGroupsByUserId(lv_User.getUserId());
-   
+		 List<WorkGroup_Users> userGroupList =  iUserService.getGroupsByUserId(lv_User.getUserId());
+		 List<String> userGroups = new ArrayList<String>();
     	 List<Work_Groups> wfGroups = null;
       	 try{
     		 userRole = (Roles)userRoles.get(0);
-    		 wfGroups = (List<Work_Groups>)iUserService.getGroupsByRole(userRole.getName());
+    		 //wfGroups = (List<Work_Groups>)iUserService.getGroupsByRole(userRole.getName());
+    		 wfGroups = (List<Work_Groups>)iUserService.getGroupsByRole("ROLE_REQ_CR");
     	 }catch(Exception e){}	
  
       	 
       	UserForm formFields = new UserForm();
       	
-      	String userZone = userGroups.getZonalGrp();
+      	String userZone = "";
+      	for(WorkGroup_Users userGroup : userGroupList)
+      	{
+      		userZone =userGroup.getZonalGrp(); 
+      		userGroups.add(userGroup.getId()+"");
+      	}
       	
       	List<WorkGroup_Users> zonalHDSubGroups = (List<WorkGroup_Users>) iUserService.getZonalHeadSubGroups(userZone);
       	
-      	log.debug("::::zonalHDSubGroups:::::::"+zonalHDSubGroups);
-      	 Iterator iter = zonalHDSubGroups.iterator();
-      	 while(iter.hasNext())
-      	 {
-      		WorkGroup_Users lv_wgu = (WorkGroup_Users)iter.next();
-      	    log.debug(lv_wgu.getUserId()+":::::"+lv_wgu.getGroupId()+":::::"+lv_wgu.getStateGrp()+"::::"+lv_wgu.getZonalGrp());
-      	 }
+		/*
+		 * log.debug("::::zonalHDSubGroups:::::::"+zonalHDSubGroups); Iterator iter =
+		 * zonalHDSubGroups.iterator(); while(iter.hasNext()) { WorkGroup_Users lv_wgu =
+		 * (WorkGroup_Users)iter.next();
+		 * log.debug(lv_wgu.getUserId()+":::::"+lv_wgu.getGroupId()+":::::"+lv_wgu.
+		 * getStateGrp()+"::::"+lv_wgu.getZonalGrp()); }
+		 */
       	
       	try{
       		userZone = userZone.substring(0,userZone.indexOf("_"));
       	}catch(Exception e){}	
       	
-      	
+      	log.debug("::::::::::userGroups"+userGroups);
       	
       	formFields.setId(lv_User.getId());
       	formFields.setUserId(lv_User.getUserId());
@@ -195,7 +202,7 @@ public class UserController {
       	formFields.setLastName(lv_User.getLastName());
       	formFields.setEmail(lv_User.getEmail());
       	formFields.setRole(userRole.getName());
-      	formFields.setGroup(userGroups.getGroupId());
+      	formFields.setGroup(userGroups);
       	formFields.setZone(userZone);
  		 
       	 model.addAttribute("userForm", formFields);

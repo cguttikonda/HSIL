@@ -42,9 +42,9 @@
   		 <label for="listType">Status</label><br>	
 		  <div class="input-group">
 			 <select class="form-control input-sm"  th:field="*{status}">  
+			 	<option value="" th:selected="*{status=='ALL'}">All</option>
 				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
 				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
-				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
 			 </select>
 		  </div>
   	</td>

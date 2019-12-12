@@ -102,14 +102,14 @@
 			</ul></li>
 		<!-- Master Data End-->
 		<!-- TPM/TPS menu Option -->
-	<li class="treeview"  sec:authorize="hasRole('ADMIN')"><a href="#">
+	<li class="treeview"  sec:authorize="hasRole('ROLE_BD_MKT')"><a href="#">
 				<i class="fa fa-edit"></i> <span>BD Creation</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
 			</span>
 		</a>
 			<ul class="treeview-menu">
-				<li class="" sec:authorize="hasRole('ADMIN')"><a href="#" th:href="@{/bd/add}"><i
+				<li class=""><a href="#" th:href="@{/bd/add}"><i
 						class="fa fa-circle-o"></i> Create</a></li>
 				<li><a href="#" th:href="@{/bd/bdRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
@@ -138,12 +138,12 @@
 				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
 		
-		<li  sec:authorize="hasRole('ROLE_REQ_CR')">
+		<li  sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_BD_MKT')">
 			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
 		</a>
 		</li>
 		
-		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD')">
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
@@ -157,6 +157,7 @@
 			<ul class="treeview-menu">
 				<li class=""><a href="#" th:href="@{/reports/teamTPMReport}"><i class="fa fa-circle-o"></i> TPM History</a></li>
 				<li sec:authorize="hasRole('ROLE_ZN_HEAD')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
+				<li class=""><a href="#" th:href="@{/reports/stockavailbydept}"><i class="fa fa-circle-o"></i> Stock Report</a></li>
 			</ul></li>
 				<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">
 				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span

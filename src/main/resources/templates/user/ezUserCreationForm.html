@@ -63,7 +63,7 @@
 				
 				<div class="form-group">
 					<label for="role">Role</label>
-					<select th:field="*{role}" required onChange='changeRole()'>
+					<select class="form-control select2" th:field="*{role}" required onChange='changeRole()'>
                          <option value=""> --Select-- </option>
                          <option th:each="role : ${roles}"
                             th:value="${role.roleId}"
@@ -71,7 +71,7 @@
                   </select>					
 
 					<label for="group">Group</label>
-					 <select th:field="*{group}">
+					 <select class="form-control select2" multiple="multiple" data-placeholder="Select group" th:field="*{group}">
                          <option value=""> --Select-- </option>
                          <option th:each="state : ${states}"
                             th:value="${state.code}"
@@ -79,7 +79,7 @@
                   </select>			
 				
 					<label for="zone">Zone</label>
-					<select th:field="*{zone}" required>
+					<select class="form-control select2" th:field="*{zone}" required>
                          <option value=""> --Select-- </option>
                          <option th:each="zone : ${zones}"
                             th:value="${zone.zonalId}"
@@ -120,7 +120,8 @@ function changeRole()
 	  }	
 }
 $(document).ready(function(){
-	
+    $('.select2').select2();
+
 	$('#submitBut').click(function(event) {
 		event.preventDefault();
 		  $.ajax({

@@ -19,4 +19,6 @@ public interface IReportService {
 	public List<Object[]> getUsersByHead(String userId);
 	public List<EzcRequestHeader> getTeamTPMReport(ReportSelector reportSelector);
 	public List<Object[]> getUsersByZoneHd(String userId);
+	public List<Object[]> getStockAvailabilityByUser(List<String> userList);
+	public List<Object[]> getStateHdByZoneHd(String userId);
 }

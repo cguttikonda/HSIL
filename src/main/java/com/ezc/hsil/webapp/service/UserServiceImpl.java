@@ -112,28 +112,34 @@ public class UserServiceImpl implements IUserService{
 	        
 	        if(userRepository.save(user)!=null)
 	        {	
-	        	String userGrp = accountDto.getGroup();
+	        	List<String> userGrpList =  accountDto.getGroup();
+	        	//String userGrp = accountDto.getGroup();
 	        	String stHDGrp = "";
 	        	String zonalUserGrp = "";
-	        	 
-	        	if("ROLE_REQ_CR".equals(accountDto.getRole()))
-	        	{
-	        		//userGrp = 	accountDto.getState()+"_GRP";
-	        		stHDGrp =   userGrp+"_HD_GRP";
-	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
-	        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole())){
-	        		//userGrp = 	accountDto.getState()+"_HD_GRP";
-	        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
-	        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
-	        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
-	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
-	        	}
-	        	
-	        	
-   	
-		        //createGroupIfNotFound(userGrp,groupDesc,role);
-	        	insertUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp,"","");
-	        }	
+		        	for(String userGrp : userGrpList)
+		        	{
+			        	if("ROLE_REQ_CR".equals(accountDto.getRole()))
+			        	{
+			        		//userGrp = 	accountDto.getState()+"_GRP";
+			        		stHDGrp =   userGrp+"_HD_GRP";
+			        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+			        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole()) || "ROLE_BD_MKTG".equals(accountDto.getRole())){
+			        		userGrp = 	userGrp+"_HD_GRP";
+			        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
+			        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
+			        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
+			        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+			        	}else if("ROLE_BD_MKT".equals(accountDto.getRole())){
+			        		userGrp = 	userGrp+"_MK_GRP";
+			        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+			        	}
+			        	
+			        	
+		   	
+				        //createGroupIfNotFound(userGrp,groupDesc,role);
+			        	insertUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp,"","");
+		        	}
+		        }	
 	        
 	        return userRepository.save(user);
 	    }
@@ -160,11 +166,11 @@ public class UserServiceImpl implements IUserService{
 	    }
 	    
 	    @Override
-	    public WorkGroup_Users getGroupsByUserId(String userId) {    
+	    public List<WorkGroup_Users> getGroupsByUserId(String userId) {    
 	    	
 	    	//System.out.println(":::::::userId:::::"+userId);
 	    	
-	    	WorkGroup_Users userGroup = groupUsersRepository.getGroupByUserId(userId);
+	    	List<WorkGroup_Users> userGroup = groupUsersRepository.getGroupByUserId(userId);
 	    	
 	    	//System.out.println(":::::::userGroups-getGroupId:::::"+userGroup.getGroupId());
 	    	
@@ -207,26 +213,31 @@ public class UserServiceImpl implements IUserService{
 	    	user.setLastName(accountDto.getLastName());
 	    	user.setEmail(accountDto.getEmail());
 	    	user.setRoles(new ArrayList<Roles>(Arrays.asList(userRole)));
+	    	List<String> userGrpList =  accountDto.getGroup();
 	    	
-	    	String userGrp = accountDto.getGroup();
+	    	//String userGrp = accountDto.getGroup();
         	String stHDGrp = "";
         	String zonalUserGrp = "";
-        	
-        	if("ROLE_REQ_CR".equals(accountDto.getRole()))
+        	for(String userGrp : userGrpList)
         	{
-        		//userGrp = 	accountDto.getState()+"_GRP";
-        		stHDGrp =   userGrp+"_HD_GRP";
-        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
-        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole())){
-        		//userGrp = 	accountDto.getState()+"_HD_GRP";
-        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
-        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
-        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
-        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
-        	}
+        		if("ROLE_REQ_CR".equals(accountDto.getRole()))
+	        	{
+	        		//userGrp = 	accountDto.getState()+"_GRP";
+	        		stHDGrp =   userGrp+"_HD_GRP";
+	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        	}else if("ROLE_ST_HEAD".equals(accountDto.getRole()) || "ROLE_BD_MKTG".equals(accountDto.getRole())){
+	        		userGrp = 	userGrp+"_HD_GRP";
+	        		zonalUserGrp = accountDto.getZone()+"_ZONE_GRP";
+	        	}else if("ROLE_ZN_HEAD".equals(accountDto.getRole())){
+	        		userGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        	}else if("ROLE_BD_MKT".equals(accountDto.getRole())){
+	        		userGrp = 	userGrp+"_MK_GRP";
+	        		zonalUserGrp = 	accountDto.getZone()+"_ZONE_GRP";
+	        	}
 	    	
         	updateUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp);
-        	
+        	}
 	        userRepository.save(user);
 	    }
 

@@ -57,7 +57,7 @@ public class ReportController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		ArrayList<String> userList=new ArrayList<String>();
-    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD") || requestWrapper.isUserInRole("ROLE_BD_MKT"))
     	{
     		userList.add(userObj.getUserId());
     		listSelector.setUser(userList);
@@ -122,6 +122,27 @@ public class ReportController {
     	model.addAttribute("reqList", repService.getStockAvailabilityForAll());
     	return "/reports/stockforallrep"; 
 	}
+    
+    @RequestMapping(value = "/stockavailbydept", method = RequestMethod.GET)
+    public String getStockAvailabilityByDept(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) 
+    {	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		List<Object[]> userListObj = null; 
+    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+    	{
+    		userListObj=repService.getUsersByHead(userObj.getUserId()); 
+    	}
+    	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
+    	{
+    		userListObj=repService.getUsersByZoneHd(userObj.getUserId());
+    	}
+    	List<String> userList = new ArrayList<String>();
+    	if(userListObj != null)
+    		userListObj.forEach(obj->userList.add((String) obj[0]));
+    	model.addAttribute("reqList", repService.getStockAvailabilityByUser(userList));
+    	return "/reports/stockforallrep"; 
+	}
 
     @RequestMapping("/stockavailuser")
     public String add(Model model) {
@@ -181,40 +202,110 @@ public class ReportController {
     		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
     	}
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Users userObj = (Users)authentication.getPrincipal();		
+		Users userObj = (Users)authentication.getPrincipal();
+		List<Object[]> userList= null;
+		List<Object[]> tempUserList = null;
     	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
     	{
-    		List<Object[]> userList=repService.getUsersByHead(userObj.getUserId());
+    		userList=repService.getUsersByHead(userObj.getUserId());
     		reportSelector.setUserGrp(userList); 
     	}
     	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
     	{
-    		List<Object[]> userList=repService.getUsersByZoneHd(userObj.getUserId());
-    		List<Object[]> stateHdGrp=new ArrayList<Object[]>();
-    		for(Object[] obj : userList)
-    		{
-    			String stateGrp = (String)obj[3];
-    			if(stateGrp == null || "null".equals(stateGrp)  || "".equals(stateGrp))
-    			{
-    				stateHdGrp.add(obj);
-    				userList.remove(obj);
-    			}
-    		}
+    		userList=repService.getUsersByZoneHd(userObj.getUserId());
+    		List<Object[]> stateHdGrp=repService.getStateHdByZoneHd(userObj.getUserId());
+			/*
+			 * for(int i = 0; i<userList.size(); i++){ Object[] tempUserArr =
+			 * userList.get(i); String stateGrp = (String)tempUserArr[3]; if(stateGrp ==
+			 * null || "null".equals(stateGrp) || "".equals(stateGrp)) {
+			 * stateHdGrp.add(tempUserArr); userList.remove(tempUserArr); i--; } }
+			 */
+    		
     		reportSelector.setHdGrp(stateHdGrp);
+    		reportSelector.setUserGrp(userList); 
+    	}
+    	tempUserList = userList;
+    	
+    	String selStHd = reportSelector.getSelStHd();
+    	if(selStHd != null && !"null".equals(selStHd) && !"".equals(selStHd))
+    	{
+    		userList=repService.getUsersByHead(selStHd);
     		reportSelector.setUserGrp(userList); 
     	}
     	
     	String selUser = reportSelector.getSelUser();
     	if(selUser != null && !"null".equals(selUser) && !"".equals(selUser))
     	{
-    		List<Object[]> userList= new ArrayList<Object[]>();
+    		userList= new ArrayList<Object[]>();
     		userList.add(new Object[]{selUser});
     		reportSelector.setUserGrp(userList);
     	}
+    	
+    	
         List<EzcRequestHeader> list = repService.getTeamTPMReport(reportSelector);
+        reportSelector.setUserGrp(tempUserList);
         model.addAttribute("reportSelector", reportSelector);
         model.addAttribute("reqList", list);
         return "reports/teamTPMReport"; 
+
+    }
+    
+    @RequestMapping(value = "/teamTPSReport", method = RequestMethod.GET)
+    public String teamTPSReport(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -3);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+    	reportSelector.setType("TPS");
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		List<Object[]> userList= null;
+		List<Object[]> tempUserList = null;
+    	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
+    	{
+    		userList=repService.getUsersByZoneHd(userObj.getUserId());
+    		List<Object[]> stateHdGrp=new ArrayList<Object[]>();
+    		for(int i = 0; i<userList.size(); i++){
+    			Object[] tempUserArr = userList.get(i);	
+    			String stateGrp = (String)tempUserArr[3];
+    			if(stateGrp == null || "null".equals(stateGrp)  || "".equals(stateGrp))
+    			{
+    				stateHdGrp.add(tempUserArr);
+    				userList.remove(tempUserArr);
+    				i--;
+    			}
+    		}
+    		
+    		reportSelector.setHdGrp(stateHdGrp);
+    		reportSelector.setUserGrp(stateHdGrp); 
+    	}
+    	tempUserList = userList;
+    	String selStHd = reportSelector.getSelStHd();
+    	if(selStHd != null && !"null".equals(selStHd) && !"".equals(selStHd))
+    	{
+    		userList = new ArrayList<Object[]>();
+    		userList.add(new Object[] {selStHd});
+    		reportSelector.setUserGrp(userList); 
+    	}
+        List<EzcRequestHeader> list = null;
+        if(userList != null && userList.size()>0)
+        {
+        	list = repService.getTeamTPMReport(reportSelector);
+        }
+        reportSelector.setUserGrp(tempUserList);
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", list);
+        return "reports/teamTPSReport"; 
 
     }
     

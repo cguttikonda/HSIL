@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -71,16 +73,16 @@ public class UserDto {
     
     private String state;
     private String zone;
-    private String group;
+    private List<String> group;
     
     
     
     
-    public String getGroup() {
+    public List<String> getGroup() {
 		return group;
 	}
 
-	public void setGroup(String group) {
+	public void setGroup(List<String> group) {
 		this.group = group;
 	}
 

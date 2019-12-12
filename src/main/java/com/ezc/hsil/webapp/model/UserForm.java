@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.model;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,15 +16,15 @@ public class UserForm extends Auditable<String> {
 	private String stateCode;
 	private String role;
 	private String zone;
-	private String group;
+	private List<String> group;
 	
 	
 	@NotNull
-	public String getGroup() {
+	public List<String> getGroup() {
 		return group;
 	}
 
-	public void setGroup(String group) {
+	public void setGroup(List<String> group) {
 		this.group = group;
 	}
 

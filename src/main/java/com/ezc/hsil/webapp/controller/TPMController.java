@@ -166,11 +166,10 @@ public class TPMController {
     		c.setTime(todayDate); 
     		c.add(Calendar.MONTH, -3);
     		listSelector = new ListSelector();
-    		listSelector.setStatus("ALL");
-    		listSelector.setType("TPM");
     		listSelector.setFromDate(c.getTime());
     		listSelector.setToDate(todayDate);    		
     	}
+    	listSelector.setType("TPM");
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		ArrayList<String> userList=new ArrayList<String>();

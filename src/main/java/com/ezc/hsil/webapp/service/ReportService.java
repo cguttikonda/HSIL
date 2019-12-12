@@ -108,6 +108,17 @@ public class ReportService implements IReportService {
 			dispCnt = customDto.findRequestListCnt(listSelector);
 			htMap.put("apprTpsCnt",dispCnt+"");
 		}
+		if(role.contains("ROLE_BD_MKT"))
+		{
+			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
+			htMap.put("ackDispCnt",dispCnt+"");
+			ListSelector listSelector = new ListSelector();
+			listSelector.setStatus("APPROVED");
+			listSelector.setType("BD");
+			listSelector.setUser(userList);
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("apprBDCnt",dispCnt+"");
+		}
 		if(role.contains("ROLE_ADMIN"))
 		{
 			ListSelector listSelector = new ListSelector();
@@ -165,6 +176,16 @@ public class ReportService implements IReportService {
 	public List<Object[]> getUsersByZoneHd(String userId) {
 		
 		return workGrpUserRepo.getUsersByZoneHd(userId);
+	}
+
+	@Override
+	public List<Object[]> getStockAvailabilityByUser(List<String> userList) {
+		return reqHeaderRepo.getStockAvailabilityByUser(userList);
+	}
+
+	@Override
+	public List<Object[]> getStateHdByZoneHd(String userId) {
+		return workGrpUserRepo.getStateHdByZoneHd(userId);
 	}
 
 }

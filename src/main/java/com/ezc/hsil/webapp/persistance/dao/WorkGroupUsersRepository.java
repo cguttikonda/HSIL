@@ -13,7 +13,7 @@ public interface WorkGroupUsersRepository extends JpaRepository<WorkGroup_Users,
 	WorkGroup_Users findByUserANDGroup(String groupId,String userId);
 	
 	@Query("SELECT wgu FROM WorkGroup_Users wgu WHERE wgu.userId = ?1")	
-	WorkGroup_Users getGroupByUserId(String userId);
+	List<WorkGroup_Users> getGroupByUserId(String userId);
 	
 	@Query("SELECT wgu FROM WorkGroup_Users wgu WHERE wgu.stateGrp = ?1")	
 	List<WorkGroup_Users> getStateHeadSubGroups(String stateGrp);
@@ -30,10 +30,13 @@ public interface WorkGroupUsersRepository extends JpaRepository<WorkGroup_Users,
 	@Query("DELETE FROM WorkGroup_Users wgu WHERE wgu.userId = ?1")	
 	void deleteUserGroups(String userId);
 	
-	@Query(value="select a.userId,b.firstName,b.lastName from WorkGroup_Users a,Users b where a.userId=b.userId and  a.stateGrp in (select CONCAT(b.groupId,'_HD_GRP') from WorkGroup_Users b where b.userId=:userId)")
+	@Query(value="select a.userId,b.firstName,b.lastName from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_REQ_CR' and  a.stateGrp in (select b.groupId from WorkGroup_Users b where b.userId=:userId)")
     List<Object[]> getUsersByHead(String userId);
     
-    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b where a.userId=b.userId and  a.zonalGrp in (select b.zonalGrp from WorkGroup_Users b where b.userId=:userId)")
+    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_REQ_CR' and a.zonalGrp in (select b.zonalGrp from WorkGroup_Users b where b.userId=:userId)")
     List<Object[]> getUsersByZoneHd(String userId);
+    
+    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_ST_HEAD' and a.zonalGrp in (select b.zonalGrp from WorkGroup_Users b where b.userId=:userId)")
+    List<Object[]> getStateHdByZoneHd(String userId);
 
 }

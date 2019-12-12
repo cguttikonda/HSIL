@@ -19,6 +19,7 @@ public class ReportSelector {
 	private List<Object[]> userGrp;
 	private List<Object[]> hdGrp;
 	private String selUser;
+	private String selStHd;
 	
 	public Date getFromDate() {
 		return fromDate;
@@ -62,6 +63,13 @@ public class ReportSelector {
 	public void setSelUser(String selUser) {
 		this.selUser = selUser;
 	}
-		
+	public String getSelStHd() {
+		return selStHd;
+	}
+	public void setSelStHd(String selStHd) {
+		this.selStHd = selStHd;
+	}
+	
+	
 		
 }

@@ -57,7 +57,7 @@ public interface IUserService {
 	
 	List<Users> getUsersList();
 	
-	WorkGroup_Users getGroupsByUserId(String userId);
+	List<WorkGroup_Users> getGroupsByUserId(String userId);
 	
 	List<Work_Groups> getAllGroups();
 	
