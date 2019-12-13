@@ -188,4 +188,14 @@ public class ReportService implements IReportService {
 		return workGrpUserRepo.getStateHdByZoneHd(userId);
 	}
 
+	@Override
+	public List<Object[]> getAllStateHd() {
+		return workGrpUserRepo.getAllStateHd();
+	}
+
+	@Override
+	public List<Object[]> getAllUsers() {
+		return workGrpUserRepo.getAllUsers();
+	}
+
 }

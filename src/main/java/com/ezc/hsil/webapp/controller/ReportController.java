@@ -27,6 +27,7 @@ import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.IReportService;
 import com.ezc.hsil.webapp.service.ITPMService;
 
@@ -42,17 +43,23 @@ public class ReportController {
     
     @Autowired
     ITPMService tpmService;
+    
+    @Autowired
+    IMasterService iMasterService;
 
     @RequestMapping(value = "/requeststatus", method = RequestMethod.GET)
     public String requestStatus(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
 
-    	Date todayDate = new Date();
-		Calendar c = Calendar.getInstance(); 
-		c.setTime(todayDate); 
-		c.add(Calendar.MONTH, -3);
-		listSelector = new ListSelector();
-		listSelector.setFromDate(c.getTime());
-		listSelector.setToDate(todayDate);
+    	if(listSelector == null || listSelector.getFromDate() == null)
+    	{
+			Date todayDate = new Date();
+			Calendar c = Calendar.getInstance(); 
+			c.setTime(todayDate); 
+			c.add(Calendar.MONTH, -3);
+			listSelector = new ListSelector();
+			listSelector.setFromDate(c.getTime());
+			listSelector.setToDate(todayDate);
+    	}
 		
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
@@ -70,6 +77,41 @@ public class ReportController {
 
     } 
   
+    @RequestMapping(value = "/requeststatus/{type}", method = RequestMethod.GET)
+    public String requestStatus( @PathVariable String type, Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	ListSelector listSelector = new ListSelector();
+    	Date todayDate = new Date();
+		Calendar c = Calendar.getInstance(); 
+		c.setTime(todayDate); 
+		if("UPCMG".equals(type))
+		{
+			listSelector.setFromDate(todayDate);
+			c.add(Calendar.MONTH, +1);
+			listSelector.setToDate(c.getTime());
+		}
+		else if("DUE".equals(type))
+		{
+			c.add(Calendar.MONTH, -3);
+			listSelector.setFromDate(c.getTime());
+			listSelector.setToDate(todayDate);
+		}
+		listSelector.setStatus("APPROVED");
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		ArrayList<String> userList=new ArrayList<String>();
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD") || requestWrapper.isUserInRole("ROLE_BD_MKT"))
+    	{
+    		userList.add(userObj.getUserId());
+    		listSelector.setUser(userList);
+    	}
+
+    	List<EzcRequestHeader> list = repService.getRequestStatus(listSelector);
+        model.addAttribute("reqList", list); 
+        model.addAttribute("listSelector", listSelector);
+        return "/reports/requeststatus"; 
+
+    }
+    
     @RequestMapping(value = "/stockavailablity", method = RequestMethod.GET)
     public String stockAvailablity(ListSelector listSelector , Model model) {
     	if(listSelector == null || listSelector.getFromDate() == null)
@@ -100,21 +142,34 @@ public class ReportController {
     }
     
     @RequestMapping(value = "/dispatchupdate", method = RequestMethod.POST)
-	public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments ) {
+    public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments ) {
 
-    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
-		ezcRequestHeader.setId(id);
-		Set<EzcComments> comments = new HashSet<EzcComments>();
-		if(dispComments != null)
-		{
-			
-				EzcComments reqCom = new EzcComments();
-				comments.add(reqCom);
-		}
-			ezcRequestHeader.setEzcComments(comments);
-			repService.dispatchUpdate(ezcRequestHeader);
-		return "ok";
-	}
+    String loggedUser="";
+    EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
+           ezcRequestHeader.setId(id);
+           Set<EzcComments> comments = new HashSet<EzcComments>();
+           try {
+                  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                  Users userObj = (Users)authentication.getPrincipal();
+                  loggedUser=(String)userObj.getUserId();
+                  
+           } catch (Exception e) {
+                  
+           }
+           if(dispComments != null)
+           {
+                  
+                        EzcComments reqCom = new EzcComments();
+                        reqCom.setType("DISPATCH");
+                        reqCom.setComments(dispComments);
+                        reqCom.setCreatedBy(loggedUser);
+                        reqCom.setLastModifiedBy(loggedUser);
+                        comments.add(reqCom);
+           }
+                  ezcRequestHeader.setEzcComments(comments);
+                  repService.dispatchUpdate(ezcRequestHeader);
+           return "ok";
+    }
     
     @RequestMapping(value = "/stockavailforall", method = RequestMethod.GET)
     public String getStockAvailabilityAll(Model model) 
@@ -136,6 +191,11 @@ public class ReportController {
     	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
     	{
     		userListObj=repService.getUsersByZoneHd(userObj.getUserId());
+    	}
+    	if(requestWrapper.isUserInRole("ADMIN"))
+    	{
+    		userListObj=repService.getAllStateHd();
+    		userListObj.addAll(repService.getAllUsers());
     	}
     	List<String> userList = new ArrayList<String>();
     	if(userListObj != null)
@@ -168,21 +228,34 @@ public class ReportController {
     }
     
     @RequestMapping(value = "/dispackupdate", method = RequestMethod.POST)
-	public @ResponseBody String dispackUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments ) {
-
-    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
-		ezcRequestHeader.setId(id);
-		Set<EzcComments> comments = new HashSet<EzcComments>();
-		if(dispComments != null)
-		{
-			
-				EzcComments reqCom = new EzcComments();
-				comments.add(reqCom);
-		}
-			ezcRequestHeader.setEzcComments(comments);
-			repService.dispatchAckUpdate(ezcRequestHeader);
-		return "ok";
-	}
+    public @ResponseBody String dispackUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments ) {
+    
+    EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
+           ezcRequestHeader.setId(id);
+           Set<EzcComments> comments = new HashSet<EzcComments>();
+           String loggedUser="";
+           try {
+                  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                  Users userObj = (Users)authentication.getPrincipal();
+                  loggedUser=(String)userObj.getUserId();
+                  
+           } catch (Exception e) {
+                  
+           }
+           if(dispComments != null)
+           {
+                  
+                        EzcComments reqCom = new EzcComments();
+                        reqCom.setType("DISACK");
+                        reqCom.setComments(dispComments);
+                        reqCom.setCreatedBy(loggedUser);
+                        reqCom.setLastModifiedBy(loggedUser);
+                        comments.add(reqCom);
+           }
+                  ezcRequestHeader.setEzcComments(comments);
+                  repService.dispatchAckUpdate(ezcRequestHeader);
+           return "ok";
+    }
     
     @RequestMapping(value = "/teamTPMReport", method = RequestMethod.GET)
     public String teamTPMReport(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
@@ -214,15 +287,16 @@ public class ReportController {
     	{
     		userList=repService.getUsersByZoneHd(userObj.getUserId());
     		List<Object[]> stateHdGrp=repService.getStateHdByZoneHd(userObj.getUserId());
-			/*
-			 * for(int i = 0; i<userList.size(); i++){ Object[] tempUserArr =
-			 * userList.get(i); String stateGrp = (String)tempUserArr[3]; if(stateGrp ==
-			 * null || "null".equals(stateGrp) || "".equals(stateGrp)) {
-			 * stateHdGrp.add(tempUserArr); userList.remove(tempUserArr); i--; } }
-			 */
-    		
-    		reportSelector.setHdGrp(stateHdGrp);
+    		reportSelector.setHdGrp(stateHdGrp); 
     		reportSelector.setUserGrp(userList); 
+    	}
+    	if(requestWrapper.isUserInRole("ADMIN"))
+    	{
+    		userList=repService.getAllUsers();
+    		List<Object[]> stateHdGrp=repService.getAllStateHd();
+    		reportSelector.setHdGrp(stateHdGrp);
+    		reportSelector.setUserGrp(userList);
+    		reportSelector.setDistList(iMasterService.findAll());
     	}
     	tempUserList = userList;
     	
@@ -273,21 +347,17 @@ public class ReportController {
 		List<Object[]> tempUserList = null;
     	if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
     	{
-    		userList=repService.getUsersByZoneHd(userObj.getUserId());
-    		List<Object[]> stateHdGrp=new ArrayList<Object[]>();
-    		for(int i = 0; i<userList.size(); i++){
-    			Object[] tempUserArr = userList.get(i);	
-    			String stateGrp = (String)tempUserArr[3];
-    			if(stateGrp == null || "null".equals(stateGrp)  || "".equals(stateGrp))
-    			{
-    				stateHdGrp.add(tempUserArr);
-    				userList.remove(tempUserArr);
-    				i--;
-    			}
-    		}
+    		userList=repService.getStateHdByZoneHd(userObj.getUserId());
+    		reportSelector.setHdGrp(userList);
+    		reportSelector.setUserGrp(userList); 
+    	}
+    	if(requestWrapper.isUserInRole("ADMIN"))
+    	{
     		
-    		reportSelector.setHdGrp(stateHdGrp);
-    		reportSelector.setUserGrp(stateHdGrp); 
+    		userList=repService.getAllStateHd();
+    		reportSelector.setHdGrp(userList);
+    		reportSelector.setUserGrp(userList);
+    		reportSelector.setDistList(iMasterService.findAll());
     	}
     	tempUserList = userList;
     	String selStHd = reportSelector.getSelStHd();
@@ -308,6 +378,7 @@ public class ReportController {
         return "reports/teamTPSReport"; 
 
     }
+    
     
 }
  

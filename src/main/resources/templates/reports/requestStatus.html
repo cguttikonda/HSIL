@@ -42,16 +42,33 @@
   		 <label for="listType">Status</label><br>	
 		  <div class="input-group">
 			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="" th:selected="*{status=='ALL'}">All</option>
 				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
 				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
-				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
-				<option value="ALL" th:selected="*{status=='ALL'}">All</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option>  
+				
 			 </select>
 		  </div>
   	</td>
- 
+  	<td>	
+  		 <label for="listType">Type</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{type}">  
+				<option value="" th:selected="*{status=='ALL'}">All</option>
+				<option value="TPM" th:selected="*{status=='NEW'}">TPM</option>
+				<option value="TPS" th:selected="*{status=='SUBMITTED'}">TPS</option>
+				<option value="BD" th:selected="*{status=='APPROVED'}">BD & MARKETING</option> 
+			 </select>
+		  </div>
+  	</td>
+ 	<td>
+  		<a th:href="@{/reports/requeststatus/UPCMG}" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">UPCOMING <i class="fa fa-angle-double-up"></i></a>
+  	</td>
   	<td>
-  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
+  		<a th:href="@{/reports/requeststatus/DUE}" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">DUE <i class="fa fa-angle-double-down"></i></a>
+  	</td>
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">Go <i class="fa fa-paper-plane"></i></button>
   	</td>
   </tr>
   

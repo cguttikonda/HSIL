@@ -70,15 +70,15 @@
 
 
 				<li class="treeview"><a href="#"><i class="fa fa-circle-o"></i>
-						Material <span class="pull-right-container"> <i
+						Stock <span class="pull-right-container"> <i
 							class="fa fa-angle-left pull-right"></i>
 					</span> </a>
 					<ul class="treeview-menu">
 						<li><a href="#" th:href="@{/master/addMaterial}"><i
-								class="fa fa-circle-o"></i> Add Material</a></li>
+								class="fa fa-circle-o"></i> Add Stock</a></li>
 						<li class="treeview"><a href="#"
 							th:href="@{/master/listMaterial}"><i class="fa fa-circle-o"></i>
-								List Materials</a></li>
+								List Stock</a></li>
 					</ul></li>
 
 
@@ -126,7 +126,7 @@
 			</ul></li>
 		<!-- TPS/TPM End -->
 		 
-		<li class="treeview" sec:authorize="hasAnyRole('ADMIN','ROLE_ST_HEAD')"><a href="#">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD')"><a href="#">
 				<i class="fa fa-edit"></i> <span>TPS Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -143,12 +143,12 @@
 		</a>
 		</li>
 		
-		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT','ADMIN')">
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
 		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>Available Stock</a></li>
-		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD')"><a href="#">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD','ADMIN')"><a href="#">
 				<i class="fa fa-list-ul"></i> <span>Team Reports</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -156,7 +156,7 @@
 		</a>
 			<ul class="treeview-menu">
 				<li class=""><a href="#" th:href="@{/reports/teamTPMReport}"><i class="fa fa-circle-o"></i> TPM History</a></li>
-				<li sec:authorize="hasRole('ROLE_ZN_HEAD')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
+				<li sec:authorize="hasAnyRole('ROLE_ZN_HEAD','ADMIN')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
 				<li class=""><a href="#" th:href="@{/reports/stockavailbydept}"><i class="fa fa-circle-o"></i> Stock Report</a></li>
 			</ul></li>
 				<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">

@@ -30,11 +30,11 @@ public class RequestCustomDto {
         CriteriaQuery<EzcRequestHeader> cq = cb.createQuery(EzcRequestHeader.class);
         Root<EzcRequestHeader> header = cq.from(EzcRequestHeader.class);
         List<Predicate> predicates = new ArrayList<Predicate>();
-        if(listSelector.getType() != null)
+        if(listSelector.getType() != null && !"null".equals(listSelector.getType()) && !"".equals(listSelector.getType()))
         	predicates.add(cb.equal(header.get("erhReqType"), listSelector.getType()));
         if(listSelector.getFromDate() != null && listSelector.getToDate() != null)
         	predicates.add(cb.between(header.get("erhRequestedOn"), listSelector.getFromDate(), listSelector.getToDate()));
-        if(listSelector.getStatus() != null)
+        if(listSelector.getStatus() != null && !"null".equals(listSelector.getStatus()) && !"".equals(listSelector.getStatus()))
         	predicates.add(cb.equal(header.get("erhStatus"), listSelector.getStatus()));
         if(listSelector.getUser() != null && listSelector.getUser().size() > 0)
         {
@@ -52,9 +52,9 @@ public class RequestCustomDto {
 	        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 	        Root<EzcRequestHeader> header = cq.from(EzcRequestHeader.class);
 	        List<Predicate> predicates = new ArrayList<Predicate>();
-	        if(listSelector.getType() != null)
+	        if(listSelector.getType() != null && !"null".equals(listSelector.getType()) && !"".equals(listSelector.getType()))
 	        	predicates.add(cb.equal(header.get("erhReqType"), listSelector.getType()));
-	        if(listSelector.getStatus() != null)
+	        if(listSelector.getStatus() != null && !"null".equals(listSelector.getStatus()) && !"".equals(listSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), listSelector.getStatus()));
 	        if(listSelector.getFromDate() != null && listSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), listSelector.getFromDate(), listSelector.getToDate()));
@@ -83,6 +83,8 @@ public class RequestCustomDto {
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), reportSelector.getFromDate(), reportSelector.getToDate()));
 	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), reportSelector.getStatus()));
+	        if(reportSelector.getSelDist() != null && !"null".equals(reportSelector.getSelDist()) && !"".equals(reportSelector.getSelDist()))
+	        	predicates.add(cb.equal(header.get("erhDistrubutor"), reportSelector.getSelDist()));
 	        if(reportSelector.getUserGrp() != null && reportSelector.getUserGrp().size() > 0)
 	        {
 	        	List<String> userList = new ArrayList<String>(); 

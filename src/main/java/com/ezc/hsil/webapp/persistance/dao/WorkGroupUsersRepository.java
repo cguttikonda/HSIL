@@ -38,5 +38,11 @@ public interface WorkGroupUsersRepository extends JpaRepository<WorkGroup_Users,
     
     @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_ST_HEAD' and a.zonalGrp in (select b.zonalGrp from WorkGroup_Users b where b.userId=:userId)")
     List<Object[]> getStateHdByZoneHd(String userId);
+    
+    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_ST_HEAD'")
+    List<Object[]> getAllStateHd();
+    
+    @Query(value="select a.userId,b.firstName,b.lastName,a.stateGrp from WorkGroup_Users a,Users b,Work_Groups c where a.userId=b.userId and a.groupId=c.name and c.role='ROLE_REQ_CR'")
+    List<Object[]> getAllUsers();
 
 }

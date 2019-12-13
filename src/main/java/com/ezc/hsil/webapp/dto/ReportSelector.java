@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.ezc.hsil.webapp.model.DistributorMaster;
+
 public class ReportSelector {
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -18,8 +20,10 @@ public class ReportSelector {
 	
 	private List<Object[]> userGrp;
 	private List<Object[]> hdGrp;
+	private List<DistributorMaster> distList;
 	private String selUser;
 	private String selStHd;
+	private String selDist;
 	
 	public Date getFromDate() {
 		return fromDate;
@@ -68,6 +72,18 @@ public class ReportSelector {
 	}
 	public void setSelStHd(String selStHd) {
 		this.selStHd = selStHd;
+	}
+	public List<DistributorMaster> getDistList() {
+		return distList;
+	}
+	public void setDistList(List<DistributorMaster> distList) {
+		this.distList = distList;
+	}
+	public String getSelDist() {
+		return selDist;
+	}
+	public void setSelDist(String selDist) {
+		this.selDist = selDist;
 	}
 	
 	

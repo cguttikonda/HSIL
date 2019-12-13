@@ -21,4 +21,6 @@ public interface IReportService {
 	public List<Object[]> getUsersByZoneHd(String userId);
 	public List<Object[]> getStockAvailabilityByUser(List<String> userList);
 	public List<Object[]> getStateHdByZoneHd(String userId);
+	public List<Object[]> getAllStateHd();
+	public List<Object[]> getAllUsers();
 }
