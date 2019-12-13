@@ -235,6 +235,7 @@ $(document).ready(function() {
 function approveTPSReq(event){
 	var leftOverCnt=parseInt($("#leftOverCnt").val());
 	var qtyEntered = false;
+	var comments=$("#comments").val();
 	for(i=0;i<leftOverCnt;i++)
 	{
 			if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
@@ -263,7 +264,12 @@ function approveTPSReq(event){
 		$('#selQty').validationEngine('showPrompt', 'Allocate atleast one material', '');
 		return ;
 	}
-
+	//alert(comments);
+	if(comments==null || comments=='')
+	{
+		$('#comments').validationEngine('showPrompt', 'Please enter comments', '');
+		return ;
+	}
 	var formdata = $('#appr-tps-form').serialize();
 	//alert("ok1");
 	$.ajax({

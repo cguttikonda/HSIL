@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -17,13 +18,27 @@ public class BDRequestDetailDto {
 	EzcRequestHeader reqHeader = new EzcRequestHeader();
 	List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
 	List<RequestMaterials> ezReqMatList = null;
+	List<EzcComments> ezcComments = new  ArrayList<EzcComments>();
 	private String contactNo="";
 	private String city="";
 	List purpose=null;
 	private String recordedText="";
+	private String commentReqDto="";
 	
 	
 	
+	public List<EzcComments> getEzcComments() {
+		return ezcComments;
+	}
+	public void setEzcComments(List<EzcComments> ezcComments) {
+		this.ezcComments = ezcComments;
+	}
+	public String getCommentReqDto() {
+		return commentReqDto;
+	}
+	public void setCommentReqDto(String commentReqDto) {
+		this.commentReqDto = commentReqDto;
+	}
 	public List<EzcRequestItems> getEzcRequestItems() {
 		return ezcRequestItems;
 	}

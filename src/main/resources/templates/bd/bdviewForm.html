@@ -82,7 +82,7 @@
                 <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form"  id="myForm" th:object="${reqDto}" th:action="@{/bd/saveDetails}" method="post" name="myForm" >
+        <form data-toggle="validator" role="form"  id="myForm" th:object="${reqDto}" name="myForm" >
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
@@ -94,19 +94,20 @@
              
               <label class="col-lg-2 control-label">City & Area</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><input   placeholder="" class="form-control validate[required]" th:field="*{reqHeader.erhCity}" ></div>
+                 <div class="input-group"><input   placeholder="" class="form-control" th:field="*{reqHeader.erhCity}" th:value="*{reqHeader.erhCity}" readonly></div>
               </div>
                <label class="col-lg-2 control-label">Purpose</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group">
-                   <select class="form-control select2 validate[required]" th:field="*{reqHeader.erhPurpose}"  id="purpose">
+                 <input   placeholder="" class="form-control" th:field="*{reqHeader.erhPurpose}" th:value="*{reqHeader.erhPurpose}" readonly>
+                 <!--   <select class="form-control select2 validate[required]" th:field="*{reqHeader.erhPurpose}"  id="purpose" readonly>
                  <option selected value="">---select Purpose---</option>
                  <option selected value="Event">Event</option>
                  <option selected value="Customer Meeting">Customer Meeting</option>
                  <option selected value="Factory Visit Guest">Factory Visit Guest</option>
                  <option selected value="Consultant Meeting">Consultant Meeting</option>
                  <option selected value="Govt Official Meeting">Govt Official Meeting</option>
-                 </select> 
+                 </select> -->
                  </div>
               </div>
            </div>
@@ -136,6 +137,28 @@
                 	</tbody>
                 </table>
                 </div>
+                 <div id="no-more-tables" >
+                 <table class="col-sm-12 table-bordered table-condensed cf">
+					<thead class="cf">
+						<tr>
+							<th colspan='2'>Comments</th>
+						</tr>
+						</thead>
+					<tbody>
+					 <tr th:if="*{ezcComments.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+					<tr th:each="row, itemStat : *{ezcComments}">
+					<td>	<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].createdBy}">
+						<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].comments}">
+					<span th:text="*{ezcComments[__${itemStat.index}__].createdBy}"></span></td>
+							<td><span th:text="*{ezcComments[__${itemStat.index}__].comments}"></span> </td>
+						</tr>	
+							
+					
+					</tbody>
+					</table>
+    </div>
     			<!--  <div class="input-group">
                 <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
                 
@@ -146,32 +169,11 @@
 					</span>
                 
                 </div>-->
-                 <table class="col-sm-12 table-bordered table-condensed cf">
-					<thead class="cf">
-						<tr>
-							<th colspan='2'>Comments</th>
-						</tr>
-						</thead>
-					<tbody>
-					<tr th:each="row, itemStat : *{ezcComments}">
-					<td>	<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].createdBy}">
-						<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].comments}">
-					<span th:text="*{ezcComments[__${itemStat.index}__].createdBy}"></span></td>
-							<td th:text="*{ezcComments[__${itemStat.index}__].comments}"> </td>
-						</tr>
-						<tr>	
-						<td><span sec:authentication="principal.firstName"> &nbsp; </span></td>
-							<td><textarea class="form-control validate[required]" name="comments" th:field="*{commentReqDto}"></textarea></td>
-						</tr>	
-							
-					
-					</tbody>
-					</table>
                 <p id="recording-instructions"></p>
                 
                
     			<div id="no-more-tables">
-                    <table class="col-sm-12 table-bordered table-condensed cf" style="margin-top: 5px;" id="bdReqTable">
+                    <table class="col-sm-12 table-bordered table-condensed cf" id="bdReqTable">
                     <thead class="cf">
                 	<tr>
                 		<th>Name Of Client</th>
@@ -182,40 +184,32 @@
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
                 		<th>Event Name</th>
-                		<th></th>
+                		
                 		
                 	</tr>
                 	</thead>
                 	<tbody>
-                	 <tr th:if="${reqDto.ezcRequestItems.empty}">
+                	 <tr th:if="*{ezcRequestItems.empty}">
             			<td colspan="2"> No Items Added </td>
        			   </tr>
-                	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Client"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDealer}" /></td>
-						<td data-title="Professional Details"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriProfDet}" /></td>
-					    <td data-title="Location"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erilocation}" /></td>
-					    <td data-title="Gift"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td>
-					    <td data-title="Contact No"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+                	<tr th:each="row, itemStat : *{ezcRequestItems}">
+						<td data-title="Name Of Client"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDealer}" ></span></td>
+						<td data-title="Professional Details"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriProfDet}" ></span></td>
+					    <td data-title="Location"><span th:text="*{ezcRequestItems[__${itemStat.index}__].erilocation}" ></span></td>
+					    <td data-title="Gift"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriGift}" ></span></td>
+					    <td data-title="Contact No"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriContact}" ></span></td>
 						<td data-title="D.O.B">
-							<div class="input-group date">
-							<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-							</div>
-							<input type="text" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
-							</div>
+							
+							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDob}"></span>
+							
 						</td>
 						<td data-title="D.O.A">
-							<div class="input-group date">
-							<div class="input-group-addon">
-							<i class="fa fa-calendar"></i>
-							</div>
-							<input type="text"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
-							</div>
+							
+							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDoa}"></span>
+							
 						</td>
-						<td ><input type="text"  class="form-control validate[required]" th:disabled="${disabledStr}" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" /></td>	
-                		<td data-title="">
-                			<i class="fa fa-trash deleteItem"></i>
-                		</td>
+						<td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" ></span></td>	
+                		
                 		
                 	</tr>
                 	</tbody>
@@ -223,9 +217,7 @@
                 </div>
             </div>
             <div class="box-footer">
-                <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
-                <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
-                <button type="button" onclick="onSaveClick()"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
             </div>
         </form>
     </div>
@@ -242,6 +234,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                
               </div>
             </div>
             <!-- /.modal-content -->
@@ -282,9 +275,10 @@
       
     	window.speechSynthesis.speak(speech); 
     }
-    function addItem()
+   
+    function funBack()
     {
-	 	document.myForm.action ="/tpm/processSpeech";
+    	document.myForm.action ="/bd/bdRequestList";
 	 	document.myForm.submit();
     }
 	 function addNewItem()

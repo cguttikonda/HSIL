@@ -23,11 +23,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.dto.BDRequestDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
@@ -60,14 +62,23 @@ public class BDController {
 	 @RequestMapping("/bd/add")
 	 public String add(Model model) {
 		 BDRequestDto bdReqDto = new BDRequestDto();
+		 String loggedUser="";
+			try {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				Users userObj = (Users)authentication.getPrincipal();
+				loggedUser=(String)userObj.getUserId();
+				
+			} catch (Exception e) {
+				
+			} 
 			
-	    
+		 	model.addAttribute("matList", bdService.getLeftOverStock(loggedUser));
 	        model.addAttribute("bdReqDto",bdReqDto);
 	        return "bd/bdForm";
 
 	    }
 	 @RequestMapping(value = "/bd/saveRequest", method = RequestMethod.POST)
-	 public String save(@Valid @ModelAttribute("bdReqDto") BDRequestDto bdReqDto,BindingResult bindingResult,final RedirectAttributes ra)
+	 public String save(@Valid @ModelAttribute("bdReqDto") BDRequestDto bdReqDto,BindingResult bindingResult,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,final RedirectAttributes ra)
 	 {
 		 log.debug("in controller");
 		 if(bindingResult.hasErrors())
@@ -103,7 +114,24 @@ public class BDController {
 				reqMat.setEzcRequestHeader(ezRequestHeader);
 				reqMatSet.add(reqMat);
 				
- 
+				 if(leftOverId != null && leftOverId.length > 0)
+					{
+						for(int i=0;i<leftOverId.length;i++)
+						{
+							if(allocQty[i] != null && allocQty[i] > 0)
+							{
+								RequestMaterials reqMat1 = new RequestMaterials();
+								reqMat1.setMatCode(leftOverMat[i].split("#")[0]);
+								reqMat1.setMatDesc(leftOverMat[i].split("#")[1]);
+								reqMat1.setApprQty(allocQty[i]);
+								reqMat1.setIsNew('N');
+								reqMat1.setAllocId(leftOverId[i]);
+								reqMatSet.add(reqMat1);
+							}
+						}
+						
+					}
+				
 				ezRequestHeader.setRequestMaterials(reqMatSet);
    	
 				bdService.createBDRequest(ezRequestHeader);
@@ -184,6 +212,9 @@ public class BDController {
 	       
 	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
 	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
+	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
+	        ezcComm=bdService.getBDCommentRequest(docId);
+	       
 	        for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
 			{
 				ezcRequestItems.add(item); 
@@ -195,10 +226,40 @@ public class BDController {
 	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
 	        reqDto.setReqHeader(ezcRequestHeader);
 	        reqDto.setEzReqMatList(ezcMatList);
+	        reqDto.setEzcComments(ezcComm);
 	        model.addAttribute("reqDto", reqDto);
 	        
 	        
 	       	return "BD/bdDetailsForm";
+	       
+
+	    }
+	  @RequestMapping(value = "/bd/viewDetails/{docId}", method = RequestMethod.GET)
+	    public String viewDetails(@PathVariable String docId, Model model) {
+	        EzcRequestHeader ezcRequestHeader = bdService.getBDRequest(docId);
+	       
+	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
+	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
+	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
+	        ezcComm=bdService.getBDCommentRequest(docId);
+	       
+	        for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
+			{
+				ezcRequestItems.add(item); 
+			}
+	        for(RequestMaterials item : ezcRequestHeader.getRequestMaterials())
+			{
+				ezcMatList.add(item); 
+			}
+	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
+	        reqDto.setReqHeader(ezcRequestHeader);
+	        reqDto.setEzcRequestItems(ezcRequestItems); 
+	        reqDto.setEzReqMatList(ezcMatList);
+	        reqDto.setEzcComments(ezcComm);
+	        model.addAttribute("reqDto", reqDto);
+	        
+	        
+	       	return "bd/bdviewForm";
 	       
 
 	    } 

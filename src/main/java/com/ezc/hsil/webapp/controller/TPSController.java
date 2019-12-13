@@ -190,12 +190,24 @@ public class TPSController {
 	    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
 			Set<EzcComments> comments = new HashSet<EzcComments>();
+			String loggedUser="";
+			try {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				Users userObj = (Users)authentication.getPrincipal();
+				loggedUser=(String)userObj.getUserId();
+				
+			} catch (Exception e) {
+				
+			}
 			if(rejectComments != null)
 			{
 				
 					EzcComments reqCom = new EzcComments();
 					reqCom.setComments(rejectComments);
+					reqCom.setCreatedBy(loggedUser);
+					reqCom.setLastModifiedBy(loggedUser);
 					reqCom.setType("REJECT");
+					
 					comments.add(reqCom);
 				
 			}
