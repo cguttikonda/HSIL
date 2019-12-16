@@ -23,4 +23,5 @@ public interface IReportService {
 	public List<Object[]> getStateHdByZoneHd(String userId);
 	public List<Object[]> getAllStateHd();
 	public List<Object[]> getAllUsers();
+	public List<Object[]> getPlumberMaster(List<String> dist);
 }

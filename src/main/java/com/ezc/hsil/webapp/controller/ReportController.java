@@ -14,6 +14,7 @@ import org.springframework.security.web.servletapi.SecurityContextHolderAwareReq
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -379,6 +380,25 @@ public class ReportController {
 
     }
     
+    @RequestMapping(value = "/plumbermaster", method = RequestMethod.GET)
+    public String plumberMaster(ReportSelector reportSelector,Model model) {
+    	String selDist = reportSelector.getSelDist();
+    	List<DistributorMaster> distMastList = iMasterService.findAll();
+    	List<String> list = new ArrayList<String>();
+        model.addAttribute("distList", distMastList);
+        if(selDist != null && !"null".equals(selDist) && !"".equals(selDist))
+        {
+        	list.add(selDist);
+        }
+        else
+        {
+        	distMastList.forEach(obj->list.add(obj.getCode()));
+        }
+        model.addAttribute("reqList", repService.getPlumberMaster(list));
+        model.addAttribute("selDist", "");
+        return "reports/plumberMaster"; 
+
+    }
     
 }
  

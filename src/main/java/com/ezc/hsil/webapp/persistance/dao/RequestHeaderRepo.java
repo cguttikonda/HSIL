@@ -41,5 +41,8 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	Long getToAckDispCnt(String requestedBy);
 	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.leftOverQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and a.erhReqType in ('TPM','TPS') and a.erhRequestedBy in :userList group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityByUser(List<String> userList);
+	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id  and a.erhDistrubutor in :distList")
+	List<Object[]> getPlumberMaster(List<String> distList);
+	
 }
                              

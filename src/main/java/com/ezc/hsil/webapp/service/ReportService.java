@@ -198,4 +198,9 @@ public class ReportService implements IReportService {
 		return workGrpUserRepo.getAllUsers();
 	}
 
+	@Override
+	public List<Object[]> getPlumberMaster(List<String> dist) {
+		return reqHeaderRepo.getPlumberMaster(dist);
+	}
+
 }
