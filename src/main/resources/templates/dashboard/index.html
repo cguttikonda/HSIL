@@ -120,7 +120,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
             </div>
         </div>
         <!-- ./col -->
-        <!-- ./col -->
+                <!-- ./col -->
          <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
             <div class="small-box bg-green">
@@ -133,12 +133,50 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 </div>
                 <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
+            <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+                    <th>Plumber Name</th>
+                    <th>State</th>
+                    <th>DOB</th>
+                 
+                </tr>
+                    </thead>
+           		<tbody>	
+				 <tr th:each="row : ${reqList}">
+                    <td th:text="${row[0]}"></td>
+                    <td th:text="${row[1]}"></td> 
+                    <td th:text="${row[2]}"></td>
+                </tr>
+                </tbody>
+				</table>
+            
         </div>
+         <div class="col-lg-5 col-xs-6" sec:authorize="hasRole('ADMIN')">
+            <!-- small box -->
+           <div class="box box-success">
+				<div class="box-header with-border">
+				  <h3 class="box-title">Bar Chart</h3>
+
+					  <div class="box-tools pull-right">
+						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+						</button>
+						<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+					  </div>
+				</div>
+				<div class="box-body chart-responsive">
+				  <div class="chart" id="bar-chart" style="height: 300px;"></div>
+				</div>
+				
+            <!-- /.box-body -->
+          </div>
+        </div>
+        
+        
         <!-- ./col -->
             </div>
     <!-- /.row -->
     </div>
-
 
 <div layout:fragment="scriptContent">
 	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
@@ -148,8 +186,122 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 	<script th:src="@{/resources/plugins/jvectormap/jquery-jvectormap-world-mill-en.js}"></script>
 	<script th:src="@{/resources/plugins/knob/jquery.knob.js}"></script>
 	<script th:src="@{/resources/dist/js/pages/dashboard.js}"></script> -->
-</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script th:src="@{/resources/plugins/morris/morris.min.js}"></script>	
+<script type="text/javascript" th:inline="javascript">
 
+</script>
+<script type="text/javascript" th:inline="javascript">
+  $(function () {
+    "use strict";
+    var reqList = /*[[${reqList}]]*/ [];
+    var h = new Object(); 
+    for (var i = 0; i < reqList.length; i++) {
+    	var mo=reqList[i];
+   // alert(reqList[i]+","+mo.toString().split(',')[0]); 
+    // or just {}
+    var month=mo.toString().split(',')[0];
+    h[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
+   
+
+    }
+    // AREA CHART
+ /*for (var k in h) {
+    // use hasOwnProperty to filter out keys from the Object.prototype
+    if (h.hasOwnProperty(k)) {
+        alert('key is: ' + k + ', value is: ' + h[k]);
+    }
+}*/ var janCrt,janSubt;
+  
+    //BAR CHART
+  //  alert(h.hasOwnProperty('January')+","+h.hasOwnProperty('November'));
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(h.hasOwnProperty('January'))
+    {		
+     janCrt=h.January.toString().split('#')[0];
+     janSubt=h.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    var bar = new Morris.Bar({
+      element: 'bar-chart',
+      resize: true,
+      data: [
+        {y: 'JAN', a: janCrt, b: janSubt},
+        {y: 'FEB', a: 75, b: 65},
+        {y: 'MAR', a: 50, b: 40},
+        {y: 'APR', a: 75, b: 65},
+        {y: 'MAY', a: 50, b: 40},
+        {y: 'JUN', a: 75, b: 65},
+        {y: 'JUL', a: 100, b: 90},
+        {y: 'AUG', a: 100, b: 90},
+        {y: 'SEP', a: 100, b: 90},
+        {y: 'OCT', a: 100, b: 90},
+        {y: 'NOV', a: 100, b: 90},
+        {y: 'DEC', a: 100, b: 90}
+      ],
+      barColors: ['#00a65a', '#f56954'],
+      xkey: 'y',
+      ykeys: ['a', 'b'],
+      labels: ['Created', 'Submitted'],
+      hideHover: 'auto'
+    });
+    
+  });
+</script>
+</div>
 
 </body>
 </html>

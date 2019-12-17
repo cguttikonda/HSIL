@@ -65,7 +65,7 @@
 	                </tr>
 	                <tr>
 	                    <th>Material</th>
-	                    <th>Distributor</th>
+	                    
 	                    <th>Available Qty</th>
 	                    <th>Allocated Qty</th>
 	                </tr>
@@ -73,7 +73,7 @@
            		<tbody>	
                 <tr th:each="row, itemStat : ${matList}">
                     <td th:text="${row[2]+'-'+row[3]}"></td>
-                    <td th:text="${row[1]}"></td>
+                    
                     <td th:text="${row[4]}"></td>
                     <td>
                     	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">

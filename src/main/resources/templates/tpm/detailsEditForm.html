@@ -70,7 +70,7 @@
             </div>
         </div>
             <div class="box-body">
-            	<form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tpm/close-tpm-post}" method="post" name="myForm">
+            	<form data-toggle="validator" role="form"  th:object="${reqDto}"  name="myForm">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
@@ -167,8 +167,10 @@
                 </div>
         </form>
     </div>
-    <div class="box-footer" th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">
-                <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>
+  <!--   <div class="box-footer" th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">-->
+  <div class="box-footer">
+              <!--  <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>  -->
+               <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
             </div>
 </div>
 <div layout:fragment="scriptContent">
@@ -281,7 +283,11 @@
 	  noteContent = $(this).val();
 	})
 
- 
+  function funBack()
+    {
+    	document.myForm.action ="/tpm/tpmRequestList";
+	 	document.myForm.submit();
+    }
 
 	</script>
 </div>
