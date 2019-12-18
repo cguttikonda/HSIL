@@ -24,5 +24,6 @@ public interface IReportService {
 	public List<Object[]> getAllStateHd();
 	public List<Object[]> getAllUsers();
 	public List<Object[]> getPlumberMaster(List<String> dist);
-	public List<Object[]> getTPMMonthWise();
+	public List<Object[]> getTPMMonthWise(List<String> userList);
+	public List<Object[]> getTPSMonthWise(List<String> userList);
 }

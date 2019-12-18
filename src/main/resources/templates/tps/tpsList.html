@@ -82,6 +82,7 @@
                     <th>ID</th>
                     <th>Distributor</th>
                     <th>City</th>
+                    <th>Created BY</th>
                     <th>Meeting Date</th>
                     <th>No Of Retailers</th>
                     <th>Status</th>
@@ -94,6 +95,7 @@
                      <td><a th:href="${'/tps/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
+                    <td th:text="${row.erhRequestedBy}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>

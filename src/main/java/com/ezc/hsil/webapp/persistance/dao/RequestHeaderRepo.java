@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
@@ -43,8 +44,12 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getStockAvailabilityByUser(List<String> userList);
 	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id  and a.erhDistrubutor in :distList")
 	List<Object[]> getPlumberMaster(List<String> distList);
-	@Query(value="SELECT MONTHNAME(ERH_REQUESTED_ON) as mon, COUNT(*),SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header  where ERH_REQ_TYPE='TPM' GROUP BY mon",nativeQuery = true)
-	List<Object[]> getTPMMonthWise();
+	@Query(nativeQuery = true,value="SELECT MONTHNAME(ERH_REQUESTED_ON) as mon, COUNT(*),SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header   where ERH_REQ_TYPE='TPM' and erh_requested_by in :userList")
+	List<Object[]> getTPMMonthWise(List<String> userList);
+	//@Query(value="SELECT MONTHNAME(ERH_REQUESTED_ON) as mon, COUNT(*),SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header  where ERH_REQ_TYPE='TPM' and ERH_REQUESTED_BY in (SELECT USER_ID FROM EZC_USERS WHERE ID IN(  select user_id from users_roles where role_id in (select id from ezc_roles where name='ROLE_REQ_CR'))) GROUP BY mon",nativeQuery = true)
+	//@Query(value="SELECT MONTHNAME(a.erhRequestedOn) as mon, COUNT(*),SUM(CASE WHEN a.erhStatus='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header a  where a.erhReqType='TPM' and ERH_REQUESTED_BY in :userList group by mon")
 	
+	@Query(nativeQuery = true,value="SELECT MONTHNAME(ERH_REQUESTED_ON) as mon, COUNT(*),SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header   where ERH_REQ_TYPE='TPS' and erh_requested_by in :userList")
+	List<Object[]> getTPSMonthWise(List<String> userList);
 }
                              

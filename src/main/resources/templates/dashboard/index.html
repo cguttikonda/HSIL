@@ -133,30 +133,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 </div>
                 <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
             </div>
-            <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
-                       <thead>			
-                <tr>
-                    <th>Plumber Name</th>
-                    <th>State</th>
-                    <th>DOB</th>
-                 
-                </tr>
-                    </thead>
-           		<tbody>	
-				 <tr th:each="row : ${reqList}">
-                    <td th:text="${row[0]}"></td>
-                    <td th:text="${row[1]}"></td> 
-                    <td th:text="${row[2]}"></td>
-                </tr>
-                </tbody>
-				</table>
+            
             
         </div>
-         <div class="col-lg-5 col-xs-6" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-6 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
             <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
-				  <h3 class="box-title">Bar Chart</h3>
+				  <h3 class="box-title">TPM Chart Scheduled Vs Completed</h3>
 
 					  <div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -165,12 +149,34 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 					  </div>
 				</div>
 				<div class="box-body chart-responsive">
-				  <div class="chart" id="bar-chart" style="height: 300px;"></div>
+				  <div class="chart" id="bar-chartTPM" style="height: 300px;"></div>
 				</div>
 				
             <!-- /.box-body -->
           </div>
+          
         </div>
+         <div class="col-lg-6 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
+            <!-- small box -->
+           <div class="box box-success">
+				<div class="box-header with-border">
+				  <h3 class="box-title">TPS Chart Scheduled Vs Completed</h3>
+
+					  <div class="box-tools pull-right">
+						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+						</button>
+						<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+					  </div>
+				</div>
+				<div class="box-body chart-responsive">
+				  <div class="chart" id="bar-chartTPS" style="height: 300px;"></div>
+				</div>
+				
+            <!-- /.box-body -->
+          </div>
+          
+        </div>
+        
         
         
         <!-- ./col -->
@@ -194,111 +200,233 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 <script type="text/javascript" th:inline="javascript">
   $(function () {
     "use strict";
-    var reqList = /*[[${reqList}]]*/ [];
-    var h = new Object(); 
-    for (var i = 0; i < reqList.length; i++) {
-    	var mo=reqList[i];
+    var reqListTPM = /*[[${reqListTPM}]]*/ [];
+    var reqListTPS = /*[[${reqListTPS}]]*/ [];
+    var hTPM = new Object(); 
+    for (var i = 0; i < reqListTPM.length; i++) {
+    	var mo=reqListTPM[i];
    // alert(reqList[i]+","+mo.toString().split(',')[0]); 
     // or just {}
     var month=mo.toString().split(',')[0];
-    h[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
+    hTPM[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
+   
+
+    }
+    var hTPS = new Object(); 
+    for (var i = 0; i < reqListTPS.length; i++) {
+    	var mo=reqListTPS[i];
+   // alert(reqList[i]+","+mo.toString().split(',')[0]); 
+    // or just {}
+    var month=mo.toString().split(',')[0];
+    hTPS[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
    
 
     }
     // AREA CHART
  /*for (var k in h) {
     // use hasOwnProperty to filter out keys from the Object.prototype
-    if (h.hasOwnProperty(k)) {
+    if (hTPM.hasOwnProperty(k)) {
         alert('key is: ' + k + ', value is: ' + h[k]);
     }
-}*/ var janCrt,janSubt;
+}*/ var janCrt,janSubt,febCrt,febSubt,marCrt,marSubt,aprCrt,aprSubt,mayCrt,maySubt,junCrt,junSubt,julCrt,julSubt,augCrt,augSubt;
+    var sepCrt,sepSubt,octCrt,octSubt,novCrt,novSubt,decCrt,decSubt;
   
     //BAR CHART
-  //  alert(h.hasOwnProperty('January')+","+h.hasOwnProperty('November'));
-    if(h.hasOwnProperty('January'))
+  //  alert(hTPM.hasOwnProperty('January')+","+hTPM.hasOwnProperty('November'));
+    if(hTPM.hasOwnProperty('January'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     janCrt=hTPM.January.toString().split('#')[0];
+     janSubt=hTPM.January.toString().split('#')[1];
     }
     else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    if(hTPM.hasOwnProperty('February'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     febCrt=hTPM.February.toString().split('#')[0];
+     febSubt=hTPM.February.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{febCrt=0;febSubt=0;}
+    if(hTPM.hasOwnProperty('March'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     marCrt=hTPM.MarchTPM.toString().split('#')[0];
+     marSubt=hTPM.MarchTPM.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{marCrt=0;marSubt=0;}
+    if(hTPM.hasOwnProperty('April'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     aprCrt=hTPM.April.toString().split('#')[0];
+     aprSubt=hTPM.April.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{aprCrt=0;aprSubt=0;}
+    if(hTPM.hasOwnProperty('May'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     mayCrt=hTPM.May.toString().split('#')[0];
+     maySubt=hTPM.May.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{mayCrt=0;maySubt=0;}
+    if(hTPM.hasOwnProperty('June'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     junCrt=hTPM.June.toString().split('#')[0];
+     junSubt=hTPM.June.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{junCrt=0;junSubt=0;}
+    if(hTPM.hasOwnProperty('July'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     julCrt=hTPM.July.toString().split('#')[0];
+     julSubt=hTPM.July.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{julCrt=0;julSubt=0;}
+    if(hTPM.hasOwnProperty('August'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     augCrt=hTPM.August.toString().split('#')[0];
+     augSubt=hTPM.August.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{augCrt=0;augSubt=0;}
+    if(hTPM.hasOwnProperty('September'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     sepCrt=hTPM.September.toString().split('#')[0];
+     sepSubt=hTPM.September.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
-    if(h.hasOwnProperty('January'))
+    else{sepCrt=0;sepSubt=0;}
+    if(hTPM.hasOwnProperty('October'))
     {		
-     janCrt=h.January.toString().split('#')[0];
-     janSubt=h.January.toString().split('#')[1];
+     octCrt=hTPM.October.toString().split('#')[0];
+     octSubt=hTPM.October.toString().split('#')[1];
     }
-    else{janCrt=0;janSubt=0;}
+    else{octCrt=0;octSubt=0;}
+    if(hTPM.hasOwnProperty('November'))
+    {		
+     novCrt=hTPM.November.toString().split('#')[0];
+     novSubt=hTPM.November.toString().split('#')[1];
+    }
+    else{novCrt=0;novSubt=0;}
+    if(hTPM.hasOwnProperty('December'))
+    {		
+     decCrt=hTPM.December.toString().split('#')[0];
+     decSubt=hTPM.December.toString().split('#')[1];
+    }
+    else{decCrt=0;decSubt=0;}
     var bar = new Morris.Bar({
-      element: 'bar-chart',
+      element: 'bar-chartTPM',
       resize: true,
       data: [
         {y: 'JAN', a: janCrt, b: janSubt},
-        {y: 'FEB', a: 75, b: 65},
-        {y: 'MAR', a: 50, b: 40},
-        {y: 'APR', a: 75, b: 65},
-        {y: 'MAY', a: 50, b: 40},
-        {y: 'JUN', a: 75, b: 65},
-        {y: 'JUL', a: 100, b: 90},
-        {y: 'AUG', a: 100, b: 90},
-        {y: 'SEP', a: 100, b: 90},
-        {y: 'OCT', a: 100, b: 90},
-        {y: 'NOV', a: 100, b: 90},
-        {y: 'DEC', a: 100, b: 90}
+        {y: 'FEB', a: febCrt, b: febSubt},
+        {y: 'MAR', a: marCrt, b: marSubt},
+        {y: 'APR', a: aprCrt, b: aprSubt},
+        {y: 'MAY', a: mayCrt, b: maySubt},
+        {y: 'JUN', a: junCrt, b: junSubt},
+        {y: 'JUL', a: julCrt, b: julSubt},
+        {y: 'AUG', a: augCrt, b: augSubt},
+        {y: 'SEP', a: sepCrt, b: sepSubt},
+        {y: 'OCT', a: octCrt, b: octSubt},
+        {y: 'NOV', a: novCrt, b: novSubt},
+        {y: 'DEC', a: decCrt, b: decSubt}
       ],
+     
+    
       barColors: ['#00a65a', '#f56954'],
       xkey: 'y',
       ykeys: ['a', 'b'],
       labels: ['Created', 'Submitted'],
       hideHover: 'auto'
     });
+    if(hTPS.hasOwnProperty('January'))
+    {		
+     janCrt=hTPS.January.toString().split('#')[0];
+     janSubt=hTPS.January.toString().split('#')[1];
+    }
+    else{janCrt=0;janSubt=0;}
+    if(hTPS.hasOwnProperty('February'))
+    {		
+     febCrt=hTPS.February.toString().split('#')[0];
+     febSubt=hTPS.February.toString().split('#')[1];
+    }
+    else{febCrt=0;febSubt=0;}
+    if(hTPS.hasOwnProperty('March'))
+    {		
+     marCrt=hTPS.MarchTPS.toString().split('#')[0];
+     marSubt=hTPS.MarchTPS.toString().split('#')[1];
+    }
+    else{marCrt=0;marSubt=0;}
+    if(hTPS.hasOwnProperty('April'))
+    {		
+     aprCrt=hTPS.April.toString().split('#')[0];
+     aprSubt=hTPS.April.toString().split('#')[1];
+    }
+    else{aprCrt=0;aprSubt=0;}
+    if(hTPS.hasOwnProperty('May'))
+    {		
+     mayCrt=hTPS.May.toString().split('#')[0];
+     maySubt=hTPS.May.toString().split('#')[1];
+    }
+    else{mayCrt=0;maySubt=0;}
+    if(hTPS.hasOwnProperty('June'))
+    {		
+     junCrt=hTPS.June.toString().split('#')[0];
+     junSubt=hTPS.June.toString().split('#')[1];
+    }
+    else{junCrt=0;junSubt=0;}
+    if(hTPS.hasOwnProperty('July'))
+    {		
+     julCrt=hTPS.July.toString().split('#')[0];
+     julSubt=hTPS.July.toString().split('#')[1];
+    }
+    else{julCrt=0;julSubt=0;}
+    if(hTPS.hasOwnProperty('August'))
+    {		
+     augCrt=hTPS.August.toString().split('#')[0];
+     augSubt=hTPS.August.toString().split('#')[1];
+    }
+    else{augCrt=0;augSubt=0;}
+    if(hTPS.hasOwnProperty('September'))
+    {		
+     sepCrt=hTPS.September.toString().split('#')[0];
+     sepSubt=hTPS.September.toString().split('#')[1];
+    }
+    else{sepCrt=0;sepSubt=0;}
+    if(hTPS.hasOwnProperty('October'))
+    {		
+     octCrt=hTPS.October.toString().split('#')[0];
+     octSubt=hTPS.October.toString().split('#')[1];
+    }
+    else{octCrt=0;octSubt=0;}
+    if(hTPS.hasOwnProperty('November'))
+    {		
+     novCrt=hTPS.November.toString().split('#')[0];
+     novSubt=hTPS.November.toString().split('#')[1];
+    }
+    else{novCrt=0;novSubt=0;}
+    if(hTPS.hasOwnProperty('December'))
+    {		
+     decCrt=hTPS.December.toString().split('#')[0];
+     decSubt=hTPS.December.toString().split('#')[1];
+    }
+    else{decCrt=0;decSubt=0;}
     
+      
+      var barTPS = new Morris.Bar({
+          element: 'bar-chartTPS',
+          resize: true,
+          data: [
+            {y: 'JAN', a: janCrt, b: janSubt},
+            {y: 'FEB', a: febCrt, b: febSubt},
+            {y: 'MAR', a: marCrt, b: marSubt},
+            {y: 'APR', a: aprCrt, b: aprSubt},
+            {y: 'MAY', a: mayCrt, b: maySubt},
+            {y: 'JUN', a: junCrt, b: junSubt},
+            {y: 'JUL', a: julCrt, b: julSubt},
+            {y: 'AUG', a: augCrt, b: augSubt},
+            {y: 'SEP', a: sepCrt, b: sepSubt},
+            {y: 'OCT', a: octCrt, b: octSubt},
+            {y: 'NOV', a: novCrt, b: novSubt},
+            {y: 'DEC', a: decCrt, b: decSubt}
+          ],
+          barColors: ['#00a65a', '#f56954'],
+          xkey: 'y',
+          ykeys: ['a', 'b'],
+          labels: ['Created', 'Submitted'],
+          hideHover: 'auto'
+      });
   });
 </script>
 </div>

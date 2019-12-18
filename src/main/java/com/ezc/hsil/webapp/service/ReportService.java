@@ -150,8 +150,12 @@ public class ReportService implements IReportService {
 		return reqHeaderRepo.getToAckDispReport(user);
 	}
 	@Override
-	public List<Object[]> getTPMMonthWise() {
-		return reqHeaderRepo.getTPMMonthWise();
+	public List<Object[]> getTPMMonthWise(List<String> userList) {
+		return reqHeaderRepo.getTPMMonthWise(userList);
+	}
+	@Override
+	public List<Object[]> getTPSMonthWise(List<String> userList) {
+		return reqHeaderRepo.getTPSMonthWise(userList);
 	}
 	@Override
 	public void dispatchAckUpdate(EzcRequestHeader ezcRequestHeader) {

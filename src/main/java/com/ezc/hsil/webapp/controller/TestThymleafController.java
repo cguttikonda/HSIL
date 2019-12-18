@@ -34,12 +34,28 @@ public class TestThymleafController {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObjt = (Users)authentication.getPrincipal();
-		List<Object[]> userListObj = null; 
+		List<Object[]> userListObj = null, userListObjTPS =null;
+		List<String> userList = new ArrayList<String>();
+		
     	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
     	{
     		userListObj=repService.getUsersByHead(userObjt.getUserId()); 
     	}
-		
+    	else if(requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
+    	{
+    		userListObj=repService.getUsersByZoneHd(userObjt.getUserId());
+    		
+    	}
+    	else  if(requestWrapper.isUserInRole("ADMIN"))
+    	{
+    		userListObj=repService.getAllUsers();
+    		userListObjTPS=repService.getAllStateHd();
+    	}
+    	log.info("userListObj:::::::::{}",userListObj);
+    	if(userListObj != null)
+    		userListObj.forEach(obj->userList.add((String) obj[0]));
+    	if(userListObjTPS != null)
+    		userListObjTPS.forEach(obj->userList.add((String) obj[0]));
 		if(auth!= null && auth.isAuthenticated()) {
 			log.info("Principal:::::::::{}",principal.getName());
 			log.info("Authentication:::::::::{}",auth.isAuthenticated());
@@ -51,14 +67,16 @@ public class TestThymleafController {
 				userRoles.add(authObj.getAuthority().trim());
 				log.debug("role:::"+authObj.getAuthority());
 			}
-			List<Object[]> reqList=repService.getTPMMonthWise();
+			List<Object[]> reqListTPM=repService.getTPMMonthWise(userList);
+			List<Object[]> reqListTPS=repService.getTPSMonthWise(userList);
 			
 			  
 				
 			Map<String, String> htMap = repService.getDashBoardValues(userRoles,userObj.getUserId());
 			 
 			model.addAllAttributes(htMap);
-			model.addAttribute("reqList", reqList);
+			model.addAttribute("reqListTPM", reqListTPM);
+			model.addAttribute("reqListTPS", reqListTPS);
 			
 			return "dashboard/index";
 		}
