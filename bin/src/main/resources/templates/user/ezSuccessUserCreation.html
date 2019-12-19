@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<h1>Success</h1>
+    <table>
+            <tr>
+               <td><p th:text="'User Id ' + ${userForm.userId}" /></td>
+            </tr>
+            <tr>
+               <td><p th:text="'First Name ' + ${userForm.firstName}" /></td>
+            </tr>
+            <tr>
+               <td><p th:text="'Last Name ' + ${userForm.lastName}" /></td>
+            </tr>
+            <tr>
+               <td><p th:text="'Email ' + ${userForm.email}" /></td>
+            </tr>
+            <tr>
+               <td><p th:text="'State ' + ${userForm.stateCode}" /></td>
+            </tr>
+             <tr>
+               <td><p th:text="'Role ' + ${userForm.role}" /></td>
+            </tr>
+             <tr>
+               <td><p th:text="'Zone ' + ${userForm.zone}" /></td>
+            </tr>
+</body>
+</html>

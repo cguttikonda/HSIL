@@ -1,0 +1,140 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Request Status Report</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>Request Status Report</h1>
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-dashboard"></i> Reports</a></li>
+    <li class="active">Request Status</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-body no-padding">
+        
+ <form role="form"  th:object="${listSelector}" th:action="@{/reports/requeststatus}" method="get" name="myForm">
+<table class="table table-striped" style="margin-bottom: 1%;">
+  <tbody><tr>  
+	<td>
+		<label>From Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
+                </div>
+                <!-- /.input group -->
+	</td>
+	<td>
+                <label>To Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{toDate}">
+                </div>
+                <!-- /.input group -->
+  	</td>
+  	<td>	
+  		 <label for="listType">Status</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="" th:selected="*{status=='ALL'}">All</option>
+				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
+				<option value="SUBMITTED" th:selected="*{status=='SUBMITTED'}">Submitted</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option>  
+				
+			 </select>
+		  </div>
+  	</td>
+  	<td>	
+  		 <label for="listType">Type</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{type}">  
+				<option value="" th:selected="*{status=='ALL'}">All</option>
+				<option value="TPM" th:selected="*{status=='NEW'}">TPM</option>
+				<option value="TPS" th:selected="*{status=='SUBMITTED'}">TPS</option>
+				<option value="BD" th:selected="*{status=='APPROVED'}">BD & MARKETING</option> 
+			 </select>
+		  </div>
+  	</td>
+ 	<td>
+  		<a th:href="@{/reports/requeststatus/UPCMG}" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">UPCOMING <i class="fa fa-angle-double-up"></i></a>
+  	</td>
+  	<td>
+  		<a th:href="@{/reports/requeststatus/DUE}" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">DUE <i class="fa fa-angle-double-down"></i></a>
+  	</td>
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;margin-top: 7px;">Go <i class="fa fa-paper-plane"></i></button>
+  	</td>
+  </tr>
+  
+  </tbody></table>
+  </form>
+                   <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+                    <th>Request No</th>
+                    <th>Distributor</th>
+                    <th>City</th>
+                    <th>Meeting Date</th>
+                    <th>No Of Attendance</th>
+                    <th>Approval Status</th>
+                    <th>Dispatch Status</th>
+                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row : ${reqList}">
+                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
+                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhCity}"></td>
+                    <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row.erhNoOfAttendee}"></td>
+                    <td th:text="${row.erhStatus}"></td>
+                    <td>
+                    	<th:block th:switch="${row.erhDispatchFlag}">
+                    		<span th:case="'Y'" class="label label-success">Shipped</span>
+						    <span th:case="null" class="label label-warning">Pending</span>
+						    <span th:case="S" class="label label-danger">Delivered</span>
+						</th:block>
+                    </td>
+                </tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+    <div th:fragment="appr-tpm" id="apprTPMModalHolder"></div>
+</div>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
+	
+	$('#example').DataTable({
+					
+		 dom: 'lBfrtip',
+         buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'Reports' },{ extend: 'copy', text: 'Copy',title:null }]
+	
+		}
+			
+	);
+	 
+});
+
+</script>
+
+
+</div>
+
+</body>
+</html>

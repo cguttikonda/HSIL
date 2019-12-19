@@ -1,0 +1,387 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPM</title>
+    <style type="text/css">
+    .boxLabel
+	{
+		    background-color: #3c8dbc;
+		    color:white;
+		    border: 1px solid green;
+	}
+	.boxElement
+	{
+		    border: 1px solid green;
+	}
+    @media only screen and (max-width: 800px) {
+        /* Force table to not be like tables anymore */
+        #no-more-tables table,
+        #no-more-tables thead,
+        #no-more-tables tbody,
+        #no-more-tables th,
+        #no-more-tables td,
+        #no-more-tables tr {
+        display: block;
+        }
+         
+        /* Hide table headers (but not display: none;, for accessibility) */
+        #no-more-tables thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        }
+         
+        #no-more-tables tr { border: 1px solid #ccc; }
+          
+        #no-more-tables td {
+        /* Behave like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align:left;
+        }
+         
+        #no-more-tables td:before {
+        /* Now like a table header */
+        background-color: #3c8dbc;
+	    color:white;
+        position: absolute;
+        /* Top/left values mimic padding */
+        /* top: 6px; */
+        left: 6px;
+        width: 45%;
+        /* padding-right: 10px; */
+        white-space: nowrap;
+        text-align:left;
+        font-weight: bold;
+        padding:5px;
+        }
+         
+        /*
+        Label the data
+        */
+        #no-more-tables td:before { content: attr(data-title); }
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>BD</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
+        <li class="active">Report</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">Report</h3>
+            <div class="box-tools pull-right">
+                <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
+            </div>
+        </div>
+        <form data-toggle="validator" role="form"  id="myForm" th:object="${reqDto}" name="myForm" >
+            <div class="box-body">
+            	<input hidden="hidden" th:field="*{reqHeader.id}">
+            	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
+            <div class=row>	
+              <label class="col-lg-2 control-label">User Name</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{reqHeader.id}"></span></div>
+              </div>
+             
+              <label class="col-lg-2 control-label">City & Area</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><input   placeholder="" class="form-control" th:field="*{reqHeader.erhCity}" th:value="*{reqHeader.erhCity}" readonly></div>
+              </div>
+               <label class="col-lg-2 control-label">Purpose</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group">
+                 <input   placeholder="" class="form-control" th:field="*{reqHeader.erhPurpose}" th:value="*{reqHeader.erhPurpose}" readonly>
+                 <!--   <select class="form-control select2 validate[required]" th:field="*{reqHeader.erhPurpose}"  id="purpose" readonly>
+                 <option selected value="">---select Purpose---</option>
+                 <option selected value="Event">Event</option>
+                 <option selected value="Customer Meeting">Customer Meeting</option>
+                 <option selected value="Factory Visit Guest">Factory Visit Guest</option>
+                 <option selected value="Consultant Meeting">Consultant Meeting</option>
+                 <option selected value="Govt Official Meeting">Govt Official Meeting</option>
+                 </select> -->
+                 </div>
+              </div>
+           </div>
+      <div id="no-more-tables">
+                    <table class="col-sm-12 table-bordered table-condensed cf">
+                    <thead class="cf">
+                	<tr>
+                		<th>Material</th>
+                		<th>Approved Qty</th>
+                	</tr>
+                	</thead>
+                	<tbody> 
+                	 <tr th:if="*{ezReqMatList.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : *{ezReqMatList}">
+						<td data-title="Material">
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matCode}">
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}">
+							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
+						</td>
+						<td data-title="Approved Qty">
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
+						</td>
+                	</tr>
+                	</tbody>
+                </table>
+                </div>
+                 <div id="no-more-tables" >
+                 <table class="col-sm-12 table-bordered table-condensed cf">
+					<thead class="cf">
+						<tr>
+							<th colspan='2'>Comments</th>
+						</tr>
+						</thead>
+					<tbody>
+					 <tr th:if="*{ezcComments.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+					<tr th:each="row, itemStat : *{ezcComments}">
+					<td>	<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].createdBy}">
+						<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].comments}">
+					<span th:text="*{ezcComments[__${itemStat.index}__].createdBy}"></span></td>
+							<td><span th:text="*{ezcComments[__${itemStat.index}__].comments}"></span> </td>
+						</tr>	
+							
+					
+					</tbody>
+					</table>
+    </div>
+    			<!--  <div class="input-group">
+                <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
+                
+                	<span class="input-group-addon btn-group-vertical">
+					  <button type="button" class="btn btn-success" id="start-record-btn"><i class="fa fa-microphone" id="start-record-btn"></i>&nbsp;&nbsp;Record</button>
+					  <button type="button" class="btn btn-danger" id="pause-record-btn"><i class="fa fa-pause"></i>&nbsp;&nbsp;Pause</button>
+					  <button type="button" class="btn btn-warning" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal"><i class="fa fa-play"></i>&nbsp;&nbsp;Sample</button>
+					</span>
+                
+                </div>-->
+                <p id="recording-instructions"></p>
+                
+               
+    			<div id="no-more-tables">
+                    <table class="col-sm-12 table-bordered table-condensed cf" id="bdReqTable">
+                    <thead class="cf">
+                	<tr>
+                		<th>Name Of Client</th>
+                		<th>Professional details</th>
+                		<th>Location</th>
+                		<th>Gift Item</th>
+                		<th>Contact NO</th>
+                		<th>D.O.B</th>
+                		<th>D.O.A</th>
+                		<th>Event Name</th>
+                		
+                		
+                	</tr>
+                	</thead>
+                	<tbody>
+                	 <tr th:if="*{ezcRequestItems.empty}">
+            			<td colspan="2"> No Items Added </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : *{ezcRequestItems}">
+						<td data-title="Name Of Client"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDealer}" ></span></td>
+						<td data-title="Professional Details"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriProfDet}" ></span></td>
+					    <td data-title="Location"><span th:text="*{ezcRequestItems[__${itemStat.index}__].erilocation}" ></span></td>
+					    <td data-title="Gift"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriGift}" ></span></td>
+					    <td data-title="Contact No"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriContact}" ></span></td>
+						<td data-title="D.O.B">
+							
+							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDob}"></span>
+							
+						</td>
+						<td data-title="D.O.A">
+							
+							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDoa}"></span>
+							
+						</td>
+						<td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" ></span></td>	
+                		
+                		
+                	</tr>
+                	</tbody>
+                </table>
+                </div>
+            </div>
+            <div class="box-footer">
+                <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+            </div>
+        </form>
+    </div>
+        <div class="modal fade" id="recordModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Audio Format</h4>
+              </div>
+              <div class="modal-body">
+	        	<span id="sampleTxt">Kiran 9290303030 12th august 1980 26th august 2015 next Rahim 9790303030 26th august 1986 26th august 2009</span>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+
+ $('.datePickObj').datepicker({
+      autoclose: true,
+      format: 'dd/mm/yyyy'
+    });
+    $('.deleteItem').click(function(){
+    	$(this).closest("tr").remove();
+    });
+     				
+    function onSaveClick()
+    {
+		if($("#myForm").validationEngine('validate'))
+		{
+		
+			document.myForm.submit();
+		}
+
+    }
+    function readOutLoud() {
+     	var message = $("#sampleTxt").text();
+    	var speech = new SpeechSynthesisUtterance();
+
+      // Set the text and voice attributes.
+    	speech.text = message;
+    	speech.volume = 1;
+    	speech.rate = 1;
+    	speech.pitch = 1;
+      
+    	window.speechSynthesis.speak(speech); 
+    }
+   
+    function funBack()
+    {
+    	document.myForm.action ="/bd/bdRequestList";
+	 	document.myForm.submit();
+    }
+	 function addNewItem()
+	 {
+		// alert(document.getElementById("purpose").value);	
+		purpose=document.getElementById("purpose").value;
+		if($("#myForm").validationEngine('validate'))
+		{
+			
+			 document.myForm.action ="/bd/addNewItem/"+ purpose;
+			 document.myForm.submit();
+		}
+		
+	 }
+ 
+ try {
+	  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+	  var recognition = new SpeechRecognition();
+	}
+	catch(e) {
+	  console.error(e);
+	  $('.no-browser-support').show();
+	  $('.app').hide();
+	}
+
+
+	var noteTextarea = $('#note-textarea');
+	var instructions = $('#recording-instructions');
+
+	var noteContent = '';
+
+	/*-----------------------------
+	      Voice Recognition 
+	------------------------------*/
+
+	// If false, the recording will stop after a few seconds of silence.
+	// When true, the silence period is longer (about 15 seconds),
+	// allowing us to keep recording even when the user pauses. 
+	recognition.continuous = true;
+
+	// This block is called every time the Speech APi captures a line. 
+	recognition.onresult = function(event) {
+
+	  // event is a SpeechRecognitionEvent object.
+	  // It holds all the lines we have captured so far. 
+	  // We only need the current one.
+	  var current = event.resultIndex;
+
+	  // Get a transcript of what was said.
+	  var transcript = event.results[current][0].transcript;
+
+	  // Add the current transcript to the contents of our Note.
+	  // There is a weird bug on mobile, where everything is repeated twice.
+	  // There is no official solution so far so we have to handle an edge case.
+	  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+
+	  if(!mobileRepeatBug) {
+	    noteContent += transcript;
+	    noteTextarea.val(noteContent);
+	  }
+	};
+
+	recognition.onstart = function() { 
+	  instructions.text('Voice recognition activated. Try speaking into the microphone.');
+	}
+
+	recognition.onspeechend = function() {
+	  instructions.text('You were quiet for a while so voice recognition turned itself off.');
+	}
+
+	recognition.onerror = function(event) {
+	  if(event.error == 'no-speech') {
+	    instructions.text('No speech was detected. Try again.');  
+	  };
+	}
+
+
+
+	/*-----------------------------
+	      App buttons and input 
+	------------------------------*/
+
+	$('#start-record-btn').on('click', function(e) {
+	  if (noteContent.length) {
+	    noteContent += ' ';
+	  }
+	  recognition.start();
+	});
+
+
+	$('#pause-record-btn').on('click', function(e) {
+	  recognition.stop();
+	  instructions.text('Voice recognition paused.');
+	});
+
+	// Sync the text inside the text area with the noteContent variable.
+	noteTextarea.on('input', function() {
+	  noteContent = $(this).val();
+	})
+
+
+
+	</script>
+</div>
+</body>
+</html>

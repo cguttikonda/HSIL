@@ -1,0 +1,220 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>BD</title>
+     <style type="text/css">
+    #attachModal {
+    width: 50%;
+    height: 40%;
+    margin-left: 35%;
+    padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
+    
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>BD & Marketing</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${success}" ></span>
+   	</div>
+    <div class="box">
+    	     <form name="myForm" id="myForm" data-toggle="validator" role="form" th:action="@{/bd/saveRequest}" th:object="${bdReqDto}" th:method="post">
+            <div class="box-body">
+            
+            
+            
+
+                     <div th:class="${#fields.hasErrors('bdMatCode')}? 'form-group has-error' : 'form-group'">   
+                    <label for="selMat">Material</label>
+                    <select  id="selMat" class="select2 form-control"  style="width:100%" th:field="*{bdMatCode}">
+                    
+						</select>
+                      <span class="help-block" th:if="${#fields.hasErrors('bdMatCode')}" th:errors="*{bdMatCode}"></span>
+                </div>
+                 <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
+                    <label for="bdQty">Quantity</label>
+                    <input type="number"  class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" th:field="*{bdQty}" id="bdQty" />
+                    <span class="help-block" th:if="${#fields.hasErrors('bdQty')}" th:errors="*{bdQty}"></span>
+                </div>
+               
+               <div>
+                    <label for="stkAva">Available Stock</label>
+                      <input type="text" readonly name="stkAva" id="stkAva" class="form-control">
+                   
+                </div>
+                 <div>
+                   <input type="hidden" id="leftOverCnt" th:value="${#lists.size(matList)}">
+					<table  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" th:if="${!matList.empty}">
+	                <thead>			
+	                <tr>
+	                    <th colspan=4 style="text-align: center;">Available Stock</th>
+	                </tr>
+	                <tr>
+	                    <th>Material</th>
+	                    
+	                    <th>Available Qty</th>
+	                    <th>Allocated Qty</th>
+	                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row, itemStat : ${matList}">
+                    <td th:text="${row[2]+'-'+row[3]}"></td>
+                    
+                    <td th:text="${row[4]}"></td>
+                    <td>
+                    	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
+                    	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
+                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
+                    	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
+                    </td>
+                    <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
+                </tr>
+            	</tbody>
+            </table>
+                   
+                </div>
+              
+                    </div>
+            <div class="box-footer">
+                
+                 <button type="button" id="save" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Save</button>
+                 <!--  <button type="button" id="attach" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Attach</button> -->
+            </div>
+        </form>
+    </div>
+    <div th:fragment="att-file" id="attachFileModalHolder"></div>
+</div>
+
+
+
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+function geThan(field, rules, i, options){
+	 var a=rules[i+2];
+	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
+	   return "Quantity entered is greater than available stock"
+	 }
+	}
+$(document.body).on("change","#selMat",function(){
+	// alert(this.value);
+	var totVal=this.value;
+	var stkAvaQty=totVal.split("#")[2];
+	document.getElementById("stkAva").value=stkAvaQty;
+	});
+$(document).ready(function(){
+	$("#save").click(function(){
+		if($("#myForm").validationEngine('validate'))
+		{
+			
+			document.myForm.submit();
+		}
+	});
+	$("#attach").click(function(){
+		openModal();
+		
+	});
+	
+	$('#selMat').select2({
+			         placeholder: 'Select Material',
+			         ajax: {
+			           url: '/modal/mat-autocomp?type=text',
+			           dataType: 'json',
+			           delay: 250,
+			           processResults: function (data) {
+			             return {
+	 	    	                       results: $.map(data, function (item) {
+	 	    	                          return {
+	 	    	                              text: item.materialCode+"-"+item.materialDesc,
+	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	 	    	                              
+	 	    	                          }
+	 	    	                      }) 
+			 	                  };
+			           },
+			           cache: true
+			         }
+			    });
+});
+		
+function openModal(){
+	
+	
+		
+	
+		$.ajax({
+			url: "/modal/att-file",
+			success: function(data){
+				$("#attachFileModalHolder").html(data);
+				$('#attachFileModal').modal({
+					backdrop: 'static'
+				});
+				
+				
+				
+			}
+		});
+		
+	}
+
+
+
+function uploadSingleFile(file) {
+    var formData = new FormData();
+  
+
+    formData.append("file", file);
+    formData.append("_csrf", $("#csrfToken").val());
+
+    $.ajax({
+            url : '/uploads/doUpload',
+            type : 'POST',
+            method : 'POST',
+            data : formData,
+            contentType : false,
+            cache : false,
+            processData : false,
+            success : function(response) {
+            	
+            	 document.getElementById("fileUploadSuccess").innerHTML = "<p>File Uploaded Successfully.</p><p>DownloadUrl : </p>";
+            },
+            error: function(){}    
+         });
+    
+
+   
+}
+
+function funSubmit()
+{
+	var fileAttch = document.getElementById("fileUploadInput").files;
+	alert(fileAttch.length);
+//    if(fileAttch.length === 0) {
+        //document.getElementById('fileUploadError').innerHTML = "Please select a file";
+        //document.getElementById('fileUploadError').style.display = "block";
+  //  }
+    alert(fileAttch[0]);
+    uploadSingleFile(fileAttch[0]);
+	
+	
+}
+
+
+
+   </script>
+</div>
+</body>
+</html>

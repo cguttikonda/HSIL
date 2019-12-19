@@ -1,7 +1,7 @@
 <!-- Logo -->
 <a th:href="@{/dashboard/index.html}" class="logo">
     <!-- mini logo for sidebar mini 50x50 pixels -->
-    <span class="logo-mini"><img alt="Hindware" height="40px" th:src="@{/resources/images/toplogo.png}"></span>
+    <!-- <span class="logo-mini"><img alt="Hindware" height="40px" th:src="@{/resources/images/toplogo.png}"></span> -->
     <!-- logo for regular state and mobile devices -->
     <span class="logo-lg"><img alt="Hindware" height="40px" th:src="@{/resources/images/trulogo.png}"> <b></b></span>
 </a>
@@ -251,17 +251,11 @@
                 </ul>
             </li> -->
             
+       <li>
+       <a href="javascript:logOut()"><i class="fa fa-power-off" style="font-size:18px"></i> Logout</a>
        
-       <!-- <a th:href="@{/logout}"><i class="fa fa-power-off" style="font-size:18px"></i> Logout</a> -->
-       
-		<li>
-       <form th:action="@{/logout}" th:method="post" th:name=logoutForm > 
-
-    		<!-- <input type="submit" value="logout" class="fa fa-power-off" style="font-size:18px" /> -->
-    		<a th:href="'javascript: logOut()'"><i class="fa fa-power-off" style="font-size:18px"></i> Logout</a>
-
-		
-
+       <form th:action="@{/logout}" th:method="post" th:name=logoutForm style="display:none"> 
+    		<!-- <a th:href="'javascript: logOut()'"><i class="fa fa-power-off" style="font-size:18px"></i> Logout</a> -->
 		</form>
         </li>    
                   <!--  Control Sidebar Toggle Button -->

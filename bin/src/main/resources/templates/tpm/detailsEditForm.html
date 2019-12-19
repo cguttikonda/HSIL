@@ -1,0 +1,295 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPM</title>
+    <style type="text/css">
+    @media only screen and (max-width: 800px) {
+        /* Force table to not be like tables anymore */
+        #no-more-tables table,
+        #no-more-tables thead,
+        #no-more-tables tbody,
+        #no-more-tables th,
+        #no-more-tables td,
+        #no-more-tables tr {
+        display: block;
+        }
+         
+        /* Hide table headers (but not display: none;, for accessibility) */
+        #no-more-tables thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+        }
+         
+        #no-more-tables tr { border: 1px solid #ccc; }
+          
+        #no-more-tables td {
+        /* Behave like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        white-space: normal;
+        text-align:left;
+        }
+         
+        #no-more-tables td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align:left;
+        font-weight: bold;
+        }
+         
+        /*
+        Label the data
+        */
+        #no-more-tables td:before { content: attr(data-title); }
+        }
+    </style>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>TPM</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Tpm</a></li>
+        <li class="active">Report</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">Report</h3>
+            <div class="box-tools pull-right">
+                <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
+            </div>
+        </div>
+            <div class="box-body">
+            	<form data-toggle="validator" role="form"  th:object="${reqDto}"  name="myForm">
+            	<input hidden="hidden" th:field="*{reqHeader.id}">
+            	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
+            	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
+            <div class=row>	
+              <label class="col-lg-2 control-label">User Name</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{reqHeader.id}"></span></div>
+              </div>
+              <label class="col-lg-2 control-label">Distributor Code</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{reqHeader.erhDistrubutor}"></span></div>
+              </div>
+              </div>
+               <div class=row>
+              <label class="col-lg-2 control-label">Date of TPM</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}"></span></div>
+              </div>
+              <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{reqHeader.erhCostIncured}"></span></div>
+              </div>
+           	</div>
+           <div id="no-more-tables" th:if="${not #lists.isEmpty(ezReqMatList)}">
+                    <table class="col-sm-12 table-bordered table-condensed cf">
+                    <thead class="cf">
+                	<tr>
+                		<th>Material</th>
+                		<th>Approved Qty</th>
+                		<th>Used Qty</th> 
+                	</tr>
+                	</thead>
+                	<tbody>
+                	 <tr th:if="*{ezReqMatList.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : *{ezReqMatList}">
+						<td data-title="Material" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></td>
+						<td data-title="Approved Qty" th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></td>
+						<td data-title="Used Qty">
+							<span th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">
+								<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].id}">
+								<input type="number"  class="form-control" th:field="*{ezReqMatList[__${itemStat.index}__].usedQty}" />
+							</span>
+							<span th:if="*{reqHeader.erhStatus != 'SUBMITTED'}">
+								<span th:text="*{ezReqMatList[__${itemStat.index}__].usedQty}"></span>		
+							</span>
+						</td> 
+                	</tr>
+                	</tbody>
+                </table>
+                </div>
+            <!-- <div id="no-more-tables" >
+            
+             <table class="table table-bordered" >
+					<thead>
+						<tr>
+							<th>Comments</th>
+						</tr>
+						</thead>
+					<tbody>
+						<tr>	
+							<td><textarea class="form-control" name="comments" th:text="*{ezcComments.comments}" readonly></textarea></td>
+						</tr>	
+							
+					
+					</tbody>
+					</table>
+            
+            
+            </div> -->
+    			<div id="no-more-tables" th:if="${not #lists.isEmpty(reqDto.ezcRequestItems)}">
+                    <table class="col-sm-12 table-bordered table-condensed cf">
+                    <thead class="cf">
+                	<tr>
+                		<th>Name Of Plumber</th>
+                		<th>Contact No</th>
+                		<th>D.O.B</th>
+                		<th>D.O.A</th>
+                	</tr>
+                	</thead>
+                	<tbody>
+                	 <tr th:if="${reqDto.ezcRequestItems.empty}">
+            			<td colspan="2"> No Items Added </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
+						<td data-title="Name Of Plumber" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" ></td>
+						<td data-title="Contact No" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}"></td>
+						<td data-title="D.O.B" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDob, 'dd/MM/yyyy')}"></td>
+						<td data-title="D.O.A" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa, 'dd/MM/yyyy')}"></td>
+                	</tr>
+                	</tbody>
+                </table>
+                </div>
+        </form>
+    </div>
+  <!--   <div class="box-footer" th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">-->
+  <div class="box-footer">
+              <!--  <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>  -->
+               <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+            </div>
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+ $('.datePickObj').datepicker({
+      autoclose: true,
+      format: 'dd/mm/yyyy'
+    });
+    $('.deleteItem').click(function(){
+    	$(this).closest("tr").remove();
+    });
+     		
+	function closeRequest()
+	{
+		document.myForm.submit();
+	}
+    function addItem()
+    {
+	 	document.myForm.action ="/tpm/processSpeech";
+	 	document.myForm.submit();
+    }
+	 function addNewItem()
+	 {
+		 	document.myForm.action ="/tpm/addNewItem";
+		 	document.myForm.submit();
+	 }
+ 
+ try {
+	  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+	  var recognition = new SpeechRecognition();
+	}
+	catch(e) {
+	  console.error(e);
+	  $('.no-browser-support').show();
+	  $('.app').hide();
+	}
+
+
+	var noteTextarea = $('#note-textarea');
+	var instructions = $('#recording-instructions');
+
+	var noteContent = '';
+
+	/*-----------------------------
+	      Voice Recognition 
+	------------------------------*/
+
+	// If false, the recording will stop after a few seconds of silence.
+	// When true, the silence period is longer (about 15 seconds),
+	// allowing us to keep recording even when the user pauses. 
+	recognition.continuous = true;
+
+	// This block is called every time the Speech APi captures a line. 
+	recognition.onresult = function(event) {
+
+	  // event is a SpeechRecognitionEvent object.
+	  // It holds all the lines we have captured so far. 
+	  // We only need the current one.
+	  var current = event.resultIndex;
+
+	  // Get a transcript of what was said.
+	  var transcript = event.results[current][0].transcript;
+
+	  // Add the current transcript to the contents of our Note.
+	  // There is a weird bug on mobile, where everything is repeated twice.
+	  // There is no official solution so far so we have to handle an edge case.
+	  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+
+	  if(!mobileRepeatBug) {
+	    noteContent += transcript;
+	    noteTextarea.val(noteContent);
+	  }
+	};
+
+	recognition.onstart = function() { 
+	  instructions.text('Voice recognition activated. Try speaking into the microphone.');
+	}
+
+	recognition.onspeechend = function() {
+	  instructions.text('You were quiet for a while so voice recognition turned itself off.');
+	}
+
+	recognition.onerror = function(event) {
+	  if(event.error == 'no-speech') {
+	    instructions.text('No speech was detected. Try again.');  
+	  };
+	}
+
+
+
+	/*-----------------------------
+	      App buttons and input 
+	------------------------------*/
+
+	$('#start-record-btn').on('click', function(e) {
+	  if (noteContent.length) {
+	    noteContent += ' ';
+	  }
+	  recognition.start();
+	});
+
+
+	$('#pause-record-btn').on('click', function(e) {
+	  recognition.stop();
+	  instructions.text('Voice recognition paused.');
+	});
+
+	// Sync the text inside the text area with the noteContent variable.
+	noteTextarea.on('input', function() {
+	  noteContent = $(this).val();
+	})
+
+  function funBack()
+    {
+    	document.myForm.action ="/tpm/tpmRequestList";
+	 	document.myForm.submit();
+    }
+
+	</script>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+
+<div id="attachFileModal"  class="modal fade" role="dialog" th:fragment="att-file">
+	<div class="modal-dialog" id="attachModal">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold">Attach File</span></h4>
+			</div>
+			 <form id="uploadForm" name="uploadForm" th:action="@{/uploads/uploadFile}" enctype="multipart/form-data" th:method="post">
+			 <input type="hidden" id="csrfToken" th:name="_csrf" th:value="${_csrf.token}">
+			 <div class="modal-body">
+			  <div class="single-upload">
+                    <h3>Upload  File</h3>
+                   
+                        <input id="fileUploadInput" type="file" th:name="file" class="file-input" required />
+                      
+                    
+                    <div class="upload-response">
+                        <div id="fileUploadError"></div>
+                        <div id="fileUploadSuccess"></div>
+                    </div>
+				</div>
+				  
+				</div>
+				<div class="modal-footer">
+					<button type="button"  id="closeModal" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+			        <button type="button" class="btn btn-primary"  onclick='funSubmit()'>Submit</button>
+				</div>
+				</form>
+			</div>	
+	</div>
+</div>

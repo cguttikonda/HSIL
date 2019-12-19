@@ -1,0 +1,111 @@
+<!-- jQuery 2.2.0 -->
+<script th:src="@{/resources/plugins/jQuery/jQuery-2.2.0.min.js}"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+	$.widget.bridge('uibutton', $.ui.button);
+</script>
+
+
+<script th:src="@{/resources/bootstrap/js/bootstrap.min.js}"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script
+	th:src="@{/resources/plugins/daterangepicker/daterangepicker.js}"></script>
+<script
+	th:src="@{/resources/plugins/datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/resources/plugins/validator.min.js}"></script>
+<script
+	th:src="@{/resources/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js}"></script>
+<script
+	th:src="@{/resources/plugins/slimScroll/jquery.slimscroll.min.js}"></script>
+<script th:src="@{/resources/plugins/fastclick/fastclick.js}"></script>
+<script th:src="@{/resources/dist/js/app.min.js}"></script>
+<script th:src="@{/resources/dist/js/demo.js}"></script>
+<!-- Datatable Js -->
+<script
+	th:src="@{/resources/plugins/datatables/jquery.dataTables.min.js}"></script>
+<script th:src="@{/resources/plugins/datatables/dataTables.bootstrap.min.js}"></script>
+
+
+
+<!-- Pace.js  -->
+<script th:src="@{/resources/plugins/pace/pace.min.js}"></script>
+
+<!-- select2.js  -->
+<script th:src="@{/resources/plugins/select2/select2.full.min.js}"></script>
+
+<script  th:src="@{/resources/plugins/datatables/download/dataTables.buttons.min.js}"></script>
+<script  th:src="@{/resources/plugins/datatables/download/buttons.flash.min.js}"></script>
+<script  th:src="@{/resources/plugins/datatables/download/jszip.min.js}"></script>
+<script  th:src="@{/resources/plugins/datatables/download/vfs_fonts.js}"></script>
+<script  th:src="@{/resources/plugins/datatables/download/buttons.html5.min.js}"></script>
+<script  th:src="@{/resources/plugins/validation/jquery.validationEngine.js}"></script>
+<script  th:src="@{/resources/plugins/validation/jquery.validationEngine-en.js}"></script>
+<!-- <script  th:src="@{/resources/plugins/datatables/download/buttons.print.min.js"></script>
+ -->
+<script th:inline="javascript" >
+	
+	
+	
+	
+	$(document).ready(function() {
+
+ 		const anchortags = document.querySelectorAll(".sidebar-menu a");
+ 		const submitBtns = document.querySelectorAll(".btn-primary");
+ 		
+		const paceObj = Pace;
+		for (const anchortag of anchortags) {
+				
+				anchortag.addEventListener('click', function(event) {
+		    	//	event.preventDefault();
+		    		Pace.restart();
+		    		anchortag.classList.add("active");
+		  
+				})
+			} 
+		for(const submitBtn of submitBtns){
+			submitBtn.addEventListener("click",(e)=>{
+				
+				setTimeout(()=>{
+					Pace.restart()
+					},300); 
+			})
+			
+		}
+		
+		 /** add active class and stay opened when selected */
+        var url = window.location;
+        // for sidebar menu entirely but not cover treeview
+        $('ul.sidebar-menu a').filter(function() {
+             return this.href == url;
+        }).parent().addClass('active');
+
+        // for treeview
+        $('ul.treeview-menu a').filter(function() {
+             return this.href == url;
+        }).parentsUntil(".sidebar-menu > .treeview-menu").addClass('active');
+		
+
+        $('form').trigger("reset");
+	});
+	
+	
+
+//	});
+
+	function logOut(){
+		
+		/* document.logoutForm.method="POST"
+		document.logoutForm.action="/logout" */
+		Pace.restart()
+		document.logoutForm.submit();
+		
+		
+	}
+	
+</script>
+
+
+

@@ -16,9 +16,9 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 
     <!-- Small boxes (Stat box) -->
     <div class="row">
-        <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_OUT_STOR')">
+        <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_OUT_STOR')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${pendDispCnt}"></h3>
 
@@ -27,13 +27,13 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/reports/disprep/PENDING}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/reports/disprep/PENDING}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${ackDispCnt}"></h3>
                     <p>DISPATCH ACKNOWLEDGEMENT</p>
@@ -41,14 +41,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_REQ_CR')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_REQ_CR')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${apprTpmCnt}"></h3>
                     <p>TPM APPROVED</p>
@@ -56,14 +56,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tpm/tpmReqListSts/APPROVED}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tpm/tpmReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_ST_HEAD')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_ST_HEAD')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${apprTpsCnt}"></h3>
                     <p>TPS APPROVED</p>
@@ -71,14 +71,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ROLE_BD_MKT')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_BD_MKT')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${apprBDCnt}"></h3>
                     <p>BD/MKT APPROVED</p>
@@ -86,14 +86,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${toActTpmRequest}"></h3>
                     <p>TPM TO BE APPROVED</p>
@@ -101,14 +101,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tpm/tpmReqListSts/NEW}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tpm/tpmReqListSts/NEW}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${toActTpsRequest}"></h3>
                     <p>TPS TO BE APPROVED</p>
@@ -116,14 +116,14 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tps/tpsReqListSts/NEW}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tps/tpsReqListSts/NEW}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
                 <!-- ./col -->
-         <div class="col-lg-3 col-xs-6" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
-            <div class="small-box bg-green">
+            <div class="small-box bg-aqua">
                 <div class="inner">
                     <h3 th:text="${toActBDRequest}"></h3>
                     <p>BD TO BE APPROVED</p>
@@ -131,7 +131,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
             
             

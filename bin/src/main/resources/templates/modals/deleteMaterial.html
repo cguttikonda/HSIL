@@ -1,0 +1,25 @@
+<div id="deleteMatModal" class="modal fade" role="dialog" th:fragment="delete-mat" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title font-weight-bold">Delete Material</h4>
+			</div>
+			<div class="modal-body">
+				<p>Do you really want to delete the  material  <span style="font-weight:bold" 
+					th:text="|${materialDto.materialDesc}"     
+					th:if="${materialDto.materialCode!=''} ? ( ${materialDto.materialCode} ) : '' |"></span>?</p>
+			</div>
+			<div class="modal-footer">
+				<form th:action="@{/master/edit-material}" th:object="${materialDto}" th:method="post">
+					<input th:field="${materialDto.materialCode}" type="hidden"  />
+					<input th:field="${materialDto.materialDesc}" type="hidden"  />
+					<input th:field="${materialDto.quantity}" type="hidden"  />
+					<input name="isActive" type="hidden" value="N" />
+					<button type="button"  class="btn btn-default" data-dismiss="modal">Cancel</button>
+		            <button type="submit" class="btn btn-danger">Delete</button>
+	        	</form>
+				
+			</div>
+		</div>
+	</div>
+</div>

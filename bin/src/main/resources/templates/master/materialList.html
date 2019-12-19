@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="ISO-8859-1">
+<title>List Materials</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>Material List</h1>
+		<ol class="breadcrumb">
+			<li><a th:href="@{/dashboard/index.html}"><i
+					class="fa fa-dashboard"></i> Master data</a></li>
+			<li class="active">list</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<!-- <form role="form" th:action="@{#}"  th:method="GET" > -->
+		<div class="box">
+			<div class="box-header">
+				<!-- <h3 class="box-title">Data Table With Full Features</h3> -->
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<table id="example" class="table table-striped table-bordered"
+					style="width: 100%">
+					<thead>
+						<tr>
+							<th>Material Code</th>
+							<th>Description</th>
+							<th>Quantity</th>
+							<th>Action</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="material:${matList}">
+							<td th:text="${material.materialCode}">Name</td>
+							<td th:text="${material.materialDesc}">description</td>
+							<td th:text="${material.quantity}">0</td>
+							<td>
+								<a href="#"
+								th:data-id="${material.materialCode}"
+								th:onclick="javascript:openModal('edit',this.getAttribute('data-id'));"
+								class="btn btn-success btn-xs"> <span
+									class="glyphicon glyphicon-pencil"></span>
+								</a>
+								<a href="#"
+								th:data-id="${material.materialCode}"
+								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
+								class="btn btn-danger btn-xs"> <span
+									class="glyphicon glyphicon-trash"></span>
+								</a>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th>Material Code</th>
+							<th>Description</th>
+							<th>Quantity</th>
+							<th>Action</th>
+
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<!-- /.box-body -->
+		</div>
+
+		<!-- /.box-body -->
+		<!-- 
+	</form>
+ -->
+	
+	<!-- Modals -->
+	<div th:fragment="delete-mat" id="deleteMatModalHolder"></div>
+	<div th:fragment="edit-mat" id="editMatModalHolder"></div>
+	
+	<!-- Models End -->
+	
+	</div>
+	
+	<!-- Script Start -->
+	<div layout:fragment="scriptContent">
+		<script th:inline="javascript">
+			$(document).ready(function() {
+				$('#example').DataTable({
+
+						"dom" : 'T<"clear">lfrtip'
+
+					}
+				);
+
+				$('#closeModal').click((e)=>{
+					
+					e.preventDefault();
+					$('#editMatModal').modal('toggle');
+				});
+				
+						
+				
+			});	
+/* 			$( window ).on("unload",function() {
+					Pace.restart();
+			})
+ */			
+			function openModal(modelType,matId){
+				if(modelType === "edit"){
+					
+					$.ajax({
+						url: "/modal/edit-material/" + matId,
+						success: function(data){
+							$("#editMatModalHolder").html(data);
+							$('#editMatModal').modal({
+								backdrop: 'static'
+							});
+						}
+					});
+					
+				}
+				if(modelType === "delete"){
+					
+					$.ajax({
+						url: "/modal/delete-material/" + matId,
+						success: function(data){
+							$("#deleteMatModalHolder").html(data);
+							$('#deleteMatModal').modal({
+								backdrop: 'static'
+							});
+						}
+					});
+					
+					
+				}
+				
+			}
+			function validate(event){
+					event.preventDefault();
+					var formdata = $('edit-dist-form').serialize();
+					
+					debugger;
+					$.ajax({
+							
+						type : "POST",
+						url : "/master/edit-dist", 
+						data : formdata,
+						success : function(response) {
+								
+							if(response.status == 'FAIL') {
+								showFormError(response.errorMessageList);
+							} else {
+								//everything is O.K. user logged in successfully.
+							
+							}
+						},
+						error : function(ex) {
+							console.log(ex);
+						}
+					});
+			}
+						
+		</script>
+	</div>
+</body>
+</html>

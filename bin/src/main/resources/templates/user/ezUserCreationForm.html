@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>User Creation</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+
+</style>
+  
+
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			User Creation
+		</h1>
+	</section>
+	<div layout:fragment="content">
+	<form  id= "userForm" name="userForm" th:action="@{/user/UserCreation}" th:object="${userForm}" th:method="POST">
+		<div id="errorDIV"></div>
+		
+			<div class="box-body">
+				<div class="form-group">
+					<label for="userId">User Id</label>
+					 <input
+						th:field="*{userId}" type="text" class="form-control"
+						placeholder="Enter User Id" th:errorclass="has-error" required/>
+						<p th:if="${#fields.hasErrors('userId')}" th:erros="*{userId}"/>						
+				</div>
+				<div id="exceptionDIV"></div>
+				
+				<div class="form-group">
+					<label for="firstName">First Name</label>
+					 <input
+						th:field="*{firstName}" type="text" class="form-control"
+						placeholder="Enter First Name" th:errorclass="has-error" required/>
+						<p th:if="${#fields.hasErrors('firstName')}" th:erros="*{firstName}"/>						
+				</div>
+				
+				<div class="form-group">
+					<label for="lastName">Last Name</label>
+					 <input
+						th:field="*{lastName}" type="text" class="form-control"
+						placeholder="Enter Last Name" th:errorclass="has-error" required/>
+						<p th:if="${#fields.hasErrors('lastName')}" th:erros="*{lastName}"/>						
+				</div>
+				
+				<div class="form-group">
+					<label for="email">E-Mail</label>
+					 <input
+						th:field="*{email}" type="text" class="form-control"
+						placeholder="Enter E-Mail" th:errorclass="has-error" required/>
+						<p th:if="${#fields.hasErrors('email')}" th:erros="*{email}"/>						
+				</div>
+				
+				<div class="form-group">
+					<label for="role">Role</label>
+					<select class="form-control select2" th:field="*{role}" required onChange='changeRole()'>
+                         <option value=""> --Select-- </option>
+                         <option th:each="role : ${roles}"
+                            th:value="${role.roleId}"
+                            th:utext="${role.roleDesc}"/>
+                  </select>					
+
+					<label for="group">Group</label>
+					 <select class="form-control select2" multiple="multiple" data-placeholder="Select group" th:field="*{group}">
+                         <option value=""> --Select-- </option>
+                         <option th:each="state : ${states}"
+                            th:value="${state.code}"
+                            th:utext="${state.desc}"/>
+                  </select>			
+				
+					<label for="zone">Zone</label>
+					<select class="form-control select2" th:field="*{zone}" required>
+                         <option value=""> --Select-- </option>
+                         <option th:each="zone : ${zones}"
+                            th:value="${zone.zonalId}"
+                            th:utext="${zone.zonalName}"/>
+                  </select>
+				</div>
+
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="button" class="btn btn-primary" id='submitBut'>Submit</button>
+			</div>
+
+		</form>
+
+	</div>
+	
+	
+
+<div layout:fragment="scriptContent">
+<script th:inline="javascript">
+function changeRole()
+{
+	  if(document.userForm.role.value=='ADMIN')
+	  {
+		  //document.getElementById('group_div').style.visibility = 'hidden';
+		  //document.getElementById('zone_div').style.visibility = 'hidden';
+		  
+		  document.getElementById('group').disabled = true;
+		  document.getElementById('zone').disabled = true;
+	  }	  
+	  else if(document.userForm.role.value=='ZN_HEAD')
+		  document.getElementById('group').disabled = true;
+	  else
+	  {
+		  document.getElementById('group').disabled = false;
+		  document.getElementById('zone').disabled = false;
+	  }	
+}
+$(document).ready(function(){
+    $('.select2').select2();
+
+	$('#submitBut').click(function(event) {
+		event.preventDefault();
+		  $.ajax({
+			  url: "/user/userByUserId/" + document.getElementById('userId').value,
+			  type: "GET",
+			  contentType : "application/json",
+				success: function(result){
+					event.preventDefault();
+					console.log(":::result::::::"+result);
+					
+					if(result == 'Y')
+							$("#exceptionDIV").html("<Font color=RED><B>User Id already exists.</B></Font>");
+					else
+						{
+						     $("#exceptionDIV").html("&nbsp;");
+							 $('#userForm').attr('action', "/user/UserCreation");
+							 $("#userForm").attr("method", "POST");
+							 $("#userForm").submit();
+						}	
+				},
+			     error: function (jqXHR, exception) {
+
+			    	 var msg = '';
+			         if (jqXHR.status === 0) {
+			             msg = 'Not connect.\n Verify Network.';
+			         } else if (jqXHR.status == 404) {
+			             msg = 'Requested page not found. [404]';
+			         } else if (jqXHR.status == 500) {
+			             msg = 'Internal Server Error [500].';
+			         } else if (exception === 'parsererror') {
+			             msg = 'Requested JSON parse failed.';
+			         } else if (exception === 'timeout') {
+			             msg = 'Time out error.';
+			         } else if (exception === 'abort') {
+			             msg = 'Ajax request aborted.';
+			         } else {
+			             msg = 'Uncaught Error.\n' + jqXHR.responseText;
+			         }
+			         $('#errorDIV').html("<Font color=RED><B>"+msg+"</B></Font>");
+			     },
+		  });	  
+	  });
+});
+  
+</script>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Distributor Master</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+
+</style>
+  
+  <Script>
+  function changeRole()
+  {
+	  if(document.userForm.role.value=='ADMIN')
+	  {
+		  //document.getElementById('group_div').style.visibility = 'hidden';
+		  //document.getElementById('zone_div').style.visibility = 'hidden';
+		  
+		  document.getElementById('group').disabled = true;
+		  document.getElementById('zone').disabled = true;
+	  }	  
+	  else if(document.userForm.role.value=='ZN_HEAD')
+		  document.getElementById('group').disabled = true;
+	  else
+	  {
+		  document.getElementById('group').disabled = false;
+		  document.getElementById('zone').disabled = false;
+	  }	 
+  }
+  </Script>      
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Edit User
+		</h1>
+	</section>
+	<div layout:fragment="content">
+      <form  name='userForm'  action="#" th:action="@{/user/editSave}" th:object="${userForm}" method="POST">
+			<div class="box-body">
+			
+			<div class="form-group">
+					<label for="userId">User Id</label>
+					<input type="hidden" th:field="*{id}" readonly/>
+					 <input type="text" th:field="*{userId}" readonly class="form-control"
+						placeholder="Enter name" th:errorclass="has-error" required/>
+				
+				</div>
+			
+			
+
+    
+		<div class="form-group">
+      <label class="control-label col-sm-2" for="email">First Name</label>
+      <input type="text" th:field="*{firstName}" class="form-control"
+						placeholder="Enter First Name" th:errorclass="has-error" required/>
+      </div>
+      
+      <div class="form-group">
+      <label class="control-label col-sm-2" for="lastName">Last Name</label>
+      <input type="text" th:field="*{lastName}" class="form-control"
+			placeholder="Enter Last Name" th:errorclass="has-error" required/>
+      </div>
+    
+	<div class="form-group">
+      <label class="control-label col-sm-2" for="email">E-Mail</label>
+      <input type="text" th:field="*{email}" class="form-control"
+			placeholder="Enter E-Mail" th:errorclass="has-error" required/>
+    </div>    
+  
+   <div class="form-group">
+      <label>Role</label>
+    <select class="form-control select2" th:field="*{role}" onChange='changeRole()'>
+                         <option value=""> --Select-- </option>
+                         <option th:each="role : ${roles}"
+                        	th:value="${role.roleId}"
+                            th:utext="${role.roleDesc}"
+                            th:selected="${role.roleId == userForm.role}"
+                            />
+                  </select>
+      <label>Group</label>
+   <select class="form-control select2" multiple="multiple" th:field="*{group}">
+                         <option value=""> --Select-- </option>
+                         <option th:each="groups : ${wfGroups}"
+                            th:value="${groups.name}"
+                            th:utext="${groups.desc}"
+                            th:selected="${groups.name == userForm.group[0]}"
+                            />
+                  </select>
+      <label>Zone</label>
+              <select class="form-control select2" th:field="*{zone}">
+                         <option value=""> --Select-- </option>
+                         <option th:each="zone : ${zones}"
+                            th:value="${zone.zonalId}"
+                            th:utext="${zone.zonalName}"
+                            th:selected="${zone.zonalId == userForm.zone}"
+                            />
+                  </select>
+     </div> 
+    
+ <div class="box-footer">
+				<button type="submit" class="btn btn-primary">Save</button>
+                  <a th:href="@{/user/usersList}">Cancel</a>
+			</div>
+		</form>
+
+	</div>      
+ <div layout:fragment="scriptContent">
+<script th:inline="javascript">
+function changeRole()
+{
+	  if(document.userForm.role.value=='ADMIN')
+	  {
+		  //document.getElementById('group_div').style.visibility = 'hidden';
+		  //document.getElementById('zone_div').style.visibility = 'hidden';
+		  
+		  document.getElementById('group').disabled = true;
+		  document.getElementById('zone').disabled = true;
+	  }	  
+	  else if(document.userForm.role.value=='ZN_HEAD')
+		  document.getElementById('group').disabled = true;
+	  else
+	  {
+		  document.getElementById('group').disabled = false;
+		  document.getElementById('zone').disabled = false;
+	  }	
+}
+$(document).ready(function(){
+    $('.select2').select2();
+});
+  
+</script>
+</div>
+ 
+   </body>
+</html>

@@ -2,56 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPM</title>
-    <style type="text/css">
-    @media only screen and (max-width: 800px) {
-        /* Force table to not be like tables anymore */
-        #no-more-tables table,
-        #no-more-tables thead,
-        #no-more-tables tbody,
-        #no-more-tables th,
-        #no-more-tables td,
-        #no-more-tables tr {
-        display: block;
-        }
-         
-        /* Hide table headers (but not display: none;, for accessibility) */
-        #no-more-tables thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        }
-         
-        #no-more-tables tr { border: 1px solid #ccc; }
-          
-        #no-more-tables td {
-        /* Behave like a "row" */
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50%;
-        white-space: normal;
-        text-align:left;
-        }
-         
-        #no-more-tables td:before {
-        /* Now like a table header */
-        position: absolute;
-        /* Top/left values mimic padding */
-        top: 6px;
-        left: 6px;
-        width: 45%;
-        padding-right: 10px;
-        white-space: nowrap;
-        text-align:left;
-        font-weight: bold;
-        }
-         
-        /*
-        Label the data
-        */
-        #no-more-tables td:before { content: attr(data-title); }
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/nomoretable.css}"/>
 </head>
 <body>
 <section layout:fragment="header">
@@ -94,9 +45,9 @@
                  <div class="input-group"><span th:text="*{reqHeader.erhCostIncured}"></span></div>
               </div>
            	</div>
-           <div id="no-more-tables" th:if="${not #lists.isEmpty(ezReqMatList)}">
-                    <table class="col-sm-12 table-bordered table-condensed cf">
-                    <thead class="cf">
+           <div class="table-responsive">
+                    <table class="col-sm-12 table table-bordered table-condensed">
+                    <thead>
                 	<tr>
                 		<th>Material</th>
                 		<th>Approved Qty</th>
@@ -110,38 +61,29 @@
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
 						<td data-title="Material" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></td>
 						<td data-title="Approved Qty" th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></td>
-						<td data-title="Used Qty">
-							<span th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">
-								<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].id}">
-								<input type="number"  class="form-control" th:field="*{ezReqMatList[__${itemStat.index}__].usedQty}" />
-							</span>
-							<span th:if="*{reqHeader.erhStatus != 'SUBMITTED'}">
-								<span th:text="*{ezReqMatList[__${itemStat.index}__].usedQty}"></span>		
-							</span>
-						</td> 
+						<td data-title="Used Qty" th:text="*{ezReqMatList[__${itemStat.index}__].usedQty}"></td> 
                 	</tr>
                 	</tbody>
                 </table>
                 </div>
-            <!-- <div id="no-more-tables" >
-            
-             <table class="table table-bordered" >
+			<div class="table-responsive">                
+                  <table class="col-sm-12 table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th>Comments</th>
+							<th colspan='2'>Comments</th>
 						</tr>
 						</thead>
 					<tbody>
-						<tr>	
-							<td><textarea class="form-control" name="comments" th:text="*{ezcComments.comments}" readonly></textarea></td>
-						</tr>	
-							
+					<tr th:each="row, itemStat : *{ezcComments}">
+					<td>	<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].createdBy}">
+						<input hidden="hidden" th:field="*{ezcComments[__${itemStat.index}__].comments}">
+					<span th:text="*{ezcComments[__${itemStat.index}__].createdBy}"></span></td>
+							<td th:text="*{ezcComments[__${itemStat.index}__].comments}"> </td>
+						</tr>
 					
 					</tbody>
 					</table>
-            
-            
-            </div> -->
+    				</div>
     			<div id="no-more-tables" th:if="${not #lists.isEmpty(reqDto.ezcRequestItems)}">
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
@@ -167,7 +109,6 @@
                 </div>
         </form>
     </div>
-  <!--   <div class="box-footer" th:if="${reqDto.reqHeader.erhStatus == 'SUBMITTED'}">-->
   <div class="box-footer">
               <!--  <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>  -->
                <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>

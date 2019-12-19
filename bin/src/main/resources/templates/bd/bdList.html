@@ -1,0 +1,176 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>TPS List</title>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>TPS List</h1>
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
+    <li class="active">List</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-body no-padding">
+        
+ <form role="form"  th:object="${listSelector}" th:action="@{/bd/bdRequestList}" method="get" name="myForm">
+<table class="table table-striped" style="margin-bottom: 1%;">
+  <tbody><tr>  
+	<td>
+		<label>From Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
+                </div>
+                <!-- /.input group -->
+	</td>
+	<td>
+                <label>To Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{toDate}">
+                </div>
+                <!-- /.input group -->
+  	</td>
+  	<td>	
+  		 <label for="listType">Status</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{status}">  
+			 	<option value="" th:selected="*{status=='ALL'}">All</option>
+				<option value="NEW" th:selected="*{status=='NEW'}">New</option>
+				<option value="APPROVED" th:selected="*{status=='APPROVED'}">Approved</option> 
+			 </select>
+		  </div>
+  	</td>
+ 
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
+  	</td>
+  </tr>
+  
+  </tbody></table>
+  </form>
+                   <table id="example" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row : ${reqList}">
+                    <td><a th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
+                    <td th:text="${row.erhStatus}"></td>
+                     <td>
+                    	
+						<span th:if="${row.erhStatus == 'APPROVED'}">
+							<a th:href="${'/bd/addDetails/' + {row.id}}"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">SUBMIT</span>
+							</a>
+						</span>
+						
+                    </td>
+                </tr>
+            	</tbody>
+            </table>
+        </div>
+    </div>
+   <div th:fragment="appr-tps" id="apprTPSModalHolder"></div> 
+</div>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+		
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
+	
+	$('#example').DataTable({
+					
+		"dom": 'T<"clear">lfrtip'
+	
+		}
+			
+	);
+	 
+});
+function funCheckQty()
+{
+	//alert(document.getElementById("stkAva").value);
+	//alert(document.getElementById("selQty").value);
+	document.getElementById("addMatRow").disabled=false;
+	if(parseInt(document.getElementById("stkAva").value)<parseInt(document.getElementById("selQty").value))
+		{
+		alert("provided Quantity is greater than available Quantity.");
+		document.getElementById("addMatRow").disabled=true;
+		}
+	
+}
+function approveTPSReq(event){
+	var leftOverCnt=parseInt($("#leftOverCnt").val());
+	var qtyEntered = false;
+	for(i=0;i<leftOverCnt;i++)
+	{
+			if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
+			{
+				qtyEntered = true;
+			}
+			else
+			{
+				continue;
+			}
+			if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
+			{
+				$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
+				return ;
+			}
+	}
+	if(!qtyEntered)
+	{
+		if($(".apprMat").size() > 0)
+		{
+			qtyEntered =true;
+		}
+	}
+	if(!qtyEntered)
+	{
+		$('#selQty').validationEngine('showPrompt', 'Allocate atleast one material', '');
+		return ;
+	}
+
+	var formdata = $('#appr-tps-form').serialize();
+	//alert("ok1");
+	$.ajax({
+			
+		type : "POST",
+		url : "/tps/appr-tps-post", 
+		data : formdata,
+		success : function(response) {
+				//$('#apprTPMModal  :first-child').find('div.modal-confirm').html("TPM Request approved successfully");
+				location.href="/tps/tpsRequestList"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+}
+
+</script>
+
+
+</div>
+
+</body>
+</html>

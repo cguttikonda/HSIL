@@ -67,16 +67,19 @@ public class TestThymleafController {
 				userRoles.add(authObj.getAuthority().trim());
 				log.debug("role:::"+authObj.getAuthority());
 			}
-			List<Object[]> reqListTPM=repService.getTPMMonthWise(userList);
-			List<Object[]> reqListTPS=repService.getTPSMonthWise(userList);
-			
+			if(requestWrapper.isUserInRole("ADMIN") || requestWrapper.isUserInRole("ROLE_ZN_HEAD"))
+	    	{
+				List<Object[]> reqListTPM=repService.getTPMMonthWise(userList);
+				List<Object[]> reqListTPS=repService.getTPSMonthWise(userList);
+				model.addAttribute("reqListTPM", reqListTPM);
+				model.addAttribute("reqListTPS", reqListTPS);
+	    	}
 			  
 				
 			Map<String, String> htMap = repService.getDashBoardValues(userRoles,userObj.getUserId());
 			 
 			model.addAllAttributes(htMap);
-			model.addAttribute("reqListTPM", reqListTPM);
-			model.addAttribute("reqListTPS", reqListTPS);
+			
 			
 			return "dashboard/index";
 		}
