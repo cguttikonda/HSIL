@@ -88,7 +88,7 @@ public class BDController {
 	    	}
 	    	else 
 	    	{
-	    		log.debug("in controller no err");	
+	    		log.debug("in controller no err"+bdReqDto.getBdMatCode());	
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				Users userObj = (Users)authentication.getPrincipal();
    	
@@ -107,19 +107,22 @@ public class BDController {
 			   	Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 				
 				RequestMaterials reqMat = new RequestMaterials();
+				
 				reqMat.setMatCode(bdReqDto.getBdMatCode().toString().split("#")[0]);
 				reqMat.setMatDesc(bdReqDto.getBdMatCode().toString().split("#")[1]);
 				reqMat.setApprQty(bdReqDto.getBdQty());
 				reqMat.setIsNew('Y');
 				reqMat.setEzcRequestHeader(ezRequestHeader);
 				reqMatSet.add(reqMat);
-				
+				log.debug("in controller no err"+leftOverId.length+allocQty.length);	
 				 if(leftOverId != null && leftOverId.length > 0)
 					{
 						for(int i=0;i<leftOverId.length;i++)
 						{
-							if(allocQty[i] != null && allocQty[i] > 0)
+							if(allocQty.length>0 )
 							{
+								if(allocQty[i] != null && allocQty[i] > 0)
+								{	
 								RequestMaterials reqMat1 = new RequestMaterials();
 								reqMat1.setMatCode(leftOverMat[i].split("#")[0]);
 								reqMat1.setMatDesc(leftOverMat[i].split("#")[1]);
@@ -127,6 +130,7 @@ public class BDController {
 								reqMat1.setIsNew('N');
 								reqMat1.setAllocId(leftOverId[i]);
 								reqMatSet.add(reqMat1);
+								}
 							}
 						}
 						
