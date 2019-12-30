@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -21,9 +23,12 @@ public class TpmRequestDto implements java.io.Serializable {
 	private String erhState;
 	private String erhRequestedBy;
 	@NotNull
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@DateTimeFormat(pattern = "MM/yyyy")
 	private Date erhConductedOn;
 	@NotNull 
+	@Min(value = 1)
+	private Integer noOfMeets;
+
 	private Integer erhNoOfAttendee;
 	@NotNull
 	private String erhDistrubutor;
@@ -33,6 +38,9 @@ public class TpmRequestDto implements java.io.Serializable {
 	private String erhInstructions;
 
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
+	
+	@Valid
+	private List<TPMMeetDto> meetList=new ArrayList<TPMMeetDto>();
 	
 	public TpmRequestDto() {
 	}
@@ -101,6 +109,22 @@ public class TpmRequestDto implements java.io.Serializable {
 		this.distList = distList;
 	}
 
+	public Integer getNoOfMeets() {
+		return noOfMeets;
+	}
+
+	public void setNoOfMeets(Integer noOfMeets) {
+		this.noOfMeets = noOfMeets;
+	}
+
+	public List<TPMMeetDto> getMeetList() {
+		return meetList;
+	}
+
+	public void setMeetList(List<TPMMeetDto> meetList) {
+		this.meetList = meetList;
+	}
+	
 	
 
 }

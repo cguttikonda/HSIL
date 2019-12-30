@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -33,14 +32,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
-import com.ezc.hsil.webapp.model.Roles;
-import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
@@ -64,13 +64,14 @@ public class TPMController {
     
     @RequestMapping("/tpm/add")
     public String add(Model model) {
-    	try {
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			Users userObj = (Users)authentication.getPrincipal();
-			model.addAttribute("matList", tpmService.getLeftOverStock(userObj.getUserId()));
-		} catch (Exception e) {
-			
-		}
+		/*
+		 * try { Authentication authentication =
+		 * SecurityContextHolder.getContext().getAuthentication(); Users userObj =
+		 * (Users)authentication.getPrincipal(); model.addAttribute("matList",
+		 * tpmService.getLeftOverStock(userObj.getUserId())); } catch (Exception e) {
+		 * 
+		 * }
+		 */
     	TpmRequestDto tpmRequestDto = new TpmRequestDto();
     	List<DistributorMaster> distList = masterService.findAll();
     	tpmRequestDto.setDistList(distList); 
@@ -79,6 +80,24 @@ public class TPMController {
 
     } 
   
+    @RequestMapping("/tpm/addmeetrows")
+	 public String addMeetRows(TpmRequestDto reqDto, Model model) {
+      
+       int j= reqDto.getNoOfMeets();
+	   List<TPMMeetDto> arrTempList = new ArrayList<TPMMeetDto>();
+		
+		for(int i=1;i<=j;i++)
+		{
+			TPMMeetDto tpmMeetDto = new TPMMeetDto();
+			tpmMeetDto.setMeetId("Meet"+i);
+			arrTempList.add(tpmMeetDto);
+		}
+		reqDto.setMeetList(arrTempList);
+	   model.addAttribute("distList",masterService.findAll());
+       model.addAttribute("tpmRequestDto",reqDto);
+       return "tpm/form";
+	}
+    
     @RequestMapping(value = "/tpm/appr-tpm-post", method = RequestMethod.POST)
 	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
 		EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
@@ -105,7 +124,7 @@ public class TPMController {
 				reqMatSet.add(reqMat);
 			}
 		}
-		if(leftOverId != null && leftOverId.length > 0)
+		if(leftOverId != null && leftOverId.length > 0 && allocQty != null && allocQty.length > 0)
 		{
 			for(int i=0;i<leftOverId.length;i++)
 			{
@@ -190,7 +209,13 @@ public class TPMController {
     		userList.add(userObj.getUserId());
     		listSelector.setUser(userList);
     	}
-    	List<EzcRequestHeader> list = tpmService.getTPMRequestListByDate(listSelector);
+		/*
+		 * List<EzcRequestHeader> list =
+		 * tpmService.getTPMRequestListByDate(listSelector);
+		 * model.addAttribute("reqList", list);
+		 */
+    	List<Object[]> list = tpmService.getTPMRequestList(listSelector);
+    	log.debug("list:::"+list.size());
         model.addAttribute("reqList", list);
         model.addAttribute("listSelector", listSelector);
         return "tpm/list"; 
@@ -236,10 +261,24 @@ public class TPMController {
     	ezRequestHeader.setErhNoOfAttendee(tpmRequestDto.getErhNoOfAttendee());
     	ezRequestHeader.setErhReqType("TPM");
     	ezRequestHeader.setErhRequestedOn(new Date());
-    	ezRequestHeader.setErhState("TEST"); 
-    	ezRequestHeader.setErhStatus("NEW"); 
+    	ezRequestHeader.setErhState(""); 
+    	ezRequestHeader.setErhStatus("NEW");
+    	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
+    	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor()).getName());
     	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
-  
+    	List<TPMMeetDto> meetList= tpmRequestDto.getMeetList();
+    	Set<EzcRequestDealers> reqDealerList= new HashSet<EzcRequestDealers>(); 
+    	for(TPMMeetDto tpmMeetDto : meetList) 
+    	{
+    		EzcRequestDealers ezcRequestDealers= new EzcRequestDealers();
+    		ezcRequestDealers.setErdDealerName(tpmMeetDto.getRetailer());
+    		ezcRequestDealers.setErdInstructions(tpmMeetDto.getInstructions());
+    		ezcRequestDealers.setErdMeetId(tpmMeetDto.getMeetId());
+    		ezcRequestDealers.setErdNoOfAttendee(tpmMeetDto.getNoOfAttendees());
+    		ezcRequestDealers.setEzcRequestHeader(ezRequestHeader);
+    		reqDealerList.add(ezcRequestDealers); 
+    	}
+    	ezRequestHeader.setEzcRequestDealers(reqDealerList); 
     	tpmService.createTPMRequest(ezRequestHeader);
         ra.addFlashAttribute("success","TPM request details saved sucessfully.");
         return "redirect:/tpm/add";

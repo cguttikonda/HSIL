@@ -22,4 +22,5 @@ public interface ITPMService {
 	public void closeTPMRequest(TpmRequestDetailDto tpmRequestDetailDto);
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
 	public List<Object[]> getLeftOverStock(String requestedBy);
+	public List<Object[]> getTPMRequestList(ListSelector listSelector);
 }

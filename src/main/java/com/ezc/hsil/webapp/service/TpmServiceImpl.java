@@ -135,6 +135,18 @@ public class TpmServiceImpl implements ITPMService{
 			log.debug("type in getTPMRequestListByDate::::"+listSelector.getType()); 
 			return requestCustomDto.findRequestList(listSelector);
 		}
+		
+		@Override
+		public List<Object[]> getTPMRequestList(ListSelector listSelector) {
+			/*
+			if("ALL".equals(listSelector.getStatus()))
+				return reqHeaderRepo.findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getToDate(),listSelector.getFromDate());	
+			else	
+				return reqHeaderRepo.findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(listSelector.getType(),listSelector.getStatus(),listSelector.getToDate(),listSelector.getFromDate());
+			*/
+			log.debug("type in getTPMRequestListByDate::::"+listSelector.getType()); 
+			return requestCustomDto.findRequestListJoinDealer(listSelector); 
+		}
 
 		@Override
 		public void approveTPMRequest(EzcRequestHeader ezcRequestHeader) {

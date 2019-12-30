@@ -1,70 +1,8 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
-    <title>TPM</title>
-    <style type="text/css">
-    .boxLabel
-	{
-		    background-color: #3c8dbc;
-		    color:white;
-		    border: 1px solid green;
-	}
-	.boxElement
-	{
-		    border: 1px solid green;
-	}
-    @media only screen and (max-width: 800px) {
-        /* Force table to not be like tables anymore */
-        #no-more-tables table,
-        #no-more-tables thead,
-        #no-more-tables tbody,
-        #no-more-tables th,
-        #no-more-tables td,
-        #no-more-tables tr {
-        display: block;
-        }
-         
-        /* Hide table headers (but not display: none;, for accessibility) */
-        #no-more-tables thead tr {
-        position: absolute;
-        top: -9999px;
-        left: -9999px;
-        }
-         
-        #no-more-tables tr { border: 1px solid #ccc; }
-          
-        #no-more-tables td {
-        /* Behave like a "row" */
-        border: none;
-        border-bottom: 1px solid #eee;
-        position: relative;
-        padding-left: 50%;
-        white-space: normal;
-        text-align:left;
-        }
-         
-        #no-more-tables td:before {
-        /* Now like a table header */
-        background-color: #3c8dbc;
-	    color:white;
-        position: absolute;
-        /* Top/left values mimic padding */
-        /* top: 6px; */
-        left: 6px;
-        width: 45%;
-        /* padding-right: 10px; */
-        white-space: nowrap;
-        text-align:left;
-        font-weight: bold;
-        padding:5px;
-        }
-         
-        /*
-        Label the data
-        */
-        #no-more-tables td:before { content: attr(data-title); }
-        }
-    </style>
+    <title>BD & Marketing</title>
+    <link rel="stylesheet" th:href="@{/resources/dist/css/nomoretable.css}"/>
 </head>
 <body>
 <section layout:fragment="header">
@@ -110,9 +48,9 @@
                  </div>
               </div>
            </div>
-      <div id="no-more-tables">
-                    <table class="col-sm-12 table-bordered table-condensed cf">
-                    <thead class="cf">
+      <div class="table-responsive" style="margin-top:2%">
+                    <table class="col-sm-12 table table-bordered table-condensed">
+                    <thead>
                 	<tr>
                 		<th>Material</th>
                 		<th>Approved Qty</th>
@@ -136,18 +74,9 @@
                 	</tbody>
                 </table>
                 </div>
-    			<!--  <div class="input-group">
-                <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
-                
-                	<span class="input-group-addon btn-group-vertical">
-					  <button type="button" class="btn btn-success" id="start-record-btn"><i class="fa fa-microphone" id="start-record-btn"></i>&nbsp;&nbsp;Record</button>
-					  <button type="button" class="btn btn-danger" id="pause-record-btn"><i class="fa fa-pause"></i>&nbsp;&nbsp;Pause</button>
-					  <button type="button" class="btn btn-warning" onclick="javascript:readOutLoud()" data-toggle="modal" data-target="#recordModal"><i class="fa fa-play"></i>&nbsp;&nbsp;Sample</button>
-					</span>
-                
-                </div>-->
-                 <table class="col-sm-12 table-bordered table-condensed cf">
-					<thead class="cf">
+      			<div class="table-responsive">
+                 <table class="col-sm-12 table table-bordered table-condensed">
+					<thead>
 						<tr>
 							<th colspan='2'>Comments</th>
 						</tr>
@@ -167,6 +96,7 @@
 					
 					</tbody>
 					</table>
+					</div>
                 <p id="recording-instructions"></p>
                 
                

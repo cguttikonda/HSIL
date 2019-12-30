@@ -82,19 +82,35 @@
                        <thead>			
                 <tr>
                     <th>ID</th>
+                    <th>Month</th>
+                    <th>Requested By</th>
                     <th>Distributor</th>
+                    <th>Distributor Name</th>
                     <th>City</th>
-                    <th>Created BY</th>
-                    <th>Meeting Date</th>
-                    <th>No Of Attendance</th>
-                    <th>Status</th>
-                    <th></th>
+                    <th>Total Attendance</th>
+                    <th>Meet</th>
+                    <th>Meet Date</th>
+                    <th>Instructions</th>
+                    <th>Attendance</th>
+                    <th>Dealer Name</th>
                 </tr>
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
-                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td><a th:href="${'/tpm/addDetails/' + {row[0]}}" th:text="${row[1]+'-'+row[0]}"></a></td>
+                    <td th:text="${#dates.format(row[2], 'MM/yyyy')}"></td>
+                    <td th:text="${row[3]+'['+row[4]+']'}"></td>
+                    <td th:text="${row[5]}"></td>
+                    <td th:text="${row[6]}"></td>
+                    <td th:text="${row[7]}"></td>
+                    <td th:text="${row[8]}"></td>
+                    <td th:text="${row[9]}"></td>
+                    <td th:text="${#dates.format(row[10], 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row[11]}"></td>
+                    <td th:text="${row[12]}"></td>
+                    <td th:text="${row[13]}"></td>
+                    
+                    <!-- <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${row.erhRequestedBy}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
@@ -122,7 +138,7 @@
 							</a>
 						</span>
 						
-                    </td>
+                    </td> -->
                 </tr>
             	</tbody>
             </table>
@@ -220,7 +236,43 @@ $(document).ready(function() {
          format: 'dd/mm/yyyy'
     });
 	
-	$('#example').DataTable({
+    var dtOptions = {
+    	    "dom": '<"clearfix"><"pull-left"l<"toolbar">><"pull-right"Bf>r<"horizontal-scroll"t><"pull-left"i><"pull-right"p><"clearfix">',
+    	    "pageLength": 10,
+    	    "paging": false,
+    	    "columnDefs": [
+    	        { "visible": false, "targets": hiddenCols },
+    	        { "orderable": false, "targets": allColumns }
+    	    ],
+    	    "sort": true,
+    	    "order": [[0, 'asc'], [1, 'asc']],
+    	    "displayLength": 15,
+    	    "drawCallback": function (settings) {
+    	        var api = this.api();
+    	        var rows = api.rows({ page: 'current' }).nodes();
+    	        var last = null;
+
+    	        var CommentCol = -1;
+
+    	        _.each(api.columns().header(), function (e, i) {
+    	            if(e.innerHTML == "Comments"){
+    	                CommentCol = i;
+    	            }
+    	        })
+
+    	        api.column(groupByCol, { page: 'current' }).data().each(function (group, i, $currTable) {
+    	            if (last !== group) {
+
+    	                $(rows).eq(i).before(
+    	                    '<tr class="group"><td class="nowrap" colspan="3">' + buttons + '<div style="margin-right:6px;"><b>Lot:</b> ' + group + '</div></td><td colspan="16"><b>Comments:</b> ' + $currTable.rows(rows[i]._DT_RowIndex).data()[0][CommentCol] + '</td></tr>'
+    	                );
+
+    	                last = group;
+    	            }
+    	        });
+    	    }
+    	}
+    $('#example').DataTable({
 					
 		"dom": 'T<"clear">lfrtip'
 	

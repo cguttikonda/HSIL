@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +98,24 @@ public class RequestCustomDto {
 	        }
 	        cq.where(predicates.toArray(new Predicate[0]));
 	        TypedQuery<EzcRequestHeader> query = em.createQuery(cq);
+	        return query.getResultList();
+	    }
+	    
+	    public List<Object[]> findRequestListJoinDealer(ListSelector reportSelector) {
+	        CriteriaBuilder cb = em.getCriteriaBuilder();
+	        CriteriaQuery cq = cb.createQuery();
+	        Root<EzcRequestHeader> header = cq.from(EzcRequestHeader.class);
+	        Join<EzcRequestHeader, EzcRequestDealers>  dealerJoin = header.join ("ezcRequestDealers");
+	        List<Predicate> predicates = new ArrayList<Predicate>();
+	        if(reportSelector.getType() != null)
+	        	predicates.add(cb.equal(header.get("erhReqType"), reportSelector.getType()));
+	        if(reportSelector.getFromDate() != null && reportSelector.getToDate() != null)
+	        	predicates.add(cb.between(header.get("erhRequestedOn"), reportSelector.getFromDate(), reportSelector.getToDate()));
+	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))
+	        	predicates.add(cb.equal(header.get("erhStatus"), reportSelector.getStatus()));
+	        cq.where(predicates.toArray(new Predicate[0]));
+	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"));
+	        Query query = em.createQuery(cq);
 	        return query.getResultList();
 	    }
 	

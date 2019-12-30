@@ -50,7 +50,8 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private String erhDistrubutor; 
 	private String erhCity;
 	private String erhPurpose;
-	
+	private String erhDistName;
+	private String erhReqName;
 
 	private String erhVenue;
 	private String erhInstructions;
@@ -318,6 +319,24 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setErhPurpose(String erhPurpose) {
 		this.erhPurpose = erhPurpose;
+	}
+
+	@Column(name = "ERH_DIST_NAME",length=50)
+	public String getErhDistName() {
+		return erhDistName;
+	}
+
+	public void setErhDistName(String erhDistName) {
+		this.erhDistName = erhDistName;
+	}
+
+	@Column(name = "ERH_REQ_NAME",length=50)
+	public String getErhReqName() { 
+		return erhReqName;
+	}
+
+	public void setErhReqName(String erhReqName) {
+		this.erhReqName = erhReqName;
 	}
 	
 

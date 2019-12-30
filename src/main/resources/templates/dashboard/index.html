@@ -86,7 +86,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
@@ -120,27 +120,13 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
             </div>
         </div>
         <!-- ./col -->
-                <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
-            <!-- small box -->
-            <div class="small-box bg-aqua">
-                <div class="inner">
-                    <h3 th:text="${toActBDRequest}"></h3>
-                    <p>BD TO BE APPROVED</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-chevron-right"></i>
-                </div>
-                <a href="#" th:href="@{/reports/dispack}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
-            </div>
-            
-            
-        </div>
+         </div>
+         <div class="row">   
          <div class="col-lg-6 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
             <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
-				  <h3 class="box-title">TPM Chart Scheduled Vs Completed</h3>
+				  <h3 class="box-title"><b>TPM SCHEDULED VS COMPLETED</b></h3>
 
 					  <div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -160,7 +146,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
             <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
-				  <h3 class="box-title">TPS Chart Scheduled Vs Completed</h3>
+				  <h3 class="box-title"><b>TPS SCHEDULED VS COMPLETED</b></h3>
 
 					  <div class="box-tools pull-right">
 						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>

@@ -115,7 +115,7 @@ public class BDController {
 				reqMat.setEzcRequestHeader(ezRequestHeader);
 				reqMatSet.add(reqMat);
 				log.debug("in controller no err"+leftOverId.length+allocQty.length);	
-				 if(leftOverId != null && leftOverId.length > 0)
+				 if(leftOverId != null && leftOverId.length > 0 && allocQty != null && allocQty.length > 0)
 					{
 						for(int i=0;i<leftOverId.length;i++)
 						{

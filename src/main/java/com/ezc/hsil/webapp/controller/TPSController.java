@@ -162,7 +162,7 @@ public class TPSController {
 					reqMatSet.add(reqMat);
 				}
 			}
-			if(leftOverId != null && leftOverId.length > 0)
+			if(leftOverId != null && leftOverId.length > 0 && allocQty != null && allocQty.length > 0)
 			{
 				for(int i=0;i<leftOverId.length;i++)
 				{

@@ -33,7 +33,7 @@
 	<ul class="sidebar-menu">
 		<li class="header">MAIN NAVIGATION</li>
 		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
-			<a th:href="@{/master/listMaterial}"><i class="fa fa-gift"></i> <span>Add Stock</span> 
+			<a th:href="@{/master/addMaterial}"><i class="fa fa-gift"></i> <span>Add Stock</span> 
 		</a>
 		</li>
 		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
@@ -42,10 +42,6 @@
 		</li>
 		<li  sec:authorize="hasRole('ROLE_OUT_STOR')">
 			<a th:href="@{/reports/disprep/PENDING}"><i class="fa fa-truck"></i> <span>Pending For Dispatch</span> 
-		</a>
-		</li>
-		<li  sec:authorize="hasRole('ROLE_OUT_STOR')">
-			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>Available Stock</span> 
 		</a>
 		</li>
 		<li class="treeview"sec:authorize="hasRole('ADMIN')"><a href="#">
@@ -101,6 +97,10 @@
 
 			</ul></li>
 		<!-- Master Data End-->
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ADMIN')">
+			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>Available Stock</span> 
+		</a>
+		</li>
 		<!-- TPM/TPS menu Option -->
 	<li class="treeview"  sec:authorize="hasRole('ROLE_BD_MKT')"><a href="#">
 				<i class="fa fa-edit"></i> <span>BD Creation</span> <span
@@ -147,7 +147,7 @@
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
-		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>Available Stock</a></li>
+		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>Available Stock</a></li>
 		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD','ADMIN')"><a href="#">
 				<i class="fa fa-list-ul"></i> <span>Team Reports</span> <span
 				class="pull-right-container"> <i
@@ -159,7 +159,7 @@
 				<li sec:authorize="hasAnyRole('ROLE_ZN_HEAD','ADMIN')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
 				<li class=""><a href="#" th:href="@{/reports/stockavailbydept}"><i class="fa fa-circle-o"></i> Stock Report</a></li>
 			</ul></li>
-				<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">
+			<!-- 	<li class="treeview" sec:authorize="hasAnyRole('ADMIN')"><a href="#">
 				<i class="fa fa fa-pie-chart"></i> <span>Reports</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -173,7 +173,7 @@
 				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i>TPM History</a></li>
 				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i>Scheduled TPM</a></li>
 			</ul></li>
-		
+			 -->
 		
 		</ul>
 </section>

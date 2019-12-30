@@ -297,8 +297,8 @@ public class ReportController {
     		List<Object[]> stateHdGrp=repService.getAllStateHd();
     		reportSelector.setHdGrp(stateHdGrp);
     		reportSelector.setUserGrp(userList);
-    		reportSelector.setDistList(iMasterService.findAll());
     	}
+    	reportSelector.setDistList(iMasterService.findAll());
     	tempUserList = userList;
     	
     	String selStHd = reportSelector.getSelStHd();
