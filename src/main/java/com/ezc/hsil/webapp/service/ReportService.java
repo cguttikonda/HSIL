@@ -108,6 +108,17 @@ public class ReportService implements IReportService {
 			dispCnt = customDto.findRequestListCnt(listSelector);
 			htMap.put("apprTpsCnt",dispCnt+"");
 		}
+		if(role.contains("ROLE_ST_HEAD"))
+		{
+			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
+			htMap.put("ackDispCnt",dispCnt+"");
+			ListSelector listSelector = new ListSelector();
+			listSelector.setStatus("APPROVED");
+			listSelector.setType("BD");
+			listSelector.setUser(userList);
+			dispCnt = customDto.findRequestListCnt(listSelector);
+			htMap.put("apprBDCnt",dispCnt+"");
+		}
 		if(role.contains("ROLE_BD_MKT"))
 		{
 			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
@@ -157,6 +168,10 @@ public class ReportService implements IReportService {
 	public List<Object[]> getTPSMonthWise(List<String> userList) {
 		return reqHeaderRepo.getTPSMonthWise(userList);
 	}
+	/*@Override
+	public List<Object[]> getBDMonthWise(List<String> userList) {
+		return reqHeaderRepo.getBDMonthWise(userList);
+	}*/
 	@Override
 	public void dispatchAckUpdate(EzcRequestHeader ezcRequestHeader) {
 		  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
@@ -204,7 +219,11 @@ public class ReportService implements IReportService {
 	public List<Object[]> getAllUsers() {
 		return workGrpUserRepo.getAllUsers();
 	}
-
+	@Override
+	public List<Object[]> getAllMKTUsers() {
+		return workGrpUserRepo.getAllMKTUsers();
+	}
+	
 	@Override
 	public List<Object[]> getPlumberMaster(List<String> dist) {
 		return reqHeaderRepo.getPlumberMaster(dist);

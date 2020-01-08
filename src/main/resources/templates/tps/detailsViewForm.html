@@ -62,7 +62,7 @@
               </div>
               <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]" type="number"></div>
+                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]" type="number" readonly></div>
               </div>
            </div>
            
@@ -92,6 +92,31 @@
                 	</tbody>
                 </table>
                 </div>
+                 <div class="table-responsive" style="margin-top:2%">
+                    <table class="col-sm-12 table table-bordered table-condensed" id="tpsReqTable">
+                    <thead>
+                	<tr>
+                		<th>Retailer</th>
+                		
+                	</tr>
+                	</thead>
+                	<tbody>
+                	
+                	<tr th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}">
+                	
+                	
+                	
+						<td data-title="retailer">
+							<!-- <input type="text" class="form-control" name="retailer" th:id="${'retailer_'+itemStat1.index}" th:value="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"/> -->
+							<input type="text" class="form-control validate[required]" th:field="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}" readonly/>
+							
+						</td>
+						
+                	</tr>
+                	</tbody>
+                </table>
+      </div>
+    
     	 <div class="table-responsive">          
                    <table class="col-sm-12 table table-bordered table-condensed">
 					<thead>
@@ -118,7 +143,7 @@
                     <table class="col-sm-12 table-bordered table-condensed cf">
                     <thead class="cf">
                 	<tr>
-						<th>Retailer/Dealer Name</th>
+						<!-- <th>Retailer/Dealer Name</th> -->
                 		<th>Name Of Plumber</th>
                 		<th>Contact No</th>
                 		<th>D.O.B</th>
@@ -131,13 +156,13 @@
             			<td colspan="2"> No Items Added </td>
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-                	<td data-title="Retailer">
+                	<!-- <td data-title="Retailer">
              		
 		   			<select   class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDealer}"> 
                          <option value=""> --Select Retailer-- </option>
                          <option th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}" th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}" th:value="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></option>
                  	 </select>
-					  </td>
+					  </td> -->
 						<td data-title="Name Of Plumber"><input type="text"  disabled class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
 						<td data-title="Contact No"><input type="text" disabled  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">

@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +47,9 @@ public class BDServiceImpl implements IBDService{
 	 private EzcCommentsRepo commRepo;
     @Autowired
     private RequestMaterialsRepo reqMatRep;
+    @Autowired
+	 IBDService bdService;
+	 
     
 	 
 	@Override
@@ -112,6 +116,48 @@ public class BDServiceImpl implements IBDService{
 		return commRepo.findByRequest(docId);
 	}
 	@Override
+	public void submitBDDet(String id,Integer appQty,EzcRequestHeader ezcRequestHeader)
+	{
+		
+		EzcRequestHeader ezReqHeader = bdService.getBDRequest(id);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		log.debug("id123"+id);
+		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+		Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
+		Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
+		ezReqHeader.setErhStatus("APPROVED");
+		ezReqHeader.setErhModifiedBy(userObj.getUserId());
+		ezReqHeader.setErhModifiedOn(new Date());
+		ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
+		ezReqHeader.getEzcComments().addAll(ezcComments);
+		
+		  log.debug("appQty"+appQty);
+		  for(RequestMaterials tempItem : reqMatSet) {
+			  log.debug("matid"+tempItem.getId());
+		      Character c1 = new Character('Y'); 
+			  if(c1.equals(tempItem.getIsNew()))
+			  {
+				  RequestMaterials requestMaterials = reqMatRep.findById(tempItem.getId()).orElseThrow(() -> new EntityNotFoundException());
+				  requestMaterials.setApprQty(appQty);
+				  log.debug("matid"+tempItem.getId());
+			  }
+			  
+		  } 
+		  log.debug("appQtymat"+appQty);
+		  for(RequestMaterials tempItem : ezReqMatList) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  reqMatRep.save(tempItem); 
+			}
+		  for(EzcComments tempItem : ezcComments) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  commRepo.save(tempItem); 
+			}
+	
+		
+ 
+	}
+	@Override
 	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto) {
 		String loggedUser="";
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(bdRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
@@ -124,7 +170,7 @@ public class BDServiceImpl implements IBDService{
 			{
 				EzcComments comm=new EzcComments();
 				comm.setComments(comments);
-				comm.setType("SUBMIT");
+				comm.setType("APPROVE");
 				
 				commSet.add(comm);
 			
@@ -168,6 +214,7 @@ public class BDServiceImpl implements IBDService{
 	  
 	  
 	}
+	
 
 	@Override
 	public List<Object[]> getLeftOverStock(String requestedBy) {

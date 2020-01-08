@@ -92,7 +92,12 @@
            		<tbody>	
                 <tr th:each="row : ${reqList}">
                     
-                     <td><a th:href="${'/tps/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
+                     <td ><span th:if="${row.erhReqType == 'BD'}">
+                   <a th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>                  </span>
+                     <span th:if="${row.erhReqType == 'TPS'}">
+                     <a th:href="${'/tps/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
+                     </span></td>
+                     
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${row.erhRequestedBy}"></td>
@@ -100,11 +105,21 @@
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
                      <td>
+                    	<span th:if="${row.erhReqType == 'BD'}">
+                    	<span sec:authorize="hasRole('ROLE_ST_HEAD')"  th:if="${row.erhStatus == 'APPROVED'}">
+							<a th:href="${'/bd/addDetails/' + {row.id}}"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">SUBMIT</span>
+							</a>
+						</span>
+						</span>
+						<span th:if="${row.erhReqType == 'TPS'}">
                     	<span sec:authorize="hasRole('ROLE_ST_HEAD')" th:if="${row.erhStatus == 'APPROVED'}">
 							<a th:href="${'/tps/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>
 							</a>
+						</span>
 						</span>
 						<span sec:authorize="hasRole('ADMIN')" th:if="${row.erhStatus == 'NEW'}">
 							<a href="#"

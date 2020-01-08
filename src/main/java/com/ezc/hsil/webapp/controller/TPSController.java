@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Arrays;  
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -293,6 +295,9 @@ public class TPSController {
 	   }
 	    @RequestMapping(value = "/tps/tpsRequestList", method = RequestMethod.GET)
 	    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+	    	ArrayList<String> typeList=new ArrayList<String>();
+	    	typeList.add("TPS");
+	    	typeList.add("BD");
 	    	if(listSelector == null || listSelector.getFromDate() == null)
 	    	{
 	    		Date todayDate = new Date();
@@ -300,9 +305,10 @@ public class TPSController {
 	    		c.setTime(todayDate); 
 	    		c.add(Calendar.MONTH, -3);
 	    		listSelector = new ListSelector();
-	    		listSelector.setType("TPS");
+	    		//listSelector.setType("TPS");
 	    		listSelector.setFromDate(c.getTime());
-	    		listSelector.setToDate(todayDate);    		
+	    		listSelector.setToDate(todayDate); 
+	    		listSelector.setTypeList(typeList);
 	    	}
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
@@ -320,8 +326,11 @@ public class TPSController {
 	    } 
 	    @RequestMapping(value = "/tps/tpsReqListSts/{status}", method = RequestMethod.GET)
 	    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
+	    	ArrayList<String> typeList=new ArrayList<String>();
+	    	typeList.add("TPS");
+	    	typeList.add("BD");
 	    	ListSelector listSelector = new ListSelector();
-	    	listSelector.setType("TPS");
+	    	listSelector.setTypeList(typeList);
 	    	listSelector.setStatus(status);
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
@@ -338,7 +347,58 @@ public class TPSController {
 
 	    }
  
-	    
+	   /* @RequestMapping("/tps/addRetailer")
+		 public String addRetailer(TpsRequestDetailDto reqDto, @RequestParam(value = "retailer", required = false) String retailer[],@RequestParam(value = "retailerSize", required = false) Integer  retailerSize,Model model) {
+	       
+	       int j= retailerSize;
+	       log.debug(retailerSize+"retailerSize");
+			List<EzcRequestDealers> arrTempList = new ArrayList<EzcRequestDealers>();
+			EzcRequestDealers myObject=new EzcRequestDealers();
+			for(int i=0;i<retailer.length;i++)
+			{	
+				log.debug(retailer[i]+"retailerSize");
+				myObject.setErdDealerName(retailer[i]);
+				arrTempList.add(myObject);
+			}
+		     
+			
+			arrTempList.add(new EzcRequestDealers());
+			List<EzcRequestItems> ezcRequestItems=null;
+		   
+		 
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setEzcRequestDealers(arrTempList);
+					
+			
+			model.addAttribute("reqDto", reqDto);  ;
+	       return "tps/tpsDetailsForm";
+		}*/
+	    @RequestMapping("/tps/addRetailer")
+		 public String addRetailer(TpsRequestDetailDto reqDto, @RequestParam(value = "retailer", required = false) String retailer[],@RequestParam(value = "retailerSize", required = false) Integer  retailerSize,Model model) {
+	       
+	    	 List<EzcRequestDealers> ezcRequestDealers=null;
+		     ezcRequestDealers = reqDto.getEzcRequestDealers();
+		      
+		 	for(EzcRequestDealers item :ezcRequestDealers)
+			{
+				log.debug(item.getErdDealerName());
+			} 
+	        if(ezcRequestDealers== null)
+	        	ezcRequestDealers = new ArrayList<EzcRequestDealers>();
+	        else
+	        	ezcRequestDealers = reqDto.getEzcRequestDealers();
+	        
+		    ezcRequestDealers.add(new EzcRequestDealers());
+			
+		   
+		 
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setEzcRequestDealers(ezcRequestDealers);
+					
+			
+			model.addAttribute("reqDto", reqDto);  ;
+	       return "tps/tpsDetailsForm";
+		}
 	  @RequestMapping(value = "/tps/addNewItem", method = RequestMethod.POST)
 	    public String addNewTPSItem(TpsRequestDetailDto reqDto, Model model) {
 	        List<EzcRequestItems> ezcRequestItems=null;
@@ -352,7 +412,7 @@ public class TPSController {
 	        ezcRequestItems.add(new EzcRequestItems());
 	        reqDto.setEzcRequestItems(ezcRequestItems);
 			reqDto.setReqHeader(reqDto.getReqHeader());
-			reqDto.setEzcRequestDealers(ezcRequestDealers);
+			//reqDto.setEzcRequestDealers(ezcRequestDealers);
 			
 	        model.addAttribute("reqDto", reqDto);  
 	        return "tps/tpsDetailsForm";
@@ -433,7 +493,8 @@ public class TPSController {
 
 	    }
 	  @RequestMapping(value = "/tps/saveDetails", method = RequestMethod.POST)
-	    public String saveDetails(TpsRequestDetailDto tpsRequestDetailDto, final RedirectAttributes ra) {
+	    public String saveDetails(TpsRequestDetailDto tpsRequestDetailDto,final RedirectAttributes ra) {
+			
 	    	tpsService.createTPSDetails(tpsRequestDetailDto);
 	        ra.addFlashAttribute("successFlash", "Success");
 	        return "redirect:/tps/tpsRequestList";

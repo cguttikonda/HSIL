@@ -12,4 +12,9 @@ public interface RequestDealersRepo extends JpaRepository<EzcRequestDealers, Int
 	@Query(value="Select a from EzcRequestDealers a where a.ezcRequestHeader.id=:reqId")
 	Set<EzcRequestDealers> findByRequest(String reqId);
 
+	
+	
+	
+	
+
 }

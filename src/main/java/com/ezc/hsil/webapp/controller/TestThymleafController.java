@@ -34,7 +34,7 @@ public class TestThymleafController {
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObjt = (Users)authentication.getPrincipal();
-		List<Object[]> userListObj = null, userListObjTPS =null;
+		List<Object[]> userListObj = null, userListObjTPS =null,userListObjBD =null;
 		List<String> userList = new ArrayList<String>();
 		
     	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
@@ -50,12 +50,15 @@ public class TestThymleafController {
     	{
     		userListObj=repService.getAllUsers();
     		userListObjTPS=repService.getAllStateHd();
+    		userListObjBD=repService.getAllMKTUsers();
     	}
     	log.info("userListObj:::::::::{}",userListObj);
     	if(userListObj != null)
     		userListObj.forEach(obj->userList.add((String) obj[0]));
     	if(userListObjTPS != null)
     		userListObjTPS.forEach(obj->userList.add((String) obj[0]));
+    	if(userListObjBD != null)
+    		userListObjBD.forEach(obj->userList.add((String) obj[0]));
 		if(auth!= null && auth.isAuthenticated()) {
 			log.info("Principal:::::::::{}",principal.getName());
 			log.info("Authentication:::::::::{}",auth.isAuthenticated());
@@ -71,6 +74,9 @@ public class TestThymleafController {
 	    	{
 				List<Object[]> reqListTPM=repService.getTPMMonthWise(userList);
 				List<Object[]> reqListTPS=repService.getTPSMonthWise(userList);
+				//List<Object[]> reqListBD=repService.getBDMonthWise(userList);
+				List<Object[]> reqListBD=repService.getTPSMonthWise(userList);
+				model.addAttribute("reqListBD", reqListBD);
 				model.addAttribute("reqListTPM", reqListTPM);
 				model.addAttribute("reqListTPS", reqListTPS);
 	    	}

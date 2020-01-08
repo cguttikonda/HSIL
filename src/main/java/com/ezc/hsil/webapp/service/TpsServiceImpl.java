@@ -14,12 +14,14 @@ import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.RequestDealersRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestMaterialsRepo;
@@ -46,7 +48,8 @@ public class TpsServiceImpl implements ITPSService {
 	 private EzcCommentsRepo commRepo;
 	 @Autowired
 	 private RequestCustomDto requestCustomDto;
-	    
+	 @Autowired
+	 private RequestDealersRepo requestDealerRepo;   
 	 
 	@Override
 	public void createTPSRequest(EzcRequestHeader ezcRequestHeader) {
@@ -123,7 +126,23 @@ public class TpsServiceImpl implements ITPSService {
 	public void createTPSDetails(TpsRequestDetailDto tpsRequestDetailDto) {
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpsRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
 		List<EzcRequestItems> ezReqItemList = tpsRequestDetailDto.getEzcRequestItems();
+		List<EzcRequestDealers> ezReqDeal = tpsRequestDetailDto.getEzcRequestDealers();
+		Set<EzcRequestDealers> ezReqDealSet=new  HashSet<EzcRequestDealers>();
+		Set<EzcRequestDealers> fromDBReqDeal=requestDealerRepo.findByRequest(tpsRequestDetailDto.getReqHeader().getId());
 		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+		 for(EzcRequestDealers tempItem : fromDBReqDeal) { 
+			  log.debug("id delete"+tempItem.getId());	
+			  requestDealerRepo.deleteById(tempItem.getId()); 
+			}
+		 for(EzcRequestDealers tempItem : ezReqDeal) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  requestDealerRepo.save(tempItem); 
+			}
+		 for(EzcRequestDealers tempItem : ezReqDeal) {
+			 ezReqDealSet.add(tempItem); 
+
+		 }
+		 ezReqHeader.setEzcRequestDealers(ezReqDealSet);
 		String comments=tpsRequestDetailDto.getCommentReqDto();
 		Set<EzcComments> commSet = new HashSet<EzcComments>();
 		 if(comments!= null)

@@ -13,6 +13,7 @@ public interface IBDService {
 	public List<EzcRequestHeader> getBDRequestListByDate(ListSelector listSelector);
 	public EzcRequestHeader getBDRequest(String docId);
 	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto);
+	public void submitBDDet(String id,Integer appQty,EzcRequestHeader ezcRequestHeader);
 	public List<EzcComments> getBDCommentRequest(String docId);
 	public List<Object[]> getLeftOverStock(String requestedBy);
 }

@@ -17,6 +17,7 @@ public class ListSelector {
 	private String type;
 	
 	private ArrayList<String> user;
+	private ArrayList<String> typeList;
 
 	
 	
@@ -60,6 +61,14 @@ public class ListSelector {
 
 	public void setUser(ArrayList<String> user) {
 		this.user = user;
+	}
+
+	public ArrayList<String> getTypeList() {
+		return typeList;
+	}
+
+	public void setTypeList(ArrayList<String> typeList) {
+		this.typeList = typeList;
 	}
 	
 	

@@ -72,6 +72,12 @@
                     <td th:text="${row.erhStatus}"></td>
                      <td>
                     	
+						<span th:if="${row.erhStatus == 'NEW'}">
+							<a th:href="${'/bd/addDetails/' + {row.id}}"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">APPROVE</span>
+							</a>
+						</span>
 						<span th:if="${row.erhStatus == 'APPROVED'}">
 							<a th:href="${'/bd/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span

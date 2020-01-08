@@ -46,7 +46,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_REQ_CR')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ROLE_REQ_CR')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -61,7 +61,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_ST_HEAD')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ROLE_ST_HEAD')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -76,7 +76,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ROLE_BD_MKT')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -86,12 +86,17 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                
+                <a sec:authorize="hasRole('ROLE_BD_MKT')" href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                
+                
+                <a  sec:authorize="hasRole('ROLE_ST_HEAD')" href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                
             </div>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -106,7 +111,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-3 col-xs-12" sec:authorize="hasRole('ADMIN')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ADMIN')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -119,10 +124,23 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <a href="#" th:href="@{/tps/tpsReqListSts/NEW}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ADMIN')">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3 th:text="${toActBDRequest}"></h3>
+                    <p>BD TO BE APPROVED</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                <a href="#" th:href="@{/bd/bdRequestList/NEW}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+            </div>
+        </div>
         <!-- ./col -->
          </div>
          <div class="row">   
-         <div class="col-lg-6 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
             <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
@@ -142,7 +160,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
           </div>
           
         </div>
-         <div class="col-lg-6 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
             <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
@@ -163,6 +181,26 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
           
         </div>
         
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
+            <!-- small box -->
+           <div class="box box-success">
+				<div class="box-header with-border">
+				  <h3 class="box-title"><b>BD SCHEDULED VS COMPLETED</b></h3>
+
+					  <div class="box-tools pull-right">
+						<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+						</button>
+						<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+					  </div>
+				</div>
+				<div class="box-body chart-responsive">
+				  <div class="chart" id="bar-chartBD" style="height: 300px;"></div>
+				</div>
+				
+            <!-- /.box-body -->
+          </div>
+          
+        </div>
         
         
         <!-- ./col -->
@@ -188,6 +226,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
     "use strict";
     var reqListTPM = /*[[${reqListTPM}]]*/ [];
     var reqListTPS = /*[[${reqListTPS}]]*/ [];
+    var reqListBD = /*[[${reqListBD}]]*/ [];
     var hTPM = new Object(); 
     for (var i = 0; i < reqListTPM.length; i++) {
     	var mo=reqListTPM[i];
@@ -205,6 +244,17 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
     // or just {}
     var month=mo.toString().split(',')[0];
     hTPS[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
+   
+
+    }
+    var hBD = new Object(); 
+    //alert(reqListBD.length);
+    for (var i = 0; i < reqListBD.length; i++) {
+    	var mo=reqListBD[i];
+   // alert(reqList[i]+","+mo.toString().split(',')[0]); 
+    // or just {}
+    var month=mo.toString().split(',')[0];
+    hBD[month] =mo.toString().split(',')[1]+"#"+mo.toString().split(',')[2] ;
    
 
     }
@@ -413,6 +463,104 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
           labels: ['Created', 'Submitted'],
           hideHover: 'auto'
       });
+      if(hBD.hasOwnProperty('January'))
+      {		
+       janCrt=hBD.January.toString().split('#')[0];
+       janSubt=hBD.January.toString().split('#')[1];
+      }
+      else{janCrt=0;janSubt=0;}
+      if(hBD.hasOwnProperty('February'))
+      {		
+       febCrt=hBD.February.toString().split('#')[0];
+       febSubt=hBD.February.toString().split('#')[1];
+      }
+      else{febCrt=0;febSubt=0;}
+      if(hBD.hasOwnProperty('March'))
+      {		
+       marCrt=hBD.March.toString().split('#')[0];
+       marSubt=hBD.March.toString().split('#')[1];
+      }
+      else{marCrt=0;marSubt=0;}
+      if(hBD.hasOwnProperty('April'))
+      {		
+       aprCrt=hBD.April.toString().split('#')[0];
+       aprSubt=hBD.April.toString().split('#')[1];
+      }
+      else{aprCrt=0;aprSubt=0;}
+      if(hBD.hasOwnProperty('May'))
+      {		
+       mayCrt=hBD.May.toString().split('#')[0];
+       maySubt=hBD.May.toString().split('#')[1];
+      }
+      else{mayCrt=0;maySubt=0;}
+      if(hBD.hasOwnProperty('June'))
+      {		
+       junCrt=hBD.June.toString().split('#')[0];
+       junSubt=hBD.June.toString().split('#')[1];
+      }
+      else{junCrt=0;junSubt=0;}
+      if(hBD.hasOwnProperty('July'))
+      {		
+       julCrt=hBD.July.toString().split('#')[0];
+       julSubt=hBD.July.toString().split('#')[1];
+      }
+      else{julCrt=0;julSubt=0;}
+      if(hBD.hasOwnProperty('August'))
+      {		
+       augCrt=hBD.August.toString().split('#')[0];
+       augSubt=hBD.August.toString().split('#')[1];
+      }
+      else{augCrt=0;augSubt=0;}
+      if(hBD.hasOwnProperty('September'))
+      {		
+       sepCrt=hBD.September.toString().split('#')[0];
+       sepSubt=hBD.September.toString().split('#')[1];
+      }
+      else{sepCrt=0;sepSubt=0;}
+      if(hBD.hasOwnProperty('October'))
+      {		
+       octCrt=hBD.October.toString().split('#')[0];
+       octSubt=hBD.October.toString().split('#')[1];
+      }
+      else{octCrt=0;octSubt=0;}
+      if(hBD.hasOwnProperty('November'))
+      {		
+       novCrt=hBD.November.toString().split('#')[0];
+       novSubt=hBD.November.toString().split('#')[1];
+      }
+      else{novCrt=0;novSubt=0;}
+      if(hBD.hasOwnProperty('December'))
+      {		
+       decCrt=hBD.December.toString().split('#')[0];
+       decSubt=hBD.December.toString().split('#')[1];
+      }
+      else{decCrt=0;decSubt=0;}
+      
+        
+        var barBD = new Morris.Bar({
+            element: 'bar-chartBD',
+            resize: true,
+            data: [
+              {y: 'JAN', a: janCrt, b: janSubt},
+              {y: 'FEB', a: febCrt, b: febSubt},
+              {y: 'MAR', a: marCrt, b: marSubt},
+              {y: 'APR', a: aprCrt, b: aprSubt},
+              {y: 'MAY', a: mayCrt, b: maySubt},
+              {y: 'JUN', a: junCrt, b: junSubt},
+              {y: 'JUL', a: julCrt, b: julSubt},
+              {y: 'AUG', a: augCrt, b: augSubt},
+              {y: 'SEP', a: sepCrt, b: sepSubt},
+              {y: 'OCT', a: octCrt, b: octSubt},
+              {y: 'NOV', a: novCrt, b: novSubt},
+              {y: 'DEC', a: decCrt, b: decSubt}
+            ],
+            barColors: ['#00a65a', '#f56954'],
+            xkey: 'y',
+            ykeys: ['a', 'b'],
+            labels: ['Created', 'Submitted'],
+            hideHover: 'auto'
+        });
+
   });
 </script>
 </div>

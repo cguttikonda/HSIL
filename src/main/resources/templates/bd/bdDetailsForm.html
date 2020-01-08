@@ -23,13 +23,15 @@
         <form data-toggle="validator" role="form"  id="myForm" th:object="${reqDto}" th:action="@{/bd/saveDetails}" method="post" name="myForm" >
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
+            	<input hidden="hidden" name="id" th:value="*{reqHeader.id}">
+            	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
             <div class=row>	
               <label class="col-lg-2 control-label">User Name</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><span th:text="*{reqHeader.id}"></span></div>
               </div>
-             
+             <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
               <label class="col-lg-2 control-label">City & Area</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><input   placeholder="" class="form-control validate[required]" th:field="*{reqHeader.erhCity}" ></div>
@@ -47,6 +49,7 @@
                  </select> 
                  </div>
               </div>
+           </div>
            </div>
       <div class="table-responsive" style="margin-top:2%">
                     <table class="col-sm-12 table table-bordered table-condensed">
@@ -66,13 +69,50 @@
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
 						</td>
-						<td data-title="Approved Qty">
-							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+						<td data-title="Approved Qty" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
+							<input hidden="hidden"  th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
+						</td>
+						<td data-title="Approved Qty" sec:authorize="hasRole('ADMIN')">
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+							<input  type="number" class="form-control validate[required]" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}" id="bdQty" >
+							
 						</td>
                 	</tr>
                 	</tbody>
                 </table>
+                </div>
+                 <!-- <div sec:authorize="hasRole('ADMIN')">-->
+                 	<div id="no-more-tables" th:if="${not #lists.isEmpty(matList)}">
+                   <input type="hidden" id="leftOverCnt" th:value="${#lists.size(matList)}">
+					<table  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" th:if="${!matList.empty}">
+	                <thead>			
+	                <tr>
+	                    <th colspan=4 style="text-align: center;">Available Stock</th>
+	                </tr>
+	                <tr>
+	                    <th>Material</th>
+	                    
+	                    <th>Available Qty</th>
+	                    <th>Allocated Qty</th>
+	                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row, itemStat : ${matList}">
+                    <td th:text="${row[2]+'-'+row[3]}"></td>
+                    
+                    <td th:text="${row[4]}"></td>
+                    <td>
+                    	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
+                    	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
+                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
+                    	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
+                    </td>
+                    <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
+                </tr>
+            	</tbody>
+            </table>
+                   
                 </div>
       			<div class="table-responsive">
                  <table class="col-sm-12 table table-bordered table-condensed">
@@ -99,7 +139,7 @@
 					</div>
                 <p id="recording-instructions"></p>
                 
-               
+               <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
     			<div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf" style="margin-top: 5px;" id="bdReqTable">
                     <thead class="cf">
@@ -151,11 +191,13 @@
                 	</tbody>
                 </table>
                 </div>
+                </div>
             </div>
             <div class="box-footer">
-                <button type="button" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
+                <button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
                 <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
-                <button type="button" onclick="onSaveClick()"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -191,14 +233,67 @@
     	$(this).closest("tr").remove();
     });
      				
-    function onSaveClick()
+    function onSaveClickAdmin()
     {
+		
+    	var leftOverCnt=parseInt($("#leftOverCnt").val());
+    	
+		var qtyEntered = false;
+		for(i=0;i<leftOverCnt;i++)
+		{
+				if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
+				{
+					qtyEntered = true;
+				}
+				else
+				{
+					continue;
+				}
+				if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
+				{
+					$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
+					return ;
+				}
+		}
+		
+		if(!qtyEntered)
+		{
+			if($("#bdQty").val() !== "" && parseFloat($("#bdQty").val()) > 0)
+			{
+				qtyEntered =true;
+			}
+		}
+		
+		if(!qtyEntered)
+		{
+			$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
+			return ;
+		}
+		
+			
+		//	document.myForm.submit();
+		
+	
 		if($("#myForm").validationEngine('validate'))
 		{
-		
+			
+			
+			document.myForm.action="/bd/apprbd";
 			document.myForm.submit();
 		}
 
+    }
+    function onSaveClick()
+    {
+    	
+    
+			
+    	if($("#myForm").validationEngine('validate'))
+		{
+			
+			
+			document.myForm.submit();
+		}	
     }
     function readOutLoud() {
      	var message = $("#sampleTxt").text();

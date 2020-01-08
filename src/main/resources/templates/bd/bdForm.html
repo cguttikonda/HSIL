@@ -56,37 +56,7 @@
                       <input type="text" readonly name="stkAva" id="stkAva" class="form-control">
                    
                 </div>
-                 <div>
-                   <input type="hidden" id="leftOverCnt" th:value="${#lists.size(matList)}">
-					<table  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" th:if="${!matList.empty}">
-	                <thead>			
-	                <tr>
-	                    <th colspan=4 style="text-align: center;">Available Stock</th>
-	                </tr>
-	                <tr>
-	                    <th>Material</th>
-	                    
-	                    <th>Available Qty</th>
-	                    <th>Allocated Qty</th>
-	                </tr>
-                    </thead>
-           		<tbody>	
-                <tr th:each="row, itemStat : ${matList}">
-                    <td th:text="${row[2]+'-'+row[3]}"></td>
-                    
-                    <td th:text="${row[4]}"></td>
-                    <td>
-                    	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
-                    	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
-                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
-                    	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
-                    </td>
-                    <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
-                </tr>
-            	</tbody>
-            </table>
-                   
-                </div>
+                
               
                     </div>
             <div class="box-footer">
@@ -117,7 +87,7 @@ $(document.body).on("change","#selMat",function(){
 	});
 $(document).ready(function(){
 	$("#save").click(function(){
-		var leftOverCnt=parseInt($("#leftOverCnt").val());
+		/*var leftOverCnt=parseInt($("#leftOverCnt").val());
 		var qtyEntered = false;
 		for(i=0;i<leftOverCnt;i++)
 		{
@@ -148,10 +118,15 @@ $(document).ready(function(){
 		{
 			$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
 			return ;
-		}
+		}*/
 		
 			
+			//document.myForm.submit();
+		if($("#myForm").validationEngine('validate'))
+		{
+		
 			document.myForm.submit();
+		}
 		
 	});
 	$("#attach").click(function(){
