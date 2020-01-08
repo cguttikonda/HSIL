@@ -56,15 +56,17 @@
 	                </tr>
                     </thead>
            		<tbody>	
-                <tr th:each="row, itemStat : ${matList}">
+                <tr th:each="row, itemStat : ${matList}" th:id="${'row_'+row[5]}">
                     <td th:text="${row[2]+'-'+row[3]}"></td>
-                    <td th:text="${row[1]}"></td>
+                    <td th:text="${row[1]+'-'+row[6]}"></td>
                     <td th:text="${row[4]}"></td>
                     <td>
                     	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
                     	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
-                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
+                    	<!-- <input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}"> -->
+                    	<input type="hidden" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
                     	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
+                    	<button th:data-id="${row[2]+'#'+row[3]}"  type="button" class="btn btn-primary" th:onclick="|nullifyQty(this.getAttribute('data-id'),'${row[4]}', '${row[5]}')|">Nullify</button>
                     </td>
                     <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
                 </tr>
@@ -101,13 +103,16 @@
 				</div>
 						
 				<div class="modal-footer">
+					<div class="alert alert-success pull-left" id="success-alert">
+					  <button type="button" class="close" data-dismiss="alert">x</button>
+					  <strong>Success! </strong> Nullified Data Saved Successfully
+					</div>
 					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
 			        <button type="button" class="btn btn-primary" id="saveBut" onclick="approveTPMReq()">Save</button>
 				</div>
 		</div>
 	</div>
 	</div>
-	
 	</form>
 </div>
 <div th:fragment="att-file" id="attachFileModalHolder"></div>

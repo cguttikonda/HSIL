@@ -3,6 +3,8 @@ package com.ezc.hsil.webapp.service;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -23,4 +25,5 @@ public interface ITPMService {
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
 	public List<Object[]> getLeftOverStock(String requestedBy);
 	public List<Object[]> getTPMRequestList(ListSelector listSelector);
+	public void NullifyTpmQty(String leftOverId,String reasonNullify,String commentsNullify);
 }

@@ -46,6 +46,33 @@
                  <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]"  type="number"></div>
               </div>
            </div>
+              <div class=row>
+              <label class="col-lg-2 control-label">Meet</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group">
+                 	<span th:text="*{meetDealer.erdMeetId}"></span>
+                 	<input hidden="hidden" th:field="*{meetDealer.erdMeetId}">
+                 	<input hidden="hidden" th:field="*{meetDealer.id}">
+                 </div>
+              </div>
+              <label class="col-lg-2 control-label">Meet Date</label>
+              <div class="col-lg-4 inputGroupContainer">
+                     <div class="input-group date">
+					  <div class="input-group-addon">
+					    <i class="fa fa-calendar"></i>
+					  </div>
+					  <input type="text"  class="form-control pull-right" id="meetDate" th:field="*{meetDealer.erdMeetDate}">
+					</div>
+              </div>
+           </div>
+             <div class=row>
+              <label class="col-lg-2 control-label">Dealer Name</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group">
+                 	<div class="input-group"><input th:field="*{meetDealer.erdDealerName}"  placeholder="" class="form-control validate[required]"  type="text"></div>
+                 </div>
+              </div>
+           </div>
       <div class="table-responsive" style="margin-top:2%"> 
                     <table class="col-sm-12 table table-bordered table-condensed">
                     <thead>
@@ -309,7 +336,10 @@
 	  noteContent = $(this).val();
 	})
 
- 
+ 	$('#meetDate').datepicker({
+      autoclose: true,
+      format: 'dd/mm/yyyy'
+    });
 
 	</script>
 </div>

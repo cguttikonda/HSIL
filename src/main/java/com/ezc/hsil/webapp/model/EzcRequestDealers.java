@@ -34,6 +34,7 @@ public class EzcRequestDealers implements java.io.Serializable {
 	private Date erdMeetDate;
 	private Integer erdNoOfAttendee;
 	private String erdInstructions;
+	private String erdMeetStatus;
 
 	public EzcRequestDealers() {
 	}
@@ -87,7 +88,7 @@ public class EzcRequestDealers implements java.io.Serializable {
 		this.erdMeetId = erdMeetId;
 	}
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ERD_MEET_DATE")
 	public Date getErdMeetDate() {
@@ -113,6 +114,15 @@ public class EzcRequestDealers implements java.io.Serializable {
 	
 	public void setErdInstructions(String erdInstructions) {
 		this.erdInstructions = erdInstructions;
+	}
+
+	@Column(name = "ERD_MEET_STS", length = 10)
+	public String getErdMeetStatus() {
+		return erdMeetStatus;
+	}
+
+	public void setErdMeetStatus(String erdMeetStatus) {
+		this.erdMeetStatus = erdMeetStatus;
 	}
 
 	

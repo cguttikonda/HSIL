@@ -16,7 +16,8 @@ public class TpmRequestDetailDto {
 	List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
 //	Set<RequestMaterials> ezReqMatList = new HashSet<RequestMaterials>();
 	List<RequestMaterials> ezReqMatList = null;
-	Set<EzcRequestDealers> ezcRequestDealers = null;
+	List<EzcRequestDealers> ezcRequestDealers = null;
+	EzcRequestDealers meetDealer = null;
 	List<EzcComments> ezcComments =null;
 	private String costIncured="";
 	private String avgSales="";
@@ -98,11 +99,11 @@ public class TpmRequestDetailDto {
 		this.avgSales = avgSales;
 	}
 
-	public Set<EzcRequestDealers> getEzcRequestDealers() {
+	public List<EzcRequestDealers> getEzcRequestDealers() {
 		return ezcRequestDealers;
 	}
 
-	public void setEzcRequestDealers(Set<EzcRequestDealers> ezcRequestDealers) {
+	public void setEzcRequestDealers(List<EzcRequestDealers> ezcRequestDealers) {
 		this.ezcRequestDealers = ezcRequestDealers;
 	}
 
@@ -112,6 +113,22 @@ public class TpmRequestDetailDto {
 
 	public void setRecordedText(String recordedText) {
 		this.recordedText = recordedText;
+	}
+
+
+
+
+
+	public EzcRequestDealers getMeetDealer() {
+		return meetDealer;
+	}
+
+
+
+
+
+	public void setMeetDealer(EzcRequestDealers meetDealer) {
+		this.meetDealer = meetDealer;
 	}
 
 

@@ -104,6 +104,7 @@ public class TPMController {
 		ezcRequestHeader.setId(id);
 		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 		Set<EzcComments> commSet = new HashSet<EzcComments>();
+		log.debug("Comments:::"+comments); 
 		if(comments!= null)
 		{
 			EzcComments comm=new EzcComments();
@@ -235,7 +236,9 @@ public class TPMController {
     		userList.add(userObj.getUserId());
     		listSelector.setUser(userList);
     	}
-    	List<EzcRequestHeader> list = tpmService.getTPMRequestListByDate(listSelector);
+    	//List<EzcRequestHeader> list = tpmService.getTPMRequestListByDate(listSelector);
+    	List<Object[]> list = tpmService.getTPMRequestList(listSelector);
+    	log.debug("list:::"+list.size());
         model.addAttribute("reqList", list);
         model.addAttribute("listSelector", listSelector);
         return "tpm/list"; 
@@ -285,11 +288,12 @@ public class TPMController {
     	}
     }
     
-    @RequestMapping(value = "/tpm/addDetails/{docId}", method = RequestMethod.GET)
-    public String addDetails(@PathVariable String docId, Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    @RequestMapping(value = "/tpm/addDetails/{docId}/{meetId}", method = RequestMethod.GET)
+    public String addDetails(@PathVariable String docId,@PathVariable String meetId, Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
     	
     	
         EzcRequestHeader ezcRequestHeader = tpmService.getTPMRequest(docId);
+        
         TpmRequestDetailDto reqDto = new TpmRequestDetailDto();
         List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
         List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
@@ -298,18 +302,27 @@ public class TPMController {
 		{
         	ezcComm.add(item); 
 		}
-		for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems())
-		{
-			ezcRequestItems.add(item); 
-		}
+		/*
+		 * for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems()) {
+		 * ezcRequestItems.add(item); }
+		 */
 		for(RequestMaterials item : ezcRequestHeader.getRequestMaterials())
 		{
 			ezcMatList.add(item); 
 		}
-		
+	
+		EzcRequestDealers meetDealer = null;
+		for(EzcRequestDealers dealerObj:ezcRequestHeader.getEzcRequestDealers())
+		{
+			if(meetId.equals(dealerObj.getErdMeetId()))
+			{
+				dealerObj.setErdMeetDate(new Date());
+				meetDealer = dealerObj; 
+			}
+		}
         reqDto.setEzcRequestItems(ezcRequestItems);
         reqDto.setReqHeader(ezcRequestHeader);
-        reqDto.setEzcRequestDealers(ezcRequestHeader.getEzcRequestDealers());
+        reqDto.setMeetDealer(meetDealer);
         reqDto.setEzcComments(ezcComm);
         reqDto.setEzReqMatList(ezcMatList);
         model.addAttribute("reqDto", reqDto);
@@ -521,5 +534,11 @@ public class TPMController {
   }
   return parsedDate;
 }
+
+    @RequestMapping(value = "/tpm/nullify-qty", method = RequestMethod.POST)
+	public @ResponseBody String NullifyTpmQty(@RequestParam String leftOverId,@RequestParam(value = "reasonNullify", required = false) String  reasonNullify,@RequestParam(value = "commentsNullify", required = false) String  commentsNullify) {
+    	tpmService.NullifyTpmQty(leftOverId,reasonNullify,commentsNullify);
+    	return "ok";
+	}    
 
 }

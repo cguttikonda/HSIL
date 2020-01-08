@@ -114,7 +114,7 @@ public class RequestCustomDto {
 	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), reportSelector.getStatus()));
 	        cq.where(predicates.toArray(new Predicate[0]));
-	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"));
+	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),header.get("erhStatus"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"),dealerJoin.get("erdMeetStatus"));
 	        Query query = em.createQuery(cq);
 	        return query.getResultList();
 	    }

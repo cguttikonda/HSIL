@@ -18,8 +18,11 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.EzNullifiedStock;
 import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.NullifiedStockRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestMaterialsRepo;
@@ -50,7 +53,8 @@ public class TpmServiceImpl implements ITPMService{
 	    @Autowired
 	    private RequestCustomDto requestCustomDto;
 	    
-	    
+	    @Autowired
+	    private NullifiedStockRepo nullifiedStockRepo;
 
 		@Override
 		public void createTPMRequest(EzcRequestHeader ezcRequestHeader) {
@@ -74,17 +78,19 @@ public class TpmServiceImpl implements ITPMService{
 		}
 		@Override
 		public void createTPMDetails(TpmRequestDetailDto tpmRequestDetailDto) {
-			EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpmRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
-			List<EzcRequestItems> ezReqItemList = tpmRequestDetailDto.getEzcRequestItems();
-			List<EzcComments> ezcommList = tpmRequestDetailDto.getEzcComments();
-			Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
-			Set<EzcComments> commSet = new HashSet<EzcComments>();
-			String comments=tpmRequestDetailDto.getCommentReqDto();
-		  ezReqHeader.setErhStatus("SUBMITTED");
+		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpmRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
+		List<EzcRequestItems> ezReqItemList = tpmRequestDetailDto.getEzcRequestItems();
+		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
+		List<EzcComments> ezcommList = tpmRequestDetailDto.getEzcComments();
+		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+		Set<EzcRequestDealers> reqDealersSet = ezReqHeader.getEzcRequestDealers();
+		Set<EzcComments> commSet = new HashSet<EzcComments>();
+		String comments=tpmRequestDetailDto.getCommentReqDto();
 		  ezReqHeader.setErhCostIncured(tpmRequestDetailDto.getReqHeader().getErhCostIncured());
-		  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
+		  //ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
 		  
-		  int matCnt = 0;
+		  
+		 
 		  if(comments!= null)
 			{
 				EzcComments comm=new EzcComments();
@@ -98,28 +104,49 @@ public class TpmServiceImpl implements ITPMService{
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  commRepo.save(tempItem); 
 			}
+		  boolean isCompleted = true; 
+		  EzcRequestDealers ezcRequestDealers = tpmRequestDetailDto.getMeetDealer();
 		  for(EzcRequestItems tempItem : ezReqItemList) {
 			  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
 			  {
-				  matCnt++;
-				  tempItem.setEzcRequestHeader(ezReqHeader);	
-				  reqDtlRep.save(tempItem);
+				  tempItem.setEriDealerId(ezcRequestDealers.getId());
+				  tempItem.setEzcRequestHeader(ezReqHeader);
+				  ezReqItems.add(tempItem);
+				  //reqDtlRep.save(tempItem);
 			  }
 			}
 		  
-		   for(RequestMaterials requestMaterials : reqMatSet) { 
-			   int apprQty =requestMaterials.getApprQty();
-			   if(apprQty > matCnt)
-			   {
-				   requestMaterials.setLeftOverQty(apprQty-matCnt);
-				   requestMaterials.setUsedQty(matCnt);
-			   }
-			   else
-			   {
-				   requestMaterials.setUsedQty(apprQty);
-				   matCnt = matCnt-apprQty;
-			   }
-			} 
+		  for(EzcRequestDealers tempItem : reqDealersSet) {
+			  if(ezcRequestDealers.getId()==tempItem.getId())
+			  {
+				  tempItem.setErdDealerName(ezcRequestDealers.getErdDealerName());
+				  tempItem.setErdMeetDate(ezcRequestDealers.getErdMeetDate());
+				  tempItem.setErdMeetStatus("COMPLETED");
+			  }
+			  if(!"COMPLETED".equals(tempItem.getErdMeetStatus()))
+			  {
+				  isCompleted = false;
+			  }
+			}
+		 
+		  if(isCompleted)
+		  {
+			  ezReqHeader.setErhStatus("SUBMITTED");
+			  int matCnt = ezReqItems.size();
+			   for(RequestMaterials requestMaterials : reqMatSet) { 
+				   int apprQty =requestMaterials.getApprQty();
+				   if(apprQty > matCnt)
+				   {
+					   requestMaterials.setLeftOverQty(apprQty-matCnt);
+					   requestMaterials.setUsedQty(matCnt);
+				   }
+				   else
+				   {
+					   requestMaterials.setUsedQty(apprQty);
+					   matCnt = matCnt-apprQty;
+				   }
+				}
+		  }
 		   
 		  
 		}
@@ -169,8 +196,12 @@ public class TpmServiceImpl implements ITPMService{
 	                if(matMaster.isPresent())
 	                {  
 	                       MaterialMaster mat = matMaster.get();
-	                       int qty = mat.getQuantity()-tempItem.getApprQty();
-	                       mat.setQuantity(qty);
+	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
+	                       //mat.setQuantity(qty);
+	                       int blockQty = tempItem.getApprQty();
+	                       if(mat.getBlockQty() != null)
+	                    	   blockQty += mat.getBlockQty();
+	                       mat.setBlockQty(blockQty);
 	                }      
 
 			  }
@@ -231,6 +262,35 @@ public class TpmServiceImpl implements ITPMService{
 		@Override
 		public List<Object[]> getLeftOverStock(String requestedBy) {
 			return reqHeaderRepo.getLeftOverStock(requestedBy);
+		}
+
+		@Override
+		public void NullifyTpmQty(String leftOverId, String reasonNullify, String commentsNullify) {
+			
+			Optional<RequestMaterials> reqMaterials = reqMatRep.findById(Integer.parseInt(leftOverId));
+			if(reqMaterials.isPresent())
+			{
+				RequestMaterials reqMaterialObj = reqMaterials.get();
+				int leftOverQty = reqMaterialObj.getLeftOverQty();
+				reqMaterialObj.setFreeQty(leftOverQty);
+				reqMaterialObj.setLeftOverQty(0);
+				Optional<EzcRequestHeader> reqHeader = reqHeaderRepo.findById(reqMaterialObj.getEzcRequestHeader().getId());
+				String userId = "";
+				if(reqHeader.isPresent())
+				{
+					userId = reqHeader.get().getErhRequestedBy(); 
+				}
+				EzNullifiedStock ezNullifiedStock=new EzNullifiedStock();
+				ezNullifiedStock.setQty(leftOverQty);
+				ezNullifiedStock.setLeftOverId(reqMaterialObj.getId());
+				ezNullifiedStock.setMaterial(reqMaterialObj.getMatCode());
+				ezNullifiedStock.setReason(reasonNullify);
+				ezNullifiedStock.setComments(commentsNullify);
+				ezNullifiedStock.setUserId(userId);
+				nullifiedStockRepo.save(ezNullifiedStock);
+				
+			}
+		
 		}
 
 		

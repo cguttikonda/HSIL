@@ -39,6 +39,8 @@ public class MaterialDto {
 	@NonNull
 	private String isActive;
 	
+	private Integer blockQty;
+	
 	
 	public MaterialDto() {}
 	

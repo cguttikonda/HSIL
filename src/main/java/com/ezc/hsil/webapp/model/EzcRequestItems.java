@@ -43,6 +43,7 @@ public class EzcRequestItems implements java.io.Serializable {
 	private String erilocation;
 	private String eriGift;
 	private String eriProfDet;
+	private Integer eriDealerId;
 
 
 
@@ -177,5 +178,16 @@ public class EzcRequestItems implements java.io.Serializable {
 	public void setEriProfDet(String eriProfDet) {
 		this.eriProfDet = eriProfDet;
 	}
+
+	@Column(name = "ERI_DEALER_ID", length = 11)
+	public Integer getEriDealerId() {
+		return eriDealerId;
+	}
+
+	public void setEriDealerId(Integer eriDealerId) {
+		this.eriDealerId = eriDealerId;
+	}
+
+	
 	
 }

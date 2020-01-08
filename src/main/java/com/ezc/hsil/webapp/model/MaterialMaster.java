@@ -28,7 +28,8 @@ import lombok.NonNull;
 	            	@ColumnResult(name="EMM_MAT_CODE"),
 	                @ColumnResult(name="EMM_MAT_DESC"),
 	                @ColumnResult(name="EMM_MAT_QUANTITY"),
-	                @ColumnResult(name="EMM_MAT_ISACTIVE")
+	                @ColumnResult(name="EMM_MAT_ISACTIVE"),
+	                @ColumnResult(name="EMM_BLOCK_QTY") 
 	            }
 	        )
 	    }
@@ -51,15 +52,21 @@ public class MaterialMaster {
 	@NonNull
 	@Column(name="EMM_MAT_CODE",length=20)
 	private String materialCode;
+	
 	@NonNull
 	@Column(name="EMM_MAT_DESC",length=50)
 	private String materialDesc;
+	
 	@NonNull
 	@Column(name="EMM_MAT_QUANTITY",length=5)
 	private int quantity;
+	
 	@NonNull
 	@Column(name="EMM_MAT_ISACTIVE",length=2)
 	private String isActive;
+	
+	@Column(name="EMM_BLOCK_QTY")
+	private Integer blockQty;
 	
 	public MaterialMaster() {
 		
