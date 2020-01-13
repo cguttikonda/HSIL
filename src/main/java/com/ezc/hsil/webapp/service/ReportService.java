@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,8 +18,10 @@ import com.ezc.hsil.webapp.dto.ReportSelector;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
-import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
+import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.WorkGroupUsersRepository;
 
@@ -37,6 +40,9 @@ public class ReportService implements IReportService {
     
     @Autowired
     private WorkGroupUsersRepository workGrpUserRepo;
+    
+    @Autowired
+    private MaterialMasterRepo masterRepo;
     
 	@Override
 	public List<EzcRequestHeader> getRequestStatus(ListSelector listSelector) {
@@ -65,15 +71,35 @@ public class ReportService implements IReportService {
 	}
 
 	@Override
-	public void dispatchUpdate(EzcRequestHeader ezcRequestHeader) {
-		  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
-		  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
-		  ezReqHeader.getEzcComments().addAll(ezComments);
-		  ezReqHeader.setErhDispatchFlag('Y');
-		  for(EzcComments tempItem : ezComments) { 
-			  tempItem.setEzcRequestHeader(ezReqHeader);	
-			  commRepo.save(tempItem); 
-			}
+		public void dispatchUpdate(EzcRequestHeader ezcRequestHeader) {
+			  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
+			  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
+			  ezReqHeader.getEzcComments().addAll(ezComments);
+			  ezReqHeader.setErhDispatchFlag('Y');
+			  ezReqHeader.setErhDispDate(ezcRequestHeader.getErhDispDate());
+			  for(EzcComments tempItem : ezComments) { 
+				  tempItem.setEzcRequestHeader(ezReqHeader);	
+				  commRepo.save(tempItem); 
+				}
+			  Set<RequestMaterials> matList = ezReqHeader.getRequestMaterials();
+			  for(RequestMaterials reqMatObj : matList)
+			  {
+				  String apprMat = reqMatObj.getMatCode();
+				  int apprQty = reqMatObj.getApprQty();
+				  Optional<MaterialMaster> matMaster = masterRepo.findById(apprMat);
+	              if(matMaster.isPresent())
+	              {  
+	                     MaterialMaster mat = matMaster.get();
+	                     int blockQty = mat.getBlockQty();
+	                     if(mat.getBlockQty() != null)
+	                  	   blockQty -= apprQty;
+	                     int qty = mat.getQuantity();
+	                     qty -= apprQty; 
+	                     mat.setBlockQty(blockQty);
+	                     mat.setQuantity(qty);
+	              }
+				  
+			  }
 	}
 
 	@Override

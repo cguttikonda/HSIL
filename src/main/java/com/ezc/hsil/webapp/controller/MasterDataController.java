@@ -193,7 +193,7 @@ public class MasterDataController {
         List<DistributorMaster> distMastList= masterService.findAll();
         List<Object[]> objArrList=null;
 		try {
-			objArrList = getObjectArray(distMastList);
+			objArrList = getObjectArray(distMastList,5);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -216,7 +216,7 @@ public class MasterDataController {
         List<MaterialMaster> matMastList= masterService.findMatAll();
         List<Object[]> objArrList=null;
 		try {
-			objArrList = getObjectArray(matMastList);
+			objArrList = getObjectArray(matMastList,3);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -254,7 +254,14 @@ public class MasterDataController {
 		 {
 			 	 MaterialMaster matMaster = new MaterialMaster();
 			 	 String quan=(String)objArr[2];
-			 	int qty=Integer.parseInt(quan); 
+			 	int qty=0;
+			 	try {
+			 		qty = Integer.parseInt(quan);
+
+			 	} catch(NumberFormatException e) {
+			 	    double d = Double.parseDouble(quan); 
+			 	   qty = (int) d;
+			 	}
 			 	 matMaster.setMaterialCode((String)objArr[0]);
 			 	 matMaster.setMaterialDesc((String)objArr[1]);
 			 	 matMaster.setQuantity(qty);
@@ -263,7 +270,7 @@ public class MasterDataController {
 		 masterService.addMaterialMultiple(matList);
 	    }
 	
-	public <T extends Object> List<Object[]> getObjectArray(List<T> objList) throws NoSuchAlgorithmException, IllegalArgumentException, IllegalAccessException {
+	public <T extends Object> List<Object[]> getObjectArray(List<T> objList,int length) throws NoSuchAlgorithmException, IllegalArgumentException, IllegalAccessException {
 		   
 		   List<Object[]> listOutArr = new ArrayList<Object[]>();
 		   for(T obj:objList)
@@ -272,7 +279,7 @@ public class MasterDataController {
 			   int fieldCount = fields.length;
 			   Object[] objArr = new Object[fieldCount];
 	
-			   for (int i = 0; i < objArr.length; i++) {
+			   for (int i = 0; i < length; i++) {
 			     Field field = fields[i];
 			     field.setAccessible(true);
 	

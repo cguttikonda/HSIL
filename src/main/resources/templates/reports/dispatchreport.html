@@ -83,6 +83,10 @@ function openModal(modelType,distId){
 				$('#dispatchModal').modal({
 					backdrop: 'static'
 				});
+				$("#dispDate").datepicker({
+			    	 autoclose: true,
+			         format: 'dd/mm/yyyy'
+			    });
 			}
 		});
 		

@@ -194,7 +194,22 @@ public class MasterServiceImpl implements IMasterService {
 	
 	@Override
 	public String addMaterialMultiple(List<MaterialMaster> matList) {
-		matMastRep.saveAll(matList);
+		for(MaterialMaster matObj : matList)
+		{
+			Optional<MaterialMaster> dbMatOpt = matMastRep.findById(matObj.getMaterialCode());
+			if(dbMatOpt.isPresent())
+			{
+				MaterialMaster matObjOld = dbMatOpt.get();
+				int oldQty = matObjOld.getQuantity();
+				oldQty += matObj.getQuantity();
+				matObjOld.setQuantity(oldQty);
+			}
+			else
+			{
+				matMastRep.save(matObj);
+			}
+		}
+		//matMastRep.saveAll(matList);
 		return null;
 	}
 	

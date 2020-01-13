@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
@@ -143,7 +144,7 @@ public class ReportController {
     }
     
     @RequestMapping(value = "/dispatchupdate", method = RequestMethod.POST)
-    public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments ) {
+    public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments,@RequestParam @DateTimeFormat(pattern="dd/MM/yyyy") Date dispDate) {
 
     String loggedUser="";
     EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
@@ -168,6 +169,7 @@ public class ReportController {
                         comments.add(reqCom);
            }
                   ezcRequestHeader.setEzcComments(comments);
+                  ezcRequestHeader.setErhDispDate(dispDate);
                   repService.dispatchUpdate(ezcRequestHeader);
            return "ok";
     }
