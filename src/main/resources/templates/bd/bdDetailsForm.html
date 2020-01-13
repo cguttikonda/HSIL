@@ -4,7 +4,7 @@
     <title>BD & Marketing</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/nomoretable.css}"/>
 </head>
-<body>
+<body onload="funHide()">
 <section layout:fragment="header">
     <h1>BD</h1>
     <ol class="breadcrumb">
@@ -98,15 +98,16 @@
 	                </tr>
                     </thead>
            		<tbody>	
-                <tr th:each="row, itemStat : ${matList}">
+                <tr th:each="row, itemStat : ${matList}"  th:id="${'row_'+row[5]}">
                     <td th:text="${row[2]+'-'+row[3]}"></td>
                     
                     <td th:text="${row[4]}"></td>
                     <td>
                     	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
                     	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
-                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
+                    	<!-- <input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">-->
                     	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
+                    	<button th:data-id="${row[2]+'#'+row[3]}"  type="button" class="btn btn-primary" th:onclick="|nullifyQty(this.getAttribute('data-id'),'${row[4]}', '${row[5]}')|">Nullify</button>
                     </td>
                     <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
                 </tr>
@@ -221,6 +222,49 @@
           <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
+        
+          <div class="modal" id="nullifyModal" tabindex="-1" role="dialog" aria-labelledby="nullifyModal-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+          <h4 class="modal-title" id="nullifyModal-title">Nullify Quantity</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form" id="nullifyForm">
+            <input type="hidden" name="leftOverId" id="leftOverId">
+            <input type="hidden" th:name="_csrf" th:value="${_csrf.token}">
+            <div class="form-group">
+             <label for="matNullify">Material</label>
+             <span id="matNullify"></span>
+             </div>
+             <div class="form-group">
+             <label for="reason">Quantity</label>
+             <span id="qtyNullify"></span>
+             </div>
+            <div class="form-group">
+              <label for="reasonNullify">Select Reason</label>
+                   <select class="form-control validate[required]" name="reasonNullify" id="reasonNullify" placeholder="select reason">
+						<option value="Scrapped or Theft">Scrapped or Theft</option>
+						<option value="Gifted To Trade Partner">Gifted To Trade Partner</option>
+						<option value="Self Consumed">Self Consumed</option>
+	                </select>
+            </div>
+            <div class="form-group">
+              <label for="comments">Comments</label>
+               <textarea  class="form-control validate[required]" name="commentsNullify" id="commentsNullify"></textarea>
+            </div>
+            <button type="button"  class="btn btn-default" data-dismiss="modal">Cancel</button>
+			<button type="button" class="btn btn-primary" onclick="postNullifyData()">Submit</button>
+          </form>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+    <div class="alert alert-success pull-left" id="success-alert">
+					  <button type="button" class="close" data-dismiss="alert">x</button>
+					  <strong>Success! </strong> Nullified Data Saved Successfully
+					</div>    
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
@@ -410,8 +454,57 @@
 	  noteContent = $(this).val();
 	})
 
-
-
+function nullifyQty(mat,lefoverQty,leftoverid)
+{
+	mat.replace("#","-");
+	$('#matNullify').html(mat);
+	$('#qtyNullify').html(lefoverQty);
+	$('#leftOverId').val(leftoverid);
+	$('#commentsNullify').val("");
+	$('#reasonNullify').val("");
+	$('#nullifyModal').modal();
+}
+function postNullifyData(event){
+	if($("#nullifyForm").validationEngine('validate'))
+    {
+		var formdata = $('#nullifyForm').serialize();
+		var leftOverId = $('#leftOverId').val();
+		 $.ajax({
+			type : "POST",
+			url : "/bd/nullify-qty", 
+			data : formdata,
+			success : function(response) {
+				$('#row_'+leftOverId).hide();
+				$('#nullifyModal').modal('toggle');
+				$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
+				    $("#success-alert").slideUp(500);
+				});
+			},
+			error : function(ex) {
+				console.log(ex);
+			}
+		});
+	}
+}
+function checkQty()
+{
+	
+	var leftOverStk=$("#leftOverStk").val();
+	var attendee=$("#attendee").val();
+	
+	if($("#leftOverStk").val()>$("#attendee").val())
+	{
+		remainVal=leftOverStk-attendee;
+		//alert(remainVal);
+		$('#selQty').validationEngine('showPrompt', 'Recommended quantity '+remainVal, 'success','true');
+		return ;
+	}
+}
+function funHide()
+{
+	
+	$("#success-alert").hide();
+}
 	</script>
 </div>
 </body>

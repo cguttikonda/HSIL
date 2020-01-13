@@ -74,8 +74,8 @@ public class TestThymleafController {
 	    	{
 				List<Object[]> reqListTPM=repService.getTPMMonthWise(userList);
 				List<Object[]> reqListTPS=repService.getTPSMonthWise(userList);
-				//List<Object[]> reqListBD=repService.getBDMonthWise(userList);
-				List<Object[]> reqListBD=repService.getTPSMonthWise(userList);
+				List<Object[]> reqListBD=repService.getBDMonthWise(userList);
+				//List<Object[]> reqListBD=repService.getTPSMonthWise(userList);
 				model.addAttribute("reqListBD", reqListBD);
 				model.addAttribute("reqListTPM", reqListTPM);
 				model.addAttribute("reqListTPS", reqListTPS);

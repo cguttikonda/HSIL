@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
+import com.ezc.hsil.webapp.model.EzNullifiedStock;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -21,6 +22,7 @@ import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.NullifiedStockRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDealersRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
@@ -50,6 +52,8 @@ public class TpsServiceImpl implements ITPSService {
 	 private RequestCustomDto requestCustomDto;
 	 @Autowired
 	 private RequestDealersRepo requestDealerRepo;   
+	 @Autowired
+	 private NullifiedStockRepo nullifiedStockRepo;
 	 
 	@Override
 	public void createTPSRequest(EzcRequestHeader ezcRequestHeader) {
@@ -216,4 +220,35 @@ public class TpsServiceImpl implements ITPSService {
 	public List<Object[]> getLeftOverStock(String requestedBy) {
 		return reqHeaderRepo.getLeftOverStock(requestedBy);
 	}
+	@Override
+	public void NullifyTpsQty(String leftOverId, String reasonNullify, String commentsNullify) {
+		
+		Optional<RequestMaterials> reqMaterials = reqMatRep.findById(Integer.parseInt(leftOverId));
+		if(reqMaterials.isPresent())
+		{
+			RequestMaterials reqMaterialObj = reqMaterials.get();
+			int leftOverQty = reqMaterialObj.getLeftOverQty();
+			reqMaterialObj.setFreeQty(leftOverQty);
+			reqMaterialObj.setLeftOverQty(0);
+			Optional<EzcRequestHeader> reqHeader = reqHeaderRepo.findById(reqMaterialObj.getEzcRequestHeader().getId());
+			String userId = "";
+			if(reqHeader.isPresent())
+			{
+				userId = reqHeader.get().getErhRequestedBy(); 
+			}
+			EzNullifiedStock ezNullifiedStock=new EzNullifiedStock();
+			ezNullifiedStock.setQty(leftOverQty);
+			ezNullifiedStock.setLeftOverId(reqMaterialObj.getId());
+			ezNullifiedStock.setMaterial(reqMaterialObj.getMatCode());
+			ezNullifiedStock.setReason(reasonNullify);
+			ezNullifiedStock.setComments(commentsNullify);
+			ezNullifiedStock.setUserId(userId);
+			nullifiedStockRepo.save(ezNullifiedStock);
+			
+		}
+	
+	}
+
+	
+
 }

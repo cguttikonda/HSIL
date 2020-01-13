@@ -8,6 +8,8 @@
 			</div>
 				<div class="modal-body">
 					<input type="hidden" th:field="*{id}" />
+					<input type="hidden" id="attendee" th:value="${attendee}" />
+					<input type="hidden" id="leftOverStk" th:value="${leftOverStk}" />
 					<input type="hidden" th:name="_csrf" th:value="${_csrf.token}">
 					<div class="table-responsive">
 					<table class="table table-bordered">
@@ -30,7 +32,7 @@
 					<tr>
 					<th>Quantity</th>
 					<td >						
-						<input type="text" name="selQty" id="selQty" class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" >
+						<input type="text" name="selQty" id="selQty" class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" onchange="checkQty()" >
 					</td>
 					<th>Stock Availablity</th>
 					<td>						
@@ -57,15 +59,16 @@
 	                </tr>
                     </thead>
            		<tbody>	
-                <tr th:each="row, itemStat : ${matList}">
+                <tr th:each="row, itemStat : ${matList}" th:id="${'row_'+row[5]}">
                     <td th:text="${row[2]+'-'+row[3]}"></td>
                     <td th:text="${row[1]}"></td>
                     <td th:text="${row[4]}"></td>
                     <td>
                     	<input type="hidden" name="leftOverMat" th:id="${'leftOverMat_'+itemStat.index}" th:value="${row[2]+'#'+row[3]}">
                     	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
-                    	<input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">
+                    	<!-- <input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}"> -->
                     	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
+                    	<button th:data-id="${row[2]+'#'+row[3]}"  type="button" class="btn btn-primary" th:onclick="|nullifyQty(this.getAttribute('data-id'),'${row[4]}', '${row[5]}')|">Nullify</button>
                     </td>
                     <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
                 </tr>
@@ -100,6 +103,10 @@
 				</div>
 						
 				<div class="modal-footer">
+					<div class="alert alert-success pull-left" id="success-alert">
+					  <button type="button" class="close" data-dismiss="alert">x</button>
+					  <strong>Success! </strong> Nullified Data Saved Successfully
+					</div>
 					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
 			        <button type="button" class="btn btn-primary" onclick="approveTPSReq()">Save</button>
 				</div>

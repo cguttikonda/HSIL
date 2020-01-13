@@ -73,7 +73,7 @@ public class BDController {
 				
 			} 
 			
-		 	model.addAttribute("matList", bdService.getLeftOverStock(loggedUser));
+		 	model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        model.addAttribute("bdReqDto",bdReqDto);
 	        return "bd/bdForm";
 
@@ -380,7 +380,7 @@ public class BDController {
 	        reqDto.setEzReqMatList(ezcMatList);
 	        reqDto.setEzcComments(ezcComm);
 	        model.addAttribute("reqDto", reqDto);
-	        model.addAttribute("matList", bdService.getLeftOverStock(loggedUser));
+	        model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        
 	       	return "BD/bdDetailsForm";
 	       
@@ -442,6 +442,10 @@ public class BDController {
 	        return "redirect:/bd/bdRequestList";
 
 	    }
-
+	  @RequestMapping(value = "/bd/nullify-qty", method = RequestMethod.POST)
+		public @ResponseBody String NullifyBDQty(@RequestParam String leftOverId,@RequestParam(value = "reasonNullify", required = false) String  reasonNullify,@RequestParam(value = "commentsNullify", required = false) String  commentsNullify) {
+		  bdService.NullifyBDQty(leftOverId,reasonNullify,commentsNullify);
+	    	return "ok";
+		}  
 
 }

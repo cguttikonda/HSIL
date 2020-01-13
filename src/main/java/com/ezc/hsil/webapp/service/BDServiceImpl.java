@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
+import com.ezc.hsil.webapp.model.EzNullifiedStock;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -25,6 +26,7 @@ import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.NullifiedStockRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestDetailsRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.RequestMaterialsRepo;
@@ -50,7 +52,9 @@ public class BDServiceImpl implements IBDService{
     @Autowired
 	 IBDService bdService;
 	 
-    
+    @Autowired
+    private NullifiedStockRepo nullifiedStockRepo;
+
 	 
 	@Override
 	public void createBDRequest(EzcRequestHeader ezcRequestHeader) {
@@ -217,10 +221,39 @@ public class BDServiceImpl implements IBDService{
 	
 
 	@Override
-	public List<Object[]> getLeftOverStock(String requestedBy) {
-		return reqHeaderRepo.getLeftOverStock(requestedBy);
+	public List<Object[]> getBDLeftOverStock() {
+		return reqHeaderRepo.getBDLeftOverStock();
 	}
 	
+	@Override
+	public void NullifyBDQty(String leftOverId, String reasonNullify, String commentsNullify) {
+		
+		Optional<RequestMaterials> reqMaterials = reqMatRep.findById(Integer.parseInt(leftOverId));
+		if(reqMaterials.isPresent())
+		{
+			RequestMaterials reqMaterialObj = reqMaterials.get();
+			int leftOverQty = reqMaterialObj.getLeftOverQty();
+			reqMaterialObj.setFreeQty(leftOverQty);
+			reqMaterialObj.setLeftOverQty(0);
+			Optional<EzcRequestHeader> reqHeader = reqHeaderRepo.findById(reqMaterialObj.getEzcRequestHeader().getId());
+			String userId = "";
+			if(reqHeader.isPresent())
+			{
+				userId = reqHeader.get().getErhRequestedBy(); 
+			}
+			EzNullifiedStock ezNullifiedStock=new EzNullifiedStock();
+			ezNullifiedStock.setQty(leftOverQty);
+			ezNullifiedStock.setLeftOverId(reqMaterialObj.getId());
+			ezNullifiedStock.setMaterial(reqMaterialObj.getMatCode());
+			ezNullifiedStock.setReason(reasonNullify);
+			ezNullifiedStock.setComments(commentsNullify);
+			ezNullifiedStock.setUserId(userId);
+			nullifiedStockRepo.save(ezNullifiedStock);
+			
+		}
 	
+	}
+
+
 
 }

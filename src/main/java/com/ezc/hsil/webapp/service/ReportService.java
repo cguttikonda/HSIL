@@ -168,10 +168,10 @@ public class ReportService implements IReportService {
 	public List<Object[]> getTPSMonthWise(List<String> userList) {
 		return reqHeaderRepo.getTPSMonthWise(userList);
 	}
-	/*@Override
+	@Override
 	public List<Object[]> getBDMonthWise(List<String> userList) {
 		return reqHeaderRepo.getBDMonthWise(userList);
-	}*/
+	}
 	@Override
 	public void dispatchAckUpdate(EzcRequestHeader ezcRequestHeader) {
 		  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());

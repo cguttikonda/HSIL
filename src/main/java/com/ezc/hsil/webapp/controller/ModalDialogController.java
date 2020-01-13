@@ -81,6 +81,17 @@ public class ModalDialogController {
 	@GetMapping(value="/appr-tpm/{id}")
 	public String approveTPMModal(@PathVariable("id") String id, Model model) {
 		EzcRequestHeader ezReqHead = iTPMService.getTPMRequest(id);
+		Integer attendee=ezReqHead.getErhNoOfAttendee();
+		log.debug("att"+ezReqHead.getErhNoOfAttendee());
+		int leftOverStk=0;
+		List<Object[]> matLi=iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy());
+		for(int k=0;k<matLi.size();k++)
+		{	
+		log.debug("matli"+matLi.get(k)[4]);
+		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
+		}
+		
+		log.debug("leftOverStk"+leftOverStk);
 		try {
 			/*
 			 * Authentication authentication =
@@ -88,6 +99,8 @@ public class ModalDialogController {
 			 * (Users)authentication.getPrincipal();
 			 */
 			model.addAttribute("matList", iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
+			model.addAttribute("leftOverStk", leftOverStk);
+			model.addAttribute("attendee", attendee);
 		} catch (Exception e) {
 			 
 		}
@@ -118,6 +131,17 @@ public class ModalDialogController {
 	@GetMapping(value="/appr-tps/{id}")
 	public String approveTPSModal(@PathVariable("id") String id, Model model) {
 		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
+		Integer attendee=ezReqHead.getErhNoOfAttendee();
+		log.debug("att"+ezReqHead.getErhNoOfAttendee());
+		int leftOverStk=0;
+		List<Object[]> matLi=iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy());
+		for(int k=0;k<matLi.size();k++)
+		{	
+		log.debug("matli"+matLi.get(k)[4]);
+		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
+		}
+		
+		log.debug("leftOverStk"+leftOverStk);
 		try {
 			/*
 			 * Authentication authentication =
@@ -129,6 +153,8 @@ public class ModalDialogController {
 			 
 		}
 		model.addAttribute("tpsDetails", ezReqHead);
+		model.addAttribute("leftOverStk", leftOverStk);
+		model.addAttribute("attendee", attendee);
 		return "modals/approveTPS" ; 
 	}
 

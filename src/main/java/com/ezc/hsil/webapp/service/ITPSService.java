@@ -20,4 +20,6 @@ public interface ITPSService {
 	public void createTPSDetails(TpsRequestDetailDto tpsRequestDetailDto);
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
 	public List<Object[]> getLeftOverStock(String requestedBy);
+	public void NullifyTpsQty(String leftOverId,String reasonNullify,String commentsNullify);
+	
 }

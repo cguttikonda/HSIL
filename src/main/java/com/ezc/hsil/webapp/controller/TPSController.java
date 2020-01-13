@@ -305,10 +305,10 @@ public class TPSController {
 	    		c.setTime(todayDate); 
 	    		c.add(Calendar.MONTH, -3);
 	    		listSelector = new ListSelector();
-	    		//listSelector.setType("TPS");
+	    		listSelector.setType("TPS");
 	    		listSelector.setFromDate(c.getTime());
 	    		listSelector.setToDate(todayDate); 
-	    		listSelector.setTypeList(typeList);
+	    		//listSelector.setTypeList(typeList);
 	    	}
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
@@ -330,7 +330,8 @@ public class TPSController {
 	    	typeList.add("TPS");
 	    	typeList.add("BD");
 	    	ListSelector listSelector = new ListSelector();
-	    	listSelector.setTypeList(typeList);
+	    	//listSelector.setTypeList(typeList);
+	    	//listSelector.setType("TPS");
 	    	listSelector.setStatus(status);
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
@@ -500,6 +501,11 @@ public class TPSController {
 	        return "redirect:/tps/tpsRequestList";
 
 	    }
+	  @RequestMapping(value = "/tps/nullify-qty", method = RequestMethod.POST)
+		public @ResponseBody String NullifyTpsQty(@RequestParam String leftOverId,@RequestParam(value = "reasonNullify", required = false) String  reasonNullify,@RequestParam(value = "commentsNullify", required = false) String  commentsNullify) {
+	    	tpsService.NullifyTpsQty(leftOverId,reasonNullify,commentsNullify);
+	    	return "ok";
+		}   
         
 }
  
