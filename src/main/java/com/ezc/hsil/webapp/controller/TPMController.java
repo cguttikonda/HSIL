@@ -36,6 +36,7 @@ import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -59,7 +60,8 @@ public class TPMController {
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
+    	binder.setAutoGrowCollectionLimit(2000);
+    	binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
     }
     
     @RequestMapping("/tpm/add")
@@ -74,7 +76,9 @@ public class TPMController {
 		 */
     	TpmRequestDto tpmRequestDto = new TpmRequestDto();
     	List<DistributorMaster> distList = masterService.findAll();
-    	tpmRequestDto.setDistList(distList); 
+    	List<EzPlaceMaster> placeList = masterService.findAllCities();
+    	tpmRequestDto.setDistList(distList);
+    	tpmRequestDto.setPlaceList(placeList);
         model.addAttribute("tpmRequestDto", tpmRequestDto);
         return "tpm/form";
 
@@ -94,17 +98,18 @@ public class TPMController {
 		}
 		reqDto.setMeetList(arrTempList);
 	   model.addAttribute("distList",masterService.findAll());
+	   model.addAttribute("placeList",masterService.findAllCities());
        model.addAttribute("tpmRequestDto",reqDto);
        return "tpm/form";
 	}
     
     @RequestMapping(value = "/tpm/appr-tpm-post", method = RequestMethod.POST)
-	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
+	public @ResponseBody String approveTpmRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore) {
 		EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 		ezcRequestHeader.setId(id);
 		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 		Set<EzcComments> commSet = new HashSet<EzcComments>();
-		log.debug("Comments:::"+comments); 
+		log.debug("outStore:::"+outStore); 
 		if(comments!= null)
 		{
 			EzcComments comm=new EzcComments();
@@ -144,6 +149,7 @@ public class TPMController {
 		}
 		ezcRequestHeader.setRequestMaterials(reqMatSet);
 		ezcRequestHeader.setEzcComments(commSet);
+		ezcRequestHeader.setErhOutStore(outStore);
 		tpmService.approveTPMRequest(ezcRequestHeader);
 		return "ok";
 	} 
@@ -228,6 +234,8 @@ public class TPMController {
     	ListSelector listSelector = new ListSelector();
     	listSelector.setType("TPM");
     	listSelector.setStatus(status);
+    	if("APPROVED".equals(status))
+    		listSelector.setDispStatus('S');
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		ArrayList<String> userList=new ArrayList<String>();
@@ -332,7 +340,42 @@ public class TPMController {
         else
         	return "tpm/detailsEditForm";
 
-    } 
+    }
+    
+    @RequestMapping(value = "/tpm/addDetails/{docId}", method = RequestMethod.GET)
+    public String addDetails(@PathVariable String docId, Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	
+    	
+        EzcRequestHeader ezcRequestHeader = tpmService.getTPMRequest(docId);
+        TpmRequestDetailDto reqDto = new TpmRequestDetailDto();
+        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
+        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
+        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
+        for(EzcComments item : ezcRequestHeader.getEzcComments())
+		{
+        	ezcComm.add(item); 
+		}
+		/*
+		 * for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems()) {
+		 * ezcRequestItems.add(item); }
+		 */
+		for(RequestMaterials item : ezcRequestHeader.getRequestMaterials())
+		{
+			ezcMatList.add(item); 
+		}
+	
+        reqDto.setEzcRequestItems(ezcRequestItems);
+        reqDto.setReqHeader(ezcRequestHeader);
+        //reqDto.setMeetDealer(meetDealer);
+        reqDto.setEzcComments(ezcComm);
+        reqDto.setEzReqMatList(ezcMatList);
+        List<Object[]> meetList = null;
+        meetList = tpmService.getMeetDetailsById(docId);
+        model.addAttribute("reqDto", reqDto);
+        model.addAttribute("meetList", meetList);
+        	return "tpm/detailsEditForm";
+
+    }
     
     @RequestMapping(value = "/tpm/processSpeech", method = RequestMethod.POST)
     public String processSpeechData(TpmRequestDetailDto reqDto, Model model) {

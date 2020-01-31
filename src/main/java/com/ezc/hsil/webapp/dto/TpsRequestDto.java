@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 
 public class TpsRequestDto implements java.io.Serializable{
@@ -34,6 +36,15 @@ public class TpsRequestDto implements java.io.Serializable{
 	@NotEmpty
 	private List<EzcRequestDealers> dealerName;
 	
+	private List<EzPlaceMaster> placeList=new ArrayList<EzPlaceMaster>();
+	
+	
+	public List<EzPlaceMaster> getPlaceList() {
+		return placeList;
+	}
+	public void setPlaceList(List<EzPlaceMaster> placeList) {
+		this.placeList = placeList;
+	}
 	public TpsRequestDto() {
 	}
 	public String getRequestedBy() {

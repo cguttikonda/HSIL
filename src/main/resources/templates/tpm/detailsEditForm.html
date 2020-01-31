@@ -84,10 +84,13 @@
 					</tbody>
 					</table>
     				</div>
-    			<div id="no-more-tables" th:if="${not #lists.isEmpty(reqDto.ezcRequestItems)}">
-                    <table class="col-sm-12 table-bordered table-condensed cf">
-                    <thead class="cf">
+    			<div class="table table-responsive">
+                    <table id="example" class="col-sm-12 table table-bordered table-condensed">
+                    <thead>
                 	<tr>
+                		<th>Meet Id</th>
+                		<th>Date</th>
+                		<th>Dealer</th>
                 		<th>Name Of Plumber</th>
                 		<th>Contact No</th>
                 		<th>D.O.B</th>
@@ -95,14 +98,17 @@
                 	</tr>
                 	</thead>
                 	<tbody>
-                	 <tr th:if="${reqDto.ezcRequestItems.empty}">
+                	 <tr th:if="${meetList.empty}">
             			<td colspan="2"> No Items Added </td>
        			   </tr>
-                	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Plumber" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" ></td>
-						<td data-title="Contact No" th:text="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}"></td>
-						<td data-title="D.O.B" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDob, 'dd/MM/yyyy')}"></td>
-						<td data-title="D.O.A" th:text="${#dates.format(reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa, 'dd/MM/yyyy')}"></td>
+                	<tr th:each="row, itemStat : ${meetList}">
+						<td  th:text="${row[0]}" ></td>
+						<td th:text="${#dates.format(row[1], 'dd/MM/yyyy')}"></td>
+						<td  th:text="${row[2]}" ></td>
+						<td  th:text="${row[3]}" ></td>
+						<td  th:text="${row[4]}" ></td>
+						<td th:text="${#dates.format(row[5], 'dd/MM/yyyy')}"></td>
+						<td th:text="${#dates.format(row[6], 'dd/MM/yyyy')}"></td>
                 	</tr>
                 	</tbody>
                 </table>
@@ -113,6 +119,7 @@
               <!--  <button type="button" onclick="closeRequest()" class="btn btn-primary pull-right"><i class="fa fa-save"></i>&nbsp;Close</button>  -->
                <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
             </div>
+</div>
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
@@ -229,6 +236,17 @@
     	document.myForm.action ="/tpm/tpmRequestList";
 	 	document.myForm.submit();
     }
+	$(document).ready(function() {
+		$('#example').DataTable({
+			
+			 dom: 'lBfrtip',
+	         buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'Reports' },{ extend: 'copy', text: 'Copy',title:null }]
+		
+			}
+				
+		);
+		 
+	});
 
 	</script>
 </div>

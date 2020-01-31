@@ -138,7 +138,9 @@ public class ReportController {
       
     @RequestMapping(value = "/disprep/{status}", method = RequestMethod.GET)
     public String dispatchReport(@PathVariable String status,Model model) {
-    	model.addAttribute("matList", repService.getDispatchReport(status)); 
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+    	model.addAttribute("matList", repService.getDispatchReport(status,userObj.getUserId())); 
         return "/reports/dispatchreport"; 
 
     }

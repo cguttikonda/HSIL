@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.service.IBDService;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
 import com.ezc.hsil.webapp.service.ITPSService;
@@ -40,6 +42,9 @@ public class ModalDialogController {
 	
 	@Autowired
     private ITPSService iTPSService;
+	
+	@Autowired
+    private IBDService iBDService;
 	
 	
 	@Value("#{'${city}'.split(',')}")
@@ -85,9 +90,9 @@ public class ModalDialogController {
 		log.debug("att"+ezReqHead.getErhNoOfAttendee());
 		int leftOverStk=0;
 		List<Object[]> matLi=iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy());
+		List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
 		for(int k=0;k<matLi.size();k++)
 		{	
-		log.debug("matli"+matLi.get(k)[4]);
 		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
 		}
 		
@@ -101,6 +106,7 @@ public class ModalDialogController {
 			model.addAttribute("matList", iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
 			model.addAttribute("leftOverStk", leftOverStk);
 			model.addAttribute("attendee", attendee);
+			model.addAttribute("outStoreList", outStoreList);
 		} catch (Exception e) {
 			 
 		}
@@ -121,6 +127,12 @@ public class ModalDialogController {
 		model.addAttribute("tpmDetails", ezReqHead);
 		return "modals/rejectTPM" ; 
 	}
+	@GetMapping(value="/rej-bd/{id}")
+	public String rejectBDModal(@PathVariable("id") String id, Model model) {
+		EzcRequestHeader ezReqHead = iBDService.getBDRequest(id);
+		model.addAttribute("bdDetails", ezReqHead);
+		return "modals/rejectBD" ; 
+	}
 	@RequestMapping(value = "/mat-autocomp", method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q) {
@@ -135,6 +147,7 @@ public class ModalDialogController {
 		log.debug("att"+ezReqHead.getErhNoOfAttendee());
 		int leftOverStk=0;
 		List<Object[]> matLi=iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy());
+		List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
 		for(int k=0;k<matLi.size();k++)
 		{	
 		log.debug("matli"+matLi.get(k)[4]);
@@ -155,6 +168,7 @@ public class ModalDialogController {
 		model.addAttribute("tpsDetails", ezReqHead);
 		model.addAttribute("leftOverStk", leftOverStk);
 		model.addAttribute("attendee", attendee);
+		model.addAttribute("outStoreList", outStoreList);
 		return "modals/approveTPS" ; 
 	}
 

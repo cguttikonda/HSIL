@@ -23,6 +23,9 @@
                 	<input type="hidden" th:field="*{distList[__${dist.index}__].code}"/>
                 	<input type="hidden" th:field="*{distList[__${dist.index}__].name}"/>
                 </th:block> 
+                 <th:block th:each="row, place : *{placeList}">
+                	<input type="hidden" th:field="*{placeList[__${place.index}__].city}"/>
+                </th:block> 
                 <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="erhDistrubutor">Distributor</label>
                       <select class="form-control select2" th:field="*{erhDistrubutor}">
@@ -31,9 +34,17 @@
 	                </select>
 	                <span class="help-block" th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}"></span>
                 </div>
-                <div th:class="${#fields.hasErrors('erhCity')}? 'form-group has-error' : 'form-group'">
+                <!-- <div th:class="${#fields.hasErrors('erhCity')}? 'form-group has-error' : 'form-group'">
                     <label for="erhCity">City</label>
                     <input type="text"  class="form-control" th:field="*{erhCity}" id="erhCity" />
+                    <span class="help-block" th:if="${#fields.hasErrors('erhCity')}" th:errors="*{erhCity}"></span>
+                </div> -->
+                <div th:class="${#fields.hasErrors('erhCity')}? 'form-group has-error' : 'form-group'">
+                    <label for="erhCity">City</label>
+                      <select class="form-control select2" th:field="*{erhCity}">
+						<option selected value="">---enter city---</option>
+						<option th:selected="${erhCity == place.city}" th:each="place : *{placeList}" th:value="${place.city}" th:text="${place.city}"></option>
+	                </select>
                     <span class="help-block" th:if="${#fields.hasErrors('erhCity')}" th:errors="*{erhCity}"></span>
                 </div>
                 <div th:class="${#fields.hasErrors('erhConductedOn')}? 'form-group has-error' : 'form-group'">

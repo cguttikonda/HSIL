@@ -14,7 +14,9 @@ public interface UserRepository extends JpaRepository<Users, Long> {
     Users findByUserId(String userId);
     
     Users findByUserIdOrEmail(String userId, String email);
-    
+    @Query(value = "select a.* from ezc_users a where id in (select user_id from users_roles where role_id in (select id from ezc_roles where name=:role))",nativeQuery = true)
+    List<Users> findUsersByRole(String role);
+     
     
 //    https://www.baeldung.com/spring-data-derived-queries
 

@@ -10,7 +10,7 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
 public interface IReportService {
 	public List<EzcRequestHeader> getRequestStatus(ListSelector listSelector);
-	public List<Object[]> getDispatchReport(String statu);
+	public List<Object[]> getDispatchReport(String statu,String userId);
 	public void dispatchUpdate(EzcRequestHeader ezcRequestHeader);
 	public Map<String,String> getDashBoardValues(ArrayList<String> role,String user);
 	public List<Object[]> getStockAvailabilityForAll();

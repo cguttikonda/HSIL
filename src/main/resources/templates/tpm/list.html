@@ -379,12 +379,17 @@ function checkQty()
 	
 	if($("#leftOverStk").val()>$("#attendee").val())
 	{
-		remainVal=leftOverStk-attendee;
+		remainVal=0;
 		//alert(remainVal);
 		
+	}	
+	else
+	{
+		remainVal=attendee-leftOverStk;
+	}
 		$('#selQty').validationEngine('showPrompt', 'Recommended quantity '+remainVal, 'pass');
 		return ;
-	}
+	
 }
 function approveTPMReq(event){
 	var leftOverCnt=parseInt($("#leftOverCnt").val());

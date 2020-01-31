@@ -465,4 +465,9 @@ public class UserServiceImpl implements IUserService{
 		    private void updateUserToGroupIfNotFound(final String groupId,final String userId,final String stateGrp,final String zonalGrp) {
 			 	groupUsersRepository.updateUserGroups(groupId,userId,stateGrp,zonalGrp);
 		    }
+
+		@Override
+		public List<Users> findUsersByRole(String role) {
+			return userRepository.findUsersByRole(role);
+		}
 }

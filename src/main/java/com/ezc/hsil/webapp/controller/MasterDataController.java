@@ -6,6 +6,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -247,7 +249,7 @@ public class MasterDataController {
 		 masterService.addDistributorMultiple(distList);
 	    }
 	@PostMapping("/matUpload")
-	public void uploadMaterial(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+	public String uploadMaterial(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
 		List<MaterialMaster> matList = new ArrayList<MaterialMaster>();
 		List<Object[]> lisObjArr= ezExcelUtil.readExcel(reapExcelDataFile.getInputStream(),reapExcelDataFile.getOriginalFilename());
 		 for(Object[] objArr:lisObjArr)
@@ -261,14 +263,26 @@ public class MasterDataController {
 			 	} catch(NumberFormatException e) {
 			 	    double d = Double.parseDouble(quan); 
 			 	   qty = (int) d;
+			 	   log.debug("Error after parsing qty:::"+qty);
 			 	}
 			 	 matMaster.setMaterialCode((String)objArr[0]);
 			 	 matMaster.setMaterialDesc((String)objArr[1]);
 			 	 matMaster.setQuantity(qty);
+			 	 matMaster.setIsActive("Y");
 			 	 matList.add(matMaster);
 		 }
 		 masterService.addMaterialMultiple(matList);
+		 return "redirect:/master/listMaterial";
 	    }
+	
+	
+	@RequestMapping(value = "/checkStock/{material}/{qty}", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String,String> checkMaterialStock( @PathVariable String material, @PathVariable int qty) {
+		
+		return masterService.checkMaterialStock(material, qty);
+	}
+
 	
 	public <T extends Object> List<Object[]> getObjectArray(List<T> objList,int length) throws NoSuchAlgorithmException, IllegalArgumentException, IllegalAccessException {
 		   

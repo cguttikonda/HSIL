@@ -22,7 +22,7 @@
 					<th>Request Id</th>
 					<td th:text="*{id}"></td>	
 					<th>Distributor</th>
-					<td colspan=2 th:text="*{erhDistrubutor}"></td>	
+					<td colspan=2 th:text="*{erhDistrubutor+'-'+erhDistName}"></td>	
 					</tr>
 					<tr>
 					<th>Material</th>
@@ -47,6 +47,15 @@
 					<td>						
 						<button type="button" class="btn btn-primary" id="addMatRow"  style="margin-right: 5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</button>
 					</td>	
+					</tr>
+					<tr>
+					<th>OutStore</th>
+					<td >						
+						  <select class="form-control validate[required]" id="outStore" name="outStore">
+						  	    <option value="" disabled selected>--Select user--</option>
+							<option  th:each="user : ${outStoreList}" th:value="${user.userId}" th:text="${user.firstName+' '+user.lastName}"></option>
+		                </select>
+					</td>
 					</tr>
 
 					</table>

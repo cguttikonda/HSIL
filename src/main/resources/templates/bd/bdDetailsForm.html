@@ -27,10 +27,20 @@
             	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
             <div class=row>	
-              <label class="col-lg-2 control-label">User Name</label>
+              <label class="col-lg-2 control-label">Document Id</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span th:text="*{reqHeader.id}"></span></div>
+                 <div class="input-group"><span th:text="*{'BD-'+reqHeader.id}"></span></div>
               </div>
+              <div sec:authorize="hasRole('ADMIN')">
+				<label class="col-lg-2 control-label">OutStore</label>
+				<div class="col-lg-4 inputGroupContainer">						
+					  <select class="form-control validate[required]" id="outStore" name="outStore">
+					  	    <option value="" disabled selected>--Select user--</option>
+						<option  th:each="user : ${outStoreList}" th:value="${user.userId}" th:text="${user.firstName+' '+user.lastName}"></option>
+	                </select>
+				</div>
+				</div>
+              
              <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
               <label class="col-lg-2 control-label">City & Area</label>
               <div class="col-lg-4 inputGroupContainer">
@@ -64,9 +74,14 @@
             			<td colspan="2"> No Data </td>
        			   </tr>
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
-						<td data-title="Material">
+						<td data-title="Material" sec:authorize="hasRole('ADMIN')">
+							<select th:field="*{ezReqMatList[__${itemStat.index}__].matCode}" id="selMat" class="select2 form-control validate[required]"  style="width:100%">
+								<option selected th:value="*{ezReqMatList[__${itemStat.index}__].matCode}" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}" >Event</option>
+							</select>
+						</td>
+						<td data-title="Material" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matCode}">
-							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}">
+							<!-- <input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}"> -->
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
@@ -75,7 +90,7 @@
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasRole('ADMIN')">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
-							<input  type="number" class="form-control validate[required]" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}" id="bdQty" >
+							<input  type="number" class="form-control validate[required]" id="bdQty" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}" >
 							
 						</td>
                 	</tr>
@@ -279,53 +294,70 @@
      				
     function onSaveClickAdmin()
     {
-		
-    	var leftOverCnt=parseInt($("#leftOverCnt").val());
-    	
-		var qtyEntered = false;
-		for(i=0;i<leftOverCnt;i++)
-		{
-				if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
-				{
-					qtyEntered = true;
-				}
-				else
-				{
-					continue;
-				}
-				if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
-				{
-					$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
-					return ;
-				}
-		}
-		
-		if(!qtyEntered)
-		{
-			if($("#bdQty").val() !== "" && parseFloat($("#bdQty").val()) > 0)
+    	$.ajax({
+			
+    		type : "GET",
+    		url : "/master/checkStock/"+$('#selMat').val()+"/"+$('#bdQty').val(), 
+    		success : function(response) {
+    				//alert(response)
+    	if(response.STOCK_FLG == 'Y')
+    	{
+	    	var leftOverCnt=parseInt($("#leftOverCnt").val());
+	    	
+			var qtyEntered = false;
+			for(i=0;i<leftOverCnt;i++)
 			{
-				qtyEntered =true;
+					if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
+					{
+						qtyEntered = true;
+					}
+					else
+					{
+						continue;
+					}
+					if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
+					{
+						$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
+						return ;
+					}
 			}
-		}
-		
-		if(!qtyEntered)
-		{
-			$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
-			return ;
-		}
-		
 			
-		//	document.myForm.submit();
+			if(!qtyEntered)
+			{
+				if($("#bdQty").val() !== "" && parseFloat($("#bdQty").val()) > 0)
+				{
+					qtyEntered =true;
+				}
+			}
+			
+			if(!qtyEntered)
+			{
+				$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
+				return ;
+			}
+			
+				
+			//	document.myForm.submit();
+			
 		
-	
-		if($("#myForm").validationEngine('validate'))
-		{
-			
-			
-			document.myForm.action="/bd/apprbd";
-			document.myForm.submit();
-		}
-
+			if($("#myForm").validationEngine('validate'))
+			{
+				
+				
+				document.myForm.action="/bd/apprbd";
+				document.myForm.submit();
+			}
+    	}
+    	else
+    	{
+    		$('#bdQty').validationEngine('showPrompt', 'Only '+response.STOCK+" available in stock for selected material", '');
+    	}
+    		},
+    		error : function(ex) {
+    			console.log(ex);
+    		}
+    	});
+    	
     }
     function onSaveClick()
     {
@@ -505,6 +537,28 @@ function funHide()
 	
 	$("#success-alert").hide();
 }
+$(document).ready(function() {
+$('#selMat').select2({
+    placeholder: 'Select Material',
+    ajax: {
+      url: '/modal/mat-autocomp?type=text',
+      dataType: 'json',
+      delay: 250,
+      processResults: function (data) {
+        return {
+                       results: $.map(data, function (item) {
+                          return {
+                              text: item.materialCode+"-"+item.materialDesc,
+                              id: item.materialCode
+                          }
+                      }) 
+                  };
+      },
+      cache: true
+    }
+});
+});
+
 	</script>
 </div>
 </body>

@@ -2,7 +2,9 @@ package com.ezc.hsil.webapp.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -15,9 +17,11 @@ import org.springframework.stereotype.Service;
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.persistance.dao.DistributorMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.PlaceMasterRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,6 +35,9 @@ public class MasterServiceImpl implements IMasterService {
 	
 	@Autowired
 	MaterialMasterRepo matMastRep;
+	
+	@Autowired
+	PlaceMasterRepo placeMasterRep;
 
 	@Override
 	public DistributorMaster addNewDistributor(final DistributorDto distDto) {
@@ -68,7 +75,7 @@ public class MasterServiceImpl implements IMasterService {
 
 		List<MaterialMaster> matList = new ArrayList<MaterialMaster>();
 
-		matList.addAll(matMastRep.findAll());
+		matList.addAll(matMastRep.findAllActiveMaterials());
 
 		return matList;
 	}
@@ -211,6 +218,32 @@ public class MasterServiceImpl implements IMasterService {
 		}
 		//matMastRep.saveAll(matList);
 		return null;
+	}
+
+	@Override
+	public List<EzPlaceMaster> findAllCities() {
+		return placeMasterRep.findAll();
+	}
+
+	@Override
+	public Map<String, String> checkMaterialStock(String material, int qty) {
+		Optional<MaterialMaster> dbMatOpt = matMastRep.findById(material);
+		Map<String, String> hmOut = new HashMap<String, String>(); 
+		if(dbMatOpt.isPresent())
+		{
+			MaterialMaster matObjOld = dbMatOpt.get();
+			int stock = matObjOld.getQuantity()-matObjOld.getBlockQty();
+			if(qty <= stock)
+			{
+				hmOut.put("STOCK_FLG","Y");
+			}
+			else
+			{
+				hmOut.put("STOCK_FLG","N");
+			}
+			hmOut.put("STOCK",stock+"");
+		}
+		return hmOut;
 	}
 	
 

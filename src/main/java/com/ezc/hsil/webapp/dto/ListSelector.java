@@ -14,6 +14,7 @@ public class ListSelector {
 	private Date toDate;
 	
 	private String status;
+	private Character dispStatus;
 	private String type;
 	
 	private ArrayList<String> user;
@@ -69,6 +70,14 @@ public class ListSelector {
 
 	public void setTypeList(ArrayList<String> typeList) {
 		this.typeList = typeList;
+	}
+
+	public Character getDispStatus() {
+		return dispStatus;
+	}
+
+	public void setDispStatus(Character dispStatus) {
+		this.dispStatus = dispStatus;
 	}
 	
 	

@@ -38,12 +38,16 @@ import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.RequestMaterialsRepo;
 import com.ezc.hsil.webapp.service.IBDService;
 import com.ezc.hsil.webapp.service.IMasterService;
+import com.ezc.hsil.webapp.service.IUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 public class BDController {
+	
+	@Autowired
+    private IUserService iUserService;
 	
 	 @Autowired
 	 IMasterService masterService;
@@ -275,7 +279,7 @@ public class BDController {
 
 	    }
 	    @RequestMapping(value = "/bd/apprbd", method = RequestMethod.POST)
-		public  String approveBDRequest(@RequestParam String id,@RequestParam(value = "bdQty", required = false) Integer  bdQty,@RequestParam(value = "commentReqDto", required = false) String  comments,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId, final RedirectAttributes ra) {
+		public  String approveBDRequest(@RequestParam String id,@RequestParam(value = "bdQty", required = false) Integer  bdQty,@RequestParam(value = "commentReqDto", required = false) String  comments,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore, final RedirectAttributes ra) {
 	    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
 			String loggedUser="";
@@ -322,7 +326,7 @@ public class BDController {
 			}
 	    	ezcRequestHeader.setRequestMaterials(reqMatSet);
 	    	ezcRequestHeader.setEzcComments(commSet);
-	    	
+	    	ezcRequestHeader.setErhOutStore(outStore);
 	    	
 	    	bdService.submitBDDet(id,appQty,ezcRequestHeader); 
 	        ra.addFlashAttribute("successFlash", "Success");
@@ -362,6 +366,7 @@ public class BDController {
 			} catch (Exception e) {
 				
 			} 
+			List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
 	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
 	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
 	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
@@ -381,7 +386,7 @@ public class BDController {
 	        reqDto.setEzcComments(ezcComm);
 	        model.addAttribute("reqDto", reqDto);
 	        model.addAttribute("matList", bdService.getBDLeftOverStock());
-	        
+	        model.addAttribute("outStoreList", outStoreList);
 	       	return "BD/bdDetailsForm";
 	       
 
@@ -447,5 +452,35 @@ public class BDController {
 		  bdService.NullifyBDQty(leftOverId,reasonNullify,commentsNullify);
 	    	return "ok";
 		}  
-
+	  @RequestMapping(value = "/bd/rej-bd-post", method = RequestMethod.POST)
+		public @ResponseBody String rejectBDRequest(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "rejectComments", required = false) String rejectComments ) {
+			log.debug("rejectComments"+rejectComments);
+	    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
+			ezcRequestHeader.setId(id);
+			Set<EzcComments> comments = new HashSet<EzcComments>();
+			String loggedUser="";
+			try {
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+				Users userObj = (Users)authentication.getPrincipal();
+				loggedUser=(String)userObj.getUserId();
+				
+			} catch (Exception e) {
+				
+			}
+			if(rejectComments != null)
+			{
+				
+					EzcComments reqCom = new EzcComments();
+					reqCom.setComments(rejectComments);
+					reqCom.setCreatedBy(loggedUser);
+					reqCom.setLastModifiedBy(loggedUser);
+					reqCom.setType("REJECT");
+					
+					comments.add(reqCom);
+				
+			}
+				ezcRequestHeader.setEzcComments(comments);
+			bdService.rejectBDRequest(ezcRequestHeader);
+			return "ok";
+		}
 }

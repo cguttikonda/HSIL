@@ -17,5 +17,6 @@ public interface IBDService {
 	public List<EzcComments> getBDCommentRequest(String docId);
 	public List<Object[]> getBDLeftOverStock();
 	public void NullifyBDQty(String leftOverId,String reasonNullify,String commentsNullify);
+	public void rejectBDRequest(EzcRequestHeader ezcRequestHeader);
 	
 }

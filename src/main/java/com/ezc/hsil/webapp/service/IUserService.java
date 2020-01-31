@@ -68,4 +68,6 @@ public interface IUserService {
 	List<WorkGroup_Users> getZonalHeadSubGroups(String zonalHeadGrp);
 
 	List<WorkGroup_Users> getStateHeadSubGroups(String stateHDGrp);
+	
+	List<Users> findUsersByRole(String role);
 }

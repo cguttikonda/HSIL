@@ -59,10 +59,10 @@ public class ReportService implements IReportService {
 	}
 
 	@Override
-	public List<Object[]> getDispatchReport(String statu) {
+	public List<Object[]> getDispatchReport(String statu,String userId) {
 		if("PENDING".equals(statu))
 		{
-			return reqHeaderRepo.getPendingDispatchDetails();
+			return reqHeaderRepo.getPendingDispatchDetails(userId);
 		}
 		else
 		{
@@ -109,7 +109,7 @@ public class ReportService implements IReportService {
 		userList.add(user);
 		if(role.contains("ROLE_OUT_STOR"))
 		{
-			long dispCnt = reqHeaderRepo.getPendingDispatchCount();
+			long dispCnt = reqHeaderRepo.getPendingDispatchCount(user);
 			htMap.put("pendDispCnt",dispCnt+"");
 		}
 		if(role.contains("ROLE_REQ_CR"))
@@ -118,6 +118,7 @@ public class ReportService implements IReportService {
 			htMap.put("ackDispCnt",dispCnt+"");
 			ListSelector listSelector = new ListSelector();
 			listSelector.setStatus("APPROVED");
+			listSelector.setDispStatus('S');
 			listSelector.setType("TPM");
 			listSelector.setUser(userList);
 			dispCnt = customDto.findRequestListCnt(listSelector);
@@ -129,6 +130,7 @@ public class ReportService implements IReportService {
 			htMap.put("ackDispCnt",dispCnt+"");
 			ListSelector listSelector = new ListSelector();
 			listSelector.setStatus("APPROVED");
+			listSelector.setDispStatus('S');
 			listSelector.setType("TPS");
 			listSelector.setUser(userList);
 			dispCnt = customDto.findRequestListCnt(listSelector);
@@ -140,6 +142,7 @@ public class ReportService implements IReportService {
 			htMap.put("ackDispCnt",dispCnt+"");
 			ListSelector listSelector = new ListSelector();
 			listSelector.setStatus("APPROVED");
+			listSelector.setDispStatus('S');
 			listSelector.setType("BD");
 			listSelector.setUser(userList);
 			dispCnt = customDto.findRequestListCnt(listSelector);
@@ -151,6 +154,7 @@ public class ReportService implements IReportService {
 			htMap.put("ackDispCnt",dispCnt+"");
 			ListSelector listSelector = new ListSelector();
 			listSelector.setStatus("APPROVED");
+			listSelector.setDispStatus('S');
 			listSelector.setType("BD");
 			listSelector.setUser(userList);
 			dispCnt = customDto.findRequestListCnt(listSelector);

@@ -1,0 +1,25 @@
+
+<div id="rejBDModal"  class="modal fade" role="dialog" th:fragment="rej-bd">
+	<div class="modal-dialog" id="rejectModal">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title"><span style="font-weight:bold" >Confirm to Reject document: <SPAN th:TEXT="*{id}"></SPAN></span></h4>
+			</div>
+				<form  th:object="${bdDetails}" th:method="post" id="rej-bd-form" name="rej-bd-form">
+				<div class="modal-body">
+				<input type="hidden" th:field="*{id}" />
+				<input type="hidden" th:name="_csrf" th:value="${_csrf.token}">
+				<div class="form-group">
+					<textarea class="form-control validate[required]" name="rejectComments" id="rejectComments" ></textarea>
+					<!-- <span class="input-group-addon btn btn-danger" onclick="saveRejComment()">REJECT</span> -->
+				</div>
+				</div>
+						
+				<div class="modal-footer">
+					<button type="button"  id="closeModal" class="btn btn-default" data-dismiss="modal">Cancel</button>
+			        <button type="button" class="btn btn-danger" onclick="saveRejComment()">Reject</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

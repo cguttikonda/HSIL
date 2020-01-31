@@ -5,7 +5,7 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>TPS List</h1>
+    <h1>List</h1>
 <ol class="breadcrumb">
     <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
     <li class="active">List</li>
@@ -72,13 +72,19 @@
                     <td th:text="${row.erhStatus}"></td>
                      <td>
                     	
-						<span th:if="${row.erhStatus == 'NEW'}">
+						<span sec:authorize="hasRole('ADMIN')" th:if="${row.erhStatus == 'NEW'}">
 							<a th:href="${'/bd/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">APPROVE</span>
 							</a>
+							<a href="#"
+							th:data-id="${row.id}"
+							onclick="javascript:openModal('reject',this.getAttribute('data-id'))"
+							class="btn btn-danger btn-xs"> <span
+								class="glyphicon glyphicon-ok">REJECT</span>
+							</a>
 						</span>
-						<span th:if="${row.erhStatus == 'APPROVED'}">
+						<span sec:authorize="hasRole('ROLE_BD_MKT')" th:if="${row.erhStatus == 'APPROVED'}">
 							<a th:href="${'/bd/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>
@@ -91,7 +97,8 @@
             </table>
         </div>
     </div>
-   <div th:fragment="appr-tps" id="apprTPSModalHolder"></div> 
+   <div th:fragment="appr-tps" id="apprTPSModalHolder"></div>
+   <div th:fragment="rej-bd" id="rejBDModalHolder"></div> 
 </div>
 <div layout:fragment="scriptContent">
 
@@ -174,7 +181,51 @@ function approveTPSReq(event){
 		}
 	});
 }
-
+function openModal(modelType,distId){
+	
+	if(modelType === "approve"){
+			
+	}
+	else
+	{
+		$.ajax({
+			url: "/modal/rej-bd/" + distId,
+			success: function(data){
+				$("#rejBDModalHolder").html(data);
+				$('#rejBDModal').modal({
+					backdrop: 'static'
+				});
+				
+				
+			}
+		});
+	
+		
+		
+		
+		
+	}
+}
+function saveRejComment(event){
+	var rejectComments=$("#rejectComments").val();
+	//alert(rejectComments);
+	var formdata = $('#rej-bd-form').serialize(); 
+	if($("#rej-bd-form").validationEngine('validate'))
+		{
+	$.ajax({			
+		type : "POST",
+		url : "/bd/rej-bd-post", 
+		data : formdata,
+		success : function(response) {
+				
+				location.href="/bd/bdRequestList"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+		}
+}
 </script>
 
 

@@ -69,7 +69,7 @@ public class TpsServiceImpl implements ITPSService {
 	  Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
 	  ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 	  ezReqHeader.setErhStatus("APPROVED");
-	  
+	  ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 	 /* for(RequestMaterials tempItem : ezReqMatList) { 
 		  tempItem.setEzcRequestHeader(ezReqHeader);	
 		  reqMatRep.save(tempItem); 
@@ -84,13 +84,16 @@ public class TpsServiceImpl implements ITPSService {
 		  else
 		  {
 			  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
-                if(matMaster.isPresent())
-                {  
-                       MaterialMaster mat = matMaster.get();
-                       int qty = mat.getQuantity()-tempItem.getApprQty();
-                       mat.setQuantity(qty);
-                }      
-
+              if(matMaster.isPresent())
+              {  
+                     MaterialMaster mat = matMaster.get();
+                     //int qty = mat.getQuantity()-tempItem.getApprQty();
+                     //mat.setQuantity(qty);
+                     int blockQty = tempItem.getApprQty();
+                     if(mat.getBlockQty() != null)
+                  	   blockQty += mat.getBlockQty();
+                     mat.setBlockQty(blockQty);
+              } 
 		  }
 	  }
 	  for(RequestMaterials tempItem : ezReqMatList) { 

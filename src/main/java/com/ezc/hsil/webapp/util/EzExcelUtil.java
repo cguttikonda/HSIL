@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -78,6 +79,7 @@ public class EzExcelUtil {
 
 	public List<Object[]> readExcel(InputStream uploadedInputStream,String fileName)
 	{
+		DecimalFormat format = new DecimalFormat("0.#");
 		XSSFWorkbook wbX 	= null;
 		HSSFWorkbook wbH 	= null;
 		HSSFSheet mySheetH	= null;
@@ -152,7 +154,7 @@ public class EzExcelUtil {
 							{
 								if(myCellX.getCellTypeEnum() == CellType.NUMERIC) 
 								{
-									colValue=new BigDecimal(myCellX.getNumericCellValue())+"";
+									colValue=format.format(myCellX.getNumericCellValue())+"";
 									log.debug("Integer:::"+colValue);
 								}
 								else if(myCellX.getCellTypeEnum() == CellType.STRING) 
@@ -174,7 +176,7 @@ public class EzExcelUtil {
 							{
 								if(myCellH.getCellTypeEnum() == CellType.NUMERIC) 
 								{
-									colValue=myCellH.getNumericCellValue()+"";
+									colValue=format.format(myCellH.getNumericCellValue())+"";
 									log.debug("Integer:::"+colValue);
 								}
 								else if(myCellH.getCellTypeEnum() == CellType.STRING) 

@@ -131,6 +131,7 @@ public class BDServiceImpl implements IBDService{
 		Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
 		Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
 		ezReqHeader.setErhStatus("APPROVED");
+		ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 		ezReqHeader.setErhModifiedBy(userObj.getUserId());
 		ezReqHeader.setErhModifiedOn(new Date());
 		ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
@@ -142,9 +143,23 @@ public class BDServiceImpl implements IBDService{
 		      Character c1 = new Character('Y'); 
 			  if(c1.equals(tempItem.getIsNew()))
 			  {
-				  RequestMaterials requestMaterials = reqMatRep.findById(tempItem.getId()).orElseThrow(() -> new EntityNotFoundException());
-				  requestMaterials.setApprQty(appQty);
-				  log.debug("matid"+tempItem.getId());
+				/*
+				 * RequestMaterials requestMaterials =
+				 * reqMatRep.findById(tempItem.getId()).orElseThrow(() -> new
+				 * EntityNotFoundException()); requestMaterials.setApprQty(appQty);
+				 * log.debug("matid"+tempItem.getId());
+				 */
+				  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
+	                if(matMaster.isPresent())
+	                {  
+	                       MaterialMaster mat = matMaster.get();
+	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
+	                       //mat.setQuantity(qty);
+	                       int blockQty = tempItem.getApprQty();
+	                       if(mat.getBlockQty() != null)
+	                    	   blockQty += mat.getBlockQty();
+	                       mat.setBlockQty(blockQty);
+	                }
 			  }
 			  
 		  } 
@@ -253,7 +268,18 @@ public class BDServiceImpl implements IBDService{
 		}
 	
 	}
-
+	@Override
+	public void rejectBDRequest(EzcRequestHeader ezcRequestHeader) {
+	  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
+	  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
+	  ezReqHeader.getEzcComments().addAll(ezComments);
+	  ezReqHeader.setErhStatus("REJECTED");
+	
+	  for(EzcComments tempItem : ezComments) { 
+		  tempItem.setEzcRequestHeader(ezReqHeader);	
+		  commRepo.save(tempItem); 
+		}		
+	}
 
 
 }

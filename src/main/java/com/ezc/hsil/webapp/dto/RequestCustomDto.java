@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RequestCustomDto {
 
-	@Autowired
+	@PersistenceContext
 	EntityManager em;
 	//findByErhReqTypeAndErhStatusAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual
 	    public List<EzcRequestHeader> findRequestList(ListSelector listSelector) {
@@ -40,6 +40,8 @@ public class RequestCustomDto {
         	predicates.add(cb.between(header.get("erhRequestedOn"), listSelector.getFromDate(), listSelector.getToDate()));
         if(listSelector.getStatus() != null && !"null".equals(listSelector.getStatus()) && !"".equals(listSelector.getStatus()))
         	predicates.add(cb.equal(header.get("erhStatus"), listSelector.getStatus()));
+        if(listSelector.getDispStatus() != null)
+        	predicates.add(cb.equal(header.get("erhDispatchFlag"), listSelector.getDispStatus()));
         if(listSelector.getUser() != null && listSelector.getUser().size() > 0)
         {
         	Expression<String> exp = header.get("erhRequestedBy");
@@ -60,6 +62,8 @@ public class RequestCustomDto {
 	        	predicates.add(cb.equal(header.get("erhReqType"), listSelector.getType()));
 	        if(listSelector.getStatus() != null && !"null".equals(listSelector.getStatus()) && !"".equals(listSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), listSelector.getStatus()));
+	        if(listSelector.getDispStatus() != null)
+	        	predicates.add(cb.equal(header.get("erhDispatchFlag"), listSelector.getDispStatus()));
 	        if(listSelector.getFromDate() != null && listSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), listSelector.getFromDate(), listSelector.getToDate()));
 	        if(listSelector.getUser() != null && listSelector.getUser().size() > 0)
@@ -107,12 +111,14 @@ public class RequestCustomDto {
 	        Root<EzcRequestHeader> header = cq.from(EzcRequestHeader.class);
 	        Join<EzcRequestHeader, EzcRequestDealers>  dealerJoin = header.join ("ezcRequestDealers");
 	        List<Predicate> predicates = new ArrayList<Predicate>();
-	        if(reportSelector.getType() != null)
+	        if(reportSelector.getType() != null) 
 	        	predicates.add(cb.equal(header.get("erhReqType"), reportSelector.getType()));
 	        if(reportSelector.getFromDate() != null && reportSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), reportSelector.getFromDate(), reportSelector.getToDate()));
 	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), reportSelector.getStatus()));
+	        if(reportSelector.getDispStatus() != null)
+	        	predicates.add(cb.equal(header.get("erhDispatchFlag"), reportSelector.getDispStatus()));
 	        cq.where(predicates.toArray(new Predicate[0]));
 	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),header.get("erhStatus"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"),dealerJoin.get("erdMeetStatus"));
 	        Query query = em.createQuery(cq);

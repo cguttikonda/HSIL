@@ -183,6 +183,7 @@ public class TpmServiceImpl implements ITPMService{
 		  ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 		  ezReqHeader.getEzcComments().addAll(ezcComments);
 		  ezReqHeader.setErhStatus("APPROVED");
+		  ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 		  for(RequestMaterials tempItem : ezReqMatList) {
 		      Character c1 = new Character('N'); 
 			  if(c1.equals(tempItem.getIsNew()))
@@ -291,6 +292,11 @@ public class TpmServiceImpl implements ITPMService{
 				
 			}
 		
+		}
+
+		@Override
+		public List<Object[]> getMeetDetailsById(String docId) {
+			return reqHeaderRepo.getMeetDetailsById(docId);
 		}
 
 		

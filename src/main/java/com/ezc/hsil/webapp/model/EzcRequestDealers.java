@@ -28,9 +28,9 @@ public class EzcRequestDealers implements java.io.Serializable {
 	private Integer id;
 	private EzcRequestHeader ezcRequestHeader;
 	private String erdDealerCode;
-	private String erdDealerName;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private String erdDealerName;	
 	private String erdMeetId;
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date erdMeetDate;
 	private Integer erdNoOfAttendee;
 	private String erdInstructions;

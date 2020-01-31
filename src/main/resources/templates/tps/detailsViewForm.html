@@ -46,11 +46,11 @@
                <div class=row>	
               <label class="col-lg-2 control-label">City of the meet</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><input th:field="*{reqHeader.erhCity}"  placeholder="" class="form-control validate[required]"   type="text" readonly></div>
+                 <div class="input-group"><span th:text="*{reqHeader.erhCity}"></span></div>
               </div>
               <label class="col-lg-2 control-label">Venue</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><input th:field="*{reqHeader.erhVenue}"  placeholder="" class="form-control validate[required]"   type="text" readonly></div>
+                 <div class="input-group"><span th:text="*{reqHeader.erhVenue}"></span></div>
                  
                  
               </div>
@@ -62,7 +62,7 @@
               </div>
               <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]" type="number" readonly></div>
+                 <div class="input-group"><i class="fa fa-rupee"></i><span th:text="*{reqHeader.erhCostIncured}"></span></div>
               </div>
            </div>
            
@@ -108,7 +108,7 @@
                 	
 						<td data-title="retailer">
 							<!-- <input type="text" class="form-control" name="retailer" th:id="${'retailer_'+itemStat1.index}" th:value="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"/> -->
-							<input type="text" class="form-control validate[required]" th:field="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}" readonly/>
+							<span th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></span>
 							
 						</td>
 						

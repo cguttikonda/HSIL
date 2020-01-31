@@ -36,6 +36,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDto;
+import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -60,6 +61,7 @@ public class TPSController {
 	 
 	 @InitBinder
 	    public void initBinder(WebDataBinder binder) {
+		    binder.setAutoGrowCollectionLimit(2000);
 	        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
 	    }
 	@RequestMapping("/tps/add")
@@ -73,6 +75,8 @@ public class TPSController {
 			
 		}
     	model.addAttribute("distList",masterService.findAll());
+    	List<EzPlaceMaster> placeList = masterService.findAllCities();
+    	tpsRequestDto.setPlaceList(placeList);
         model.addAttribute("tpsRequestDto",tpsRequestDto);
         return "tps/tpsForm";
 
@@ -138,7 +142,7 @@ public class TPSController {
 	    	}
 	    }
 	   @RequestMapping(value = "/tps/appr-tps-post", method = RequestMethod.POST)
-		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId) {
+		public @ResponseBody String approveTpsRequest(@RequestParam String id,@RequestParam(value = "comments", required = false) String  comments,@RequestParam(value = "apprMat", required = false) String [] apprMat,@RequestParam(value = "apprQty", required = false) Integer [] apprQty,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore) {
 		
 			EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
@@ -183,6 +187,7 @@ public class TPSController {
 			}
 			ezcRequestHeader.setRequestMaterials(reqMatSet);
 			ezcRequestHeader.setEzcComments(commSet);
+			ezcRequestHeader.setErhOutStore(outStore);
 			tpsService.approveTPSRequest(ezcRequestHeader);
 			return "ok"; 
 		}
@@ -328,7 +333,7 @@ public class TPSController {
 	    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
 	    	ArrayList<String> typeList=new ArrayList<String>();
 	    	typeList.add("TPS");
-	    	typeList.add("BD");
+	    	
 	    	ListSelector listSelector = new ListSelector();
 	    	//listSelector.setTypeList(typeList);
 	    	//listSelector.setType("TPS");

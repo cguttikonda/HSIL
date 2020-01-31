@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzPlaceMaster;
 
 public class TpmRequestDto implements java.io.Serializable {
 
@@ -38,6 +39,7 @@ public class TpmRequestDto implements java.io.Serializable {
 	private String erhInstructions;
 
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
+	private List<EzPlaceMaster> placeList=new ArrayList<EzPlaceMaster>();
 	
 	@Valid
 	private List<TPMMeetDto> meetList=new ArrayList<TPMMeetDto>();
@@ -123,6 +125,14 @@ public class TpmRequestDto implements java.io.Serializable {
 
 	public void setMeetList(List<TPMMeetDto> meetList) {
 		this.meetList = meetList;
+	}
+
+	public List<EzPlaceMaster> getPlaceList() {
+		return placeList;
+	}
+
+	public void setPlaceList(List<EzPlaceMaster> placeList) {
+		this.placeList = placeList;
 	}
 	
 	

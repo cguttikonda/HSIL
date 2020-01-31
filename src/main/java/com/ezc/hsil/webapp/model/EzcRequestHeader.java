@@ -58,6 +58,8 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private Double erhCostIncured;
 	private Character erhDispatchFlag;
 	private Date erhDispDate;
+	private String erhOutStore;
+	
 	private Set<EzcRequestItems> ezcRequestItems = new HashSet<EzcRequestItems>(0);
 	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
 	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);
@@ -349,8 +351,17 @@ public class EzcRequestHeader implements java.io.Serializable {
 	public void setErhDispDate(Date erhDispDate) {
 		this.erhDispDate = erhDispDate;
 	}
-	
 
+	@Column(name = "ERH_OUT_STORE",length=20)
+	public String getErhOutStore() {
+		return erhOutStore;
+	}
+
+	public void setErhOutStore(String erhOutStore) {
+		this.erhOutStore = erhOutStore;
+	}
+	
+ 
 	
 	
 	

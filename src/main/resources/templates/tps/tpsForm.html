@@ -19,6 +19,9 @@
     <div class="box">
     	     <form name="myForm" data-toggle="validator" role="form" th:object="${tpsRequestDto}" th:action="@{/tps/saveRequest}" method="post">
             <div class="box-body">
+            	 <th:block th:each="row, place : *{placeList}">
+                	<input type="hidden" th:field="*{placeList[__${place.index}__].city}"/>
+                </th:block> 
                  <div th:class="${#fields.hasErrors('distrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="distrubutor">Distributor</label>
                       <select class="form-control select2" th:field="*{distrubutor}" id="distrubutor">
@@ -28,14 +31,22 @@
 	              <span class="help-block" th:if="${#fields.hasErrors('distrubutor')}" th:errors="*{distrubutor}"></span>
 	                
                 </div>
-                 <div th:class="${#fields.hasErrors('city')}? 'form-group has-error' : 'form-group'">
+                <!--  <div th:class="${#fields.hasErrors('city')}? 'form-group has-error' : 'form-group'">
                     <label for="city">City</label>
                     <input type="text"  class="form-control" th:field="*{city}" id="city" />
                    <span class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
+                </div> -->
+                <div th:class="${#fields.hasErrors('city')}? 'form-group has-error' : 'form-group'">
+                    <label for="city">City</label>
+                      <select class="form-control select2" th:field="*{city}">
+						<option selected value="">---enter city---</option>
+						<option th:selected="${city == place.city}" th:each="place : *{placeList}" th:value="${place.city}" th:text="${place.city}"></option>
+	                </select>
+                    <span class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></span>
                 </div>
                 <div th:class="${#fields.hasErrors('noOfRetailers')}? 'form-group has-error' : 'form-group'">
                     <label for="noOfRetailers">No of Retailers</label>
-                    <input type="text" class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
+                    <input type="number" min=1 class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
                       <span class="help-block" th:if="${#fields.hasErrors('noOfRetailers')}" th:errors="*{noOfRetailers}"></span>
                 </div>
                    <div  class="form-group">
