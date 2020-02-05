@@ -95,17 +95,17 @@ public class PersistenceJPAConfig {
 		return dataSource;
 	}
 
-	@Bean
-	public JpaTransactionManager transactionManager() {
-		final JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
-		return transactionManager;
-	}
-
-	@Bean
-	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
-		return new PersistenceExceptionTranslationPostProcessor();
-	}
+//	@Bean
+//	public JpaTransactionManager transactionManager() {
+//		final JpaTransactionManager transactionManager = new JpaTransactionManager();
+//		transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+//		return transactionManager;
+//	}
+//
+//	@Bean
+//	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+//		return new PersistenceExceptionTranslationPostProcessor();
+//	}
 
 	protected Properties additionalProperties() {
 		final Properties hibernateProperties = new Properties();

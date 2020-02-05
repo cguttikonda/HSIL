@@ -3,8 +3,10 @@ package com.ezc.hsil.webapp.config;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -30,6 +32,7 @@ import com.ezc.hsil.webapp.security.CustomRememberMeServices;
 
 @Configuration
 @EnableWebSecurity
+@PropertySource({ "classpath:messages_en.properties" })
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	 @Autowired
@@ -80,6 +83,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers("/resources/**");
     }
 
+    @Value("${message.sessionExpired}") 
+    String sessionExpired;
+    
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
        // @formatter:off
@@ -87,7 +93,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //        	.csrf().disable() 
         	     .authorizeRequests()
         	     .antMatchers("/bootstrap/**", "/dist/**", "/plugins/**").permitAll()
-                .antMatchers("/login*","/login*", 
+                .antMatchers("/login*","/login*","/favicon.ico" ,
                 		//"/logout*",
                 		"/signin/**", "/signup/**", "/customLogin",
                         "/user/registration*", "/registrationConfirm*", "/expiredAccount*", "/registration*",
@@ -112,7 +118,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .permitAll()
                 .and()
             .sessionManagement()
-                .invalidSessionUrl("/invalidSession.html")
+                .invalidSessionUrl("/login?message="+sessionExpired)
                 .maximumSessions(1).sessionRegistry(sessionRegistry()).and()
                 .sessionFixation().none()
             .and()
