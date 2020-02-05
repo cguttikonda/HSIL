@@ -1,13 +1,19 @@
 package com.ezc.hsil.webapp.controller;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,9 +23,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ezc.hsil.webapp.dto.PasswordDto;
 import com.ezc.hsil.webapp.dto.UserDto;
+import com.ezc.hsil.webapp.error.InvalidOldPasswordException;
 import com.ezc.hsil.webapp.model.EzStates;
 import com.ezc.hsil.webapp.model.Roles;
 import com.ezc.hsil.webapp.model.UserForm;
@@ -30,7 +39,9 @@ import com.ezc.hsil.webapp.model.WorkGroup_Users;
 import com.ezc.hsil.webapp.model.Work_Groups;
 import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
 import com.ezc.hsil.webapp.security.ActiveUserStore;
+import com.ezc.hsil.webapp.security.ISecurityUserService;
 import com.ezc.hsil.webapp.service.IUserService;
+import com.ezc.hsil.webapp.util.GenericResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,6 +61,19 @@ public class UserController {
     
     @Autowired
     private IUserService iUserService;
+    
+    @Autowired
+    private MessageSource messages;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private ISecurityUserService securityService;
+    
+    @Autowired
+    private Environment env;
+    
 
     @RequestMapping(value = "/loggedUsers", method = RequestMethod.GET)
     public String getLoggedUsers(final Locale locale, final Model model) {
@@ -254,4 +278,73 @@ public class UserController {
     	else
             return "Y";
     }
+    
+    // Reset password
+    @RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse resetPassword(final HttpServletRequest request, @RequestParam("email") final String userEmail) {
+        final Users user = userService.findUserByEmail(userEmail);
+        if (user != null) {
+            final String token = UUID.randomUUID().toString();
+            userService.createPasswordResetTokenForUser(user, token);
+            mailSender.send(constructResetTokenEmail(getAppUrl(request), request.getLocale(), token, user));
+        }
+        return new GenericResponse(messages.getMessage("message.resetPasswordEmail", null, request.getLocale()));
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
+    public String showChangePasswordPage(final Locale locale, final Model model, @RequestParam("id") final long id, @RequestParam("token") final String token) {
+        final String result = securityService.validatePasswordResetToken(id, token);
+        if (result != null) {
+            model.addAttribute("message", messages.getMessage("auth.message." + result, null, locale));
+            return "redirect:/login?lang=" + locale.getLanguage();
+        }
+        return "redirect:/updatePassword.html?lang=" + locale.getLanguage();
+    }
+
+    @RequestMapping(value = "/savePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse savePassword(final Locale locale, @Valid PasswordDto passwordDto) {
+        final Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        userService.changeUserPassword(user, passwordDto.getNewPassword());
+        return new GenericResponse(messages.getMessage("message.resetPasswordSuc", null, locale));
+    }
+
+    // change user password
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public GenericResponse changeUserPassword(final Locale locale, @Valid PasswordDto passwordDto) {
+        final Users user = userService.findUserByEmail(((Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getEmail());
+        if (!userService.checkIfValidOldPassword(user, passwordDto.getOldPassword())) {
+            throw new InvalidOldPasswordException();
+        }
+        userService.changeUserPassword(user, passwordDto.getNewPassword());
+        return new GenericResponse(messages.getMessage("message.updatePasswordSuc", null, locale));
+    }
+
+    
+
+    /******************Non API Methods**********************/
+    
+    private String getAppUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
+    
+
+
+    private SimpleMailMessage constructResetTokenEmail(final String contextPath, final Locale locale, final String token, final Users user) {
+        final String url = contextPath + "/user/changePassword?id=" + user.getId() + "&token=" + token;
+        final String message = messages.getMessage("message.resetPassword", null, locale);
+        return constructEmail("Reset Password", message + " \r\n" + url, user);
+    }
+
+    private SimpleMailMessage constructEmail(String subject, String body, Users user) {
+        final SimpleMailMessage email = new SimpleMailMessage();
+        email.setSubject(subject);
+        email.setText(body);
+        email.setTo(user.getEmail());
+        email.setFrom(env.getProperty("support.email"));
+        return email;
+    }
+
 }
