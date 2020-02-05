@@ -156,7 +156,7 @@
 					class="fa fa-angle-left pull-right"></i>
 			</span>
 		</a>
-			<ul class="treeview-menu">
+			<ul class="treeview-menu"> 
 				<li class=""><a href="#" th:href="@{/reports/teamTPMReport}"><i class="fa fa-circle-o"></i> TPM History</a></li>
 				<li sec:authorize="hasAnyRole('ROLE_ZN_HEAD','ADMIN')" class=""><a href="#" th:href="@{/reports/teamTPSReport}"><i class="fa fa-circle-o"></i> TPS History</a></li>
 				<li class=""><a href="#" th:href="@{/reports/stockavailbydept}"><i class="fa fa-circle-o"></i> Stock Report</a></li>
@@ -176,7 +176,10 @@
 				<li><a href="#" th:href="@{/tpm/tpmRequestList}"><i class="fa fa-circle-o"></i>Scheduled TPM</a></li>
 			</ul></li>
 			 -->
-		
+		<li  sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT','ADMIN')">
+			<a th:href="@{/faq/faqAll}"><i class="fa fa-question-circle"></i> <span>FAQs</span> 
+		</a>
+		</li>
 		</ul>
 </section>
 <!-- /.sidebar -->

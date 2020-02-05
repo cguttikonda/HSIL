@@ -248,7 +248,7 @@ public class BDController {
 	        if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
 	    	{
 	    		
-	        	return "tps/tpsReqListSts"; 
+	        	return "tps/tpsRequestList"; 
 	    	}
 	    	else 
 	    	{

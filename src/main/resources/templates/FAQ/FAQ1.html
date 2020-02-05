@@ -1,0 +1,208 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>FAQ</title>
+    
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>FAQ</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> FAQ</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	
+    <div class="box">
+ 
+     <div class="box-body" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_BD_MKT')">
+     <div id="faq" role="tablist" aria-multiselectable="true">
+			
+			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
+			<div class="panel-heading" role="tab" id="questionOne">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne">
+			HOW TO CREATE TPS Request?
+			</a>
+			</h5>
+			</div>
+			<div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Follow the link
+			TPS Request-->Create
+			<div><img th:src="@{/resources/images/TPSReq.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>
+
+			
+			<div class="panel panel-primary" >
+			<div class="panel-heading" role="tab" id="questionOne">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerBD">
+			HOW TO CREATE BD Request?
+			</a>
+			</h5>
+			</div>
+			<div id="answerBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionBD">
+			<div class="panel-body">
+			Follow the link
+			TPS Request-->Request for Additional Gifts
+			<div><img th:src="@{/resources/images/BDReq.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>
+
+			<div class="panel panel-primary">
+			<div class="panel-heading" role="tab" id="questionTwo">
+			<h5 class="panel-title">
+			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
+			How to Acknowledge the request??
+			
+			</a>
+			
+			</h5>
+			</div>
+			<div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
+			<div class="panel-body">
+			Click on Dispatch Acknowledge link.
+			<div><img th:src="@{/resources/images/acknowledge.png}" alt="User Image" /></div>
+			
+			</div>
+			</div>
+			</div>
+
+
+		</div>
+     
+     </div>
+          <div class="box-body" sec:authorize="hasAnyRole('ROLE_REQ_CR')">
+     <div id="faq" role="tablist" aria-multiselectable="true">
+			
+			<div class="panel panel-primary" >
+			<div class="panel-heading" role="tab" id="questionOne">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne">
+			HOW TO CREATE TPM Request?
+			</a>
+			</h5>
+			</div>
+			<div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Follow the link
+			TPM Request-->Create
+			<div><img th:src="@{/resources/images/TPMReq.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>
+
+			
+			<div class="panel panel-primary">
+			<div class="panel-heading" role="tab" id="questionTwo">
+			<h5 class="panel-title">
+			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
+			How to Acknowledge the request??
+			
+			</a>
+			
+			</h5>
+			</div>
+			<div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
+			<div class="panel-body">
+			Click on Dispatch Acknowledge link.
+			<div><img th:src="@{/resources/images/acknowledge.png}" alt="User Image" /></div>
+			
+			</div>
+			</div>
+			</div>
+
+
+		</div>
+     
+     </div>
+    <div class="box-body" sec:authorize="hasAnyRole('ADMIN')">
+   	  <div id="faq" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-primary" >
+			<div class="panel-heading" role="tab" id="questionOne">
+				<h5 class="panel-title">
+				<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne">
+				How To Add Distributors?
+				</a>
+				</h5>
+			</div>
+			<div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+				<div class="panel-body">
+				Follow the link
+				<b>MasterData-->Distributor-->AddDistributor</b>
+				<div><img th:src="@{/resources/images/disData.png}" alt="User Image" /></div>
+				<b>To Upload Mass Data</b>
+				<div><img th:src="@{/resources/images/UploadDis.png}" alt="User Image" /></div>
+				</div>
+			
+			</div>
+		</div>
+
+			
+		<div class="panel panel-primary">
+			<div class="panel-heading" role="tab" id="questionTwo">
+			<h5 class="panel-title">
+			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
+			How To Add Stock?
+			
+			</a>
+			
+			</h5>
+			</div>
+			<div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
+			<div class="panel-body">
+				Follow the link
+				<b>MasterData-->Stock-->AddStock</b>
+				<div><img th:src="@{/resources/images/stk.png}" alt="User Image" /></div>
+				<b>To Upload Mass Data</b>
+				<div><img th:src="@{/resources/images/stkUpl.png}" alt="User Image" /></div>
+
+			
+			</div>
+			</div>
+			</div>
+
+			<div class="panel panel-primary">
+			<div class="panel-heading" role="tab" id="questionTwo">
+			<h5 class="panel-title">
+			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answer" aria-expanded="false" aria-controls="answer">
+			How to Create User?
+			
+			</a>
+			
+			</h5>
+			</div>
+			<div id="answer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
+			<div class="panel-body">
+				Follow the link
+				<b>MasterData-->User Creation-->Add</b>
+				<div><img th:src="@{/resources/images/UserCreation.png}" alt="User Image" /></div>
+			
+			</div>
+			</div>
+			</div>
+
+
+		</div>
+     
+     </div>
+     </div>
+</div>
+
+
+
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+
+   </script>
+</div>
+</body>
+</html>
