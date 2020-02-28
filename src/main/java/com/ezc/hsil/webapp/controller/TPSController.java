@@ -302,19 +302,19 @@ public class TPSController {
 	    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
 	    	ArrayList<String> typeList=new ArrayList<String>();
 	    	typeList.add("TPS");
-	    	typeList.add("BD");
+	    	//typeList.add("BD");
 	    	if(listSelector == null || listSelector.getFromDate() == null)
 	    	{
 	    		Date todayDate = new Date();
 	    		Calendar c = Calendar.getInstance(); 
 	    		c.setTime(todayDate); 
 	    		c.add(Calendar.MONTH, -3);
-	    		listSelector = new ListSelector();
-	    		listSelector.setType("TPS");
+	    		listSelector = new ListSelector();	    		
 	    		listSelector.setFromDate(c.getTime());
 	    		listSelector.setToDate(todayDate); 
 	    		//listSelector.setTypeList(typeList);
 	    	}
+	    	listSelector.setType("TPS");
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
 			ArrayList<String> userList=new ArrayList<String>();
@@ -336,7 +336,7 @@ public class TPSController {
 	    	
 	    	ListSelector listSelector = new ListSelector();
 	    	//listSelector.setTypeList(typeList);
-	    	//listSelector.setType("TPS");
+	    	listSelector.setType("TPS");
 	    	listSelector.setStatus(status);
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();

@@ -387,7 +387,7 @@ public class BDController {
 	        model.addAttribute("reqDto", reqDto);
 	        model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        model.addAttribute("outStoreList", outStoreList);
-	       	return "BD/bdDetailsForm";
+	       	return "bd/bdDetailsForm";
 	       
 
 	    }
@@ -437,7 +437,7 @@ public class BDController {
 			reqDto.setReqHeader(reqDto.getReqHeader());
 			model.addAttribute("disabledStr", disabledStr);
 	        model.addAttribute("reqDto", reqDto); 
-	        return "BD/bdDetailsForm";
+	        return "bd/bdDetailsForm";
 
 	    }
 	  @RequestMapping(value = "/bd/saveDetails", method = RequestMethod.POST)
