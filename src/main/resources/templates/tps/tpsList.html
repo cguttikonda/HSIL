@@ -411,6 +411,7 @@ function checkQty()
 	{
 		remainVal=attendee-leftOverStk;
 	}
+	if(remainVal<0)remainVal=0;
 		$('#selQty').validationEngine('showPrompt', 'Recommended quantity '+remainVal, 'pass');
 		return ;
 	

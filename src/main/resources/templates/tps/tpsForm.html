@@ -46,7 +46,7 @@
                 </div>
                 <div th:class="${#fields.hasErrors('noOfRetailers')}? 'form-group has-error' : 'form-group'">
                     <label for="noOfRetailers">No of Retailers</label>
-                    <input type="number" min=1 class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
+                    <input type="number" min=1 autocomplete="off" class="form-control" th:value="*{noOfRetailers}" th:field="*{noOfRetailers}" id="noOfRetailers"  th:onchange="loadRetailers(this)"/>
                       <span class="help-block" th:if="${#fields.hasErrors('noOfRetailers')}" th:errors="*{noOfRetailers}"></span>
                 </div>
                    <div  class="form-group">
@@ -56,7 +56,7 @@
                   
                    	<td>
                    	 <div th:class="${#fields.hasErrors('dealerName')}? 'form-group has-error' : 'form-group'">
-							<input type="text"  th:field="${tpsRequestDto.dealerName[__${itemStat.index}__].erdDealerName}" id="dealerName[__${itemStat.index}__].erdDealerName">
+							<input type="text"  autocomplete="off" th:field="${tpsRequestDto.dealerName[__${itemStat.index}__].erdDealerName}" id="dealerName[__${itemStat.index}__].erdDealerName">
 						 <span class="help-block" th:if="${#fields.hasErrors('dealerName')}" th:errors="*{dealerName}"></span>
 						</div>	
 						</td>
@@ -72,7 +72,7 @@
 					  <div class="input-group-addon">
 					    <i class="fa fa-calendar"></i>
 					  </div>
-					  <input type="text"  class="form-control pull-right" th:field="*{plannedOn}" id="plannedOn">
+					  <input type="text"  autocomplete="off"  class="form-control pull-right" th:field="*{plannedOn}" id="plannedOn">
 					  <span class="help-block" th:if="${#fields.hasErrors('plannedOn')}" th:errors="*{plannedOn}"></span>
 					</div>
                 </div>

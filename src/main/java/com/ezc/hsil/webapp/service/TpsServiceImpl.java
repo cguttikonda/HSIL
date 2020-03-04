@@ -37,7 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class TpsServiceImpl implements ITPSService {
 	
-	
+	 @Autowired
+	 private  UseLeftOverStockSer useLeftOverStk;
 	 @Autowired
 	    private RequestHeaderRepo reqHeaderRepo;
 	 @Autowired
@@ -166,6 +167,11 @@ public class TpsServiceImpl implements ITPSService {
 	  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
 	  int matCnt = 0;
 	  ezReqHeader.setEzcComments(commSet);
+	 
+	
+	  int expAttendee=ezReqHeader.getErhNoOfAttendee();
+	  
+	  log.debug("expAttendee"+expAttendee); 
 	  for(EzcComments tempItem : commSet) { 
 		  tempItem.setEzcRequestHeader(ezReqHeader);	
 		  commRepo.save(tempItem); 
@@ -185,15 +191,21 @@ public class TpsServiceImpl implements ITPSService {
 		   {
 			   requestMaterials.setLeftOverQty(apprQty-matCnt);
 			   requestMaterials.setUsedQty(matCnt);
+			   matCnt=0;
 		   }
 		   else
 		   {
 			   requestMaterials.setUsedQty(apprQty);
-			   matCnt = matCnt-apprQty;
+			   if(matCnt>0)
+				   matCnt = matCnt-apprQty;
 		   }
 		} 
-	  
-
+	   if(matCnt>0)
+	   		useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+	  	log.debug("expAttendee"+expAttendee); 
+			
+		   
+	   
 	}
 	@Override
 	public void rejectTPSRequest(EzcRequestHeader ezcRequestHeader) {

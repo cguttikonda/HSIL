@@ -35,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class TpmServiceImpl implements ITPMService{
 	
+		@Autowired
+		private  UseLeftOverStockSer useLeftOverStk;
 	    @Autowired
 	    private RequestHeaderRepo reqHeaderRepo;
 	    
@@ -115,37 +117,54 @@ public class TpmServiceImpl implements ITPMService{
 				  //reqDtlRep.save(tempItem);
 			  }
 			}
+		  int expAttendee=ezReqHeader.getErhNoOfAttendee();
 		  
+		  log.debug("expAttendee"+expAttendee); 
+		  int meetCnt=0;
 		  for(EzcRequestDealers tempItem : reqDealersSet) {
+			  log.debug("dealer"+ezcRequestDealers.getId()+"tempItem"+tempItem.getId());
 			  if(ezcRequestDealers.getId()==tempItem.getId())
-			  {
+			  {log.debug("aytte"+tempItem.getErdNoOfAttendee());
+			      expAttendee=tempItem.getErdNoOfAttendee();
 				  tempItem.setErdDealerName(ezcRequestDealers.getErdDealerName());
 				  tempItem.setErdMeetDate(ezcRequestDealers.getErdMeetDate());
 				  tempItem.setErdMeetStatus("COMPLETED");
+				  meetCnt++;
 			  }
 			  if(!"COMPLETED".equals(tempItem.getErdMeetStatus()))
 			  {
 				  isCompleted = false;
 			  }
 			}
-		 
-		  if(isCompleted)
+		 log.debug("meetCnt"+meetCnt+"expAttendee"+expAttendee);
+		 if(isCompleted) ezReqHeader.setErhStatus("SUBMITTED");
+		  if(meetCnt==1)
 		  {
-			  ezReqHeader.setErhStatus("SUBMITTED");
+			  
 			  int matCnt = ezReqItems.size();
 			   for(RequestMaterials requestMaterials : reqMatSet) { 
 				   int apprQty =requestMaterials.getApprQty();
+				   int usedQty =requestMaterials.getUsedQty();
+				   log.debug("apprQty"+apprQty+"usedQty"+usedQty+"matCnt"+matCnt);
+				   if(apprQty==usedQty)continue;
+				   
 				   if(apprQty > matCnt)
 				   {
 					   requestMaterials.setLeftOverQty(apprQty-matCnt);
 					   requestMaterials.setUsedQty(matCnt);
+					   matCnt=0;
 				   }
 				   else
 				   {
 					   requestMaterials.setUsedQty(apprQty);
-					   matCnt = matCnt-apprQty;
+					   if(matCnt>0)
+						   matCnt = matCnt-apprQty;
 				   }
 				}
+			   log.debug("matCnt"+matCnt);
+			   if(matCnt>0)
+				   useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+			   log.debug("matCnt"+matCnt); 
 		  }
 		   
 		  

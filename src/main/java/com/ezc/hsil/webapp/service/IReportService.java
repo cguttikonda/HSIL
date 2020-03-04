@@ -28,4 +28,5 @@ public interface IReportService {
 	public List<Object[]> getTPSMonthWise(List<String> userList);
 	public List<Object[]> getBDMonthWise(List<String> userList);
 	public List<Object[]> getAllMKTUsers();
+	
 }

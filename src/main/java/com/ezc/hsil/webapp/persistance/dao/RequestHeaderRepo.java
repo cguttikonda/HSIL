@@ -53,12 +53,13 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getTPSMonthWise(List<String> userList);
 	@Query(nativeQuery = true,value="SELECT MONTHNAME(ERH_REQUESTED_ON) as mon, COUNT(*),SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header   where ERH_REQ_TYPE='BD' and erh_requested_by in :userList")
 	List<Object[]> getBDMonthWise(List<String> userList);
-	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhReqType='BD' and a.erhStatus='SUBMITTED' and b.leftOverQty > 0")
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhReqType='BD'  and b.leftOverQty > 0 ORDER BY b.id")
 	List<Object[]> getBDLeftOverStock();
 	
 	@Query(value="select b.erdMeetId,b.erdMeetDate,b.erdDealerName,a.eriPlumberName,a.eriContact,a.eriDob,a.eriDoa from EzcRequestItems a,EzcRequestDealers b where a.eriDealerId=b.id and a.ezcRequestHeader.id = :docId")
 	List<Object[]> getMeetDetailsById(String docId);
-	
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and b.leftOverQty > 0 and b.matCode= :matCode and a.erhRequestedBy= :reqBy")
+	List<Object[]> UseLeftOverStockSer(String reqBy, String matCode);
 	
 	
 }

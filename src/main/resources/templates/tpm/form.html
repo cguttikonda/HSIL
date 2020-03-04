@@ -48,12 +48,12 @@
                     <span class="help-block" th:if="${#fields.hasErrors('erhCity')}" th:errors="*{erhCity}"></span>
                 </div>
                 <div th:class="${#fields.hasErrors('erhConductedOn')}? 'form-group has-error' : 'form-group'">
-                    <label for="erhConductedOn">Conducted On</label>
+                    <label for="erhConductedOn">Proposed On</label>
 					    <div class="input-group date">
 					  <div class="input-group-addon">
 					    <i class="fa fa-calendar"></i>
 					  </div>
-					  <input type="text"  class="form-control pull-right" th:field="*{erhConductedOn}" id="erhConductedOn">
+					  <input type="text" autocomplete="off" class="form-control pull-right" th:field="*{erhConductedOn}" id="erhConductedOn">
 					</div>
 					<span class="help-block" th:if="${#fields.hasErrors('erhConductedOn')}" th:errors="*{erhConductedOn}"></span>
                 </div>
@@ -95,10 +95,10 @@
 					          </div>
 						</td>
 						<td>
-							<input type="text"  class="form-control" th:field="*{meetList[__${itemStat.index}__].retailer}" />
+							<input type="text"  autocomplete="off" class="form-control" th:field="*{meetList[__${itemStat.index}__].retailer}" />
 						</td>
 						<td>
-							<input type="text"  class="form-control" th:field="*{meetList[__${itemStat.index}__].instructions}" />
+							<input type="text"  autocomplete="off" class="form-control" th:field="*{meetList[__${itemStat.index}__].instructions}" />
 						</td>
                 	</tr>
                 	</tbody>

@@ -121,7 +121,7 @@
                 	</tbody>
                 </table>
       </div>
-      <div class="table-responsive">          
+   <!--   <div class="table-responsive">          
                    <table class="col-sm-12 table table-bordered table-condensed">
 					<thead>
 						<tr>
@@ -145,7 +145,7 @@
 					</table>
     
     
-                </div>
+                </div> --> 
                 
     	<div class="input-group">
                 <textarea cols=100 class="form-control" th:field="*{recordedText}" id="note-textarea" placeholder="click on speak icon to start voice recognition." rows="6"></textarea>
@@ -183,14 +183,14 @@
                          <option th:each="row, itemStat1 : ${reqDto.ezcRequestDealers}" th:text="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}" th:value="${reqDto.ezcRequestDealers[__${itemStat1.index}__].erdDealerName}"></option>
                  	 </select>
 					  </td> -->
-						<td data-title="Name Of Plumber"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
-						<td data-title="Contact No"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+						<td data-title="Name Of Plumber"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
+						<td data-title="Contact No"><input type="number" autocomplete="off" onKeyPress="if(this.value.length==10) return false;" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
+							<input type="text" autocomplete="off" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
 							</div>
 						</td>
 						<td data-title="D.O.A">
@@ -198,7 +198,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
+							<input type="text"  autocomplete="off" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
 							</div>
 						</td>
                 		<td data-title=""> 

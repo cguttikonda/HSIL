@@ -122,7 +122,7 @@ public class TPSController {
 	    	ezRequestHeader.setErhConductedOn(reqDto.getPlannedOn());
 	    	ezRequestHeader.setErhCreatedGroup("TPS");
 	    	ezRequestHeader.setErhDistrubutor(reqDto.getDistrubutor());
-	    	ezRequestHeader.setErhNoOfAttendee(reqDto.getNoOfRetailers());
+	    	ezRequestHeader.setErhNoOfAttendee(reqDto.getNoOfAttendee());
 	    	ezRequestHeader.setErhReqType("TPS");
 	    	ezRequestHeader.setErhRequestedOn(new Date());
 	    	ezRequestHeader.setErhState("TEST"); 

@@ -233,7 +233,7 @@ public class MasterDataController {
     }
 
 	@PostMapping("/distUpload")
-	public void uploadDistributor(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+	public String uploadDistributor(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
 		List<DistributorMaster> distList = new ArrayList<DistributorMaster>();
 		List<Object[]> lisObjArr= ezExcelUtil.readExcel(reapExcelDataFile.getInputStream(),reapExcelDataFile.getOriginalFilename());
 		 for(Object[] objArr:lisObjArr)
@@ -247,6 +247,7 @@ public class MasterDataController {
 				 distList.add(distMaster);
 		 }
 		 masterService.addDistributorMultiple(distList);
+		 return "redirect:/master/listDis";
 	    }
 	@PostMapping("/matUpload")
 	public String uploadMaterial(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
