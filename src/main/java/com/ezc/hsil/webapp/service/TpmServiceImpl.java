@@ -108,15 +108,20 @@ public class TpmServiceImpl implements ITPMService{
 			}
 		  boolean isCompleted = true; 
 		  EzcRequestDealers ezcRequestDealers = tpmRequestDetailDto.getMeetDealer();
+		  int matCnt=0;
 		  for(EzcRequestItems tempItem : ezReqItemList) {
 			  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
 			  {
 				  tempItem.setEriDealerId(ezcRequestDealers.getId());
 				  tempItem.setEzcRequestHeader(ezReqHeader);
 				  ezReqItems.add(tempItem);
+				  matCnt++;
 				  //reqDtlRep.save(tempItem);
 			  }
 			}
+		  int itemCount = ezReqItemList.size();
+		  
+		  log.debug("itemCount"+itemCount+"matCnt"+matCnt);
 		  int expAttendee=ezReqHeader.getErhNoOfAttendee();
 		  
 		  log.debug("expAttendee"+expAttendee); 
@@ -128,6 +133,7 @@ public class TpmServiceImpl implements ITPMService{
 			      expAttendee=tempItem.getErdNoOfAttendee();
 				  tempItem.setErdDealerName(ezcRequestDealers.getErdDealerName());
 				  tempItem.setErdMeetDate(ezcRequestDealers.getErdMeetDate());
+				  tempItem.setErdCostIncured(ezcRequestDealers.getErdCostIncured());
 				  tempItem.setErdMeetStatus("COMPLETED");
 				  meetCnt++;
 			  }
@@ -141,24 +147,50 @@ public class TpmServiceImpl implements ITPMService{
 		  if(meetCnt==1)
 		  {
 			  
-			  int matCnt = ezReqItems.size();
+			  
+			 // int matCnt = ezReqItemList.size();
 			   for(RequestMaterials requestMaterials : reqMatSet) { 
 				   int apprQty =requestMaterials.getApprQty();
 				   int usedQty =requestMaterials.getUsedQty();
+				   int leftQty=requestMaterials.getLeftOverQty();
+				   if(matCnt==0)continue;
 				   log.debug("apprQty"+apprQty+"usedQty"+usedQty+"matCnt"+matCnt);
 				   if(apprQty==usedQty)continue;
 				   
 				   if(apprQty > matCnt)
 				   {
-					   requestMaterials.setLeftOverQty(apprQty-matCnt);
-					   requestMaterials.setUsedQty(matCnt);
+					  int remQty=0;
+					  
+					   if(leftQty>0)
+					   { 
+						   if(leftQty>matCnt)
+							   remQty=leftQty-matCnt;
+						   else
+						   {
+							   remQty=0;
+							   matCnt=matCnt-leftQty;
+						   }
+					   } 
+					  else
+						  remQty=apprQty-matCnt;
+						  
+					   requestMaterials.setLeftOverQty(remQty);
+					   requestMaterials.setUsedQty(apprQty-remQty);
 					   matCnt=0;
 				   }
 				   else
 				   {
+					  int prevLeftOvernt=requestMaterials.getLeftOverQty();
 					   requestMaterials.setUsedQty(apprQty);
+					   requestMaterials.setLeftOverQty(0);
 					   if(matCnt>0)
-						   matCnt = matCnt-apprQty;
+					   {
+						if(prevLeftOvernt>0)
+							matCnt = matCnt-prevLeftOvernt;
+						else
+							matCnt = matCnt-apprQty;
+					   }
+						   
 				   }
 				}
 			   log.debug("matCnt"+matCnt);

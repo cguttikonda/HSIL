@@ -43,7 +43,6 @@ public class EzcRequestItems implements java.io.Serializable {
 	private String erilocation;
 	private String eriGift;
 	private String eriProfDet;
-	private Double eriCostIncured;
 	private Integer eriDealerId;
 
 
@@ -64,7 +63,7 @@ public class EzcRequestItems implements java.io.Serializable {
 		this.erilocation = erilocation;
 		this.eriGift = eriGift;
 		this.eriGift = eriProfDet;
-		this.eriCostIncured = eriCostIncured;
+		
 	}
 
 	@Id
@@ -137,14 +136,7 @@ public class EzcRequestItems implements java.io.Serializable {
 	}
 
 	
-	@Column(name = "ERI_COST_INCURED")
-	public Double getEriCostIncured() {
-		return eriCostIncured;
-	}
-
-	public void setEriCostIncured(Double eriCostIncured) {
-		this.eriCostIncured = eriCostIncured;
-	}
+	
 	
 	@Column(name = "ERI_CONTACT", length = 10)
 	public String getEriContact() {

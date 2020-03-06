@@ -253,12 +253,13 @@ function openModal(modelType,distId){
 					backdrop: 'static'
 					
 				});
+				index=$('#tpmReqTable tr').length;;
 				$('#tpmReqTable').hide();
 				$("#addMatRow").click(function(){
 						if($("#appr-tpm-form").validationEngine('validate'))
 						{
 							$('#tpmReqTable').show();
-							$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+							$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" id="apprQty'+index+'" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
 							$('.deleteItem').click(function(){
 						    	$(this).closest("tr").remove();
 						    });
@@ -373,7 +374,13 @@ $(document).ready(function() {
 });
 function checkQty()
 {
-	
+	var rowCount = $('#tpmReqTable tr').length;
+	var addedVal=0;
+	for(var r=1;r<rowCount;r++)
+	{
+		//alert($("#apprQty"+r).val())
+		addedVal=addedVal+$("#apprQty"+r).val();
+	}
 	var leftOverStk=$("#leftOverStk").val();
 	var attendee=$("#attendee").val();
 	
@@ -386,6 +393,7 @@ function checkQty()
 	else
 	{
 		remainVal=attendee-leftOverStk;
+		remainVal=remainVal-addedVal;
 	}
 	if(remainVal<0)remainVal=0;
 		$('#selQty').validationEngine('showPrompt', 'Recommended quantity '+remainVal, 'pass');

@@ -24,7 +24,7 @@
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
-            	
+            	<input hidden="hidden" th:name="leftOverStk" th:value="${leftOverStk}">
             	<input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
             <div class=row>	
               <label class="col-lg-2 control-label">User Name</label>
@@ -41,10 +41,10 @@
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><span th:text="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}"></span></div>
               </div>
-            <!--   <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
+               <label class="col-lg-2 control-label">COST INCURED (F&B and others);</label>
               <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{reqHeader.erhCostIncured}"  placeholder="" class="form-control validate[required]"  type="number"></div>
-              </div> -->
+                 <div class="input-group"><span class="input-group-addon"><i class="fa fa-rupee"></i></span><input th:field="*{meetDealer.erdCostIncured}"  placeholder="" class="form-control validate[required]"  type="number"></div>
+              </div> 
            </div>
               <div class=row>
               <label class="col-lg-2 control-label">Meet</label>
@@ -70,6 +70,12 @@
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group">
                  	<div class="input-group"><input th:field="*{meetDealer.erdDealerName}"  placeholder="" class="form-control validate[required]"  type="text"></div>
+                 </div>
+              </div>
+               <label class="col-lg-2 control-label">Available Quantity</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group">
+                 	<span th:text="${leftOverStk}"></span>
                  </div>
               </div>
            </div>
@@ -144,7 +150,6 @@
                 	<tr>
                 		<th>Name Of Plumber</th>
                 		<th>Contact No</th>
-                		<th>Cost INCURED</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
                 		<th></th>
@@ -157,7 +162,6 @@
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
 						<td data-title="Name Of Plumber"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
 						<td data-title="Contact No"><input type="number" autocomplete="off"  class="form-control validate[required]" onKeyPress="if(this.value.length==10) return false;" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
-						<td data-title="Cost Incured"><input type="text" autocomplete="off"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriCostIncured}" /></td>
 						<td data-title="D.O.B"> 
 							<div class="input-group date">
 							<div class="input-group-addon">

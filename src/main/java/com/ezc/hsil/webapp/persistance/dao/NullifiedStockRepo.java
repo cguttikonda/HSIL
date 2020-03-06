@@ -7,3 +7,4 @@ import com.ezc.hsil.webapp.model.EzNullifiedStock;
 public interface NullifiedStockRepo extends JpaRepository<EzNullifiedStock, Integer>{
 
 }
+ 

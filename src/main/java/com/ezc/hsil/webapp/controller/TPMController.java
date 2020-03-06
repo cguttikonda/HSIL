@@ -43,6 +43,7 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
 
@@ -57,6 +58,9 @@ public class TPMController {
     
     @Autowired
     IMasterService masterService;
+    @Autowired
+    private RequestHeaderRepo reqHeaderRepo;
+ 
     
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -310,15 +314,30 @@ public class TPMController {
 		{
         	ezcComm.add(item); 
 		}
+        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy());
+        int leftOverStk =0;
+		   for(int i = 0; i < leftOverStkList.size(); i++)
+		   {
+			    
+			   leftOverStk=leftOverStk+(Integer)leftOverStkList.get(i)[4];
+		   } 
+		 log.debug("leftOverStk"+leftOverStk);
 		/*
 		 * for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems()) {
 		 * ezcRequestItems.add(item); }
 		 */
+		 int apprQty=0;
+		 int leftQty=0;
+		 int usedQty=0;
 		for(RequestMaterials item : ezcRequestHeader.getRequestMaterials())
-		{
+		{log.debug("qty"+item.getApprQty());
 			ezcMatList.add(item); 
+			leftQty=item.getLeftOverQty();
+			usedQty=item.getUsedQty();
+			if(leftQty==0 && usedQty==0)
+				apprQty=apprQty+item.getApprQty();
 		}
-	
+	    leftOverStk=leftOverStk+apprQty;
 		EzcRequestDealers meetDealer = null;
 		for(EzcRequestDealers dealerObj:ezcRequestHeader.getEzcRequestDealers())
 		{
@@ -334,6 +353,7 @@ public class TPMController {
         reqDto.setEzcComments(ezcComm);
         reqDto.setEzReqMatList(ezcMatList);
         model.addAttribute("reqDto", reqDto);
+        model.addAttribute("leftOverStk", leftOverStk);
         
         if("APPROVED".equals(ezcRequestHeader.getErhStatus()) && requestWrapper.isUserInRole("ROLE_REQ_CR"))
         	return "tpm/detailsForm";
@@ -399,13 +419,19 @@ public class TPMController {
     }
     
     @RequestMapping(value = "/tpm/addNewItem", method = RequestMethod.POST)
-    public String addNewTPMItem(TpmRequestDetailDto reqDto, Model model) {
+    public String addNewTPMItem(TpmRequestDetailDto reqDto, Model model,Integer leftOverStk) {
+    	EzcRequestHeader ezcRequestHeader=reqDto.getReqHeader();
         List<EzcRequestItems> ezcRequestItems=null;
+        List<RequestMaterials> ezcMatList=null;
         List<EzcComments> ezcComm=null;
         if(reqDto.getEzcRequestItems() == null)
         	ezcRequestItems = new ArrayList<EzcRequestItems>();
         else
         	ezcRequestItems = reqDto.getEzcRequestItems();
+        if(reqDto.getEzReqMatList() == null)
+        	ezcMatList = new ArrayList<RequestMaterials>();
+        else
+        	ezcMatList = reqDto.getEzReqMatList(); 
         
         if(reqDto.getEzcComments() == null)
         	ezcComm = new ArrayList<EzcComments>();
@@ -413,13 +439,18 @@ public class TPMController {
         	ezcComm = reqDto.getEzcComments();
         
         ezcRequestItems.add(new EzcRequestItems());
-        
+        log.debug("reqHe"+ezcRequestHeader.getErhRequestedBy());
+        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy());
+      
+		 log.debug("leftOverStk"+leftOverStk);
+				  
         reqDto.setEzcRequestItems(ezcRequestItems);
 		reqDto.setReqHeader(reqDto.getReqHeader());
 		reqDto.setEzcComments(ezcComm);
 		
 		
         model.addAttribute("reqDto", reqDto); 
+        model.addAttribute("leftOverStk", leftOverStk);
         return "tpm/detailsForm";
 
     }

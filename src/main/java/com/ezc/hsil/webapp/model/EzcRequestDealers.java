@@ -35,6 +35,7 @@ public class EzcRequestDealers implements java.io.Serializable {
 	private Integer erdNoOfAttendee;
 	private String erdInstructions;
 	private String erdMeetStatus;
+	private Double erdCostIncured;
 
 	public EzcRequestDealers() {
 	}
@@ -60,7 +61,14 @@ public class EzcRequestDealers implements java.io.Serializable {
 	public void setEzcRequestHeader(EzcRequestHeader ezcRequestHeader) {
 		this.ezcRequestHeader = ezcRequestHeader;
 	}
+	@Column(name = "ERD_COST_INCURED")
+	public Double getErdCostIncured() {
+		return erdCostIncured;
+	}
 
+	public void setErdCostIncured(Double erdCostIncured) {
+		this.erdCostIncured = erdCostIncured;
+	}
 	@Column(name = "ERD_DEALER_CODE", length = 10)
 	public String getErdDealerCode() {
 		return this.erdDealerCode;
