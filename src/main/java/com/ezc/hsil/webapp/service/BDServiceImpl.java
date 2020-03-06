@@ -37,6 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class BDServiceImpl implements IBDService{
 	 @Autowired
+	 private  UseLeftOverStockSer useLeftOverStk;
+	 @Autowired
 	    private RequestHeaderRepo reqHeaderRepo;
 	 
 	 @Autowired
@@ -215,14 +217,19 @@ public class BDServiceImpl implements IBDService{
 			   {
 				   requestMaterials.setLeftOverQty(apprQty-matCnt);
 				   requestMaterials.setUsedQty(matCnt);
+				   matCnt=0;
 			   }
 			   else
 			   {
 				   requestMaterials.setUsedQty(apprQty);
-				   matCnt = matCnt-apprQty;
+				   requestMaterials.setLeftOverQty(0);
+				   if(matCnt>0)
+					   matCnt = matCnt-apprQty;
+				   
 			   }
 			} 
-	  
+	 if(matCnt>0)
+	  	useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
 	  ezReqHeader.setErhStatus("SUBMITTED");
 	  ezReqHeader.setErhCity(bdRequestDetailDto.getReqHeader().getErhCity());
 	  ezReqHeader.setErhPurpose(bdRequestDetailDto.getReqHeader().getErhPurpose());

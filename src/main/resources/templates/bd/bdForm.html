@@ -86,7 +86,9 @@ $(document.body).on("change","#selMat",function(){
 	document.getElementById("stkAva").value=stkAvaQty;
 	});
 $(document).ready(function(){
+	
 	$("#save").click(function(){
+		Pace.restart();
 		/*var leftOverCnt=parseInt($("#leftOverCnt").val());
 		var qtyEntered = false;
 		for(i=0;i<leftOverCnt;i++)
@@ -154,6 +156,7 @@ $(document).ready(function(){
 			           cache: true
 			         }
 			    });
+	
 });
 		
 function openModal(){

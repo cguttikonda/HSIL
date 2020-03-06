@@ -130,7 +130,7 @@
             </table>
                    
                 </div>
-      			<div class="table-responsive">
+      			<!-- <div class="table-responsive">
                  <table class="col-sm-12 table table-bordered table-condensed">
 					<thead>
 						<tr>
@@ -152,7 +152,7 @@
 					
 					</tbody>
 					</table>
-					</div>
+					</div> -->
                 <p id="recording-instructions"></p>
                 
                <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
@@ -177,17 +177,17 @@
             			<td colspan="2"> No Items Added </td>
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
-						<td data-title="Name Of Client"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDealer}" /></td>
-						<td data-title="Professional Details"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriProfDet}" /></td>
-					    <td data-title="Location"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erilocation}" /></td>
-					    <td data-title="Gift"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td>
-					    <td data-title="Contact No"><input type="text"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+						<td data-title="Name Of Client"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDealer}" /></td>
+						<td data-title="Professional Details"><input type="text" autocomplete="off"   class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriProfDet}" /></td>
+					    <td data-title="Location"><input type="text" autocomplete="off"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erilocation}" /></td>
+					    <td data-title="Gift"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td>
+					    <td data-title="Contact No"><input type="text"  autocomplete="off"  onKeyPress="if(this.value.length==10) return false;" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
+							<input type="text" class="datePickObj form-control pull-right" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
 							</div>
 						</td>
 						<td data-title="D.O.A">
@@ -195,10 +195,10 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
+							<input type="text"  class="datePickObj form-control pull-right" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
 							</div>
 						</td>
-						<td ><input type="text"  class="form-control validate[required]" th:disabled="${disabledStr}" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" /></td>	
+						<td ><input type="text"  class="form-control validate[required]" autocomplete="off"  th:disabled="${disabledStr}" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" /></td>	
                 		<td data-title="">
                 			<i class="fa fa-trash deleteItem"></i>
                 		</td>
@@ -212,8 +212,8 @@
             <div class="box-footer">
                 <button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
                 <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
-                <button type="button" onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
-                <button type="button" onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" id="subBtn" onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" id="subBtn"  onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -294,6 +294,7 @@
      				
     function onSaveClickAdmin()
     {
+    	Pace.restart();
     	$.ajax({
 			
     		type : "GET",
@@ -362,7 +363,7 @@
     function onSaveClick()
     {
     	
-    
+    	Pace.restart();
 			
     	if($("#myForm").validationEngine('validate'))
 		{

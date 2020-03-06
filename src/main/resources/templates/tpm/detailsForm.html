@@ -72,12 +72,12 @@
                  	<div class="input-group"><input th:field="*{meetDealer.erdDealerName}"  placeholder="" class="form-control validate[required]"  type="text"></div>
                  </div>
               </div>
-               <label class="col-lg-2 control-label">Available Quantity</label>
+              <!-- <label class="col-lg-2 control-label">Available Quantity</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group">
                  	<span th:text="${leftOverStk}"></span>
                  </div>
-              </div>
+              </div> --> 
            </div>
       <div class="table-responsive" style="margin-top:2%"> 
                     <table class="col-sm-12 table table-bordered table-condensed">
@@ -85,6 +85,7 @@
                 	<tr>
                 		<th>Material</th>
                 		<th>Approved Qty</th>
+                		<th>Available Qty</th>
                 	</tr>
                 	</thead>
                 	<tbody> 
@@ -100,6 +101,10 @@
 						<td data-title="Approved Qty">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
+						</td>
+						<td data-title="Available Qty">
+							
+							<span th:text="${leftOverStk}"></span>
 						</td>
                 	</tr>
                 	</tbody>

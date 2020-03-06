@@ -196,6 +196,7 @@ public class TpsServiceImpl implements ITPSService {
 		   else
 		   {
 			   requestMaterials.setUsedQty(apprQty);
+			   requestMaterials.setLeftOverQty(0);
 			   if(matCnt>0)
 				   matCnt = matCnt-apprQty;
 		   }

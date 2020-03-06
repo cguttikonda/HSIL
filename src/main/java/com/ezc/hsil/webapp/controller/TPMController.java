@@ -391,8 +391,17 @@ public class TPMController {
         reqDto.setEzReqMatList(ezcMatList);
         List<Object[]> meetList = null;
         meetList = tpmService.getMeetDetailsById(docId);
+        double costIncurr=0.0;
+        for(int i = 0; i < meetList.size(); i++)
+		{
+        	if(costIncurr>0.0)
+        		costIncurr=costIncurr+(Double)meetList.get(i)[7];
+        	
+        }
+        log.debug(costIncurr+"costIncurr");
         model.addAttribute("reqDto", reqDto);
         model.addAttribute("meetList", meetList);
+        model.addAttribute("costIncurr", costIncurr);
         	return "tpm/detailsEditForm";
 
     }

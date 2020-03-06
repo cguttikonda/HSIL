@@ -56,7 +56,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhReqType='BD'  and b.leftOverQty > 0 ORDER BY b.id")
 	List<Object[]> getBDLeftOverStock();
 	
-	@Query(value="select b.erdMeetId,b.erdMeetDate,b.erdDealerName,a.eriPlumberName,a.eriContact,a.eriDob,a.eriDoa from EzcRequestItems a,EzcRequestDealers b where a.eriDealerId=b.id and a.ezcRequestHeader.id = :docId")
+	@Query(value="select b.erdMeetId,b.erdMeetDate,b.erdDealerName,a.eriPlumberName,a.eriContact,a.eriDob,a.eriDoa,b.erdCostIncured from EzcRequestItems a,EzcRequestDealers b where a.eriDealerId=b.id and a.ezcRequestHeader.id = :docId")
 	List<Object[]> getMeetDetailsById(String docId);
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and b.leftOverQty > 0 and b.matCode= :matCode and a.erhRequestedBy= :reqBy")
 	List<Object[]> UseLeftOverStockSer(String reqBy, String matCode);
