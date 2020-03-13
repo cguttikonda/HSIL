@@ -81,6 +81,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Distributor</th>
+                    <th>Name</th>
                     <th>City</th>
                     <th>Created BY</th>
                     <th>Meeting Date</th>
@@ -99,8 +100,9 @@
                      </span></td>
                      
                     <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhDistName}"></td>
                     <td th:text="${row.erhCity}"></td>
-                    <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
@@ -327,6 +329,8 @@ function approveTPSReq(event){
 		$('#comments').validationEngine('showPrompt', 'Please enter comments', '');
 		return ;
 	}
+	$('#saveBtn').hide();
+	Pace.restart();
 	var formdata = $('#appr-tps-form').serialize();
 	//alert("ok1");
 	$.ajax({

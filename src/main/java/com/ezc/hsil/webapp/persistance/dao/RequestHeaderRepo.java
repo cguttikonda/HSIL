@@ -25,7 +25,9 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	EzcRequestHeader getById(int i);
 	EzcRequestHeader findTopByErhCreatedGroupAndErhRequestedByAndErhStatusOrderByErhConductedOnDesc(String group,String requestedBy,String status);
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy  and b.leftOverQty > 0 ORDER BY b.id")
-	List<Object[]> getLeftOverStock(String requestedBy);	
+	List<Object[]> getLeftOverStock(String requestedBy);
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0 ORDER BY b.id")
+	List<Object[]> getAllStock(String requestedBy);
 /*	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus=:erhStatus and a.erhReqType=:erhReqType")
 	List<Object[]> getBdRequestList(String erhStatus,String erhReqType);	
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id,a.erhStatus from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and  a.erhReqType=:erhReqType and erhRequestedOn>=:fromdate  AND erhRequestedOn <=:todate")

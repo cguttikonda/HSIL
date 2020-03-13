@@ -184,7 +184,7 @@
                  	 </select>
 					  </td> -->
 						<td data-title="Name Of Plumber"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
-						<td data-title="Contact No"><input type="number" autocomplete="off" onKeyPress="if(this.value.length==10) return false;" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+						<td data-title="Contact No"><input type="number" autocomplete="off" onKeyPress="if(this.value.length==10) return false;" class="form-control validate[required,funcCall[dupMobChk]] contactNo" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">
@@ -225,7 +225,7 @@
                 <h4 class="modal-title">Audio Format</h4>
               </div>
               <div class="modal-body">
-	        	<span id="sampleTxt">retailername Kiran 9290303030 12th august 1980 26th august 2015 next retailername Rahim 9790303030 26th august 1986 26th august 2009</span>
+	        	<span id="sampleTxt">Kiran 9290303030 12th august 1980 26th august 2015 next Rahim 9790303030 26th august 1986 26th august 2009</span>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
@@ -238,7 +238,17 @@
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
-
+function dupMobChk(field, rules, i, options){
+		  var matches = new Array();
+		    $('.contactNo').each(function(index, item) {
+		        if (field.val() == $(item).val()) {
+		            matches.push(item);
+		        }
+		    });
+		    if(matches.length > 1)
+		    	return 'Mobile No is not unique';
+	  
+	}
  $('.datePickObj').datepicker({
       autoclose: true,
       format: 'dd/mm/yyyy'
@@ -380,7 +390,7 @@
 	  noteContent = $(this).val();
 	})
 
- 
+
 
 	</script>
 </div>

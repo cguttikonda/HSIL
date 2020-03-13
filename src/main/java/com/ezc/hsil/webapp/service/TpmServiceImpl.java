@@ -315,6 +315,11 @@ public class TpmServiceImpl implements ITPMService{
 		public List<Object[]> getLeftOverStock(String requestedBy) {
 			return reqHeaderRepo.getLeftOverStock(requestedBy);
 		}
+		
+		@Override
+		public List<Object[]> getAllStock(String requestedBy) {
+			return reqHeaderRepo.getAllStock(requestedBy);
+		}
 
 		@Override
 		public void NullifyTpmQty(String leftOverId, String reasonNullify, String commentsNullify) {

@@ -431,6 +431,8 @@ function approveTPMReq(event){
 		$('#selQty').validationEngine('showPrompt', 'Allocate atleast one material', '');
 		return ;
 	}
+	$('#saveBtn').hide();
+	Pace.restart();
 	var formdata = $('#appr-tpm-form').serialize(); 
 	$.ajax({
 			

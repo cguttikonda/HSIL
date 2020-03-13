@@ -214,7 +214,7 @@ public class ReportController {
     	try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
-			model.addAttribute("reqList", tpmService.getLeftOverStock(userObj.getUserId()));
+			model.addAttribute("reqList", tpmService.getAllStock(userObj.getUserId()));
 		} catch (Exception e) {
 			
 		}

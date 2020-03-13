@@ -166,7 +166,7 @@
        			   </tr>
                 	<tr th:each="row, itemStat : ${reqDto.ezcRequestItems}">
 						<td data-title="Name Of Plumber"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPlumberName}" /></td>
-						<td data-title="Contact No"><input type="number" autocomplete="off"  class="form-control validate[required]" onKeyPress="if(this.value.length==10) return false;" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+						<td data-title="Contact No"><input type="number" autocomplete="off"  class="form-control validate[required,funcCall[dupMobChk]] contactNo" onKeyPress="if(this.value.length==10) return false;" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B"> 
 							<div class="input-group date">
 							<div class="input-group-addon">
@@ -221,6 +221,17 @@
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
+function dupMobChk(field, rules, i, options){
+	  var matches = new Array();
+	    $('.contactNo').each(function(index, item) {
+	        if (field.val() == $(item).val()) {
+	            matches.push(item);
+	        }
+	    });
+	    if(matches.length > 1)
+	    	return 'Mobile No is not unique';
+
+}
 
  $('.datePickObj').datepicker({
       autoclose: true,
@@ -351,7 +362,7 @@
       autoclose: true,
       format: 'dd/mm/yyyy'
     });
-
+	
 	</script>
 </div>
 </body>

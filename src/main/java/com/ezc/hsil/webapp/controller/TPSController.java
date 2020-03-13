@@ -128,7 +128,8 @@ public class TPSController {
 	    	ezRequestHeader.setErhState("TEST"); 
 	    	ezRequestHeader.setErhStatus("NEW"); 
 	    	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
-	    	
+	    	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(reqDto.getDistrubutor()).getName());
+	    	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 	    	Set<EzcRequestDealers> reqDealSet = new HashSet<EzcRequestDealers>(arrTempList);
 	    	for(EzcRequestDealers reqDealer : reqDealSet)
 	    	{
@@ -424,41 +425,67 @@ public class TPSController {
 	        return "tps/tpsDetailsForm";
 
 	    }
+
+	/*
+	 * public List<EzcRequestItems> processText(List<EzcRequestItems>
+	 * ezcRequestItems,String text) { if(text != null && !"null".equals(text) &&
+	 * !"".equals(text)) { text = text.toUpperCase(); String [] requestArr =
+	 * text.split("NEXT"); SimpleDateFormat sdf = new
+	 * SimpleDateFormat("dd/MM/yyyy"); for(String str :requestArr) { String []
+	 * tokens = new String[5]; str = str.replaceAll("\\s+",""); //Pattern p =
+	 * Pattern.compile("(\\d+)|([a-zA-Z]+)"); //(\\d+)([a-zA-Z]+)(\\d+) Pattern p =
+	 * Pattern.compile(
+	 * "([a-zA-Z]+)|([6789][0-9]{9})|([0-9[TH]|[ST]|[ND]|[RD]]{3,4}[a-zA-Z]+[0-9]{4})|([0-9]{1,2}[a-zA-Z]+[0-9]{4})"
+	 * ); Matcher m = p.matcher(str); int strCnt=0; while(m.find()) { String token =
+	 * m.group(0); //group 0 is always the entire match
+	 * tokens[strCnt]=parseDate(token); strCnt++; }
+	 * 
+	 * EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
+	 * ezcRequestItemsObj.setEriDealer(tokens[0]);
+	 * ezcRequestItemsObj.setEriPlumberName(tokens[1]);
+	 * ezcRequestItemsObj.setEriContact(tokens[2]); try {
+	 * ezcRequestItemsObj.setEriDob(sdf.parse(tokens[3]));
+	 * ezcRequestItemsObj.setEriDoa(sdf.parse(tokens[4])); } catch (ParseException
+	 * e) {
+	 * 
+	 * } ezcRequestItems.add(ezcRequestItemsObj); } } return ezcRequestItems; }
+	 */
 	  public List<EzcRequestItems> processText(List<EzcRequestItems> ezcRequestItems,String text)
 	    {
-	    	if(text != null && !"null".equals(text) && !"".equals(text))
-	    	{
-		    	text = text.toUpperCase();
-		    	String [] requestArr = text.split("NEXT");
-		    	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		    	for(String str :requestArr)
-		    	{
-		              String [] tokens = new String[5];
-		              str = str.replaceAll("\\s+","");
-		              //Pattern p = Pattern.compile("(\\d+)|([a-zA-Z]+)"); //(\\d+)([a-zA-Z]+)(\\d+)
-		              Pattern p = Pattern.compile("([a-zA-Z]+)|([6789][0-9]{9})|([0-9[TH]|[ST]|[ND]|[RD]]{3,4}[a-zA-Z]+[0-9]{4})|([0-9]{1,2}[a-zA-Z]+[0-9]{4})");
-		              Matcher m = p.matcher(str);
-		              int strCnt=0;
-		              while(m.find())
-		              {
-		                String token = m.group(0); //group 0 is always the entire match   
-		                tokens[strCnt]=parseDate(token);
-		                strCnt++;
-		              }
-		              
-		    		EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
-		    		ezcRequestItemsObj.setEriDealer(tokens[0]);
-		    		ezcRequestItemsObj.setEriPlumberName(tokens[1]);
-		    		ezcRequestItemsObj.setEriContact(tokens[2]);
-		    		try {
-						ezcRequestItemsObj.setEriDob(sdf.parse(tokens[3]));
-						ezcRequestItemsObj.setEriDoa(sdf.parse(tokens[4]));
-					} catch (ParseException e) {
-						
-					} 
-		    		ezcRequestItems.add(ezcRequestItemsObj);
-		    	}
-	    	}	
+	    	try {
+					if(text != null && !"null".equals(text) && !"".equals(text))
+					{
+						text = text.toUpperCase();
+						String [] requestArr = text.split("NEXT");
+						SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+						for(String str :requestArr)
+						{
+					          String [] tokens = new String[4];
+					          str = str.replaceAll("\\s+","");
+					          Pattern p = Pattern.compile("([a-zA-Z]+)|([6789][0-9]{9})|([0-9[TH]|[ST]|[ND]|[RD]]{3,4}[a-zA-Z]+[0-9]{4})|([0-9]{1,2}[a-zA-Z]+[0-9]{4})");
+					          Matcher m = p.matcher(str);
+					          int strCnt=0;
+					          while(m.find())
+					          {
+					            String token = m.group(0); //group 0 is always the entire match   
+					            tokens[strCnt]=parseDate(token);
+					            strCnt++;
+					          }
+					          
+							EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
+							ezcRequestItemsObj.setEriPlumberName(tokens[0]);
+							ezcRequestItemsObj.setEriContact(tokens[1]);
+							try {
+								ezcRequestItemsObj.setEriDob(sdf.parse(tokens[2]));
+								ezcRequestItemsObj.setEriDoa(sdf.parse(tokens[3]));
+							} catch (ParseException e) {
+								
+							}
+							ezcRequestItems.add(ezcRequestItemsObj);
+						}
+					}
+			} catch (Exception e) {
+			}	
 	    	return ezcRequestItems;
 	    }
 	  public static String parseDate(String str){
@@ -490,7 +517,7 @@ public class TPSController {
 	        else
 	        	ezcRequestItems = reqDto.getEzcRequestItems();
 	        
-	        log.info("reqDto.getRecordedText()::::::",reqDto.getRecordedText());
+	        log.info("reqDto.getRecordedText()::::::"+reqDto.getRecordedText());
 	        reqDto.setEzcRequestItems(processText(ezcRequestItems,reqDto.getRecordedText()));
 			reqDto.setReqHeader(reqDto.getReqHeader());
 			reqDto.setEzReqMatList(reqDto.getEzReqMatList());

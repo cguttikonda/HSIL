@@ -6,7 +6,10 @@
 </head>
 <body onload="funHide()">
 <section layout:fragment="header">
-    <h1>BD</h1>
+    <!-- <h1 th:text="${reDto.reqHeader.id}"></h1>
+    BD & Marketing Request -->
+    <h1><span th:text="${'BD & Marketing Request : '+reqDto.reqHeader.id}" th:remove="tag"></span></h1>
+    
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
         <li class="active">Report</li>
@@ -81,7 +84,7 @@
 						</td>
 						<td data-title="Material" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matCode}">
-							<!-- <input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}"> -->
+							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].matDesc}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
@@ -163,8 +166,8 @@
                 		<th>Name Of Client</th>
                 		<th>Professional details</th>
                 		<th>Location</th>
-                		<th>Gift Item</th>
-                		<th>Contact NO</th>
+                		<!-- <th>Gift Item</th> -->
+                		<th>Contact No</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
                 		<th>Event Name</th>
@@ -180,8 +183,8 @@
 						<td data-title="Name Of Client"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDealer}" /></td>
 						<td data-title="Professional Details"><input type="text" autocomplete="off"   class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriProfDet}" /></td>
 					    <td data-title="Location"><input type="text" autocomplete="off"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erilocation}" /></td>
-					    <td data-title="Gift"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td>
-					    <td data-title="Contact No"><input type="text"  autocomplete="off"  onKeyPress="if(this.value.length==10) return false;" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
+					    <!-- <td data-title="Gift"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td> -->
+					    <td data-title="Contact No"><input type="number" autocomplete="off"  class="form-control validate[required,funcCall[dupMobChk]] contactNo" onKeyPress="if(this.value.length==10) return false;" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">
@@ -212,8 +215,8 @@
             <div class="box-footer">
                 <button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
                 <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
-                <button type="button" id="subBtn" onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
-                <button type="button" id="subBtn"  onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button"  onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button"   onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
         </form>
     </div>
@@ -283,7 +286,17 @@
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
+function dupMobChk(field, rules, i, options){
+	  var matches = new Array();
+	    $('.contactNo').each(function(index, item) {
+	        if (field.val() == $(item).val()) {
+	            matches.push(item);
+	        }
+	    });
+	    if(matches.length > 1)
+	    	return 'Mobile No is not unique';
 
+}
  $('.datePickObj').datepicker({
       autoclose: true,
       format: 'dd/mm/yyyy'
@@ -343,8 +356,7 @@
 		
 			if($("#myForm").validationEngine('validate'))
 			{
-				
-				
+				$('.subBtn').hide();
 				document.myForm.action="/bd/apprbd";
 				document.myForm.submit();
 			}
@@ -368,7 +380,7 @@
     	if($("#myForm").validationEngine('validate'))
 		{
 			
-			
+    		$('.subBtn').hide();
 			document.myForm.submit();
 		}	
     }

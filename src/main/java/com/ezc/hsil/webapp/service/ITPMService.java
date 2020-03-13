@@ -27,4 +27,5 @@ public interface ITPMService {
 	public List<Object[]> getTPMRequestList(ListSelector listSelector);
 	public void NullifyTpmQty(String leftOverId,String reasonNullify,String commentsNullify);
 	public List<Object[]> getMeetDetailsById(String docId);
+	List<Object[]> getAllStock(String requestedBy);
 }

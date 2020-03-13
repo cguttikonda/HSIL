@@ -418,7 +418,7 @@ public class TPMController {
         else
         	ezcRequestItems = reqDto.getEzcRequestItems();
         
-        log.info("reqDto.getRecordedText()::::::",reqDto.getRecordedText());
+        log.info("reqDto.getRecordedText()::::::"+reqDto.getRecordedText());
         reqDto.setEzcRequestItems(processText(ezcRequestItems,reqDto.getRecordedText()));
 		reqDto.setReqHeader(reqDto.getReqHeader());
 		reqDto.setEzReqMatList(reqDto.getEzReqMatList());

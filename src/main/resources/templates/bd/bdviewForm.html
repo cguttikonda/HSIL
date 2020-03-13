@@ -6,7 +6,7 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>BD</h1>
+    <h1><span th:text="${'BD & Marketing Request : '+reqDto.reqHeader.id}" th:remove="tag"></span></h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
         <li class="active">Report</li>
@@ -117,7 +117,7 @@
                 		<th>Name Of Client</th>
                 		<th>Professional details</th>
                 		<th>Location</th>
-                		<th>Gift Item</th>
+                		<!-- <th>Gift Item</th> -->
                 		<th>Contact NO</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
@@ -134,7 +134,7 @@
 						<td data-title="Name Of Client"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDealer}" ></span></td>
 						<td data-title="Professional Details"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriProfDet}" ></span></td>
 					    <td data-title="Location"><span th:text="*{ezcRequestItems[__${itemStat.index}__].erilocation}" ></span></td>
-					    <td data-title="Gift"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriGift}" ></span></td>
+					    <!-- <td data-title="Gift"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriGift}" ></span></td> -->
 					    <td data-title="Contact No"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriContact}" ></span></td>
 						<td data-title="D.O.B">
 							

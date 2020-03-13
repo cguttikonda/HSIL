@@ -72,6 +72,7 @@
                 	<tr>
                 		<th>Material</th>
                 		<th>Approved Qty</th>
+                		<th>Used Qty</th> 
                 	</tr>
                 	</thead>
                 	<tbody>
@@ -88,6 +89,7 @@
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
 						</td>
+						<td data-title="Used Qty" th:text="*{ezReqMatList[__${itemStat.index}__].usedQty}"></td>
                 	</tr>
                 	</tbody>
                 </table>
