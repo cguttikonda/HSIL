@@ -87,10 +87,10 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                     <i class="ion ion-chevron-right"></i>
                 </div>
                 
-                <a sec:authorize="hasRole('ROLE_BD_MKT')" href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <a  href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
                 
                 
-                <a  sec:authorize="hasRole('ROLE_ST_HEAD')" href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <!-- <a  sec:authorize="hasRole('ROLE_ST_HEAD')" href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a> -->
                 
             </div>
         </div>
@@ -139,9 +139,9 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
          </div>
+  <!--        
          <div class="row">   
          <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
-            <!-- small box -->
            <div class="box box-success">
 				<div class="box-header with-border">
 				  <h3 class="box-title"><b>TPM SCHEDULED VS COMPLETED</b></h3>
@@ -156,12 +156,11 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 				  <div class="chart" id="bar-chartTPM" style="height: 300px;"></div>
 				</div>
 				
-            <!-- /.box-body -->
           </div>
           
         </div>
          <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
-            <!-- small box -->
+       
            <div class="box box-success">
 				<div class="box-header with-border">
 				  <h3 class="box-title"><b>TPS SCHEDULED VS COMPLETED</b></h3>
@@ -176,13 +175,13 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 				  <div class="chart" id="bar-chartTPS" style="height: 300px;"></div>
 				</div>
 				
-            <!-- /.box-body -->
+       
           </div>
           
         </div>
         
          <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')">
-            <!-- small box -->
+       
            <div class="box box-success">
 				<div class="box-header with-border">
 				  <h3 class="box-title"><b>BD SCHEDULED VS COMPLETED</b></h3>
@@ -197,15 +196,15 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
 				  <div class="chart" id="bar-chartBD" style="height: 300px;"></div>
 				</div>
 				
-            <!-- /.box-body -->
+       
           </div>
           
         </div>
         
         
-        <!-- ./col -->
-            </div>
-    <!-- /.row -->
+        
+            </div>-->
+    
     </div>
 
 <div layout:fragment="scriptContent">

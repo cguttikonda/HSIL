@@ -69,7 +69,37 @@ public class ReportService implements IReportService {
 			return null;
 		}
 	}
-
+	
+	@Override
+	public List<Object[]> getAllReqMonthWise()
+	{
+		return reqHeaderRepo.getAllReqMonthWise();
+	}
+	@Override
+	public List<Object[]> getAllMeetsMonthWise()
+	{
+		return reqHeaderRepo.getAllMeetsMonthWise();
+	}
+	@Override
+	public List<Object[]> getUserDefaults()
+	{
+		return reqHeaderRepo.getUserDefaults();
+	}
+	@Override
+	public List<Object[]> getNoofPlumbersPerUser()
+	{
+		return reqHeaderRepo.getNoofPlumbersPerUser();
+	}
+	@Override
+	public List<Object[]> getUsedLeftQtyPerUser()
+	{
+		return reqHeaderRepo.getUsedLeftQtyPerUser();
+	}
+	@Override
+	public List<Object[]> getAllInProcessReqPerUser()
+	{
+		return reqHeaderRepo.getAllInProcessReqPerUser();
+	}
 	@Override
 		public void dispatchUpdate(EzcRequestHeader ezcRequestHeader) {
 			  EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());

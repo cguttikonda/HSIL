@@ -381,10 +381,11 @@ function checkQty()
 		//alert($("#apprQty"+r).val())
 		addedVal=addedVal+$("#apprQty"+r).val();
 	}
-	var leftOverStk=$("#leftOverStk").val();
-	var attendee=$("#attendee").val();
 	
-	if($("#leftOverStk").val()>$("#attendee").val())
+	var leftOverStk=parseInt($("#leftOverStk").val());
+	var attendee=parseInt($("#attendee").val());
+	
+	if(leftOverStk>attendee)
 	{
 		remainVal=0;
 		//alert(remainVal);
@@ -441,7 +442,7 @@ function approveTPMReq(event){
 		data : formdata,
 		success : function(response) {
 				//$('#apprTPMModal  :first-child').find('div.modal-confirm').html("TPM Request approved successfully");
-				location.href="/tpm/tpmRequestList"
+				location.href="/tpm/tpmReqListSts/NEW"
 		},
 		error : function(ex) {
 			console.log(ex);
@@ -463,7 +464,7 @@ function saveRejComment(event){
 		data : formdata,
 		success : function(response) {
 				
-				location.href="/tpm/tpmRequestList"
+				location.href="/tpm/tpmReqListSts/NEW"
 		},
 		error : function(ex) {
 			console.log(ex);

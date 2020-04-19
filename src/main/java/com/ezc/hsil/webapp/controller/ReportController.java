@@ -1,9 +1,12 @@
 package com.ezc.hsil.webapp.controller;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.OverallReportDto;
 import com.ezc.hsil.webapp.dto.ReportSelector;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
@@ -403,7 +407,483 @@ public class ReportController {
         return "reports/plumberMaster"; 
 
     }
+    @GetMapping(value="/monthWiseReport")
+    public String overAllReport(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		List<Object[]> reqHeaderLt= repService.getAllReqMonthWise();
+		List<Object[]> reqDealerLt = repService.getAllMeetsMonthWise();
+		List<Object[]> userDefaults=repService.getUserDefaults();
+		List<Object[]> noofPlumb=repService.getNoofPlumbersPerUser();
+		List<Object[]> usedLeftQty=repService.getUsedLeftQtyPerUser();
+		List<Object[]> inProcessLt=repService.getAllInProcessReqPerUser();
+		
+		List<OverallReportDto> overallRepLt=new ArrayList<OverallReportDto>();
+		//OverallReportDto compRep=new OverallReportDto();
+		Hashtable<String, String> reportHt=new Hashtable<String, String>();
+		Hashtable<String, String> plumberHt=new Hashtable<String, String>();
+		Hashtable<String, String> meetHt=new Hashtable<String, String>();
+		Hashtable<String, String> usedQtytHT=new Hashtable<String, String>();
+		Hashtable<String, String> leftQtytHT=new Hashtable<String, String>();
+		Hashtable<String, String> inProcesstHT=new Hashtable<String, String>();
+		
+		for(Object[] plum:noofPlumb)
+		{
+			String key=(String)plum[1]+(String)plum[2];
+			log.debug("value"+(BigInteger)plum[0]);
+			String value=((BigInteger)plum[0])+"";
+			log.debug("value"+value);
+			if(!plumberHt.containsKey(key))
+				plumberHt.put(key,value);
+			else
+			{
+				String val=plumberHt.get(key);
+				val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+				plumberHt.put(key, val);
+			}
+		}
+		log.debug("plumberHt"+plumberHt);
+		for(Object[] meet:reqDealerLt)
+		{
+			String key=(String)meet[3]+(String)meet[0];
+			String value=((BigInteger)meet[1])+"";
+			if(!meetHt.containsKey(key))
+				meetHt.put(key, value);
+			else
+			{
+				String val=meetHt.get(key);
+				val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+				meetHt.remove(key);
+				meetHt.put(key, val);
+			}
+		}
+		log.debug("meetHt"+meetHt);
+		for(Object[] qty:usedLeftQty)
+		{
+			String key=(String)qty[3]+(String)qty[4];
+			log.debug("Before debug");
+			String value=((BigDecimal)qty[1])+"";
+			log.debug("after debug");
+			if(!leftQtytHT.containsKey(key))
+				leftQtytHT.put(key, value);
+			else
+			{
+				String val=leftQtytHT.get(key);
+				val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+				leftQtytHT.remove(key);
+				leftQtytHT.put(key, val);
+			}
+		}
+		log.debug("leftQtytHT"+leftQtytHT);
+		for(Object[] qty:usedLeftQty)
+		{
+			String key=(String)qty[3]+(String)qty[4];
+			String value=((BigDecimal)qty[1])+"";
+			if(!usedQtytHT.containsKey(key))
+				usedQtytHT.put(key, value);
+			else
+			{
+				String val=usedQtytHT.get(key);
+				val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+				usedQtytHT.remove(key);
+				usedQtytHT.put(key, val);
+			}
+		}
+		log.debug("usedQtytHT"+usedQtytHT);
+		for(Object[] inProc:inProcessLt)
+		{
+			
+			String key=(String)inProc[2]+(String)inProc[1];
+			String value=((BigDecimal)inProc[3])+"";
+			if(!inProcesstHT.containsKey(key))
+				inProcesstHT.put(key, value);
+		}
+		log.debug("inProcesstHT"+inProcesstHT);
+		for(Object[] obj:userDefaults)
+		{
+			if(!reportHt.containsKey((String)obj[2]))
+				reportHt.put((String)obj[2], (String)obj[3]+"#"+(String)obj[4]+"#"+(String)obj[1]+"#"+(String)obj[4]);
+			/*compRep.setEmpCode((String)obj[2]);
+			compRep.setZone((String)obj[3]);
+			compRep.setArea((String)obj[4]);
+			compRep.setEmpName((String)obj[1]);
+			compRep.setEmpRole((String)obj[4]);
+			overallRepLt.add(compRep);*/
+		}
+		
+		log.debug("meetHt"+meetHt);
+		for(Object[] reqHd:reqHeaderLt)
+		{
+					
+				String empFromHeaderLt=(String)reqHd[3];
+				
+				//String empFromDto=oveRep.getEmpCode();
+				
+				int mon=(Integer)reqHd[0];
+				log.debug("mon"+mon+"empFromHeaderLt"+empFromHeaderLt);
+				BigDecimal tpValBD=(BigDecimal) reqHd[4];
+				int tpVal=tpValBD.intValue();
+				if(reportHt.containsKey(empFromHeaderLt))
+				{
+					String remval=(String)reportHt.get(empFromHeaderLt);
+					if(mon==4)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+						
+						
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==5)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}
+					if(mon==6)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==7)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}	
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==8)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==9)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";		
+						}	
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==10)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+							remval=remval+"#0#0";	
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==11)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}	
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==12)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==1)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";		
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}	
+					if(mon==2)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}
+					if(mon==3)
+					{
+						if("TPM".equals((String)reqHd[2]))remval=remval+"#"+tpVal+"#0";
+						else
+						{	
+							if("TPS".equals((String)reqHd[2]))remval=remval+"#0#"+tpVal;
+							else
+								remval=remval+"#0#0";	
+						}
+					}
+					else
+					{
+						remval=remval+"#0#0";
+					}
+					String keyTPM=empFromHeaderLt+"TPM";
+					String keyTPS=empFromHeaderLt+"TPS";
+					
+					if(meetHt.containsKey(keyTPM))remval=remval+"#"+meetHt.get(keyTPM);
+					else
+						remval=remval+"#0";
+				    if(meetHt.containsKey(keyTPS))remval=remval+"#"+meetHt.get(keyTPS);
+				    else
+						remval=remval+"#0";
+				    if(inProcesstHT.containsKey(keyTPM))remval=remval+"#"+inProcesstHT.get(keyTPM);
+					else
+						remval=remval+"#0";
+				    if(inProcesstHT.containsKey(keyTPS))remval=remval+"#"+inProcesstHT.get(keyTPS);
+				    else
+						remval=remval+"#0";
+				    if(plumberHt.containsKey(keyTPM))remval=remval+"#"+plumberHt.get(keyTPM);
+				    else
+						remval=remval+"#0";
+				    if(plumberHt.containsKey(keyTPS))remval=remval+"#"+plumberHt.get(keyTPS);
+				    else
+						remval=remval+"#0";
+				    if(usedQtytHT.containsKey(keyTPM))remval=remval+"#"+usedQtytHT.get(keyTPM);
+					else
+						remval=remval+"#0";
+				    if(usedQtytHT.containsKey(keyTPS))remval=remval+"#"+usedQtytHT.get(keyTPS);
+				    else
+						remval=remval+"#0";
+				    if(leftQtytHT.containsKey(keyTPM))remval=remval+"#"+leftQtytHT.get(keyTPM);
+					else
+						remval=remval+"#0";
+				    if(leftQtytHT.containsKey(keyTPS))remval=remval+"#"+leftQtytHT.get(keyTPS);
+				    else
+						remval=remval+"#0";
+				    
+					reportHt.remove(empFromHeaderLt);
+					reportHt.put(empFromHeaderLt,remval);
+		
+						
+			}
+		}
+		
+    	
+        log.debug("hashtable"+reportHt);
+
+        Set<String> keys = reportHt.keySet();
+
+        for(String key: keys)
+        {
+        	OverallReportDto compRep=new OverallReportDto();
+        	String keyVal=key;
+        	String val=reportHt.get(keyVal);
+        	
+        	int valLen=val.split("#").length;
+        	String zone=val.split("#")[0];
+        	String area=val.split("#")[1];
+        	String name=val.split("#")[2];
+        	String role=val.split("#")[3];
+        	int janTPS=0,janTPM=0,febTPS=0,febTPM=0,marTPM=0,marTPS=0,aprTPM=0,aprTPS=0,mayTPM=0,mayTPS=0,junTPM=0,junTPS=0;
+        	int julTPS=0,julTPM=0,augTPS=0,augTPM=0,sepTPM=0,sepTPS=0,octTPM=0,octTPS=0,novTPM=0,novTPS=0,decTPM=0,decTPS=0;
+        	int meetTPM=0,meetTPS=0,plumTPM=0,plumTPS=0,usedQtyTPM=0,usedQtyTPS=0,leftQtyTPM=0,leftQtyTPS=0;
+        	int inProcessTPM=0,inProcessTPS=0;
+        			
+        	compRep.setEmpCode(key);
+			compRep.setZone(zone);
+			compRep.setArea(area);
+			compRep.setEmpName(name);
+			compRep.setEmpRole(role);
+			log.debug("length"+valLen);
+			if(valLen>4)
+			{
+				janTPM=Integer.parseInt(val.split("#")[4]);
+				janTPS=Integer.parseInt(val.split("#")[5]);
+				febTPM=Integer.parseInt(val.split("#")[6]);
+				febTPS=Integer.parseInt(val.split("#")[7]);
+				marTPM=Integer.parseInt(val.split("#")[8]);
+				marTPS=Integer.parseInt(val.split("#")[9]);
+				aprTPM=Integer.parseInt(val.split("#")[10]);
+				aprTPS=Integer.parseInt(val.split("#")[11]);
+				mayTPM=Integer.parseInt(val.split("#")[12]);
+				mayTPS=Integer.parseInt(val.split("#")[13]);
+				junTPM=Integer.parseInt(val.split("#")[14]);
+				junTPS=Integer.parseInt(val.split("#")[15]);
+				julTPM=Integer.parseInt(val.split("#")[16]);
+				julTPS=Integer.parseInt(val.split("#")[17]);
+				augTPM=Integer.parseInt(val.split("#")[18]);
+				augTPS=Integer.parseInt(val.split("#")[19]);
+				sepTPM=Integer.parseInt(val.split("#")[20]);
+				sepTPS=Integer.parseInt(val.split("#")[21]);
+				octTPM=Integer.parseInt(val.split("#")[22]);
+				octTPS=Integer.parseInt(val.split("#")[23]);
+				novTPM=Integer.parseInt(val.split("#")[24]);
+				novTPS=Integer.parseInt(val.split("#")[25]);
+				decTPM=Integer.parseInt(val.split("#")[26]);
+				decTPS=Integer.parseInt(val.split("#")[27]);
+				meetTPM=Integer.parseInt(val.split("#")[28]);
+				meetTPS=Integer.parseInt(val.split("#")[29]);
+				inProcessTPM=Integer.parseInt(val.split("#")[30]);
+				inProcessTPS=Integer.parseInt(val.split("#")[31]);
+				plumTPM=Integer.parseInt(val.split("#")[32]);
+				plumTPS=Integer.parseInt(val.split("#")[33]);
+				usedQtyTPM=Integer.parseInt(val.split("#")[34]);
+				usedQtyTPS=Integer.parseInt(val.split("#")[35]);
+				leftQtyTPM=Integer.parseInt(val.split("#")[36]);
+				leftQtyTPS=Integer.parseInt(val.split("#")[37]);
+				
+				
+				compRep.setJanTPM(janTPM);
+				compRep.setJanTPS(janTPS);
+				compRep.setFebTPS(febTPS);
+				compRep.setFebTPM(febTPM);
+				compRep.setMarTPM(marTPM);
+				compRep.setMarTPS(marTPS);
+				compRep.setAprTPM(aprTPM);
+				compRep.setAprTPS(aprTPS);
+				compRep.setMayTPM(mayTPM);
+				compRep.setMayTPS(mayTPS);
+				compRep.setJunTPM(junTPM);
+				compRep.setJunTPS(junTPS);
+				compRep.setJulyTPM(julTPM);
+				compRep.setJulyTPS(julTPS);
+				compRep.setAugTPM(augTPM);
+				compRep.setAugTPS(augTPS);
+				compRep.setSepTPM(sepTPM);
+				compRep.setSepTPS(sepTPS);
+				compRep.setOctTPM(octTPM);
+				compRep.setOctTPS(octTPS);
+				compRep.setNovTPM(novTPM);
+				compRep.setNovTPS(novTPS);
+				compRep.setDecTPM(decTPM);
+				compRep.setDecTPS(decTPS);
+				compRep.setMeetsDoneTPM(meetTPS);
+				compRep.setMeetsDoneTPS(meetTPM);
+				compRep.setInProcessTPM(inProcessTPM);
+				compRep.setInProcessTPS(inProcessTPS);
+				compRep.setNoOFPlumTPM(plumTPM);
+				compRep.setNoOFPlumTPS(plumTPS);
+				compRep.setUsedQtyTPM(usedQtyTPM);
+				compRep.setUsedQtyTPS(usedQtyTPS);
+				compRep.setLeftQtyTPM(leftQtyTPM);
+				compRep.setLeftQtyTPS(leftQtyTPS);
+			}
+			else
+			{
+				compRep.setJanTPM(janTPM);
+				compRep.setJanTPS(janTPS);
+				compRep.setFebTPS(febTPS);
+				compRep.setFebTPM(febTPM);
+				compRep.setMarTPM(marTPM);
+				compRep.setMarTPS(marTPS);
+				compRep.setAprTPM(aprTPM);
+				compRep.setAprTPS(aprTPS);
+				compRep.setMayTPM(mayTPM);
+				compRep.setMayTPS(mayTPS);
+				compRep.setJunTPM(junTPM);
+				compRep.setJunTPS(junTPS);
+				compRep.setJulyTPM(julTPM);
+				compRep.setJulyTPS(julTPS);
+				compRep.setAugTPM(augTPM);
+				compRep.setAugTPS(augTPS);
+				compRep.setSepTPM(sepTPM);
+				compRep.setSepTPS(sepTPS);
+				compRep.setOctTPM(octTPM);
+				compRep.setOctTPS(octTPS);
+				compRep.setNovTPM(novTPM);
+				compRep.setNovTPS(novTPS);
+				compRep.setDecTPM(decTPM);
+				compRep.setDecTPS(decTPS);
+				compRep.setMeetsDoneTPM(meetTPS);
+				compRep.setMeetsDoneTPS(meetTPM);
+				compRep.setInProcessTPM(inProcessTPM);
+				compRep.setInProcessTPS(inProcessTPS);
+				compRep.setNoOFPlumTPM(plumTPM);
+				compRep.setNoOFPlumTPS(plumTPS);
+				compRep.setUsedQtyTPM(usedQtyTPM);
+				compRep.setUsedQtyTPS(usedQtyTPS);
+				compRep.setLeftQtyTPM(leftQtyTPM);
+				compRep.setLeftQtyTPS(leftQtyTPS);
+				
+			}	
+			
+			
+			overallRepLt.add(compRep);	
+        	
+            log.debug("Value of "+key+" is: "+reportHt.get(key));
+        }
+        model.addAttribute("overallRepLt", overallRepLt);
+        return "reports/monthWiseReport"; 
+
+    }
+    
+
    
     
 }
- 
+  

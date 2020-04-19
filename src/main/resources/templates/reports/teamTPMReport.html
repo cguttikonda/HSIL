@@ -107,6 +107,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Distributor</th>
+                    <th>Distributor Name</th>
                     <th>City</th>
                     <th>Requested By</th>
                     <th>Meeting Date</th>
@@ -119,8 +120,9 @@
                 <tr th:each="row : ${reqList}">
                     <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhDistName}"></td>
                     <td th:text="${row.erhCity}"></td>
-                    <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                    <td>

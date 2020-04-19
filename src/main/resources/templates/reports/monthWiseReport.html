@@ -1,0 +1,205 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Dashboard</title>
+    <style type="text/css">
+ 
+.dataTables_scrollHeadInner {
+width: 5000px;
+}
+    </style>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>Dashboard</h1>
+<ol class="breadcrumb">
+    <li class="active">Dashboard</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box" >
+        <div class="box-body no-padding">
+        
+ <!-- <form role="form"  th:object="${reportSelector}" th:action="@{/reports/monthWiseReport}" method="get" name="myForm" id="myForm"> -->
+ <div class="table-responsive">
+                   <table id="example" class="table  table-bordered dt-responsive nowrap" width="100%">
+                       <thead>	
+                 <tr>
+                 <th colspan=5></th>
+                 <th colspan=2>April</th>
+                 <th colspan=2>May</th>
+                 <th colspan=2>June</th>
+                 <th colspan=2>July</th>
+                 <th colspan=2>August</th>
+                 <th colspan=2>September</th>
+                 <th colspan=2>October</th>
+                 <th colspan=2>November</th>
+                 <th colspan=2>December</th>
+                 <th colspan=2>January</th>
+                 <th colspan=2>February</th>
+                 <th colspan=2>March</th>
+               <th colspan=2> MeetsDone</th>
+                 <!--   <th colspan=2>Received Data</th>-->
+                 <th colspan=2>Pending Reports</th> 
+                 <th colspan=2>Plumber Attended Meets</th> 
+                 <th colspan=2>Gifts SentTill date</th> 
+                 <th colspan=2>Unutilised Gifts</th>
+                 
+                 </tr>      		
+                <tr>
+                    <th>Zone</th>
+                    <th>Area</th>
+                    <th>Emp Code</th>
+                    <th>Emp Name</th>
+                    <th>TBH/ABH</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                   <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>     
+                     <th>TPM</th>
+                    <th>TPS</th>
+                     <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>
+                    <th>TPM</th>
+                    <th>TPS</th>     
+                     <th>TPM</th>
+                    <th>TPS</th>
+                </tr>
+                    </thead>
+           		<tbody>
+           		<tr th:each="row:${overallRepLt}">
+        		
+        		<td th:text="${row.zone}"></td>
+        		<td th:text="${row.Area}"></td>
+        		<td th:text="${row.empCode}"></td>
+        		<td th:text="${row.empName}"></td>
+        		<td th:text="${row.empRole}"></td>
+        		<td th:text="${row.aprTPM}"></td>
+        		<td th:text="${row.aprTPS}"></td>
+        		<td th:text="${row.mayTPM}"></td>
+        		<td th:text="${row.mayTPS}"></td>
+				<td th:text="${row.junTPM}"></td>
+				<td th:text="${row.junTPS}"></td>
+				<td th:text="${row.julyTPM}"></td>
+				<td th:text="${row.julyTPS}"></td>
+				<td th:text="${row.augTPM}"></td>
+				<td th:text="${row.augTPS}"></td>
+				<td th:text="${row.sepTPM}"></td>
+        		<td th:text="${row.sepTPS}"></td>
+        		<td th:text="${row.octTPM}"></td>
+				<td th:text="${row.octTPS}"></td>
+				<td th:text="${row.novTPM}"></td>
+				<td th:text="${row.novTPS}"></td>
+				<td th:text="${row.decTPM}"></td>
+	     		<td th:text="${row.decTPS}"></td>
+	     		<td th:text="${row.janTPM}"></td>
+	     		<td th:text="${row.janTPS}"></td>
+	     		<td th:text="${row.febTPM}"></td>
+	     		<td th:text="${row.febTPS}"></td>
+	     		<td th:text="${row.marTPM}"></td>
+	     		<td th:text="${row.marTPS}"></td>
+	     		<td th:text="${row.meetsDoneTPM}"></td>
+	     		<td th:text="${row.meetsDoneTPS}"></td>
+	     		<td th:text="${row.noOFPlumTPM}"></td>
+	     		<td th:text="${row.noOFPlumTPS}"></td>
+	     		<td th:text="${row.usedQtyTPM}"></td>
+	     		<td th:text="${row.usedQtyTPS}"></td>
+	     		<td th:text="${row.leftQtyTPM}"></td>
+	     		<td th:text="${row.leftQtyTPS}"></td>
+	     		<td th:text="${row.inProcessTPM}"></td>
+	     		<td th:text="${row.inProcessTPS}"></td>
+           		
+           		</tr>
+           		</tbody>	
+                   </table>
+                   </div>
+                   <a style="margin-left: 25%;margin-bottom: 10px;margin-top: 10px;" href="#" onclick="fnExcelReport();" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>DOWNLOAD EXCEL</a>
+                   
+        </div>
+    </div>
+
+</div>
+<iframe id="txtArea1" style="display:none"></iframe>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+$(document).ready(function() {
+		
+		/*$('#example').DataTable({
+					
+		//	"dom": 'T<"clear">lfrtip',
+			   //"scrollY":        '500px',
+		        "scrollX":        'true'
+		       // "scrollCollapse": 'true',
+		        //"paging":         'false',
+		        /*"fixedColumns":   {
+		            "leftColumns": 1
+		            
+		           }
+			
+	
+		});*/
+	
+});
+function fnExcelReport()
+{
+    var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+    var textRange; var j=0;
+    tab = document.getElementById('example'); // id of table
+
+    for(j = 0 ; j < tab.rows.length ; j++) 
+    {     
+        tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+        //tab_text=tab_text+"</tr>";
+    }
+
+    tab_text=tab_text+"</table>";
+    tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+    tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+    tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE "); 
+
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+    {
+        txtArea1.document.open("txt/html","replace");
+        txtArea1.document.write(tab_text);
+        txtArea1.document.close();
+        txtArea1.focus(); 
+        sa=txtArea1.document.execCommand("SaveAs",true,"Report.xls");
+    }  
+    else                 //other browser not tested on IE 11
+        sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));  
+
+    return (sa);
+}
+</script>
+
+
+</div>
+
+</body>
+</html>

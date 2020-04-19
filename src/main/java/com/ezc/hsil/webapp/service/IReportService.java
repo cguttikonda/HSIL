@@ -28,5 +28,11 @@ public interface IReportService {
 	public List<Object[]> getTPSMonthWise(List<String> userList);
 	public List<Object[]> getBDMonthWise(List<String> userList);
 	public List<Object[]> getAllMKTUsers();
+	public List<Object[]> getAllReqMonthWise();
+	public List<Object[]> getAllMeetsMonthWise();
+	public List<Object[]> getUserDefaults();
+	public List<Object[]> getNoofPlumbersPerUser();
+	public List<Object[]> getUsedLeftQtyPerUser();
+	public List<Object[]> getAllInProcessReqPerUser();
 	
 }

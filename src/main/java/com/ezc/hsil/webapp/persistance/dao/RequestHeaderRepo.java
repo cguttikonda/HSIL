@@ -36,13 +36,13 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getPendingDispatchDetails(String userId);
 	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
 	Long getPendingDispatchCount(String userId);
-	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.leftOverQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and a.erhReqType in ('TPM','TPS') group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
+	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0  group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityForAll();
 	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
 	List<Object[]> getToAckDispReport(String requestedBy);
 	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
 	Long getToAckDispCnt(String requestedBy);
-	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.leftOverQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and a.erhReqType in ('TPM','TPS') and a.erhRequestedBy in :userList group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
+	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus  IN ('SUBMITTED','APPROVED')  and a.erhRequestedBy in :userList and b.apprQty-b.usedQty > 0 group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityByUser(List<String> userList);
 	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id  and a.erhDistrubutor in :distList")
 	List<Object[]> getPlumberMaster(List<String> distList);
@@ -63,6 +63,22 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus='SUBMITTED' and b.leftOverQty > 0 and b.matCode= :matCode and a.erhRequestedBy= :reqBy")
 	List<Object[]> UseLeftOverStockSer(String reqBy, String matCode);
 	
+	//@Query(value="SELECT MONTHNAME(erh_requested_on) as MON , COUNT(*) ,ERH_REQ_TYPE,erh_requested_by,SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header WHERE erh_requested_on >= NOW() - INTERVAL 1 YEAR GROUP BY MONTH(erh_requested_on),ERH_REQ_TYPE,erh_requested_by")
+	@Query(nativeQuery = true,value="SELECT Month(erh_requested_on) as MON , COUNT(*) ,ERH_REQ_TYPE,erh_requested_by,SUM(CASE WHEN ERH_STATUS='SUBMITTED' THEN 1 ELSE 0 END) AS SUBMITTED FROM ezc_request_header  GROUP BY MONTH(erh_requested_on),ERH_REQ_TYPE,erh_requested_by")
+	List<Object[]> getAllReqMonthWise();
+	//@Query(nativeQuery = true,value="select Month(erd_meet_date) , COUNT(erd_meet_id),SUM(ERD_ATTENDANCE),erd_req_id from ezc_request_dealers  WHERE  erd_meet_sts='COMPLETED' and erd_meet_date >= NOW() - INTERVAL 1 YEAR group by MONTH(erd_meet_date),erd_req_id")
+	@Query(nativeQuery = true,value="select ERH_REQ_TYPE , COUNT(erd_meet_id),SUM(ERD_ATTENDANCE),(SELECT erh_requested_by from ezc_request_header where id=erd_req_id) from ezc_request_dealers a,ezc_request_header b WHERE  a.erd_req_id=b.id  and erd_meet_sts='COMPLETED' and erd_meet_date >= NOW() - INTERVAL 1 YEAR group by erd_req_id")
+	List<Object[]> getAllMeetsMonthWise();
+	
+	@Query(nativeQuery = true,value="select a.user_id,a.first_name,b.egu_user_id,(select ewg_group_desc from ezc_work_groups where EGU_ZONAL_GRP=ewg_group) as  EGU_ZONAL_GRP,(select ewg_group_desc from ezc_work_groups where egu_id=ewg_group) as grp from ezc_users a,ezc_workgroup_users b   where a.user_id=b.egu_user_id and a.id IN(  select user_id from users_roles where role_id in (select id from ezc_roles where name IN ('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')))")
+	List<Object[]> getUserDefaults();
+	@Query(nativeQuery = true,value="select COUNT(eri_plumber_name),(SELECT erh_requested_by from ezc_request_header where id=eri_req_id) emp,ERH_REQ_TYPE from ezc_request_items a,ezc_request_header b where a.eri_req_id=b.id and b.erh_status='SUBMITTED' and b.ERH_REQ_TYPE!='BD' group by eri_req_id")
+	List<Object[]> getNoofPlumbersPerUser();
+	//@Query(nativeQuery = true,value="select SUM(erm_used_qty), SUM(erm_leftover_qty),(SELECT erh_requested_by from ezc_request_header where id=erm_req_id) emp,ERH_REQ_TYPE from ezc_request_materials a,ezc_request_header b where a.erm_req_id=b.id and b.erh_status='SUBMITTED' and b.ERH_REQ_TYPE!='BD' group by erm_req_id")
+	@Query(nativeQuery=true,value="select erh_status,SUM(erm_appr_qty), SUM(erm_leftover_qty),(SELECT erh_requested_by from ezc_request_header where id=erm_req_id) emp,ERH_REQ_TYPE from ezc_request_materials a,ezc_request_header b where a.erm_req_id=b.id and b.erh_status in('SUBMITTED','APPROVED') and b.ERH_REQ_TYPE!='BD' group by erm_req_id,erh_status")
+	List<Object[]> getUsedLeftQtyPerUser();
+	@Query(nativeQuery=true,value="SELECT  COUNT(*) ,ERH_REQ_TYPE,erh_requested_by,SUM(CASE WHEN ERH_STATUS!='SUBMITTED' THEN 1 ELSE 0 END) AS INPROCESS FROM ezc_request_header WHERE erh_requested_on >= NOW() - INTERVAL 1 YEAR GROUP BY ERH_REQ_TYPE,erh_requested_by")
+	List<Object[]> getAllInProcessReqPerUser();
 	
 }
                              

@@ -237,7 +237,7 @@ public class BDController {
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
 			ArrayList<String> userList=new ArrayList<String>();
-	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT"))
+	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
 	    	{
 	    		userList.add(userObj.getUserId());
 	    		listSelector.setUser(userList);
@@ -245,15 +245,13 @@ public class BDController {
 	    	List<EzcRequestHeader> list = bdService.getBDRequestListByDate(listSelector);
 	        model.addAttribute("reqList", list);
 	        model.addAttribute("listSelector", listSelector);
-	        if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
-	    	{
-	    		
-	        	return "tps/tpsRequestList"; 
-	    	}
-	    	else 
-	    	{
+		/*
+		 * if(requestWrapper.isUserInRole("ROLE_ST_HEAD")) {
+		 * 
+		 * return "tps/tpsRequestList"; } else {
+		 */
 	    		return "bd/bdlist"; 
-	    	}
+		/* } */
 	       
 	        
 
@@ -307,23 +305,17 @@ public class BDController {
 			}
 	    	Integer appQty=bdQty;
 	    	log.debug("appQty"+appQty);
-	    	if(leftOverId != null && leftOverId.length > 0 && allocQty != null && allocQty.length > 0)
-			{
-				for(int i=0;i<leftOverId.length;i++)
-				{
-					if(allocQty[i] != null && allocQty[i] > 0)
-					{
-						RequestMaterials reqMat = new RequestMaterials();
-						reqMat.setMatCode(leftOverMat[i].split("#")[0]);
-						reqMat.setMatDesc(leftOverMat[i].split("#")[1]);
-						reqMat.setApprQty(allocQty[i]);
-						reqMat.setIsNew('N');
-						reqMat.setAllocId(leftOverId[i]);
-						reqMatSet.add(reqMat);
-					}
-				}
-				
-			}
+		/*
+		 * if(leftOverId != null && leftOverId.length > 0 && allocQty != null &&
+		 * allocQty.length > 0) { for(int i=0;i<leftOverId.length;i++) { if(allocQty[i]
+		 * != null && allocQty[i] > 0) { RequestMaterials reqMat = new
+		 * RequestMaterials(); reqMat.setMatCode(leftOverMat[i].split("#")[0]);
+		 * reqMat.setMatDesc(leftOverMat[i].split("#")[1]);
+		 * reqMat.setApprQty(allocQty[i]); reqMat.setIsNew('N');
+		 * reqMat.setAllocId(leftOverId[i]); reqMatSet.add(reqMat); } }
+		 * 
+		 * }
+		 */
 	    	ezcRequestHeader.setRequestMaterials(reqMatSet);
 	    	ezcRequestHeader.setEzcComments(commSet);
 	    	ezcRequestHeader.setErhOutStore(outStore);

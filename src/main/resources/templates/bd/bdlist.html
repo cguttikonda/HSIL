@@ -84,7 +84,7 @@
 								class="glyphicon glyphicon-ok">REJECT</span>
 							</a>
 						</span>
-						<span sec:authorize="hasRole('ROLE_BD_MKT')" th:if="${row.erhStatus == 'APPROVED'}">
+						<span sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" th:if="${row.erhStatus == 'APPROVED'}">
 							<a th:href="${'/bd/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>

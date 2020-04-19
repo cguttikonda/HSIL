@@ -11,7 +11,7 @@ import com.ezc.hsil.webapp.model.RequestMaterials;
 
 public interface ITPSService {
 	
-	public void createTPSRequest(EzcRequestHeader ezcRequestHeader);
+	public EzcRequestHeader createTPSRequest(EzcRequestHeader ezcRequestHeader);
 	public List<EzcRequestHeader> getTPSRequestListByDate(ListSelector listSelector);
 	public List<EzcComments> getTPSCommentRequest(String docId);
 	public void approveTPSRequest(EzcRequestHeader ezcRequestHeader);

@@ -294,8 +294,8 @@ public class TPMController {
     		reqDealerList.add(ezcRequestDealers); 
     	}
     	ezRequestHeader.setEzcRequestDealers(reqDealerList); 
-    	tpmService.createTPMRequest(ezRequestHeader);
-        ra.addFlashAttribute("success","TPM request details saved sucessfully.");
+    	EzcRequestHeader ezReqHeadOut = tpmService.createTPMRequest(ezRequestHeader);
+        ra.addFlashAttribute("success","TPM request details saved sucessfully with reference : "+"TPM-"+ezReqHeadOut.getId()+".");
         return "redirect:/tpm/add";
     	}
     }
@@ -392,11 +392,19 @@ public class TPMController {
         List<Object[]> meetList = null;
         meetList = tpmService.getMeetDetailsById(docId);
         double costIncurr=0.0;
-        for(int i = 0; i < meetList.size(); i++)
-		{
-        	if(costIncurr>0.0)
-        		costIncurr=costIncurr+(Double)meetList.get(i)[7];
-        	
+		/*
+		 * for(int i = 0; i < meetList.size(); i++) {
+		 * costIncurr=costIncurr+(Double)meetList.get(i)[7]; } 
+		 */
+        ArrayList<String> tempDupMeet = new ArrayList<String>();
+        for(Object[] objArr : meetList)
+        {
+        	String tempMeetId = (String)objArr[0];
+        	if(objArr[7] != null && !tempDupMeet.contains(tempMeetId))
+        	{
+        		costIncurr=costIncurr+(Double)objArr[7];
+        		tempDupMeet.add(tempMeetId);
+        	}
         }
         log.debug(costIncurr+"costIncurr");
         model.addAttribute("reqDto", reqDto);
@@ -468,7 +476,7 @@ public class TPMController {
     public String saveDetails(TpmRequestDetailDto tpmRequestDetailDto, final RedirectAttributes ra) {
     	tpmService.createTPMDetails(tpmRequestDetailDto);
         ra.addFlashAttribute("successFlash", "Success");
-        return "redirect:/tpm/tpmRequestList";
+        return "redirect:/tpm/tpmReqListSts/APPROVED";
 
     }
     /*

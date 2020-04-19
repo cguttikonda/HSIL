@@ -340,7 +340,7 @@ function approveTPSReq(event){
 		data : formdata,
 		success : function(response) {
 				//$('#apprTPMModal  :first-child').find('div.modal-confirm').html("TPM Request approved successfully");
-				location.href="/tps/tpsRequestList"
+				location.href="/tps/tpsReqListSts/NEW"
 		},
 		error : function(ex) {
 			console.log(ex);
@@ -359,7 +359,7 @@ function saveRejComment(event){
 		data : formdata,
 		success : function(response) {
 				
-				location.href="/tps/tpsRequestList"
+				location.href="/tps/tpsReqListSts/NEW"
 		},
 		error : function(ex) {
 			console.log(ex);
@@ -402,10 +402,10 @@ function postNullifyData(event){
 function checkQty()
 {
 	
-	var leftOverStk=$("#leftOverStk").val();
-	var attendee=$("#attendee").val();
+	var leftOverStk=parseInt($("#leftOverStk").val());
+	var attendee=parseInt($("#attendee").val());
 	
-	if($("#leftOverStk").val()>$("#attendee").val())
+	if(leftOverStk>attendee)
 	{
 		remainVal=0;
 		//alert(remainVal);

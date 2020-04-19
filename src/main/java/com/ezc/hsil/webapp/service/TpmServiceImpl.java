@@ -59,9 +59,10 @@ public class TpmServiceImpl implements ITPMService{
 	    private NullifiedStockRepo nullifiedStockRepo;
 
 		@Override
-		public void createTPMRequest(EzcRequestHeader ezcRequestHeader) {
+		public EzcRequestHeader createTPMRequest(EzcRequestHeader ezcRequestHeader) {
 			log.debug("In service class","I");
-			reqHeaderRepo.save(ezcRequestHeader);
+			EzcRequestHeader reqHeader = reqHeaderRepo.save(ezcRequestHeader);
+			return reqHeader;
 		}
 
 		@Override
@@ -125,11 +126,14 @@ public class TpmServiceImpl implements ITPMService{
 		  int expAttendee=ezReqHeader.getErhNoOfAttendee();
 		  
 		  log.debug("expAttendee"+expAttendee); 
+		  log.debug("reqDealersSet size"+reqDealersSet.size()); 
 		  int meetCnt=0;
 		  for(EzcRequestDealers tempItem : reqDealersSet) {
 			  log.debug("dealer"+ezcRequestDealers.getId()+"tempItem"+tempItem.getId());
-			  if(ezcRequestDealers.getId()==tempItem.getId())
-			  {log.debug("aytte"+tempItem.getErdNoOfAttendee());
+			  //if(ezcRequestDealers.getId()==tempItem.getId())
+			  if(ezcRequestDealers.getId().equals(tempItem.getId()))
+			  {
+				  log.debug("aytte"+tempItem.getErdNoOfAttendee());
 			      expAttendee=tempItem.getErdNoOfAttendee();
 				  tempItem.setErdDealerName(ezcRequestDealers.getErdDealerName());
 				  tempItem.setErdMeetDate(ezcRequestDealers.getErdMeetDate());

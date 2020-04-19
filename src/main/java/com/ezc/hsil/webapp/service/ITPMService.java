@@ -14,7 +14,7 @@ import com.ezc.hsil.webapp.model.RequestMaterials;
 public interface ITPMService {
 
 	public void createTPMDetails(TpmRequestDetailDto tpmRequestDetailDto);
-	public void createTPMRequest(EzcRequestHeader ezcRequestHeader);
+	public EzcRequestHeader createTPMRequest(EzcRequestHeader ezcRequestHeader);
 	public List<EzcComments> getTPMCommentRequest(String docId);
 	public List<EzcRequestHeader> getTPMRequestList(String status); 
 	public List<EzcRequestHeader> getTPMRequestListByDate(ListSelector listSelector);

@@ -63,7 +63,7 @@ public class BDServiceImpl implements IBDService{
 		// TODO Auto-generated method stub
 		log.debug("In service class BD","I"); 
 		reqHeaderRepo.save(ezcRequestHeader);
-		
+		/*
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
 		Set<RequestMaterials> ezReqMatList = ezReqHeader.getRequestMaterials();
 		  for(RequestMaterials tempItem : ezReqMatList) {
@@ -91,6 +91,7 @@ public class BDServiceImpl implements IBDService{
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  reqMatRep.save(tempItem); 
 			}
+		*/
 	
 	}
 
@@ -143,7 +144,7 @@ public class BDServiceImpl implements IBDService{
 		  for(RequestMaterials tempItem : reqMatSet) {
 			  log.debug("matid"+tempItem.getId());
 		      Character c1 = new Character('Y'); 
-			  if(c1.equals(tempItem.getIsNew()))
+			  //if(c1.equals(tempItem.getIsNew()))
 			  {
 				/*
 				 * RequestMaterials requestMaterials =

@@ -57,10 +57,10 @@ public class TpsServiceImpl implements ITPSService {
 	 private NullifiedStockRepo nullifiedStockRepo;
 	 
 	@Override
-	public void createTPSRequest(EzcRequestHeader ezcRequestHeader) {
+	public EzcRequestHeader createTPSRequest(EzcRequestHeader ezcRequestHeader) {
 		// TODO Auto-generated method stub
 		log.debug("In service class","I"); 
-		reqHeaderRepo.save(ezcRequestHeader);
+		return reqHeaderRepo.save(ezcRequestHeader);
 	
 	}
 	@Override

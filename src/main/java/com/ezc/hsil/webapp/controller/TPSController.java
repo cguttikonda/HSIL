@@ -136,9 +136,9 @@ public class TPSController {
 	    		reqDealer.setEzcRequestHeader(ezRequestHeader);
 	    	}
 	    	ezRequestHeader.setEzcRequestDealers(reqDealSet);
-	    	
-	    	tpsService.createTPSRequest(ezRequestHeader);
-	        ra.addFlashAttribute("success","TPS request details saved sucessfully.");
+	    	 
+	    	EzcRequestHeader ezReqHeadOut = tpsService.createTPSRequest(ezRequestHeader);
+	    	ra.addFlashAttribute("success","TPS request details saved sucessfully with reference : "+"TPS-"+ezReqHeadOut.getId()+"."); 
 	        return "redirect:/tps/add";
 	    	}
 	    }

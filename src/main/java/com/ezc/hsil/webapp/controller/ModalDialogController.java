@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -136,7 +137,27 @@ public class ModalDialogController {
 	@RequestMapping(value = "/mat-autocomp", method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q) {
-		return masterService.findAllMaterialsLike(q);
+		List<MaterialMaster> matList =masterService.findAllMaterialsLike(q);
+		//List<MaterialMaster> matListOut =new ArrayList<MaterialMaster>();
+		for(MaterialMaster matObj:matList)
+		{
+			int tempQty =matObj.getQuantity();
+			int tempBlockQty =matObj.getBlockQty();
+			int outQty =0; 
+			if(tempBlockQty > 0)
+				outQty = tempQty-tempBlockQty;
+			else
+				outQty = 0;
+			if(outQty > 0)
+			{
+				matObj.setQuantity(outQty);
+			}
+			else
+			{
+				matObj.setQuantity(0);
+			}
+		}
+		return matList;
 		
 	}
 	

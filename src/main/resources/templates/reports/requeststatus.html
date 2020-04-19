@@ -91,7 +91,14 @@
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
-                    <td><a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
+                    <td>
+                    	<!-- <a th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a> -->
+                    	<th:block th:switch="${row.erhCreatedGroup}">
+                    		<a th:case="'TPM'" th:href="${'/tpm/addDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
+                    		<a th:case="'TPS'" th:href="${'/tps/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
+                    		<a th:case="'BD'" th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
+						</th:block>
+                    </td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${row.erhRequestedBy}"></td>
