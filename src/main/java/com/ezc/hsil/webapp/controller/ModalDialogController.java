@@ -147,7 +147,7 @@ public class ModalDialogController {
 			if(tempBlockQty > 0)
 				outQty = tempQty-tempBlockQty;
 			else
-				outQty = 0;
+				outQty = tempQty;
 			if(outQty > 0)
 			{
 				matObj.setQuantity(outQty);
