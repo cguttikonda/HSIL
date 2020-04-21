@@ -548,6 +548,9 @@ public class ReportController {
              int julTPS=0,julTPM=0,augTPS=0,augTPM=0,sepTPM=0,sepTPS=0,octTPM=0,octTPS=0,novTPM=0,novTPS=0,decTPM=0,decTPS=0;
              int meetTPM=0,meetTPS=0,plumTPM=0,plumTPS=0,usedQtyTPM=0,usedQtyTPS=0,leftQtyTPM=0,leftQtyTPS=0;
              int inProcessTPM=0,inProcessTPS=0;
+             String janTPMBGC="",janTPSBGC="",febTPMBGC="",febTPSBGC="",marTPMBGC="",marTPSBGC="",aprTPMBGC="",aprTPSBGC="",mayTPMBGC="",mayTPSBGC="",junTPMBGC="",junTPSBGC="",julTPMBGC="",julTPSBGC="",augTPMBGC="",augTPSBGC="",sepTPMBGC="",sepTPSBGC="",octTPMBGC="",octTPSBGC="",novTPMBGC="",novTPSBGC="",decTPMBGC="",decTPSBGC="";
+             String meetsDoneTPMBGC="",meetsDoneTPSBGC="",noOFPlumTPMBGC="",noOFPlumTPSBGC="",usedQtyTPMBGC="",usedQtyTPSBGC="",leftQtyTPMBGC="",leftQtyTPSBGC="",inProcessTPMBGC="",inProcessTPSBGC="";
+
              String keyTPM=keyVal+"TPM";
              String keyTPS=keyVal+"TPS";             
              compRep.setEmpCode(key);
@@ -621,42 +624,161 @@ public class ReportController {
           if(leftQtytHT.containsKey(keyTPM))leftQtyTPM=Integer.parseInt((String)leftQtytHT.get(keyTPM));
           if(leftQtytHT.containsKey(keyTPS))leftQtyTPS=Integer.parseInt((String)leftQtytHT.get(keyTPS));
 
+          if(janTPM>2)janTPMBGC="green";
+          else
+        	  janTPMBGC="orange";
+          if(febTPM>2)febTPMBGC="green";
+          else
+          febTPMBGC="orange";
 
-              compRep.setJanTPM(janTPM);
-              compRep.setJanTPS(janTPS);
-              compRep.setFebTPS(febTPS);
-              compRep.setFebTPM(febTPM);
-              compRep.setMarTPM(marTPM);
-              compRep.setMarTPS(marTPS);
-              compRep.setAprTPM(aprTPM);
-              compRep.setAprTPS(aprTPS);
-              compRep.setMayTPM(mayTPM);
-              compRep.setMayTPS(mayTPS);
-              compRep.setJunTPM(junTPM);
-              compRep.setJunTPS(junTPS);
-              compRep.setJulyTPM(julTPM);
-              compRep.setJulyTPS(julTPS);
-              compRep.setAugTPM(augTPM);
-              compRep.setAugTPS(augTPS);
-              compRep.setSepTPM(sepTPM);
-              compRep.setSepTPS(sepTPS);
-              compRep.setOctTPM(octTPM);
-              compRep.setOctTPS(octTPS);
-              compRep.setNovTPM(novTPM);
-              compRep.setNovTPS(novTPS);
-              compRep.setDecTPM(decTPM);
-              compRep.setDecTPS(decTPS);
-              compRep.setMeetsDoneTPM(meetTPM);
-              compRep.setMeetsDoneTPS(meetTPS);
-              compRep.setInProcessTPM(inProcessTPM);
-              compRep.setInProcessTPS(inProcessTPS);
-              compRep.setNoOFPlumTPM(plumTPM);
-              compRep.setNoOFPlumTPS(plumTPS);
-              compRep.setUsedQtyTPM(usedQtyTPM);
-              compRep.setUsedQtyTPS(usedQtyTPS);
-              compRep.setLeftQtyTPM(leftQtyTPM);
-              compRep.setLeftQtyTPS(leftQtyTPS);
+          if(marTPM>2)marTPMBGC="green";
+          else
+          marTPMBGC="orange";
 
+          if(aprTPM>2)aprTPMBGC="green";
+          else
+          aprTPMBGC="orange";
+
+
+          if(mayTPM>2)mayTPMBGC="green";
+          else
+          mayTPMBGC="orange";
+
+          if(junTPM>2)junTPMBGC="green";
+          else
+          junTPMBGC="orange";
+
+          if(julTPM>2)julTPMBGC="green";
+          else
+          julTPMBGC="orange";
+
+          if(augTPM>2)augTPMBGC="green";
+          else
+          augTPMBGC="orange";
+
+          if(sepTPM>2)sepTPMBGC="green";
+          else
+          sepTPMBGC="orange";
+
+          if(octTPM>2)octTPMBGC="green";
+          else
+          octTPMBGC="orange";
+
+          if(novTPM>2)novTPMBGC="green";
+          else
+          novTPMBGC="orange";
+
+          if(decTPM>2)decTPMBGC="green";
+          else
+          decTPMBGC="orange";
+          
+          if(meetTPM>2)meetsDoneTPMBGC="green";
+          else
+        	  meetsDoneTPMBGC="orange";
+          
+          if(plumTPM>2)noOFPlumTPMBGC="green";
+          else
+        	  noOFPlumTPMBGC="orange";
+          
+          if(usedQtyTPM>2)usedQtyTPMBGC="green";
+          else
+        	  usedQtyTPMBGC="orange";
+          
+          if(leftQtyTPM>2)leftQtyTPMBGC="green";
+          else
+        	  leftQtyTPMBGC="orange";
+          
+          if(inProcessTPM>2)inProcessTPMBGC="green";
+          else
+        	  inProcessTPMBGC="orange";
+          
+          if(janTPS>0)janTPSBGC="green";
+          if(febTPS>0)febTPSBGC="green";
+          if(marTPS>0)marTPSBGC="green";
+          if(aprTPS>0)aprTPSBGC="green";
+          if(mayTPS>0)mayTPSBGC="green";
+          if(junTPS>0)junTPSBGC="green";
+          if(julTPS>0)julTPSBGC="green";
+          if(augTPS>0)augTPSBGC="green";
+          if(sepTPS>0)sepTPSBGC="green";
+          if(octTPS>0)octTPSBGC="green";
+          if(novTPS>0)novTPSBGC="green";
+          if(decTPS>0)decTPSBGC="green";
+          if(meetTPS>0)meetsDoneTPSBGC="green";
+          if(plumTPS>0)noOFPlumTPSBGC="green";
+          if(usedQtyTPS>0)usedQtyTPSBGC="green";
+          if(leftQtyTPS>0)leftQtyTPSBGC="green";
+          if(inProcessTPS>0)inProcessTPSBGC="green";
+          
+          compRep.setJanTPM(janTPM);
+          compRep.setJanTPS(janTPS);
+          compRep.setFebTPS(febTPS);
+          compRep.setFebTPM(febTPM);
+          compRep.setMarTPM(marTPM);
+          compRep.setMarTPS(marTPS);
+          compRep.setAprTPM(aprTPM);
+          compRep.setAprTPS(aprTPS);
+          compRep.setMayTPM(mayTPM);
+          compRep.setMayTPS(mayTPS);
+          compRep.setJunTPM(junTPM);
+          compRep.setJunTPS(junTPS);
+          compRep.setJulyTPM(julTPM);
+          compRep.setJulyTPS(julTPS);
+          compRep.setAugTPM(augTPM);
+          compRep.setAugTPS(augTPS);
+          compRep.setSepTPM(sepTPM);
+          compRep.setSepTPS(sepTPS);
+          compRep.setOctTPM(octTPM);
+          compRep.setOctTPS(octTPS);
+          compRep.setNovTPM(novTPM);
+          compRep.setNovTPS(novTPS);
+          compRep.setDecTPM(decTPM);
+          compRep.setDecTPS(decTPS);
+          compRep.setMeetsDoneTPM(meetTPM);
+          compRep.setMeetsDoneTPS(meetTPS);
+          compRep.setInProcessTPM(inProcessTPM);
+          compRep.setInProcessTPS(inProcessTPS);
+          compRep.setNoOFPlumTPM(plumTPM);
+          compRep.setNoOFPlumTPS(plumTPS);
+          compRep.setUsedQtyTPM(usedQtyTPM);
+          compRep.setUsedQtyTPS(usedQtyTPS);
+          compRep.setLeftQtyTPM(leftQtyTPM);
+          compRep.setLeftQtyTPS(leftQtyTPS);
+          compRep.setAprTPMBGC(aprTPMBGC);
+          compRep.setAprTPSBGC(aprTPSBGC);
+          compRep.setMayTPMBGC(mayTPMBGC);
+          compRep.setMayTPSBGC(mayTPSBGC);
+          compRep.setJunTPMBGC(junTPMBGC);
+          compRep.setJunTPSBGC(junTPSBGC);
+          compRep.setJulTPMBGC(julTPMBGC);
+          compRep.setJulTPSBGC(julTPSBGC);
+          compRep.setAugTPMBGC(augTPMBGC);
+          compRep.setAugTPSBGC(augTPSBGC);
+          compRep.setSepTPMBGC(sepTPMBGC);
+          compRep.setSepTPSBGC(sepTPSBGC);
+          compRep.setOctTPMBGC(octTPMBGC);
+          compRep.setOctTPSBGC(octTPSBGC);
+          compRep.setNovTPMBGC(novTPMBGC);
+          compRep.setNovTPSBGC(novTPSBGC);
+          compRep.setDecTPMBGC(decTPMBGC);
+          compRep.setDecTPSBGC(decTPSBGC);
+          compRep.setJanTPMBGC(janTPMBGC);
+          compRep.setJanTPSBGC(janTPSBGC);
+          compRep.setFebTPMBGC(febTPMBGC);
+          compRep.setFebTPSBGC(febTPSBGC);
+          compRep.setMarTPMBGC(marTPMBGC);
+          compRep.setMarTPSBGC(marTPSBGC);
+          compRep.setMeetsDoneTPMBGC(meetsDoneTPMBGC);
+          compRep.setMeetsDoneTPSBGC(meetsDoneTPSBGC);
+          compRep.setNoOFPlumTPMBGC(noOFPlumTPMBGC);
+          compRep.setNoOFPlumTPSBGC(noOFPlumTPSBGC);
+          compRep.setUsedQtyTPMBGC(usedQtyTPMBGC);
+          compRep.setUsedQtyTPSBGC(usedQtyTPSBGC);
+          compRep.setLeftQtyTPMBGC(leftQtyTPMBGC);
+          compRep.setLeftQtyTPSBGC(leftQtyTPSBGC);
+          compRep.setInProcessTPMBGC(inProcessTPMBGC);
+          compRep.setInProcessTPSBGC(inProcessTPSBGC);
+          
               overallRepLt.add(compRep); 
              
             log.debug("Value of "+key+" is: "+reportHt.get(key));

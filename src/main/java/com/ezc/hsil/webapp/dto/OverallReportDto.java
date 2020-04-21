@@ -41,7 +41,40 @@ public class OverallReportDto {
 	private Integer leftQtyTPS;
 	private Integer inProcessTPM;
 	private Integer inProcessTPS;
-	
+	private String janTPMBGC;
+	private String janTPSBGC;
+	private String febTPMBGC;
+	private String febTPSBGC;
+	private String marTPMBGC;
+	private String marTPSBGC;
+	private String aprTPMBGC;
+	private String aprTPSBGC;
+	private String mayTPMBGC;
+	private String mayTPSBGC;
+	private String junTPMBGC;
+	private String junTPSBGC;
+	private String julTPMBGC;
+	private String julTPSBGC;
+	private String augTPMBGC;
+	private String augTPSBGC;
+	private String sepTPMBGC;
+	private String sepTPSBGC;
+	private String octTPMBGC;
+	private String octTPSBGC;
+	private String novTPMBGC;
+	private String novTPSBGC;
+	private String decTPMBGC;
+	private String decTPSBGC;
+	private String meetsDoneTPMBGC;
+	private String meetsDoneTPSBGC;
+	private String noOFPlumTPMBGC;
+	private String noOFPlumTPSBGC;
+	private String usedQtyTPMBGC;
+	private String usedQtyTPSBGC;
+	private String leftQtyTPMBGC;
+	private String leftQtyTPSBGC;
+	private String inProcessTPMBGC;
+	private String inProcessTPSBGC;
 	
 	public OverallReportDto() {
 	}
@@ -310,8 +343,280 @@ public class OverallReportDto {
 		this.inProcessTPS = inProcessTPS;
 	}
 
+	public String getJanTPMBGC() {
+		return janTPMBGC;
+	}
 
+	public void setJanTPMBGC(String janTPMBGC) {
+		this.janTPMBGC = janTPMBGC;
+	}
 
+	public String getJanTPSBGC() {
+		return janTPSBGC;
+	}
+
+	public void setJanTPSBGC(String janTPSBGC) {
+		this.janTPSBGC = janTPSBGC;
+	}
+
+	public String getFebTPMBGC() {
+		return febTPMBGC;
+	}
+
+	public void setFebTPMBGC(String febTPMBGC) {
+		this.febTPMBGC = febTPMBGC;
+	}
+
+	public String getFebTPSBGC() {
+		return febTPSBGC;
+	}
+
+	public void setFebTPSBGC(String febTPSBGC) {
+		this.febTPSBGC = febTPSBGC;
+	}
+
+	public String getMarTPMBGC() {
+		return marTPMBGC;
+	}
+
+	public void setMarTPMBGC(String marTPMBGC) {
+		this.marTPMBGC = marTPMBGC;
+	}
+
+	public String getMarTPSBGC() {
+		return marTPSBGC;
+	}
+
+	public void setMarTPSBGC(String marTPSBGC) {
+		this.marTPSBGC = marTPSBGC;
+	}
+
+	public String getAprTPMBGC() {
+		return aprTPMBGC;
+	}
+
+	public void setAprTPMBGC(String aprTPMBGC) {
+		this.aprTPMBGC = aprTPMBGC;
+	}
+
+	public String getAprTPSBGC() {
+		return aprTPSBGC;
+	}
+
+	public void setAprTPSBGC(String aprTPSBGC) {
+		this.aprTPSBGC = aprTPSBGC;
+	}
+
+	public String getMayTPMBGC() {
+		return mayTPMBGC;
+	}
+
+	public void setMayTPMBGC(String mayTPMBGC) {
+		this.mayTPMBGC = mayTPMBGC;
+	}
+
+	public String getMayTPSBGC() {
+		return mayTPSBGC;
+	}
+
+	public void setMayTPSBGC(String mayTPSBGC) {
+		this.mayTPSBGC = mayTPSBGC;
+	}
+
+	public String getJunTPMBGC() {
+		return junTPMBGC;
+	}
+
+	public void setJunTPMBGC(String junTPMBGC) {
+		this.junTPMBGC = junTPMBGC;
+	}
+
+	public String getJunTPSBGC() {
+		return junTPSBGC;
+	}
+
+	public void setJunTPSBGC(String junTPSBGC) {
+		this.junTPSBGC = junTPSBGC;
+	}
+
+	public String getJulTPMBGC() {
+		return julTPMBGC;
+	}
+
+	public void setJulTPMBGC(String julTPMBGC) {
+		this.julTPMBGC = julTPMBGC;
+	}
+
+	public String getJulTPSBGC() {
+		return julTPSBGC;
+	}
+
+	public void setJulTPSBGC(String julTPSBGC) {
+		this.julTPSBGC = julTPSBGC;
+	}
+
+	public String getAugTPMBGC() {
+		return augTPMBGC;
+	}
+
+	public void setAugTPMBGC(String augTPMBGC) {
+		this.augTPMBGC = augTPMBGC;
+	}
+
+	public String getAugTPSBGC() {
+		return augTPSBGC;
+	}
+
+	public void setAugTPSBGC(String augTPSBGC) {
+		this.augTPSBGC = augTPSBGC;
+	}
+
+	public String getSepTPMBGC() {
+		return sepTPMBGC;
+	}
+
+	public void setSepTPMBGC(String sepTPMBGC) {
+		this.sepTPMBGC = sepTPMBGC;
+	}
+
+	public String getSepTPSBGC() {
+		return sepTPSBGC;
+	}
+
+	public void setSepTPSBGC(String sepTPSBGC) {
+		this.sepTPSBGC = sepTPSBGC;
+	}
+
+	public String getOctTPMBGC() {
+		return octTPMBGC;
+	}
+
+	public void setOctTPMBGC(String octTPMBGC) {
+		this.octTPMBGC = octTPMBGC;
+	}
+
+	public String getOctTPSBGC() {
+		return octTPSBGC;
+	}
+
+	public void setOctTPSBGC(String octTPSBGC) {
+		this.octTPSBGC = octTPSBGC;
+	}
+
+	public String getNovTPMBGC() {
+		return novTPMBGC;
+	}
+
+	public void setNovTPMBGC(String novTPMBGC) {
+		this.novTPMBGC = novTPMBGC;
+	}
+
+	public String getNovTPSBGC() {
+		return novTPSBGC;
+	}
+
+	public void setNovTPSBGC(String novTPSBGC) {
+		this.novTPSBGC = novTPSBGC;
+	}
+
+	public String getDecTPMBGC() {
+		return decTPMBGC;
+	}
+
+	public void setDecTPMBGC(String decTPMBGC) {
+		this.decTPMBGC = decTPMBGC;
+	}
+
+	public String getDecTPSBGC() {
+		return decTPSBGC;
+	}
+
+	public void setDecTPSBGC(String decTPSBGC) {
+		this.decTPSBGC = decTPSBGC;
+	}
+
+	public String getMeetsDoneTPMBGC() {
+		return meetsDoneTPMBGC;
+	}
+
+	public void setMeetsDoneTPMBGC(String meetsDoneTPMBGC) {
+		this.meetsDoneTPMBGC = meetsDoneTPMBGC;
+	}
+
+	public String getMeetsDoneTPSBGC() {
+		return meetsDoneTPSBGC;
+	}
+
+	public void setMeetsDoneTPSBGC(String meetsDoneTPSBGC) {
+		this.meetsDoneTPSBGC = meetsDoneTPSBGC;
+	}
+
+	public String getNoOFPlumTPMBGC() {
+		return noOFPlumTPMBGC;
+	}
+
+	public void setNoOFPlumTPMBGC(String noOFPlumTPMBGC) {
+		this.noOFPlumTPMBGC = noOFPlumTPMBGC;
+	}
+
+	public String getNoOFPlumTPSBGC() {
+		return noOFPlumTPSBGC;
+	}
+
+	public void setNoOFPlumTPSBGC(String noOFPlumTPSBGC) {
+		this.noOFPlumTPSBGC = noOFPlumTPSBGC;
+	}
+
+	public String getUsedQtyTPMBGC() {
+		return usedQtyTPMBGC;
+	}
+
+	public void setUsedQtyTPMBGC(String usedQtyTPMBGC) {
+		this.usedQtyTPMBGC = usedQtyTPMBGC;
+	}
+
+	public String getUsedQtyTPSBGC() {
+		return usedQtyTPSBGC;
+	}
+
+	public void setUsedQtyTPSBGC(String usedQtyTPSBGC) {
+		this.usedQtyTPSBGC = usedQtyTPSBGC;
+	}
+
+	public String getLeftQtyTPMBGC() {
+		return leftQtyTPMBGC;
+	}
+
+	public void setLeftQtyTPMBGC(String leftQtyTPMBGC) {
+		this.leftQtyTPMBGC = leftQtyTPMBGC;
+	}
+
+	public String getLeftQtyTPSBGC() {
+		return leftQtyTPSBGC;
+	}
+
+	public void setLeftQtyTPSBGC(String leftQtyTPSBGC) {
+		this.leftQtyTPSBGC = leftQtyTPSBGC;
+	}
+
+	public String getInProcessTPMBGC() {
+		return inProcessTPMBGC;
+	}
+
+	public void setInProcessTPMBGC(String inProcessTPMBGC) {
+		this.inProcessTPMBGC = inProcessTPMBGC;
+	}
+
+	public String getInProcessTPSBGC() {
+		return inProcessTPSBGC;
+	}
+
+	public void setInProcessTPSBGC(String inProcessTPSBGC) {
+		this.inProcessTPSBGC = inProcessTPSBGC;
+	}
+
+	
+	
 	
 	
 	
