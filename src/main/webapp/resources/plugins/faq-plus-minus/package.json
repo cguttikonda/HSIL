@@ -1,0 +1,33 @@
+{
+  "author": "Gardelin <rlabrovi@gmail.com> (https://github.com/gardelin)",
+  "name": "@gardelin/jquery-accordion",
+  "scope": "gardelin",
+  "version": "1.0.0",
+  "description": "Simple jQuery accordion library, perfect for FAQ (Frequently Asked Question) list. ![Accordion](accordion.png)",
+  "main": "gulpfile.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-minify": "^3.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gardelin/jquery-accordion.git"
+  },
+  "keywords": [
+    "accordion",
+    "jquery",
+    "jquery-accordion"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gardelin/jquery-accordion/issues"
+  },
+  "homepage": "https://github.com/gardelin/jquery-accordion#readme"
+}
