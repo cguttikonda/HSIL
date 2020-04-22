@@ -171,8 +171,10 @@ public class MasterDataController {
 	@RequestMapping(value = "/distSamp", method = RequestMethod.GET)
     public StreamingResponseBody getDistSample(HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/vnd.ms-excel"); 
-        response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
+        //response.setContentType("application/vnd.ms-excel"); 
+        //response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
+		response.setContentType("application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xlsx\"");
         String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","Business Unit Name","City"};
         return ezExcelUtil.writeExcel(distCodeArr,null,"distributors"); 
     }
@@ -211,8 +213,10 @@ public class MasterDataController {
 	@RequestMapping(value = "/matDown", method = RequestMethod.GET)
     public StreamingResponseBody getMatDownload(HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/vnd.ms-excel"); 
-        response.setHeader("Content-Disposition", "attachment; filename=\"material.xls\"");
+        //response.setContentType("application/vnd.ms-excel"); 
+        //response.setHeader("Content-Disposition", "attachment; filename=\"material.xlsx\"");
+		response.setContentType("application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); 
+        response.setHeader("Content-Disposition", "attachment; filename=\"material.xlsx\"");
         String [] matCodeArr={"Material Code","Material Name","Quantity"};
 
         List<MaterialMaster> matMastList= masterService.findMatAll();
