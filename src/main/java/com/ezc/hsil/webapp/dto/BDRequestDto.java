@@ -1,6 +1,11 @@
 package com.ezc.hsil.webapp.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
+
+import com.ezc.hsil.webapp.model.DistributorMaster;
 
 public class BDRequestDto  implements java.io.Serializable {
 	
@@ -10,8 +15,11 @@ public class BDRequestDto  implements java.io.Serializable {
 	private String bdMatDesc;
 	@NotNull 
 	private Integer bdQty;
-	
-	
+	@NotNull
+	private String erhDistrubutor;
+	@NotNull
+	private String erhPurpose;
+	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
 	public BDRequestDto() {
 	}
 
@@ -43,6 +51,36 @@ public class BDRequestDto  implements java.io.Serializable {
 
 	public void setBdQty(Integer bdQty) {
 		this.bdQty = bdQty;
+	}
+
+
+	public String getErhDistrubutor() {
+		return erhDistrubutor;
+	}
+
+
+	public void setErhDistrubutor(String erhDistrubutor) {
+		this.erhDistrubutor = erhDistrubutor;
+	}
+
+
+	public String getErhPurpose() {
+		return erhPurpose;
+	}
+
+
+	public void setErhPurpose(String erhPurpose) {
+		this.erhPurpose = erhPurpose;
+	}
+
+
+	public List<DistributorMaster> getDistList() {
+		return distList;
+	}
+
+
+	public void setDistList(List<DistributorMaster> distList) {
+		this.distList = distList;
 	}
 
 

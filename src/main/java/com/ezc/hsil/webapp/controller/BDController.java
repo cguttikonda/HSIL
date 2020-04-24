@@ -30,6 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.dto.BDRequestDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
@@ -67,6 +68,7 @@ public class BDController {
 	 @RequestMapping("/bd/add")
 	 public String add(Model model) {
 		 BDRequestDto bdReqDto = new BDRequestDto();
+		List<DistributorMaster> distList = masterService.findAll();
 		 String loggedUser="";
 			try {
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,7 +78,7 @@ public class BDController {
 			} catch (Exception e) {
 				
 			} 
-			
+			bdReqDto.setDistList(distList);
 		 	model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        model.addAttribute("bdReqDto",bdReqDto);
 	        return "bd/bdForm";
@@ -172,6 +174,8 @@ public class BDController {
 			   	ezRequestHeader.setErhCreatedGroup("BD");
 			   	
 			   	ezRequestHeader.setErhNoOfAttendee(bdReqDto.getBdQty());
+			   	ezRequestHeader.setErhDistrubutor(bdReqDto.getErhDistrubutor());
+			   	ezRequestHeader.setErhPurpose(bdReqDto.getErhPurpose());
 			   	ezRequestHeader.setErhReqType("BD");
 			   	ezRequestHeader.setErhRequestedOn(new Date());
 			   	ezRequestHeader.setErhState("TEST"); 
@@ -372,6 +376,7 @@ public class BDController {
 			{
 				ezcMatList.add(item); 
 			}
+	        log.debug("distributor"+ezcRequestHeader.getErhDistrubutor());
 	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
 	        reqDto.setReqHeader(ezcRequestHeader);
 	        reqDto.setEzReqMatList(ezcMatList);
@@ -420,6 +425,7 @@ public class BDController {
 	        if("Event".equals(purpose.trim()))disabledStr="false";
 	        
 	        log.debug(disabledStr);
+	        log.debug("dist"+reqDto.getReqHeader().getErhDistrubutor());
 	        if(reqDto.getEzcRequestItems() == null)
 	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
 	        else

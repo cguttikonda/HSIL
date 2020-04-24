@@ -33,7 +33,7 @@ public class MaterialDto {
 	@Positive 
 	@NotNull
 	@Min(1)
-	@Range(max=1000)
+//	@Range(max=1000)
 	private int quantity;
 	
 	@NonNull

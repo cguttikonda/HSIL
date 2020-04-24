@@ -83,7 +83,12 @@ public class ModalDialogController {
 		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
 		return "modals/deleteMaterial" ;
 	}
-	 
+	@GetMapping(value="/delete-city/{city}")
+	public String deleteCityModal(@PathVariable("city") String city, Model model) {
+		model.addAttribute("placeMasterDto", masterService.getCityDetails(city));
+		return "modals/deleteCity" ;
+	}
+	  
 	@GetMapping(value="/appr-tpm/{id}")
 	public String approveTPMModal(@PathVariable("id") String id, Model model) {
 		EzcRequestHeader ezReqHead = iTPMService.getTPMRequest(id);

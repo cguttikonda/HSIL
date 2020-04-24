@@ -71,6 +71,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getAllMeetsMonthWise();
 	
 	@Query(nativeQuery = true,value="select a.user_id,a.first_name,b.egu_user_id,(select ewg_group_desc from ezc_work_groups where EGU_ZONAL_GRP=ewg_group) as  EGU_ZONAL_GRP,(select ewg_group_desc from ezc_work_groups where egu_id=ewg_group) as grp from ezc_users a,ezc_workgroup_users b   where a.user_id=b.egu_user_id and a.id IN(  select user_id from users_roles where role_id in (select id from ezc_roles where name IN ('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')))")
+	//@Query(nativeQuery=true,value="select a.user_id,a.first_name,b.egu_user_id,(select ewg_group_desc from ezc_work_groups where EGU_ZONAL_GRP=ewg_group) as  EGU_ZONAL_GRP,(select ewg_group_desc from ezc_work_groups where egu_id=ewg_group) as grp from ezc_users a,ezc_workgroup_users b   where a.user_id=b.egu_user_id ")
 	List<Object[]> getUserDefaults();
 	@Query(nativeQuery = true,value="select COUNT(eri_plumber_name),(SELECT erh_requested_by from ezc_request_header where id=eri_req_id) emp,ERH_REQ_TYPE from ezc_request_items a,ezc_request_header b where a.eri_req_id=b.id and b.erh_status='SUBMITTED' and b.ERH_REQ_TYPE!='BD' group by eri_req_id")
 	List<Object[]> getNoofPlumbersPerUser();

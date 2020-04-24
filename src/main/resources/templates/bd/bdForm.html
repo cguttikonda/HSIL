@@ -45,6 +45,26 @@
 						</select>
                       <span class="help-block" th:if="${#fields.hasErrors('bdMatCode')}" th:errors="*{bdMatCode}"></span>
                 </div>
+                <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
+                    <label for="erhDistrubutor">Distributor</label>
+                      <select class="form-control select2 validate[required]" th:field="*{erhDistrubutor}">
+						<option selected value="">---select distributor---</option>
+						<option th:selected="${erhDistrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
+	                </select>
+	                <span class="help-block" th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}"></span>
+                </div>
+                <div th:class="${#fields.hasErrors('erhPurpose')}? 'form-group has-error' : 'form-group'">
+                    <label for="erhPurpose">Purpose</label>
+                 <select class="form-control select2 validate[required]" th:field="*{erhPurpose}"  id="purpose">
+                 <option selected value="">---select Purpose---</option>
+                 <option selected value="Event">Event</option>
+                 <option selected value="Customer Meeting">Customer Meeting</option>
+                 <option selected value="Factory Visit Guest">Factory Visit Guest</option>
+                 <option selected value="Consultant Meeting">Consultant Meeting</option>
+                 <option selected value="Govt Official Meeting">Govt Official Meeting</option>
+                 </select> 
+                 </div>
+              
                  <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
                     <label for="bdQty">Quantity</label>
                     <input type="number"  class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" th:field="*{bdQty}" id="" />

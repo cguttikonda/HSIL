@@ -10,7 +10,7 @@
 					th:if="${materialDto.materialCode!=''} ? ( ${materialDto.materialCode} ) : '' |"></span>?</p>
 			</div>
 			<div class="modal-footer">
-				<form th:action="@{/master/edit-material}" th:object="${materialDto}" th:method="post">
+				<form th:action="@{/master/delete-mat/{id}(id=${materialDto.materialCode})}" th:object="${materialDto}" th:method="post">
 					<input th:field="${materialDto.materialCode}" type="hidden"  />
 					<input th:field="${materialDto.materialDesc}" type="hidden"  />
 					<input th:field="${materialDto.quantity}" type="hidden"  />

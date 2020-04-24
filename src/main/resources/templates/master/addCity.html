@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Place Master</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Add City <small></small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="@{/dashboard/index.html}"><i class="fa fa-dashboard"></i> Place</a></li>
+			
+			<li class="active">add</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	</div>
+		<form role="form" th:action="@{/master/addCity}"
+			th:object="${placeMasterDto}" th:method="post">
+			<div class="box-body">
+				<div class="form-group">
+					<label for="City">City</label>
+					 <input
+						th:field="*{city}" type="text" class="form-control"
+						placeholder="Enter City" th:errorclass="has-error" onchange="funIsThere()" style="width:60%;" required/>
+						<span th:if="${#fields.hasErrors('city')}" th:errors="*{city}"  th:errorclass="has-error">Name Error</span>
+						
+				</div>
+				<div class="form-group">
+					<label for="state">State</label>
+					 <input
+						th:field="*{state}" type="text" class="form-control"
+						placeholder="Enter State"  th:errorclass="has-error" style="width:60%;" required/>
+						
+				</div>
+
+				<div class="form-group">
+					<label for="country">Country</label>
+					<input
+						th:field="*{country}" type="text" class="form-control"
+						placeholder="Enter Country"  th:errorclass="has-error" style="width:60%;"  required/> 
+					
+				</div>
+				
+
+			</div>
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="submit"  class="btn btn-primary pull-right" style="margin-left:5px">Submit</button>
+				
+			
+			</div>
+		</form>
+
+	
+</body>
+<div layout:fragment="scriptContent">
+<script>
+function funIsThere()
+{
+  var city=document.getElementById("city").value;
+  $.ajax({
+	  url:"/master/getExistingCity/"+city,
+	  data : 'json',
+		success : function(response) {
+			
+			//alert("response"+response);
+			if(response>0)
+			{//alert("City is already There");
+			$('#city').validationEngine('showPrompt', 'City already there', 'pass');
+			document.getElementById("city").value="";
+			}
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+    
+  	
+  });
+  
+  
+	//alert(document.getElementById("materialCode").value);
+}
+</script>
+</html>

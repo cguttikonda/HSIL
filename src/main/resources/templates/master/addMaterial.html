@@ -37,7 +37,7 @@
 					<label for="materialName">Material</label>
 					 <input
 						th:field="*{materialCode}" type="text" class="form-control"
-						placeholder="Enter Material Code" th:errorclass="has-error" />
+						placeholder="Enter Material Code" th:errorclass="has-error" onchange="funGetAvaQty()" required/>
 						<span th:if="${#fields.hasErrors('materialCode')}" th:errors="*{materialCode}"  th:errorclass="has-error">Name Error</span>
 						
 				</div>
@@ -50,11 +50,16 @@
 				</div>
 
 				<div class="form-group">
-					<label for="materialQuantity">Quantity</label>
+					<label for="materialQuantity">New Quantity</label>
 					<input
 						th:field="*{quantity}" type="number" class="form-control"
 						placeholder="Enter Quantity"  th:errorclass="has-error" required/>
 					<span th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" th:errorclass="has-error">Business Unit Error</span>
+				</div>
+				<div class="form-group">
+					<label for="materialQuantity">Existing Quantity</label>
+					<input type="text" readonly name="stkAva" id="stkAva" class="form-control">
+					
 				</div>
 
 			</div>
@@ -72,4 +77,27 @@
 	<div th:replace="modals/uploadExcelModal.html:: uploadExcel(action='/master/matUpload',title='Excel Upload')"></div>
 	</div>
 </body>
+<div layout:fragment="scriptContent">
+<script>
+function funGetAvaQty()
+{
+  var matCode=document.getElementById("materialCode").value;
+  $.ajax({
+	  url:"/master/getExistingQuantity/"+matCode,
+	  data : 'json',
+		success : function(response) {
+			//alert(response);
+			document.getElementById("stkAva").value=response;
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+    
+  	
+  });
+  
+  
+	//alert(document.getElementById("materialCode").value);
+}
+</script>
 </html>

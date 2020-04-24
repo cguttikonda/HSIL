@@ -7,12 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +32,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
+import com.ezc.hsil.webapp.dto.PlaceMasterDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.service.IMasterService;
@@ -127,16 +130,33 @@ public class MasterDataController {
 	}
 	@PostMapping("/addMaterial")
 	public String saveMaterail(@Valid @ModelAttribute("materialDto") MaterialDto mDto, 
-			BindingResult bindingResult, RedirectAttributes ra, Model model) {
+			BindingResult bindingResult, RedirectAttributes ra, Model model,@RequestParam(value = "stkAva", required = false) int stkAva) throws SQLException {
 		
 		if(bindingResult.hasErrors()) {
 			
 			log.info("bindingResult:::::of material {}",bindingResult);
 			return "master/addMaterial";
 		}else {
-			
+			String matCode=mDto.getMaterialCode();
+			log.debug("stkAva"+stkAva);
+			int qty=mDto.getQuantity();
+			int totQty=qty+stkAva;
+			log.debug("totQty"+totQty);
+			boolean isPresent = masterService.findById(matCode);
+			log.debug("isPresent"+isPresent);
+			if(isPresent)
+			{
+				mDto.setIsActive("Y");
+				mDto.setQuantity(totQty);
+				ra.addFlashAttribute("success", "Material Updated successfully.");
+				masterService.updateMaterial(mDto);
+				
+			}
+			else
+			{	
 			ra.addFlashAttribute("success", "Material added successfully.");
 			masterService.addNewMaterial(mDto);
+			}
 		}
 		
 		return "redirect:/master/addMaterial"; //html
@@ -167,7 +187,48 @@ public class MasterDataController {
 		}
 		
 	}
-	
+	@PostMapping("/delete-mat/{id}")
+	public String deleteMaterial(@PathVariable String id) {
+		log.debug("code"+id);
+			masterService.deleteMaterial(id);
+			return "redirect:/master/listMaterial";
+	}
+	@GetMapping("/addCity") 
+	public String showAddCity(Model model) {
+		
+		model.addAttribute("placeMasterDto",new PlaceMasterDto());
+
+		return "master/addCity";
+	}
+	@PostMapping("/addCity")
+	public String saveCity(@Valid @ModelAttribute("placeMasterDto") PlaceMasterDto pDto, 
+			BindingResult bindingResult, RedirectAttributes ra, Model model)  {
+		log.debug("saving city");
+		if(bindingResult.hasErrors()) {
+			
+			log.info("bindingResult:::::of City {}",bindingResult);
+			return "master/addCity";
+		}else {
+			ra.addFlashAttribute("success", "City added successfully.");
+			masterService.addNewCity(pDto);
+		
+		}
+		
+		return "redirect:/master/addCity"; 
+	}
+	@PostMapping("/delete-city/{id}")
+	public String deleteCity(@PathVariable int id) {
+		log.debug("code"+id);
+			masterService.deleteCity(id);
+			return "redirect:/master/listCity";
+	}
+	@GetMapping("/listCity") 
+	public String listCity(Model model) {
+		
+		model.addAttribute("cityList", masterService.findAllCities());
+
+		return "master/cityList";
+	}
 	@RequestMapping(value = "/distSamp", method = RequestMethod.GET)
     public StreamingResponseBody getDistSample(HttpServletResponse response) throws IOException {
 
@@ -308,4 +369,36 @@ public class MasterDataController {
 		   }
 		   return listOutArr;
 		}
+	@RequestMapping(value="/getExistingQuantity/{matCode}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Integer getExistingQty(@PathVariable String matCode)
+	{
+		MaterialDto matdto=masterService.getMaterialDetails(matCode);
+		Integer existingQty=0;
+		try {
+		existingQty=matdto.getQuantity();
+		}catch(Exception e)
+		{
+			existingQty=0;
+		}
+		log.debug("existingQty"+existingQty);
+		return existingQty;
+	}
+	@RequestMapping(value="/getExistingCity/{city}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody int getExistingCity(@PathVariable String city)
+	{
+		PlaceMasterDto pdto=masterService.getCityDetails(city);
+		int id;
+		try {
+			id=pdto.getId();
+		}catch(Exception e)
+		{
+			id=0;
+		}
+		log.debug("response"+id);
+		return id;
+	}
+
+
+
 }
+

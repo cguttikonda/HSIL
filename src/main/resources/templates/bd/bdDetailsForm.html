@@ -26,6 +26,7 @@
         <form data-toggle="validator" role="form"  id="myForm" th:object="${reqDto}" th:action="@{/bd/saveDetails}" method="post" name="myForm" >
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
+            	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" name="id" th:value="*{reqHeader.id}">
             	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
@@ -33,6 +34,23 @@
               <label class="col-lg-2 control-label">Document Id</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><span th:text="*{'BD-'+reqHeader.id}"></span></div>
+              </div>
+               <label class="col-lg-2 control-label">Purpose</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 
+                   <select class="form-control select2 validate[required]" th:field="*{reqHeader.erhPurpose}"  id="purpose">
+                 <option selected value="">---select Purpose---</option>
+                 <option selected value="Event">Event</option>
+                 <option selected value="Customer Meeting">Customer Meeting</option>
+                 <option selected value="Factory Visit Guest">Factory Visit Guest</option>
+                 <option selected value="Consultant Meeting">Consultant Meeting</option>
+                 <option selected value="Govt Official Meeting">Govt Official Meeting</option>
+                 </select> 
+                 
+              </div>
+                <label class="col-lg-2 control-label">Distributor</label>
+              <div class="col-lg-4 inputGroupContainer">
+                 <div class="input-group"><span th:text="*{reqHeader.erhDistrubutor}"></span></div>
               </div>
               <div sec:authorize="hasRole('ADMIN')">
 				<label class="col-lg-2 control-label">OutStore</label>
@@ -49,19 +67,7 @@
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><input   placeholder="" class="form-control validate[required]" th:field="*{reqHeader.erhCity}" ></div>
               </div>
-               <label class="col-lg-2 control-label">Purpose</label>
-              <div class="col-lg-4 inputGroupContainer">
-                 <div class="input-group">
-                   <select class="form-control select2 validate[required]" th:field="*{reqHeader.erhPurpose}"  id="purpose">
-                 <option selected value="">---select Purpose---</option>
-                 <option selected value="Event">Event</option>
-                 <option selected value="Customer Meeting">Customer Meeting</option>
-                 <option selected value="Factory Visit Guest">Factory Visit Guest</option>
-                 <option selected value="Consultant Meeting">Consultant Meeting</option>
-                 <option selected value="Govt Official Meeting">Govt Official Meeting</option>
-                 </select> 
-                 </div>
-              </div>
+              
            </div>
            </div>
       <div class="table-responsive" style="margin-top:2%">
@@ -190,7 +196,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" class="datePickObj form-control pull-right" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
+							<input type="text" class="datePickObj form-control pull-right validate[required]" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
 							</div>
 						</td>
 						<td data-title="D.O.A">
@@ -198,7 +204,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text"  class="datePickObj form-control pull-right" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
+							<input type="text"  class="datePickObj form-control pull-right validate[required]" autocomplete="off"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
 							</div>
 						</td>
 						<td ><input type="text"  class="form-control validate[required]" autocomplete="off"  th:disabled="${disabledStr}" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" /></td>	

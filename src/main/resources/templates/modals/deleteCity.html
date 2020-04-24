@@ -1,0 +1,25 @@
+<div id="deleteCityModal" class="modal fade" role="dialog" th:fragment="delete-city" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header bg-primary">
+				<h4 class="modal-title font-weight-bold">Delete City</h4>
+			</div>
+			<div class="modal-body">
+				<p>Do you really want to delete the  city  <span style="font-weight:bold" 
+					th:text="|${placeMasterDto.city}"     
+					th:if="${placeMasterDto.city!=''} ? ( ${placeMasterDto.city} ) : '' |"></span>?</p>
+			</div>
+			<div class="modal-footer">
+				<form th:action="@{/master/delete-city/{id}(id=${placeMasterDto.city})}" th:object="${placeMasterDto}" th:method="post">
+					<input th:field="${placeMasterDto.id}" type="hidden"  />
+					<input th:field="${placeMasterDto.state}" type="hidden"  />
+					<input th:field="${placeMasterDto.country}" type="hidden"  />
+					<input name="isActive" type="hidden" value="N" />
+					<button type="button"  class="btn btn-default" data-dismiss="modal">Cancel</button>
+		            <button type="submit" class="btn btn-danger">Delete</button>
+	        	</form>
+				
+			</div>
+		</div>
+	</div>
+</div>

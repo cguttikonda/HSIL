@@ -171,7 +171,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" autocomplete="off"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
+							<input type="text" autocomplete="off"  class="datePickObj form-control pull-right validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
 							</div>
 						</td>
 						<td data-title="D.O.A">
@@ -179,7 +179,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" autocomplete="off"  class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
+							<input type="text" autocomplete="off"  class="datePickObj form-control pull-right validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
 							</div>
 						</td>
                 		<td data-title="">

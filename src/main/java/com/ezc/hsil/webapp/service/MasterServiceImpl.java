@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
+import com.ezc.hsil.webapp.dto.PlaceMasterDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.MaterialMaster;
@@ -177,6 +178,16 @@ public class MasterServiceImpl implements IMasterService {
 			OMatMaster.orElseThrow(()->{ return new SQLException();});
 			return "";
 	}
+	@Override
+	public boolean findById(String matCode) {
+
+		
+
+			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matCode);
+			boolean inPresent=OMatMaster.isPresent();
+			
+			return inPresent;
+	}
 
 	private Consumer<? super MaterialMaster> processMaterial(MaterialDto matDto) {
 		return matMaster ->{
@@ -187,7 +198,60 @@ public class MasterServiceImpl implements IMasterService {
 			
 		};
 	}
+	@Override
+	public String deleteMaterial(String code) {
 
+
+		Optional<MaterialMaster> OMatMaster= matMastRep.findById(code);
+			
+			if (OMatMaster.isPresent()) {
+
+				matMastRep.deleteById(code);
+			}
+		return "";
+	}
+	
+	@Override
+	public PlaceMasterDto addNewCity(final PlaceMasterDto pDto) {
+
+		if(pDto!=null) {
+			
+			EzPlaceMaster pm = new EzPlaceMaster(); 
+			pm.setCity(pDto.getCity());
+			pm.setState(pDto.getState());
+			pm.setCountry(pDto.getCountry());
+			
+			log.debug("city"+pDto.getCity());
+			placeMasterRep.save(pm);	
+			
+		}else
+		{
+			
+			throw new RuntimeException();
+		}
+		
+		
+		return null;
+	}
+	@Override
+	public String deleteCity(int code) {
+
+
+		Optional<EzPlaceMaster> OPlaceMaster= placeMasterRep.findById(code);
+			
+			if (OPlaceMaster.isPresent()) {
+
+				placeMasterRep.deleteById(code);
+			}
+		return "";
+	}
+	@Override
+	public PlaceMasterDto getCityDetails(String city) {
+		PlaceMasterDto cityDto = placeMasterRep.cityDetails(city);
+		return cityDto;
+
+ 	}
+	 
 	@Override
 	public List<MaterialMaster> findAllMaterialsLike(String q) {
 		return matMastRep.findAllMaterialsLike(q);
