@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -24,6 +25,7 @@ public class TpsRequestDto implements java.io.Serializable{
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date plannedOn;
 	@NotNull
+	@Min(value = 1)
 	private Integer noOfAttendee;
 	@NotNull
 	private Integer noOfRetailers;

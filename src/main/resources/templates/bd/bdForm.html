@@ -106,7 +106,7 @@ $(document.body).on("change","#selMat",function(){
 	document.getElementById("stkAva").value=stkAvaQty;
 	});
 $(document).ready(function(){
-	
+	$('.select2').select2();
 	$("#save").click(function(){
 		Pace.restart();
 		/*var leftOverCnt=parseInt($("#leftOverCnt").val());

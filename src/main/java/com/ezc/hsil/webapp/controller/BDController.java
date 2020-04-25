@@ -175,6 +175,7 @@ public class BDController {
 			   	
 			   	ezRequestHeader.setErhNoOfAttendee(bdReqDto.getBdQty());
 			   	ezRequestHeader.setErhDistrubutor(bdReqDto.getErhDistrubutor());
+			   	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(bdReqDto.getErhDistrubutor()).getName());
 			   	ezRequestHeader.setErhPurpose(bdReqDto.getErhPurpose());
 			   	ezRequestHeader.setErhReqType("BD");
 			   	ezRequestHeader.setErhRequestedOn(new Date());
@@ -219,8 +220,8 @@ public class BDController {
 				 }
 				ezRequestHeader.setRequestMaterials(reqMatSet);
  	
-				bdService.createBDRequest(ezRequestHeader);
-				ra.addFlashAttribute("success","BD request details saved sucessfully.");
+				EzcRequestHeader ezReqHeadOut = bdService.createBDRequest(ezRequestHeader);
+				ra.addFlashAttribute("success","BD request details saved sucessfully with reference : "+"BD-"+ezReqHeadOut.getId()+".");
 				return "redirect:/bd/add";
 	    	}
  }

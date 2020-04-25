@@ -59,10 +59,11 @@ public class BDServiceImpl implements IBDService{
 
 	 
 	@Override
-	public void createBDRequest(EzcRequestHeader ezcRequestHeader) {
+	public EzcRequestHeader createBDRequest(EzcRequestHeader ezcRequestHeader) {
 		// TODO Auto-generated method stub
 		log.debug("In service class BD","I"); 
-		reqHeaderRepo.save(ezcRequestHeader);
+		EzcRequestHeader reqHeader = reqHeaderRepo.save(ezcRequestHeader);
+		return reqHeader;
 		/*
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(ezcRequestHeader.getId()).orElseThrow(() -> new EntityNotFoundException());
 		Set<RequestMaterials> ezReqMatList = ezReqHeader.getRequestMaterials();

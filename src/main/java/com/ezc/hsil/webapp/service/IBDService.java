@@ -9,7 +9,7 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
 public interface IBDService {
 
-	public void createBDRequest(EzcRequestHeader ezcRequestHeader);
+	public EzcRequestHeader createBDRequest(EzcRequestHeader ezcRequestHeader);
 	public List<EzcRequestHeader> getBDRequestListByDate(ListSelector listSelector);
 	public EzcRequestHeader getBDRequest(String docId);
 	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto);

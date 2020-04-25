@@ -44,7 +44,7 @@
                     <i class="fa fa-calendar"></i>
                   </div>
                   <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
-                </div>
+                </div>	
                 <!-- /.input group -->
 	</td>
 	<td>
@@ -83,11 +83,12 @@
                     <th>Distributor</th>
                     <th>Name</th>
                     <th>City</th>
-                    <th>Created BY</th>
+                    <th>Created By</th>
                     <th>Meeting Date</th>
-                    <th>No Of Retailers</th>
-                    <th>Status</th>
+                    <th>Attendance</th>
                     <th></th>
+                    <th>Status</th>
+                    
                 </tr>
                     </thead>
            		<tbody>	
@@ -105,7 +106,6 @@
                     <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
-                    <td th:text="${row.erhStatus}"></td>
                      <td>
                     	<span th:if="${row.erhReqType == 'BD'}">
                     	<span sec:authorize="hasRole('ROLE_ST_HEAD')"  th:if="${row.erhStatus == 'APPROVED'}">
@@ -139,6 +139,7 @@
 						</span>
 						
                     </td>
+                        <td th:text="${row.erhStatus}"></td>
                 </tr>
             	</tbody>
             </table>
