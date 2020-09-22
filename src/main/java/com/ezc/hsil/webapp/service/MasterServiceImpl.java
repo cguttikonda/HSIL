@@ -277,7 +277,8 @@ public class MasterServiceImpl implements IMasterService {
 			}
 			else
 			{
-				matMastRep.save(matObj);
+				matObj.setBlockQty(0);
+				matMastRep.save(matObj); 
 			}
 		}
 		//matMastRep.saveAll(matList);

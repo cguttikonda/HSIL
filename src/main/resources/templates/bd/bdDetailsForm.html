@@ -98,9 +98,16 @@
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasRole('ADMIN')">
+							<div class="row">
+							<div class="form-group col-xs-6">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
-							<input  type="number" class="form-control validate[required]" id="bdQty" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}" >
-							
+							<input  type="number" class="form-control validate[required]" id="bdQty" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+							</div>
+							<div class="form-group col-xs-6">
+							  <span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span id="availQty"></span></strong></span>
+							  
+							</div>
+							</div>
 						</td>
                 	</tr>
                 	</tbody>
@@ -303,133 +310,142 @@ function dupMobChk(field, rules, i, options){
 	    	return 'Mobile No is not unique';
 
 }
- $('.datePickObj').datepicker({
-      autoclose: true,
-      format: 'dd/mm/yyyy'
-    });
-    $('.deleteItem').click(function(){
-    	$(this).closest("tr").remove();
-    });
-     				
-    function onSaveClickAdmin()
-    {
-    	Pace.restart();
-    	$.ajax({
-			
-    		type : "GET",
-    		url : "/master/checkStock/"+$('#selMat').val()+"/"+$('#bdQty').val(), 
-    		success : function(response) {
-    				//alert(response)
-    	if(response.STOCK_FLG == 'Y')
-    	{
-	    	var leftOverCnt=parseInt($("#leftOverCnt").val());
-	    	
-			var qtyEntered = false;
-			for(i=0;i<leftOverCnt;i++)
-			{
-					if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
-					{
-						qtyEntered = true;
+function getStock()
+{
+	
+	$.ajax({
+
+			type : "GET",
+			url : "/master/checkStock/" + $('#selMat').val() + "/"
+					+ $('#bdQty').val(),
+			success : function(response) {
+				$('#availQty').html(response.STOCK)
+			}
+		});
+
+	}
+	$('.datePickObj').datepicker({
+		autoclose : true,
+		format : 'dd/mm/yyyy'
+	});
+	$('.deleteItem').click(function() {
+		$(this).closest("tr").remove();
+	});
+
+	function onSaveClickAdmin() {
+		Pace.restart();
+		$
+				.ajax({
+
+					type : "GET",
+					url : "/master/checkStock/" + $('#selMat').val() + "/"
+							+ $('#bdQty').val(),
+					success : function(response) {
+						//alert(response)
+						if (response.STOCK_FLG == 'Y') {
+							var leftOverCnt = parseInt($("#leftOverCnt").val());
+
+							var qtyEntered = false;
+							for (i = 0; i < leftOverCnt; i++) {
+								if ($("#allocQty_" + i).val() !== ""
+										&& parseFloat($("#allocQty_" + i).val()) > 0) {
+									qtyEntered = true;
+								} else {
+									continue;
+								}
+								if (parseFloat($("#allocQty_" + i).val()) > parseFloat($(
+										"#leftOverQty_" + i).val())) {
+									$('#allocQty_' + i)
+											.validationEngine(
+													'showPrompt',
+													'Allocated Qty is greater than leftover qty',
+													'');
+									return;
+								}
+							}
+
+							if (!qtyEntered) {
+								if ($("#bdQty").val() !== ""
+										&& parseFloat($("#bdQty").val()) > 0) {
+									qtyEntered = true;
+								}
+							}
+
+							if (!qtyEntered) {
+								$('#bdQty').validationEngine('showPrompt',
+										'Please provide Quantity', '');
+								return;
+							}
+
+							//	document.myForm.submit();
+
+							if ($("#myForm").validationEngine('validate')) {
+								$('.subBtn').hide();
+								document.myForm.action = "/bd/apprbd";
+								document.myForm.submit();
+							}
+						} else {
+							$('#bdQty')
+									.validationEngine(
+											'showPrompt',
+											'Only '
+													+ response.STOCK
+													+ " available in stock for selected material",
+											'');
+						}
+					},
+					error : function(ex) {
+						console.log(ex);
 					}
-					else
-					{
-						continue;
-					}
-					if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
-					{
-						$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
-						return ;
-					}
-			}
-			
-			if(!qtyEntered)
-			{
-				if($("#bdQty").val() !== "" && parseFloat($("#bdQty").val()) > 0)
-				{
-					qtyEntered =true;
-				}
-			}
-			
-			if(!qtyEntered)
-			{
-				$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
-				return ;
-			}
-			
-				
-			//	document.myForm.submit();
-			
-		
-			if($("#myForm").validationEngine('validate'))
-			{
-				$('.subBtn').hide();
-				document.myForm.action="/bd/apprbd";
-				document.myForm.submit();
-			}
-    	}
-    	else
-    	{
-    		$('#bdQty').validationEngine('showPrompt', 'Only '+response.STOCK+" available in stock for selected material", '');
-    	}
-    		},
-    		error : function(ex) {
-    			console.log(ex);
-    		}
-    	});
-    	
-    }
-    function onSaveClick()
-    {
-    	
-    	Pace.restart();
-			
-    	if($("#myForm").validationEngine('validate'))
-		{
-			
-    		$('.subBtn').hide();
+				});
+
+	}
+	function onSaveClick() {
+
+		Pace.restart();
+
+		if ($("#myForm").validationEngine('validate')) {
+
+			$('.subBtn').hide();
 			document.myForm.submit();
-		}	
-    }
-    function readOutLoud() {
-     	var message = $("#sampleTxt").text();
-    	var speech = new SpeechSynthesisUtterance();
-
-      // Set the text and voice attributes.
-    	speech.text = message;
-    	speech.volume = 1;
-    	speech.rate = 1;
-    	speech.pitch = 1;
-      
-    	window.speechSynthesis.speak(speech); 
-    }
-    function addItem()
-    {
-	 	document.myForm.action ="/tpm/processSpeech";
-	 	document.myForm.submit();
-    }
-	 function addNewItem()
-	 {
-		// alert(document.getElementById("purpose").value);	
-		purpose=document.getElementById("purpose").value;
-		if($("#myForm").validationEngine('validate'))
-		{
-			
-			 document.myForm.action ="/bd/addNewItem/"+ purpose;
-			 document.myForm.submit();
 		}
-		
-	 }
- 
- try {
-	  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-	  var recognition = new SpeechRecognition();
 	}
-	catch(e) {
-	  console.error(e);
-	  $('.no-browser-support').show();
-	  $('.app').hide();
+	function readOutLoud() {
+		var message = $("#sampleTxt").text();
+		var speech = new SpeechSynthesisUtterance();
+
+		// Set the text and voice attributes.
+		speech.text = message;
+		speech.volume = 1;
+		speech.rate = 1;
+		speech.pitch = 1;
+
+		window.speechSynthesis.speak(speech);
+	}
+	function addItem() {
+		document.myForm.action = "/tpm/processSpeech";
+		document.myForm.submit();
+	}
+	function addNewItem() {
+		// alert(document.getElementById("purpose").value);	
+		purpose = document.getElementById("purpose").value;
+		if ($("#myForm").validationEngine('validate')) {
+
+			document.myForm.action = "/bd/addNewItem/" + purpose;
+			document.myForm.submit();
+		}
+
 	}
 
+	try {
+		var SpeechRecognition = window.SpeechRecognition
+				|| window.webkitSpeechRecognition;
+		var recognition = new SpeechRecognition();
+	} catch (e) {
+		console.error(e);
+		$('.no-browser-support').show();
+		$('.app').hide();
+	}
 
 	var noteTextarea = $('#note-textarea');
 	var instructions = $('#recording-instructions');
@@ -448,137 +464,141 @@ function dupMobChk(field, rules, i, options){
 	// This block is called every time the Speech APi captures a line. 
 	recognition.onresult = function(event) {
 
-	  // event is a SpeechRecognitionEvent object.
-	  // It holds all the lines we have captured so far. 
-	  // We only need the current one.
-	  var current = event.resultIndex;
+		// event is a SpeechRecognitionEvent object.
+		// It holds all the lines we have captured so far. 
+		// We only need the current one.
+		var current = event.resultIndex;
 
-	  // Get a transcript of what was said.
-	  var transcript = event.results[current][0].transcript;
+		// Get a transcript of what was said.
+		var transcript = event.results[current][0].transcript;
 
-	  // Add the current transcript to the contents of our Note.
-	  // There is a weird bug on mobile, where everything is repeated twice.
-	  // There is no official solution so far so we have to handle an edge case.
-	  var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
+		// Add the current transcript to the contents of our Note.
+		// There is a weird bug on mobile, where everything is repeated twice.
+		// There is no official solution so far so we have to handle an edge case.
+		var mobileRepeatBug = (current == 1 && transcript == event.results[0][0].transcript);
 
-	  if(!mobileRepeatBug) {
-	    noteContent += transcript;
-	    noteTextarea.val(noteContent);
-	  }
+		if (!mobileRepeatBug) {
+			noteContent += transcript;
+			noteTextarea.val(noteContent);
+		}
 	};
 
-	recognition.onstart = function() { 
-	  instructions.text('Voice recognition activated. Try speaking into the microphone.');
+	recognition.onstart = function() {
+		instructions
+				.text('Voice recognition activated. Try speaking into the microphone.');
 	}
 
 	recognition.onspeechend = function() {
-	  instructions.text('You were quiet for a while so voice recognition turned itself off.');
+		instructions
+				.text('You were quiet for a while so voice recognition turned itself off.');
 	}
 
 	recognition.onerror = function(event) {
-	  if(event.error == 'no-speech') {
-	    instructions.text('No speech was detected. Try again.');  
-	  };
+		if (event.error == 'no-speech') {
+			instructions.text('No speech was detected. Try again.');
+		}
+		;
 	}
-
-
 
 	/*-----------------------------
 	      App buttons and input 
 	------------------------------*/
 
 	$('#start-record-btn').on('click', function(e) {
-	  if (noteContent.length) {
-	    noteContent += ' ';
-	  }
-	  recognition.start();
+		if (noteContent.length) {
+			noteContent += ' ';
+		}
+		recognition.start();
 	});
 
-
 	$('#pause-record-btn').on('click', function(e) {
-	  recognition.stop();
-	  instructions.text('Voice recognition paused.');
+		recognition.stop();
+		instructions.text('Voice recognition paused.');
 	});
 
 	// Sync the text inside the text area with the noteContent variable.
 	noteTextarea.on('input', function() {
-	  noteContent = $(this).val();
+		noteContent = $(this).val();
 	})
 
-function nullifyQty(mat,lefoverQty,leftoverid)
-{
-	mat.replace("#","-");
-	$('#matNullify').html(mat);
-	$('#qtyNullify').html(lefoverQty);
-	$('#leftOverId').val(leftoverid);
-	$('#commentsNullify').val("");
-	$('#reasonNullify').val("");
-	$('#nullifyModal').modal();
-}
-function postNullifyData(event){
-	if($("#nullifyForm").validationEngine('validate'))
-    {
-		var formdata = $('#nullifyForm').serialize();
-		var leftOverId = $('#leftOverId').val();
-		 $.ajax({
-			type : "POST",
-			url : "/bd/nullify-qty", 
-			data : formdata,
-			success : function(response) {
-				$('#row_'+leftOverId).hide();
-				$('#nullifyModal').modal('toggle');
-				$("#success-alert").fadeTo(2000, 500).slideUp(500, function(){
-				    $("#success-alert").slideUp(500);
-				});
-			},
-			error : function(ex) {
-				console.log(ex);
-			}
-		});
+	function nullifyQty(mat, lefoverQty, leftoverid) {
+		mat.replace("#", "-");
+		$('#matNullify').html(mat);
+		$('#qtyNullify').html(lefoverQty);
+		$('#leftOverId').val(leftoverid);
+		$('#commentsNullify').val("");
+		$('#reasonNullify').val("");
+		$('#nullifyModal').modal();
 	}
-}
-function checkQty()
-{
-	
-	var leftOverStk=$("#leftOverStk").val();
-	var attendee=$("#attendee").val();
-	
-	if($("#leftOverStk").val()>$("#attendee").val())
-	{
-		remainVal=leftOverStk-attendee;
-		//alert(remainVal);
-		$('#selQty').validationEngine('showPrompt', 'Recommended quantity '+remainVal, 'success','true');
-		return ;
+	function postNullifyData(event) {
+		if ($("#nullifyForm").validationEngine('validate')) {
+			var formdata = $('#nullifyForm').serialize();
+			var leftOverId = $('#leftOverId').val();
+			$.ajax({
+				type : "POST",
+				url : "/bd/nullify-qty",
+				data : formdata,
+				success : function(response) {
+					$('#row_' + leftOverId).hide();
+					$('#nullifyModal').modal('toggle');
+					$("#success-alert").fadeTo(2000, 500).slideUp(500,
+							function() {
+								$("#success-alert").slideUp(500);
+							});
+				},
+				error : function(ex) {
+					console.log(ex);
+				}
+			});
+		}
 	}
-}
-function funHide()
-{
-	
-	$("#success-alert").hide();
-}
-$(document).ready(function() {
-$('#selMat').select2({
-    placeholder: 'Select Material',
-    ajax: {
-      url: '/modal/mat-autocomp?type=text',
-      dataType: 'json',
-      delay: 250,
-      processResults: function (data) {
-        return {
-                       results: $.map(data, function (item) {
-                          return {
-                              text: item.materialCode+"-"+item.materialDesc,
-                              id: item.materialCode
-                          }
-                      }) 
-                  };
-      },
-      cache: true
-    }
-});
-});
+	function checkQty() {
 
-	</script>
+		var leftOverStk = $("#leftOverStk").val();
+		var attendee = $("#attendee").val();
+
+		if ($("#leftOverStk").val() > $("#attendee").val()) {
+			remainVal = leftOverStk - attendee;
+			//alert(remainVal);
+			$('#selQty').validationEngine('showPrompt',
+					'Recommended quantity ' + remainVal, 'success', 'true');
+			return;
+		}
+	}
+	function funHide() {
+
+		$("#success-alert").hide();
+	}
+	$(document).ready(
+			function() {
+				$('#selMat').select2(
+						{
+							placeholder : 'Select Material',
+							ajax : {
+								url : '/modal/mat-autocomp?type=text',
+								dataType : 'json',
+								delay : 250,
+								processResults : function(data) {
+									return {
+										results : $.map(data, function(item) {
+											return {
+												text : item.materialCode + "-"
+														+ item.materialDesc,
+												id : item.materialCode
+											}
+										})
+									};
+								},
+								cache : true
+							}
+						});
+				$('#selMat').on('select2:select', function (e) {
+					getStock();
+					});
+			});
+	getStock();
+	
+</script>
 </div>
 </body>
 </html>

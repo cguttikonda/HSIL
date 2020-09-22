@@ -236,7 +236,7 @@ public class MasterDataController {
         //response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
 		response.setContentType("application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xlsx\"");
-        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","Business Unit Name","City"};
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City"};
         return ezExcelUtil.writeExcel(distCodeArr,null,"distributors"); 
     }
 	
@@ -253,7 +253,7 @@ public class MasterDataController {
 
         response.setContentType("application/vnd.ms-excel"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
-        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","Business Unit Name","City"};
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City"};
 
         List<DistributorMaster> distMastList= masterService.findAll();
         List<Object[]> objArrList=null;

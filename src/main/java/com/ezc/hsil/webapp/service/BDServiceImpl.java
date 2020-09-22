@@ -151,15 +151,17 @@ public class BDServiceImpl implements IBDService{
 				 * RequestMaterials requestMaterials =
 				 * reqMatRep.findById(tempItem.getId()).orElseThrow(() -> new
 				 * EntityNotFoundException()); requestMaterials.setApprQty(appQty);
-				 * log.debug("matid"+tempItem.getId());
+				 * log.debug("matid"+tempItem.getId()); 
 				 */
+				  tempItem.setApprQty(appQty);//added by goutham
 				  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
 	                if(matMaster.isPresent())
 	                {  
 	                       MaterialMaster mat = matMaster.get();
 	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
 	                       //mat.setQuantity(qty);
-	                       int blockQty = tempItem.getApprQty();
+	                       //int blockQty = tempItem.getApprQty();
+	                       int blockQty=appQty;
 	                       if(mat.getBlockQty() != null)
 	                    	   blockQty += mat.getBlockQty();
 	                       mat.setBlockQty(blockQty);

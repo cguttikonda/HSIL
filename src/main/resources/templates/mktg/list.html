@@ -1,0 +1,135 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Marketing Giveaway  List</title>
+    <style type="text/css">
+    #rejectModal {
+    width: 50%;
+    height: 40%;
+    margin-left: 35%;
+    padding: 0;
+}
+#apprModal {
+    width: 90%;
+    height: 90%;
+    margin-left: 5%;
+    padding: 0;
+}
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+.group
+{
+	/* background: #eeeeee; */
+}
+#nullifyModal {
+	z-index: 1080 !important;
+}
+    </style>
+</head>
+<body>
+<section layout:fragment="header">
+    <h1>Marketing Giveaway List</h1>
+<ol class="breadcrumb">
+    <li><a href="/"><i class="fa fa-dashboard"></i> Marketing Giveaway</a></li>
+    <li class="active">List</li>
+</ol>
+</section>
+<div layout:fragment="content">
+    <div class="box">
+        <div class="box-body no-padding">
+        
+ <form role="form"  th:object="${listSelector}" th:action="@{/mktg/mktgRequestList}" method="get" name="myForm">
+ <div class="table-responsive hidden-xs">
+<table class="table table-striped" style="margin-bottom: 1%;">
+  <tbody><tr>  
+	<td>
+		<label>From Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{fromDate}">
+                </div>
+                <!-- /.input group -->
+	</td>
+	<td>
+                <label>To Date:</label>
+                <div class="input-group date">
+                  <div class="input-group-addon">
+                    <i class="fa fa-calendar"></i>
+                  </div>
+                  <input type="text" class="form-control pull-right datepicker" th:field="*{toDate}">
+                </div>
+                <!-- /.input group -->
+  	</td>
+ 
+  	<td>
+  		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
+  	</td>
+  </tr>
+  
+  </tbody></table>
+  </div>
+  </form>
+  <div class="table-responsive">
+                   <table id="example" class="table  table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+         
+                    <th>Sent to</th>
+                    <th>Sent On</th>
+                    <th>Distributor</th>
+                    <th>Distributor Name</th>
+                    <th>Material</th>
+                    <th>Quantity</th>
+                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row : ${reqList}">
+                    <td th:text="${row.sentTo+'['+row.sentToName+']'}"></td>
+                    <td th:text="${#dates.format(row.createdOn, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row.distrubutor}"></td>
+                    <td th:text="${row.distName}"></td>
+                    <td th:text="${row.matDesc+'['+row.matCode+']'}"></td>
+                    <td th:text="${row.qty}"></td>
+                </tr>
+            	</tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+<div layout:fragment="scriptContent">
+
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	  
+    $('.datepicker').datepicker({
+    	 autoclose: true,
+         format: 'dd/mm/yyyy'
+    });
+	
+	$('#example').DataTable({
+					
+		 dom: 'lBfrtip',
+         buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'Reports' },{ extend: 'copy', text: 'Copy',title:null }]
+	
+		}
+			
+	);
+	 
+});
+
+</script>
+
+
+</div>
+
+</body>
+</html>

@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
@@ -125,4 +126,23 @@ public class RequestCustomDto {
 	        return query.getResultList();
 	    }
 	
+	    public List<EzcMktGiveAway> findMktGiveAwayList(ListSelector listSelector) {
+	        CriteriaBuilder cb = em.getCriteriaBuilder();
+	        CriteriaQuery<EzcMktGiveAway> cq = cb.createQuery(EzcMktGiveAway.class);
+	        Root<EzcMktGiveAway> header = cq.from(EzcMktGiveAway.class);
+	        List<Predicate> predicates = new ArrayList<Predicate>();
+	        
+	        if(listSelector.getFromDate() != null && listSelector.getToDate() != null)
+	        	predicates.add(cb.between(header.get("createdOn"), listSelector.getFromDate(), listSelector.getToDate()));
+	        
+	        if(listSelector.getUser() != null && listSelector.getUser().size() > 0)
+	        {
+	        	Expression<String> exp = header.get("createdBy");
+	        	predicates.add(exp.in(listSelector.getUser()));
+	        }
+	        cq.where(predicates.toArray(new Predicate[0]));
+	        TypedQuery<EzcMktGiveAway> query = em.createQuery(cq);
+	        return query.getResultList();
+	    }
+	    
 }

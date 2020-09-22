@@ -48,6 +48,7 @@
 								</a> -->
 								<a href="#"
 								th:data-id="${material.materialCode}"
+								sec:authorize="hasRole('ADMIN')"
 								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
 								class="btn btn-danger btn-xs"> <span
 									class="glyphicon glyphicon-trash"></span>
@@ -87,10 +88,12 @@
 		<script th:inline="javascript">
 			$(document).ready(function() {
 				$('#example').DataTable({
-
-						"dom" : 'T<"clear">lfrtip'
-
+					
+					 dom: 'lBfrtip',
+			         buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'Reports' },{ extend: 'copy', text: 'Copy',title:null }]
+				
 					}
+						
 				);
 
 				$('#closeModal').click((e)=>{
