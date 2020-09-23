@@ -60,7 +60,9 @@
                        <thead>			
                 <tr>
                     <th>ID</th>
-                    <th>Created BY</th>
+                    <th>Created By</th>
+                    <th>Distributor</th>
+                    <th>Distributor Name</th>
                     <th>Status</th>
                     <th></th>
                 </tr>
@@ -69,6 +71,8 @@
                 <tr th:each="row : ${reqList}">
                     <td><a th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
                     <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhDistName}"></td>
                     <td th:text="${row.erhStatus}"></td>
                      <td>
                     	

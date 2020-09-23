@@ -267,10 +267,12 @@ public class BDController {
 	    	ListSelector listSelector = new ListSelector();
 	    	listSelector.setType("BD");
 	    	listSelector.setStatus(status);
+	    	if("APPROVED".equals(status))
+	    		listSelector.setDispStatus('S');
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
 			ArrayList<String> userList=new ArrayList<String>();
-	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT"))
+	    	if(requestWrapper.isUserInRole("ROLE_BD_MKT") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
 	    	{
 	    		userList.add(userObj.getUserId());
 	    		listSelector.setUser(userList);
@@ -378,6 +380,12 @@ public class BDController {
 				ezcMatList.add(item); 
 			}
 	        log.debug("distributor"+ezcRequestHeader.getErhDistrubutor());
+	        String distCity = "";
+	        try {
+				distCity=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getCity();
+			} catch (Exception e) {
+			}
+	        ezcRequestHeader.setErhCity(distCity);
 	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
 	        reqDto.setReqHeader(ezcRequestHeader);
 	        reqDto.setEzReqMatList(ezcMatList);

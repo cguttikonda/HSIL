@@ -19,6 +19,7 @@
 	                <tr>
 	                	<th>Request Id</th>
 	                	<th>Distributor</th>
+	                	<th>Distributor Name</th>
 	                	<th>Requested By</th>
 	                    <th>Material</th>
 	                    <th>Approved Qty</th>
@@ -29,6 +30,7 @@
                 <tr th:each="row, itemStat : ${matList}">
                     <td th:text="${row[1]+'-'+row[0]}"></td>
                     <td th:text="${row[2]}"></td>
+                    <td th:text="${row[7]}"></td>
                     <td th:text="${row[3]}"></td>
                     <td th:text="${row[4]+'-'+row[5]}"></td>
                     <td th:text="${row[6]}"></td>

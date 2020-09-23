@@ -32,13 +32,13 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getBdRequestList(String erhStatus,String erhReqType);	
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id,a.erhStatus from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and  a.erhReqType=:erhReqType and erhRequestedOn>=:fromdate  AND erhRequestedOn <=:todate")
 	List<Object[]> getBdALLRequestList(String erhReqType,Date fromdate,Date todate);	*/
-	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
+	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
 	List<Object[]> getPendingDispatchDetails(String userId);
 	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
 	Long getPendingDispatchCount(String userId);
-	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0  group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
+	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty),a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0  group by a.erhRequestedBy,a.erhDistrubutor,a.erhDistName,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityForAll();
-	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
+	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
 	List<Object[]> getToAckDispReport(String requestedBy);
 	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
 	Long getToAckDispCnt(String requestedBy);

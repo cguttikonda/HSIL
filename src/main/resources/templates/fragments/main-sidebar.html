@@ -36,8 +36,8 @@
 			<a th:href="@{/master/addMaterial}"><i class="fa fa-gift"></i> <span>Add Stock</span> 
 		</a>
 		</li>
-		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
-			<a th:href="@{/master/listMaterial}"><i class="fa fa-edit"></i> <span>Update Stock</span> 
+		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_IN_STOR')">
+			<a th:href="@{/master/listMaterial}"><i class="fa fa-edit"></i> <span>List Stock</span> 
 		</a>
 		</li>
 		<li  sec:authorize="hasRole('ROLE_OUT_STOR')">
@@ -110,9 +110,21 @@
 			</ul></li>
 		<!-- Master Data End-->
 		<li  sec:authorize="hasAnyRole('ROLE_OUT_STOR','ADMIN')">
-			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>Available Stock</span> 
+			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>In Field</span> 
 		</a>
 		</li>
+		<li class="treeview" sec:authorize="hasRole('ROLE_OUT_STOR')">
+	<a href="#">
+	<i class="fa fa-bullhorn"></i> <span>Marketing Giveaway's</span> <span
+	class="pull-right-container"> <i
+	class="fa fa-angle-left pull-right"></i>
+	</span>
+	</a>
+	<ul class="treeview-menu">
+		<li class=""><a href="#" th:href="@{/mktg/add}"><i class="fa fa-circle-o"></i> Create</a></li>
+		<li><a href="#" th:href="@{/mktg/mktgRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
+	</ul>
+</li>
 		<!-- TPM/TPS menu Option -->
 	<li class="treeview"  sec:authorize="hasRole('ROLE_BD_MKT')"><a href="#">
 				<i class="fa fa-edit"></i> <span>BD Creation</span> <span
@@ -147,11 +159,15 @@
 			<ul class="treeview-menu">
 				<li class=""><a href="#" th:href="@{/tps/add}"><i
 						class="fa fa-circle-o"></i> Create</a></li>
-				<li><a href="#" th:href="@{/bd/add}"><i class="fa fa-circle-o"></i> Request For Additional Gifts</a></li>
+				<!-- <li><a href="#" th:href="@{/bd/add}"><i class="fa fa-circle-o"></i> Request For Additional Gifts</a></li> -->
 				<li><a href="#" th:href="@{/tps/tpsRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul>
 			</li>
 		
+		<li  sec:authorize="hasRole('ROLE_REQ_CR')">
+			<li><a href="#" th:href="@{/bd/add}"><i class="fa fa-gift"></i> Marketing Request</a></li> 
+		</a>
+		</li>
 		<li  sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_BD_MKT')">
 			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
 		</a>
@@ -161,7 +177,7 @@
 			<a th:href="@{/reports/requeststatus}"><i class="fa fa-bar-chart-o"></i> <span>Status Report</span> 
 		</a>
 		</li>
-		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>Available Stock</a></li>
+		<li sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')"><a href="#" th:href="@{/reports/stockavailuser}"><i class="fa fa-shopping-basket"></i>In Field</a></li>
 		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD','ADMIN')"><a href="#"> 
 				<i class="fa fa-list-ul"></i> <span>Team Reports</span> <span
 				class="pull-right-container"> <i

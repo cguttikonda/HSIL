@@ -1,0 +1,214 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+    <title>Marketing Giveaway</title>
+</head>
+<body>
+<section layout:fragment="header"> 
+    <h1>Marketing Giveaway</h1>
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fa fa-dashboard"></i> Marketing Giveaway</a></li>
+        <li class="active">Create</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${success}" ></span>
+   	</div>
+   	<div th:if="${error!= null}" class="alert alert-danger alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${error}" ></span>
+   	</div>
+    <div class="box">
+    	     <form data-toggle="validator" role="form" name="mktForm" class="mktForm"  th:object="${mktgGiveAwayDto}" th:action="@{/mktg/saveRequest}" method="post" >
+            <div class="box-body">
+            	 <th:block th:each="row, dist : *{distList}">
+                	<input type="hidden" th:field="*{distList[__${dist.index}__].code}"/>
+                	<input type="hidden" th:field="*{distList[__${dist.index}__].name}"/>
+                </th:block> 
+
+                <div class="form-group">
+                    <label for="distrubutor">Distributor</label>
+                      <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select Distributor" th:field="*{distrubutor}">
+						<option selected value="">---select distributor---</option>
+						<option th:selected="${distrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
+	                </select>
+                </div>
+                <div class="form-group">
+                    <label for="sendTo">State Head</label>
+                      <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select State Head" th:field="*{sentTo}">
+						<option selected value="">---select state head---</option>
+						<option th:selected="${sentTo == users.userId}" th:each="users : *{userList}" th:value="${users.userId}" th:text="${users.firstName+' '+users.lastName+'['+users.userId+']'}"></option>
+	                </select>
+                </div>
+                <div class="form-group">
+                    <label for="purpose">Text/Reason</label>
+                      <input class="form-control validate[required]" data-errormessage-value-missing="Please Enter Text/Reason" th:field="*{purpose}" maxlength="100">
+                </div>
+                <!-- <div class="form-group">
+                    <label for="sendTo">Material</label>
+                     <div class="row">	
+                      <div class="col-md-10">
+                      <select class="form-control select2" th:field="*{sentTo}" name="selMat" id="selMat">
+	                </select>
+	                </div>
+	                <div class="col-md-2">
+	                <span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span id="availQty"></span><input type="hidden" id="stkAva"></strong></span>
+	                </div>
+	                </div>
+                </div>
+                <div class="form-group">
+                    <label for="sendTo">Quantity</label>
+                     <div class="row">	
+                      <div class="col-md-10">
+                      <input type="text" id="selQty" class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]">
+	                </div>
+	                <div class="col-md-2">
+	                <button type="button" class="btn btn-primary" id="addMatRow"  style="margin-right: 5px;"><i class="fa fa-plus"></i>&nbsp;&nbsp;ADD</button>
+	                </div>
+	                </div>
+                </div> -->
+                
+        		        
+                
+                 <div class="table-responsive" style="margin-top:2%" th:if="*{!matList.empty}"> 
+                    <table class="col-sm-12 table table-bordered table-condensed">
+                    <thead>
+                	<tr>
+                		<th>Material</th>
+                		<th>Quantity</th>
+                	</tr>
+                	</thead>
+                	<tbody> 
+                	 <tr th:if="*{matList.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : *{matList}"> 
+						<td>
+							  <select class="form-control select2 selMat" style="width:75%" th:field="*{matList[__${itemStat.index}__].matCode}">
+	                		  </select>
+	                		  <span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span class="availQty"></span><input type="hidden" class="stkAva"></strong></span>
+						</td>
+						<td>
+							<input type="number"  autocomplete="off" class="form-control selQty" th:field="*{matList[__${itemStat.index}__].qty}" />
+						</td>
+                	</tr>
+                	</tbody>
+                </table>
+                
+            </div>
+            </div>
+            <div class="box-footer">
+                <button type="button" id="subBtn" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-arrow-circle-right fa-lg"></i>&nbsp;Submit</button>
+                <!-- <button type="button" id="dispStock" class="btn btn-primary pull-right" style="margin-left:5px" data-toggle="modal" data-target="#stockModal"><i class="fa fa-search"></i>&nbsp;Available Stock</button> -->
+            </div> 
+        </form>
+    </div>
+    
+    
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+     
+    $(function () {
+		$('.selectsel').select2();
+		$('.selMat').select2({
+	         placeholder: 'Select Material',
+	         ajax: {
+	           url: '/modal/mat-autocomp?type=text',
+	           dataType: 'json',
+	           delay: 250,
+	           processResults: function (data) {
+	             return {
+    	                       results: $.map(data, function (item) {
+    	                          return {
+    	                              text: item.materialCode+"-"+item.materialDesc,
+    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+    	                          }
+    	                      }) 
+	 	                  };
+	           },
+	           cache: true
+	         }
+	    });
+		$(document.body).on("change",".selMat",function(){
+			var totVal=this.value;
+			var stkAvaQty=totVal.split("#")[2];
+			$(this).closest('td').find('.availQty').html(stkAvaQty);
+			$(this).closest('td').find('.stkAva').val(stkAvaQty);
+			});
+		
+		$("#subBtn").click(function(){
+			//Pace.restart();
+			
+			if($(".mktForm").validationEngine('validate'))
+			{
+				var validMatCnt = 0;	
+				var err=false;
+				var dupMatChk = [];
+				$(".selMat").each(function(){
+					if($(this).val() !== null && $(this).val() !== "" && $(this).val() !== "null")
+					{
+						var selQty = $(this).closest('tr').find('td').find('.selQty').val();
+						var stock = $(this).closest('td').find('.stkAva').val();
+						if(stock !== "")
+						{
+							stock = parseInt(stock);
+							if(stock > 0 && stock >= parseInt(selQty))
+							{
+								validMatCnt++;
+							}
+							else
+							{
+								$(this).validationEngine('showPrompt', 'Selected material out of stock', '');
+								err = true;
+								return false;
+							}
+						}
+						if(selQty === "" || parseInt(selQty) <= 0)
+						{
+							$(this).validationEngine('showPrompt', 'Please enter quantity for material', '');
+							err = true;
+							return false;
+						}
+						if(dupMatChk.includes($(this).val()))
+						{
+							$(this).validationEngine('showPrompt', 'Material already added', '');
+							err = true;
+							return false;
+						}
+						dupMatChk.push($(this).val())
+						validMatCnt++;
+					}
+			    });
+				if(err)
+				{
+					return;
+				}
+					
+				if(validMatCnt === 0)
+				{
+					$(".selMat").validationEngine('showPrompt', 'Please select atleast one material', '');
+					return;
+				}
+				$("#subBtn").hide();
+				Pace.restart();
+				document.mktForm.submit();		
+			}
+		});
+		$(".attendCnt").change(function(){
+			var totAtt = 0;
+			$('.attendCnt').each(function(){
+				if(this.value != "")
+					totAtt += parseInt(this.value);
+			});
+			$('#erhNoOfAttendee').val(totAtt);
+		});
+		
+	 });
+    
+   </script>
+</div>
+</body>
+</html>

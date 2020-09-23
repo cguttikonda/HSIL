@@ -69,15 +69,17 @@
                             th:value="${role.roleId}"
                             th:utext="${role.roleDesc}"/>
                   </select>					
-
-					<label for="group">Group</label>
-					 <select class="form-control select2" multiple="multiple" data-placeholder="Select group" th:field="*{group}">
+				</div>
+				<div class="form-group">	
+					<label for="group">State</label>
+					 <select class="form-control select2" multiple="multiple" data-placeholder="Select state" th:field="*{group}">
                          <option value=""> --Select-- </option>
                          <option th:each="state : ${states}"
                             th:value="${state.code}"
                             th:utext="${state.desc}"/>
                   </select>			
-				
+				</div>
+				<div class="form-group">
 					<label for="zone">Zone</label>
 					<select class="form-control select2" th:field="*{zone}" required>
                          <option value=""> --Select-- </option>

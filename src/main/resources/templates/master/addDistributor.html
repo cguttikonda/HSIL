@@ -59,11 +59,11 @@
 				</div>
 
 				<div class="form-group">
-					<label for="distributorOrganisation">Business Unit Name</label>
+					<label for="distributorOrganisation">State</label>
 					<input
 						th:field="*{organisation}" type="text" class="form-control"
-						placeholder="Enter Business Unit" th:errorclass="has-error" />
-					<span th:if="${#fields.hasErrors('organisation')}" th:errors="*{organisation}" th:errorclass="has-error">Business Unit Error</span>
+						placeholder="Enter State" th:errorclass="has-error" />
+					<span th:if="${#fields.hasErrors('organisation')}" th:errors="*{organisation}" th:errorclass="has-error">State Error</span>
 				</div>
 
 				<div class="form-group">
