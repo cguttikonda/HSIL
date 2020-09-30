@@ -51,6 +51,13 @@ public class EzcMktGiveAway implements java.io.Serializable {
 	@Column(name = "EMGA_CREATED_ON", length = 19)
 	private Date createdOn;
 	
+	@Column(name="EMGA_MODIFIED_BY",length=20)
+	private String modifiedBy;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "EMGA_MODIFIED_ON", length = 19)
+	private Date modifiedOn;
+	
 	@Column(name="EMGA_MAT_CODE",length=20)
 	private String matCode;
 	
@@ -59,7 +66,9 @@ public class EzcMktGiveAway implements java.io.Serializable {
 	
 	@Column(name="EMGA_QTY")
 	private int qty;
-		
+	
+	@Column(name="EMGA_STATUS",length=4)
+	private String status; 
 	
 	 
 	public EzcMktGiveAway() {

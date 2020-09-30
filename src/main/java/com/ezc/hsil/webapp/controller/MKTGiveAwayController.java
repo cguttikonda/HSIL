@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -124,7 +125,11 @@ public class MKTGiveAwayController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		ArrayList<String> userList=new ArrayList<String>();
-    	//if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
+    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+    	{
+    		listSelector.setSentTo(userObj.getUserId());
+    	}
+    	else
     	{
     		userList.add(userObj.getUserId());
     		listSelector.setUser(userList);
@@ -135,6 +140,15 @@ public class MKTGiveAwayController {
         model.addAttribute("reqList", list);
         model.addAttribute("listSelector", listSelector);
         return "mktg/list"; 
+
+    }
+    
+    @RequestMapping(value = "/mktg/ackRequest/{id}", method = RequestMethod.GET)
+    public String ackRequest(@PathVariable String id , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		iMKTGGiveAwyService.acknowledgeRequest(Integer.parseInt(id), userObj.getUserId());
+        return "redirect:/mktg/mktgRequestList"; 
 
     }
 

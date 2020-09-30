@@ -19,10 +19,20 @@ public class ListSelector {
 	
 	private ArrayList<String> user;
 	private ArrayList<String> typeList;
+	private String sentTo;
+	
+	
+	
+	
+	
+	public String getSentTo() {
+		return sentTo;
+	}
 
-	
-	
-	
+	public void setSentTo(String sentTo) {
+		this.sentTo = sentTo;
+	}
+
 	public String getType() {
 		return type;
 	}

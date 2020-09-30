@@ -113,7 +113,7 @@
 			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>In Field</span> 
 		</a>
 		</li>
-		<li class="treeview" sec:authorize="hasRole('ROLE_OUT_STOR')">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_ST_HEAD')">
 	<a href="#">
 	<i class="fa fa-bullhorn"></i> <span>Marketing Giveaway's</span> <span
 	class="pull-right-container"> <i
@@ -121,7 +121,7 @@
 	</span>
 	</a>
 	<ul class="treeview-menu">
-		<li class=""><a href="#" th:href="@{/mktg/add}"><i class="fa fa-circle-o"></i> Create</a></li>
+		<li class=""><a href="#" th:href="@{/mktg/add}" sec:authorize="hasAnyRole('ROLE_OUT_STOR')"><i class="fa fa-circle-o"></i> Create</a></li>
 		<li><a href="#" th:href="@{/mktg/mktgRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 	</ul>
 </li>

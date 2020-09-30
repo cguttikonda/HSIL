@@ -135,6 +135,12 @@ public class RequestCustomDto {
 	        if(listSelector.getFromDate() != null && listSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("createdOn"), listSelector.getFromDate(), listSelector.getToDate()));
 	        
+	        if(listSelector.getSentTo() != null && !"null".equals(listSelector.getSentTo()) && !"".equals(listSelector.getSentTo()))
+	        	predicates.add(cb.equal(header.get("sentTo"), listSelector.getSentTo()));
+	        
+	        if(listSelector.getStatus() != null && !"null".equals(listSelector.getStatus()) && !"".equals(listSelector.getStatus()))
+	        	predicates.add(cb.equal(header.get("status"), listSelector.getStatus()));
+	        
 	        if(listSelector.getUser() != null && listSelector.getUser().size() > 0)
 	        {
 	        	Expression<String> exp = header.get("createdBy");

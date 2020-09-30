@@ -65,7 +65,16 @@
                 </div>
                 <!-- /.input group -->
   	</td>
- 
+ 	<td>	
+  		 <label for="listType">Status</label><br>	
+		  <div class="input-group">
+			 <select class="form-control input-sm"  th:field="*{status}">  
+				<option value="" th:selected="*{status==''}">All</option>
+				<option value="A" th:selected="*{status=='A'}">Acknowledged</option>
+				<option value="C" th:selected="*{status=='C'}">Not Acknowledged</option>
+			 </select>
+		  </div>
+  	</td>
   	<td>
   		<button type="submit" class="btn btn-primary pull-right"  style="margin-right: 5px;">Go <i class="fa fa-paper-plane"></i></button>
   	</td>
@@ -78,23 +87,34 @@
                    <table id="example" class="table  table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                        <thead>			
                 <tr>
-         
+         			<th>Id</th>
                     <th>Sent to</th>
                     <th>Sent On</th>
                     <th>Distributor</th>
                     <th>Distributor Name</th>
                     <th>Material</th>
                     <th>Quantity</th>
+                    <th>Status</th>
+                    <th></th>
                 </tr>
                     </thead>
            		<tbody>	
                 <tr th:each="row : ${reqList}">
+                    <td th:text="${row.id}"></td>
                     <td th:text="${row.sentTo+'['+row.sentToName+']'}"></td>
                     <td th:text="${#dates.format(row.createdOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.distrubutor}"></td>
                     <td th:text="${row.distName}"></td>
                     <td th:text="${row.matDesc+'['+row.matCode+']'}"></td>
                     <td th:text="${row.qty}"></td>
+                    <td th:text="${row.status == 'A'?'Acknowledged':'Not Acknowledged'}"></td>
+                    <td>
+                    <span sec:authorize="hasRole('ROLE_ST_HEAD')" th:if="${row.status == 'C'}">
+						<a th:href="${'/mktg/ackRequest/'+{row.id}}"
+						class="btn btn-success btn-xs"> <span class="glyphicon glyphicon-ok">ACKNOWLEDGE</span>
+						</a>
+					</span>
+                    </td>
                 </tr>
             	</tbody>
             </table>

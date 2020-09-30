@@ -1,5 +1,6 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,6 +91,18 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 	@Override
 	public List<EzcMktGiveAway> getRequestList(ListSelector listSelector) {
 		return customDto.findMktGiveAwayList(listSelector);
+	}
+
+	@Override
+	public void acknowledgeRequest(Integer id, String ackBy) {
+		Optional<EzcMktGiveAway> mktGiveAway = mktgGiveAwayRepo.findById(id);
+		if(mktGiveAway.isPresent())
+        {  
+			EzcMktGiveAway mktGiveAwayObj = mktGiveAway.get();
+			mktGiveAwayObj.setStatus("A");   
+			mktGiveAwayObj.setModifiedBy(ackBy);
+			mktGiveAwayObj.setModifiedOn(new Date());
+        }
 	}
 
 }
