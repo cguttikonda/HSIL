@@ -20,7 +20,7 @@
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>BD & Marketing</h1>
+    <h1>Promotional Materials Request</h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
         <li class="active">Create</li>
@@ -33,18 +33,19 @@
    	</div>
     <div class="box">
     	     <form name="myForm" id="myForm" data-toggle="validator" role="form" th:action="@{/bd/saveRequest}" th:object="${bdReqDto}" th:method="post">
+    	     <input hidden="hidden" name="matQty" />
             <div class="box-body">
             
             
             
 
-                     <div th:class="${#fields.hasErrors('bdMatCode')}? 'form-group has-error' : 'form-group'">   
+                    <!--  <div th:class="${#fields.hasErrors('bdMatCode')}? 'form-group has-error' : 'form-group'">   
                     <label for="selMat">Material</label>
                     <select  id="selMat" class="select2 form-control"  style="width:100%" th:field="*{bdMatCode}">
                     
 						</select>
                       <span class="help-block" th:if="${#fields.hasErrors('bdMatCode')}" th:errors="*{bdMatCode}"></span>
-                </div>
+                </div> -->
                 <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="erhDistrubutor">Distributor</label>
                       <select class="form-control select2 validate[required]" th:field="*{erhDistrubutor}">
@@ -65,7 +66,7 @@
                  </select> 
                  </div>
               
-                 <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
+               <!--   <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
                     <label for="bdQty">Quantity</label>
                     <input type="number"  class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" th:field="*{bdQty}" id="" />
                     <span class="help-block" th:if="${#fields.hasErrors('bdQty')}" th:errors="*{bdQty}"></span>
@@ -75,10 +76,45 @@
                     <label for="stkAva">Available Stock</label>
                       <input type="text" readonly name="stkAva" id="stkAva" class="form-control">
                    
-                </div>
+                </div>-->
+ 			<div class="table-responsive" style="margin-top:2%" th:if="*{!matLoopList.empty}"> 
+                    <table class="col-sm-12 table table-bordered table-condensed">
+                    <thead>
+                	<tr>
+                		<th width="70%">Material</th>
+                		<th width="15%">Quantity</th>
+                		<th width="15%">Available Stock</th>
+                	</tr>
+                	</thead>
+                	<tbody> 
+                	 <tr th:if="*{matLoopList.empty}">
+            			<td colspan="2"> No Data </td>
+       			   </tr>
+                	<tr th:each="row, itemStat : *{matLoopList}"> 
+						<td><input hidden="hidden" th:field="*{matLoopList[__${itemStat.index}__].matDesc}" th:id="${'matDesc_'+itemStat.index}" >
+						<input hidden="hidden" th:id="${'materialCode_'+itemStat.index}" >
+							  <select class="form-control select2 selMat" th:data-id="${itemStat.index}" style="width:70%" th:field="*{matLoopList[__${itemStat.index}__].matCode}" onchange="funMatChange(this,this.getAttribute('data-id'))">
+	                		  </select>
+	                		 
+						</td>
+						<td>
+							<!-- <input type="number"  autocomplete="off" style="width:50%" class="form-control selQty" th:field="*{matLoopList[__${itemStat.index}__].qty}" />-->
+						
+                    
+                    <input type="number"  th:data-id="${itemStat.index}"  class="form-control selQty"  onchange ="funCheckQty(this.getAttribute('data-id'))" th:field="*{matLoopList[__${itemStat.index}__].qty}" th:id="${'bdQty_'+itemStat.index}" />
+                   </td>
+						<td>               			 
+                      		<input type="text" readonly style="width:50%"  th:id="${'stkAva_'+itemStat.index}" class="form-control stkAva">
+                          
+                		</td>
+                	</tr>
+                	</tbody>
+                </table>
+                
+            </div>                
                 
               
-                    </div>
+          </div>
             <div class="box-footer">
                 
                  <button type="button" id="save" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-arrow-circle-right fa-lg"></i>&nbsp;Submit</button>
@@ -95,16 +131,39 @@
 <script type="text/javascript">
 function geThan(field, rules, i, options){
 	 var a=rules[i+2];
+	 
 	 if( parseFloat(field.val()) > parseFloat( jQuery("#"+a).val() )){
 	   return "Quantity entered is greater than available stock"
 	 }
 	}
-$(document.body).on("change","#selMat",function(){
-	// alert(this.value);
-	var totVal=this.value;
+//$(document.body).on("change","#selMat",function(){
+	//$(document.body).on("change",".selMat",function(){
+function funCheckQty(index)
+{
+	
+	var qty=document.getElementById("bdQty_"+index).value;
+	var stkAva=document.getElementById("stkAva_"+index).value;
+	//alert("qty"+qty+"stkAva"+stkAva);
+	 if( parseFloat(qty) > parseFloat(stkAva)){
+		   
+		 alert("Quantity entered is greater than available stock");
+		 document.getElementById("bdQty_"+index).value="0";
+		 return;
+		 }
+}
+
+function funMatChange(val,index)
+{
+	// alert(val.value+index);
+	var totVal=val.value;
 	var stkAvaQty=totVal.split("#")[2];
-	document.getElementById("stkAva").value=stkAvaQty;
-	});
+	var matDesc=totVal.split("#")[1];
+	var matCode=totVal.split("#")[0];
+	document.getElementById("stkAva_"+index).value=stkAvaQty;
+	document.getElementById("matDesc_"+index).value=matDesc;
+	document.getElementById("materialCode_"+index).value=matCode;
+	//});
+}
 $(document).ready(function(){
 	$('.select2').select2();
 	$("#save").click(function(){
@@ -141,14 +200,97 @@ $(document).ready(function(){
 			$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
 			return ;
 		}*/
-		
+		var totDet='';
+		for(var i=0;i<5;i++)
+		{
+			//alert("value"+document.getElementById("stkAva_"+i).value+"index"+i)
+			if(document.getElementById("stkAva_"+i).value !='')
+			{
+				//alert("null");
 			
+				var qty=document.getElementById("bdQty_"+i).value;
+				if(parseFloat(qty)<=0 || qty=="")
+				{
+					/*var p=i+1;
+					alert("Quantity should be greater than 0 for line item "+p);
+					return;*/
+				
+				}
+				else
+				{
+						if(totDet=='')totDet=document.getElementById("materialCode_"+i).value+"#"+document.getElementById("bdQty_"+i).value;
+						else
+							totDet=totDet+","+document.getElementById("materialCode_"+i).value+"#"+document.getElementById("bdQty_"+i).value;
+				}
+					
+			}
+			
+			
+		}
+		document.myForm.matQty.value=totDet;
 			//document.myForm.submit();
+			//alert(document.myForm.matQty.value);
+			
 		if($("#myForm").validationEngine('validate'))
 		{
+			var validMatCnt = 0;	
+			var err=false;
+			var dupMatChk = [];
+			$(".selMat").each(function(){
+				//alert($(this).val());
+				if($(this).val() !== null && $(this).val() !== "" && $(this).val() !== "null")
+				{
+					var selQty = $(this).closest('tr').find('td').find('.selQty').val();
+					var stock = $(this).closest('tr').find('td').find('.stkAva').val();
+					//alert(stock+"stock");
+					if(stock !== "")
+					{
+						stock = parseInt(stock);
+						if(stock > 0 && stock >= parseInt(selQty))
+						{
+							validMatCnt++;
+						}
+						else
+						{
+							$(this).validationEngine('showPrompt', 'Selected material out of stock', '');
+							err = true;
+							return false;
+						}
+					}
+					if(selQty === "" || parseInt(selQty) <= 0)
+					{
+						$(this).validationEngine('showPrompt', 'Please enter quantity for material', '');
+						err = true;
+						return false;
+					}
+					if(dupMatChk.includes($(this).val()))
+					{
+						$(this).validationEngine('showPrompt', 'Material already added', '');
+						err = true;
+						return false;
+					}
+					dupMatChk.push($(this).val())
+					validMatCnt++;
+				}
+		    });
+			if(err)
+			{
+				return;
+			}
+				
+			if(validMatCnt === 0)
+			{
+				$(".selMat").validationEngine('showPrompt', 'Please select atleast one material', '');
+				return;
+			}
+			
+			Pace.restart();
 			$("#save").hide();
-			document.myForm.submit();
+			document.myForm.submit();		
 		}
+		//$("#save").hide();
+			//document.myForm.submit();
+	
 		
 	});
 	$("#attach").click(function(){
@@ -156,7 +298,8 @@ $(document).ready(function(){
 		
 	});
 	
-	$('#selMat').select2({
+	//$('#selMat').select2({
+		$('.selMat').select2({
 			         placeholder: 'Select Material',
 			         ajax: {
 			           url: '/modal/mat-autocomp?type=text',

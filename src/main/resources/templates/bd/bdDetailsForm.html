@@ -28,6 +28,7 @@
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" name="id" th:value="*{reqHeader.id}">
+            	<input hidden="hidden" name="matQty" />
             	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
             <div class=row>	
@@ -52,6 +53,7 @@
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><span th:text="*{reqHeader.erhDistrubutor+'['+reqHeader.erhDistName+']'}"></span></div>
               </div>
+              
               <div sec:authorize="hasRole('ADMIN')">
 				<label class="col-lg-2 control-label">OutStore</label>
 				<div class="col-lg-4 inputGroupContainer">						
@@ -61,8 +63,10 @@
 	                </select>
 				</div>
 				</div>
+				
               
-             <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
+            <!--  <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">-->
+            <div>
               <label class="col-lg-2 control-label">City & Area</label>
               <div class="col-lg-4 inputGroupContainer">
                  <div class="input-group"><input   placeholder="" class="form-control validate[required]" th:field="*{reqHeader.erhCity}" ></div>
@@ -84,7 +88,7 @@
        			   </tr>
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
 						<td data-title="Material" sec:authorize="hasRole('ADMIN')">
-							<select th:field="*{ezReqMatList[__${itemStat.index}__].matCode}" id="selMat" class="select2 form-control validate[required]"  style="width:100%">
+							<select th:field="*{ezReqMatList[__${itemStat.index}__].matCode}" th:data-id="${itemStat.index}"   name="selMat" th:id="${'selMat'+itemStat.index}" class="select2 form-control validate[required]"  style="width:100%">
 								<option selected th:value="*{ezReqMatList[__${itemStat.index}__].matCode}" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}" >Event</option>
 							</select>
 						</td>
@@ -94,17 +98,17 @@
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}"></span>
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
-							<input hidden="hidden"  th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+							<input hidden="hidden"  th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}" th:id="${'apprQty'+itemStat.index}">
 							<span th:text="*{ezReqMatList[__${itemStat.index}__].apprQty}"></span>
 						</td>
 						<td data-title="Approved Qty" sec:authorize="hasRole('ADMIN')">
 							<div class="row">
 							<div class="form-group col-xs-6">
 							<input hidden="hidden" th:field="*{ezReqMatList[__${itemStat.index}__].apprQty}">
-							<input  type="number" class="form-control validate[required]" id="bdQty" name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}">
+							<input  type="number" class="form-control validate[required]" th:id="${'bdQty'+itemStat.index}"  name="bdQty" th:value="*{ezReqMatList[__${itemStat.index}__].apprQty}">
 							</div>
 							<div class="form-group col-xs-6">
-							  <span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span id="availQty"></span></strong></span>
+							  <span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span th:id="${'availQty'+itemStat.index}"></span><input type="hidden" th:id="${'stkAva'+itemStat.index}" class="stkAva"></strong></span>
 							  
 							</div>
 							</div>
@@ -184,6 +188,7 @@
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
                 		<th>Event Name</th>
+                		<th>Quantity</th>
                 		<th></th>
                 		
                 	</tr>
@@ -215,6 +220,8 @@
 							</div>
 						</td>
 						<td ><input type="text"  class="form-control validate[required]" autocomplete="off"  th:disabled="${disabledStr}" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" /></td>	
+						<td ><input type="number"  th:data-id="${itemStat.index}"  class="form-control validate[required] itemQty" autocomplete="off"   onchange="checkItemQuantity(this.getAttribute('data-id'))" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriQuantity}" th:id="${'quantity'+itemStat.index}" /></td>
+												
                 		<td data-title="">
                 			<i class="fa fa-trash deleteItem"></i>
                 		</td>
@@ -310,20 +317,92 @@ function dupMobChk(field, rules, i, options){
 	    	return 'Mobile No is not unique';
 
 }
+function checkItemQuantity(i){
+	
+	var totBdQty=0;
+	for(var j=0;j<10;j++)
+	{
+		
+		var element =  document.getElementById("apprQty"+j);
+		
+		if(element != null)
+		{
+			totBdQty=parseInt(totBdQty)+parseInt(document.getElementById("apprQty"+j).value);
+		}
+	
+	}
+	var leftOverCnt = parseInt($("#leftOverCnt").val());
+
+	//alert("leftOverCnt"+leftOverCnt);
+	for (l = 0; l < leftOverCnt; l++) {
+		if ($("#leftOverQty_" + l).val() !== ""
+				&& parseFloat($("#leftOverQty_" + l).val()) > 0) {
+			
+			totBdQty=parseInt(totBdQty)+parseInt($("#leftOverQty_" + l).val());
+		} else {
+			continue;
+		}
+	
+	}
+	//alert("totBdQty"+totBdQty);   
+	var rows= $('#bdReqTable tbody tr').length;
+
+	    for(var q=0;q<rows;q++)
+	    {
+	    	if(q==i)continue;
+	    	else
+	    		{//alert(document.getElementById("quantity"+q).value);
+	    		totBdQty=totBdQty-parseFloat(document.getElementById("quantity"+q).value);
+	    		}
+	    }	
+	 // alert("totBdQty"+totBdQty);  
+		var qty=document.getElementById("quantity"+i).value;	
+	    	if(parseFloat(qty) > parseFloat(totBdQty))
+	    		{
+	    		
+	    		$('#quantity'+i)
+	    		.validationEngine(
+									'showPrompt',
+									'Entered Quantity is greater than Approved Quantity , Available Quantity is '+totBdQty,
+									'');
+	    		$('#quantity'+i).val('');
+				}
+	    		
+
+	
+	
+	
+	
+}
 function getStock()
 {
+	for(i=0;i<5;i++)
+	{
+		if(document.getElementById('selMat'+i) != null)
+		{
+			funGetAvaiableQty(i);
+		}
 	
+	}
+}
+function funGetAvaiableQty(i)
+{
+	
+	//alert("selmat"+$('#selMat'+i).val());
+	var avialOBj='availQty'+i;
+	//alert("avialOBj"+avialOBj);
 	$.ajax({
 
 			type : "GET",
-			url : "/master/checkStock/" + $('#selMat').val() + "/"
-					+ $('#bdQty').val(),
+			url : "/master/checkStock/" + $('#selMat'+i).val() + "/"
+					+ $('#bdQty'+i).val(),
 			success : function(response) {
-				$('#availQty').html(response.STOCK)
+				//alert(response.STOCK);
+				$('#'+avialOBj).html(response.STOCK);
+				$('#stkAva'+i).val(response.STOCK);
 			}
-		});
-
-	}
+		});	
+}
 	$('.datePickObj').datepicker({
 		autoclose : true,
 		format : 'dd/mm/yyyy'
@@ -332,14 +411,53 @@ function getStock()
 		$(this).closest("tr").remove();
 	});
 
+	var cnt=0;
+	
 	function onSaveClickAdmin() {
 		Pace.restart();
+		var totDet=''
+		var noOfItems=0;
+		cnt=0;
+		for(i=0;i<10;i++)
+		{
+			if(document.getElementById('selMat'+i) != null)
+			{
+				
+				if(totDet=='')totDet=document.getElementById("selMat"+i).value+"#"+document.getElementById("bdQty"+i).value;
+				else
+					totDet=totDet+","+document.getElementById("selMat"+i).value+"#"+document.getElementById("bdQty"+i).value;
+					
+				document.myForm.matQty.value=totDet;
+				funSaveClickAdmin(i);
+				
+				noOfItems++;
+									
+			}
+			
+			
+		}
+		setTimeout(function() {
+		   
+		
+		//alert("cnt"+cnt+"noOfItems"+noOfItems);
+		if(cnt==noOfItems)
+		{
+			if ($("#myForm").validationEngine('validate')) {
+				$('.subBtn').hide();
+				document.myForm.action = "/bd/apprbd";
+				document.myForm.submit();
+			}
+		}
+		}, 5000)
+	}
+	function funSaveClickAdmin(j)
+	{
 		$
 				.ajax({
-
+				    
 					type : "GET",
-					url : "/master/checkStock/" + $('#selMat').val() + "/"
-							+ $('#bdQty').val(),
+					url : "/master/checkStock/" + $('#selMat'+j).val() + "/"
+							+ $('#bdQty'+j).val(),
 					success : function(response) {
 						//alert(response)
 						if (response.STOCK_FLG == 'Y') {
@@ -364,40 +482,47 @@ function getStock()
 								}
 							}
 
+							/*if (!qtyEntered) {
+								if ($("#bdQty"+j).val() !== ""
+										&& parseFloat($("#bdQty"+j).val()) >  parseFloat($("#stkAva"+j).val())) {
+									$('#bdQty'+j).validationEngine('showPrompt',
+											'Provided Quantity greater than available quantity', '');
+									return;
+								}
+							}*/
 							if (!qtyEntered) {
-								if ($("#bdQty").val() !== ""
-										&& parseFloat($("#bdQty").val()) > 0) {
+								if ($("#bdQty"+j).val() !== ""
+										&& parseFloat($("#bdQty"+j).val()) > 0) {
 									qtyEntered = true;
 								}
 							}
 
 							if (!qtyEntered) {
-								$('#bdQty').validationEngine('showPrompt',
+								$('#bdQty'+j).validationEngine('showPrompt',
 										'Please provide Quantity', '');
 								return;
 							}
-
+							//alert("cnt in"+cnt);
+							cnt++;
 							//	document.myForm.submit();
 
-							if ($("#myForm").validationEngine('validate')) {
-								$('.subBtn').hide();
-								document.myForm.action = "/bd/apprbd";
-								document.myForm.submit();
-							}
+							
 						} else {
-							$('#bdQty')
+							$('#bdQty'+j)
 									.validationEngine(
 											'showPrompt',
 											'Only '
 													+ response.STOCK
 													+ " available in stock for selected material",
 											'');
+							
 						}
 					},
 					error : function(ex) {
 						console.log(ex);
 					}
 				});
+		return
 
 	}
 	function onSaveClick() {
@@ -571,7 +696,8 @@ function getStock()
 	}
 	$(document).ready(
 			function() {
-				$('#selMat').select2(
+					
+				$('#selMat'+i).select2(
 						{
 							placeholder : 'Select Material',
 							ajax : {
@@ -592,9 +718,10 @@ function getStock()
 								cache : true
 							}
 						});
-				$('#selMat').on('select2:select', function (e) {
+				$('#selMat'+i).on('select2:select', function (e) {
 					getStock();
 					});
+			
 			});
 	getStock();
 	

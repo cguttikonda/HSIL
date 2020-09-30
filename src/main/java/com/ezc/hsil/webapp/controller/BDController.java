@@ -30,8 +30,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.dto.BDRequestDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.MaterialQtyDto;
+import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
@@ -78,6 +81,12 @@ public class BDController {
 			} catch (Exception e) {
 				
 			} 
+			List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
+	    	for(int i=0;i<10;i++)
+	    	{
+	    		matLoopList.add(new MaterialQtyDto());
+	    	}
+	    	bdReqDto.setMatLoopList(matLoopList);
 			bdReqDto.setDistList(distList);
 		 	model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        model.addAttribute("bdReqDto",bdReqDto);
@@ -157,14 +166,14 @@ public class BDController {
 	 public String save(@Valid @ModelAttribute("bdReqDto") BDRequestDto bdReqDto,BindingResult bindingResult,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,final RedirectAttributes ra)
 	 {
 		 log.debug("in controller");
-		 if(bindingResult.hasErrors())
+		/* if(bindingResult.hasErrors())
 	    	{
 			 log.debug("in controller has err");
 	    		return "bd/bdForm";
 	    	}
 	    	else 
-	    	{
-	    		log.debug("in controller no err"+bdReqDto.getBdMatCode());	
+	    	{*/
+	    		log.debug("in controller no err"+bdReqDto.getMatLoopList()+bdReqDto.getMatLoopList().size());	
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				Users userObj = (Users)authentication.getPrincipal();
  	
@@ -185,15 +194,32 @@ public class BDController {
 			   	
 			   	Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 				
-				RequestMaterials reqMat = new RequestMaterials();
-				
-				reqMat.setMatCode(bdReqDto.getBdMatCode().toString().split("#")[0]);
+//				RequestMaterials reqMat = new RequestMaterials();
+				/*reqMat.setMatCode(bdReqDto.getBdMatCode().toString().split("#")[0]);
 				reqMat.setMatDesc(bdReqDto.getBdMatCode().toString().split("#")[1]);
 				reqMat.setApprQty(bdReqDto.getBdQty());
 				reqMat.setIsNew('Y');
 				
 				reqMat.setEzcRequestHeader(ezRequestHeader);
-				reqMatSet.add(reqMat);
+				reqMatSet.add(reqMat);*/
+				List<MaterialQtyDto> matList= bdReqDto.getMatLoopList();
+				for(MaterialQtyDto matLt : matList) 
+		    	{
+					log.debug("in matList"+matLt.getMatCode());
+					String totMat=(String)matLt.getMatCode();
+					if(totMat != null)
+					{log.debug("in matList"+totMat);
+						RequestMaterials reqMat = new RequestMaterials();
+						reqMat.setMatCode(matLt.getMatCode().split("#")[0]);
+						reqMat.setMatDesc(matLt.getMatCode().split("#")[1]);
+						reqMat.setApprQty(matLt.getQty());
+						reqMat.setIsNew('Y');
+						
+						reqMat.setEzcRequestHeader(ezRequestHeader);
+						reqMatSet.add(reqMat);
+					}
+		    	}
+			
 				 if(leftOverId != null && allocQty != null )
 				 {	 
 				log.debug("in controller no err"+leftOverId.length+allocQty.length);	
@@ -223,7 +249,7 @@ public class BDController {
 				EzcRequestHeader ezReqHeadOut = bdService.createBDRequest(ezRequestHeader);
 				ra.addFlashAttribute("success","BD request details saved sucessfully with reference : "+"BD-"+ezReqHeadOut.getId()+".");
 				return "redirect:/bd/add";
-	    	}
+	    	//}
  }
 	
 	    @RequestMapping(value = "/bd/bdRequestList", method = RequestMethod.GET)
@@ -284,7 +310,8 @@ public class BDController {
 
 	    }
 	    @RequestMapping(value = "/bd/apprbd", method = RequestMethod.POST)
-		public  String approveBDRequest(@RequestParam String id,@RequestParam(value = "bdQty", required = false) Integer  bdQty,@RequestParam(value = "commentReqDto", required = false) String  comments,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore, final RedirectAttributes ra) {
+		///public  String approveBDRequest(@RequestParam String id,@RequestParam(value = "bdQty", required = false) Integer[]  bdQty,@RequestParam(value = "commentReqDto", required = false) String  comments,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore, final RedirectAttributes ra) {
+	    public  String approveBDRequest(@RequestParam String id,@RequestParam(value = "matQty", required = false) String  matQty,@RequestParam(value = "commentReqDto", required = false) String  comments,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,@RequestParam(value = "outStore", required = false) String outStore, final RedirectAttributes ra) {
 	    	EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
 			ezcRequestHeader.setId(id);
 			String loggedUser="";
@@ -310,8 +337,7 @@ public class BDController {
 				commSet.add(comm);
 			
 			}
-	    	Integer appQty=bdQty;
-	    	log.debug("appQty"+appQty);
+			
 		/*
 		 * if(leftOverId != null && leftOverId.length > 0 && allocQty != null &&
 		 * allocQty.length > 0) { for(int i=0;i<leftOverId.length;i++) { if(allocQty[i]
@@ -326,8 +352,13 @@ public class BDController {
 	    	ezcRequestHeader.setRequestMaterials(reqMatSet);
 	    	ezcRequestHeader.setEzcComments(commSet);
 	    	ezcRequestHeader.setErhOutStore(outStore);
+	    	log.debug("matQty"+matQty);
+	    	try {
+				bdService.submitBDDet(id,matQty,ezcRequestHeader);
+			} catch (Exception e) {
+				
+			} 
 	    	
-	    	bdService.submitBDDet(id,appQty,ezcRequestHeader); 
 	        ra.addFlashAttribute("successFlash", "Success");
 	        return "redirect:/bd/bdRequestList/NEW";
 	        
@@ -443,6 +474,7 @@ public class BDController {
 	        reqDto.setEzcRequestItems(ezcRequestItems);
 			reqDto.setReqHeader(reqDto.getReqHeader());
 			model.addAttribute("disabledStr", disabledStr);
+			model.addAttribute("matList", bdService.getBDLeftOverStock());
 	        model.addAttribute("reqDto", reqDto); 
 	        return "bd/bdDetailsForm";
 

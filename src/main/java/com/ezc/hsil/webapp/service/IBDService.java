@@ -13,10 +13,11 @@ public interface IBDService {
 	public List<EzcRequestHeader> getBDRequestListByDate(ListSelector listSelector);
 	public EzcRequestHeader getBDRequest(String docId);
 	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto);
-	public void submitBDDet(String id,Integer appQty,EzcRequestHeader ezcRequestHeader);
+	public void submitBDDet(String id,String appQty,EzcRequestHeader ezcRequestHeader) throws Exception;
 	public List<EzcComments> getBDCommentRequest(String docId);
 	public List<Object[]> getBDLeftOverStock();
 	public void NullifyBDQty(String leftOverId,String reasonNullify,String commentsNullify);
 	public void rejectBDRequest(EzcRequestHeader ezcRequestHeader);
+	
 	
 }

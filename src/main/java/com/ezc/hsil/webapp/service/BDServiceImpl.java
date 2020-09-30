@@ -2,6 +2,7 @@ package com.ezc.hsil.webapp.service;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -36,7 +37,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 public class BDServiceImpl implements IBDService{
-	 @Autowired
+	 private static final Exception Exception = null;
+	@Autowired
 	 private  UseLeftOverStockSer useLeftOverStk;
 	 @Autowired
 	    private RequestHeaderRepo reqHeaderRepo;
@@ -124,7 +126,7 @@ public class BDServiceImpl implements IBDService{
 		return commRepo.findByRequest(docId);
 	}
 	@Override
-	public void submitBDDet(String id,Integer appQty,EzcRequestHeader ezcRequestHeader)
+	public void submitBDDet(String id,String matQty,EzcRequestHeader ezcRequestHeader) throws java.lang.Exception
 	{
 		
 		EzcRequestHeader ezReqHeader = bdService.getBDRequest(id);
@@ -140,10 +142,15 @@ public class BDServiceImpl implements IBDService{
 		ezReqHeader.setErhModifiedOn(new Date());
 		ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 		ezReqHeader.getEzcComments().addAll(ezcComments);
+		Hashtable matHt=new Hashtable();
+		for(int i=0;i<matQty.split(",").length;i++)
+		{	
+			matHt.put(matQty.split(",")[i].split("#")[0],matQty.split(",")[i].split("#")[1]);
+		}
 		
-		  log.debug("appQty"+appQty);
+		  log.debug("matQty"+matQty);
 		  for(RequestMaterials tempItem : reqMatSet) {
-			  log.debug("matid"+tempItem.getId());
+			  log.debug("matHt"+matHt);
 		      Character c1 = new Character('Y'); 
 			  //if(c1.equals(tempItem.getIsNew()))
 			  {
@@ -153,6 +160,8 @@ public class BDServiceImpl implements IBDService{
 				 * EntityNotFoundException()); requestMaterials.setApprQty(appQty);
 				 * log.debug("matid"+tempItem.getId()); 
 				 */
+				  Integer appQty=Integer.parseInt((String)matHt.get(tempItem.getMatCode()));
+				  log.debug("appQty"+appQty);
 				  tempItem.setApprQty(appQty);//added by goutham
 				  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
 	                if(matMaster.isPresent())
@@ -161,15 +170,23 @@ public class BDServiceImpl implements IBDService{
 	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
 	                       //mat.setQuantity(qty);
 	                       //int blockQty = tempItem.getApprQty();
+	                       int stockChk = (mat.getQuantity()-mat.getBlockQty())-appQty;
+	    	               if(stockChk < 0)
+	    	            	   throw Exception;	//need to be changed to custom exception
+	    	               else
+	    	               {	  
+	    	            	   
+	    	       
 	                       int blockQty=appQty;
 	                       if(mat.getBlockQty() != null)
 	                    	   blockQty += mat.getBlockQty();
 	                       mat.setBlockQty(blockQty);
+	    	               }
 	                }
 			  }
 			  
 		  } 
-		  log.debug("appQtymat"+appQty);
+		  
 		  for(RequestMaterials tempItem : ezReqMatList) { 
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  reqMatRep.save(tempItem); 
@@ -206,17 +223,22 @@ public class BDServiceImpl implements IBDService{
 			  commRepo.save(tempItem); 
 			}
 		  for(EzcRequestItems tempItem : ezReqItemList) {
+			  log.debug("matCnt in items"+matCnt);
 			  if(tempItem.getEriDealer() != null && !"null".equals(tempItem.getEriDealer()) && !"".equals(tempItem.getEriDealer()))
 			  {
-				  matCnt++;
+				  String quan=tempItem.getEriQuantity();
+				  log.debug("quan"+quan);
+				  if(quan == null || "null".equals(quan) || "".equals(quan))quan="0";
+				// matCnt++;
+				  matCnt=matCnt+Integer.parseInt(quan);
 				  tempItem.setEzcRequestHeader(ezReqHeader);	
 				  reqDealRep.save(tempItem);
 			  }
 			}
-		 
+		 log.debug("matCnt"+matCnt);
 		  for(RequestMaterials requestMaterials : reqMatSet) { 
 			   int apprQty =requestMaterials.getApprQty();
-			   
+			   log.debug("apprQty"+apprQty);
 			   if(apprQty > matCnt)
 			   {
 				   requestMaterials.setLeftOverQty(apprQty-matCnt);

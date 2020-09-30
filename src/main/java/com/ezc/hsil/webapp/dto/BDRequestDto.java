@@ -20,6 +20,7 @@ public class BDRequestDto  implements java.io.Serializable {
 	@NotNull
 	private String erhPurpose;
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
+	private List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
 	public BDRequestDto() {
 	}
 
@@ -83,5 +84,11 @@ public class BDRequestDto  implements java.io.Serializable {
 		this.distList = distList;
 	}
 
+	public List<MaterialQtyDto> getMatLoopList() {
+		return matLoopList;
+	}
+	public void setMatLoopList(List<MaterialQtyDto> matLoopList) {
+		this.matLoopList = matLoopList;
+	}
 
 }

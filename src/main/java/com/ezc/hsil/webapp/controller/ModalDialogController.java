@@ -144,15 +144,19 @@ public class ModalDialogController {
 	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q) {
 		List<MaterialMaster> matList =masterService.findAllMaterialsLike(q);
 		//List<MaterialMaster> matListOut =new ArrayList<MaterialMaster>();
+		log.debug("matlist"+matList.size());
 		for(MaterialMaster matObj:matList)
 		{
+			
 			int tempQty =matObj.getQuantity();
-			int tempBlockQty =matObj.getBlockQty();
+			Integer tempBlockQty =matObj.getBlockQty();
+			if(tempBlockQty==null)tempBlockQty=0;
 			int outQty =0; 
 			if(tempBlockQty > 0)
 				outQty = tempQty-tempBlockQty;
 			else
 				outQty = tempQty;
+			//log.debug("outQty"+outQty);
 			if(outQty > 0)
 			{
 				matObj.setQuantity(outQty);
@@ -161,6 +165,7 @@ public class ModalDialogController {
 			{
 				matObj.setQuantity(0);
 			}
+			//log.debug("tempBlockQty"+tempBlockQty);
 		}
 		return matList;
 		

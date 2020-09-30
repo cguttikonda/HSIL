@@ -71,6 +71,7 @@ public class EzUserCreationDefaults {
     	STATES.add(new EzStates("UP", "Uttar Pradesh","REQ_CR"));
     	STATES.add(new EzStates("UT", "Uttarakhand,Uttaranchal","REQ_CR"));
     	STATES.add(new EzStates("WB", "West Bengal","REQ_CR"));
+    	STATES.add(new EzStates("IN", "India","REQ_CR"));
     	
     	STATE_HEAD.add(new EzStateHead("AN_HD_GRP", "Head Andaman and Nicobar Islands","ST_HEAD"));
     	STATE_HEAD.add(new EzStateHead("AP_HD_GRP", "Head Andhra Pradesh","ST_HEAD"));	
@@ -112,12 +113,14 @@ public class EzUserCreationDefaults {
     	ZONAL_HEAD.add(new EzZonalHead("EAST_ZONE_GRP", "Head East Zone","ZN_HEAD"));		
     	ZONAL_HEAD.add(new EzZonalHead("WEST_ZONE_GRP", "Head West Zone","ZN_HEAD"));		
     	ZONAL_HEAD.add(new EzZonalHead("NORTH_ZONE_GRP", "Head North Zone","ZN_HEAD"));		
-    	ZONAL_HEAD.add(new EzZonalHead("SOUTH_ZONE_GRP", "Head South Zone","ZN_HEAD"));		
+    	ZONAL_HEAD.add(new EzZonalHead("SOUTH_ZONE_GRP", "Head South Zone","ZN_HEAD"));
+    	
     	
     	ZONES.add(new UserZones("EAST", "East Zone"));
     	ZONES.add(new UserZones("WEST", "West Zone"));
     	ZONES.add(new UserZones("NORTH", "North Zone"));
     	ZONES.add(new UserZones("SOUTH", "South Zone"));
+    	ZONES.add(new UserZones("NATIONAL", "National"));
     }
  
     public List<EzStates> getStates() {

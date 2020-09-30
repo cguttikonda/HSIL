@@ -42,7 +42,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getToAckDispReport(String requestedBy);
 	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhDispatchFlag='Y' and b.isNew='Y' and a.erhRequestedBy=:requestedBy")
 	Long getToAckDispCnt(String requestedBy);
-	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus  IN ('SUBMITTED','APPROVED')  and a.erhRequestedBy in :userList and b.apprQty-b.usedQty > 0 group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
+	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty),a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus  IN ('SUBMITTED','APPROVED')  and a.erhRequestedBy in :userList and b.apprQty-b.usedQty > 0 group by a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityByUser(List<String> userList);
 	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id  and a.erhDistrubutor in :distList")
 	List<Object[]> getPlumberMaster(List<String> distList);
