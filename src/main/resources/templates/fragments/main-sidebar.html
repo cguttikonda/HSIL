@@ -164,10 +164,10 @@
 			</ul>
 			</li>
 		
-		<li  sec:authorize="hasRole('ROLE_REQ_CR')">
-			<li><a href="#" th:href="@{/bd/add}"><i class="fa fa-gift"></i> Marketing Request</a></li> 
-		</a>
-		</li>
+		
+			<li sec:authorize="hasRole('ROLE_REQ_CR')"><a href="#" th:href="@{/bd/add}"><i class="fa fa-gift"></i> Promotional Materials Req</a></li> 
+		
+		
 		<li  sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_BD_MKT')">
 			<a th:href="@{/reports/dispack}"><i class="fa fa-truck"></i> <span>Dispatch Acknowledge</span> 
 		</a>

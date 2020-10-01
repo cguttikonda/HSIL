@@ -247,7 +247,7 @@ public class BDController {
 				ezRequestHeader.setRequestMaterials(reqMatSet);
  	
 				EzcRequestHeader ezReqHeadOut = bdService.createBDRequest(ezRequestHeader);
-				ra.addFlashAttribute("success","BD request details saved sucessfully with reference : "+"BD-"+ezReqHeadOut.getId()+".");
+				ra.addFlashAttribute("success","Request details saved sucessfully with reference : "+"BD-"+ezReqHeadOut.getId()+".");
 				return "redirect:/bd/add";
 	    	//}
  }

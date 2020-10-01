@@ -98,6 +98,9 @@ function dispatchReq(event){
 	var formdata = $('#dispatchform').serialize(); 
 	if($("#dispatchform").validationEngine('validate'))
 		{
+		
+		$('#dispBtn').hide();
+		Pace.restart();
 	$.ajax({			
 		type : "POST",
 		url : "/reports/dispatchupdate", 
