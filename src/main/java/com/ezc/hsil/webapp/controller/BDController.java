@@ -88,7 +88,7 @@ public class BDController {
 	    	}
 	    	bdReqDto.setMatLoopList(matLoopList);
 			bdReqDto.setDistList(distList);
-		 	model.addAttribute("matList", bdService.getBDLeftOverStock());
+		 	//model.addAttribute("matList", bdService.getBDLeftOverStock(ezReqHeader.getErhRequestedBy()));
 	        model.addAttribute("bdReqDto",bdReqDto);
 	        return "bd/bdForm";
 
@@ -422,7 +422,7 @@ public class BDController {
 	        reqDto.setEzReqMatList(ezcMatList);
 	        reqDto.setEzcComments(ezcComm);
 	        model.addAttribute("reqDto", reqDto);
-	        model.addAttribute("matList", bdService.getBDLeftOverStock());
+	        model.addAttribute("matList", bdService.getBDLeftOverStock(ezcRequestHeader.getErhRequestedBy()));
 	        model.addAttribute("outStoreList", outStoreList);
 	       	return "bd/bdDetailsForm";
 	       
@@ -458,7 +458,7 @@ public class BDController {
 
 	    } 
 	  @RequestMapping(value = "/bd/addNewItem/{purpose}", method = RequestMethod.POST)
-	    public String addNewTPMItem(@PathVariable String purpose,BDRequestDetailDto reqDto, Model model) {
+	    public String addNewTPMItem(@PathVariable String purpose,@RequestParam String requestBY,BDRequestDetailDto reqDto, Model model) {
 	        List<EzcRequestItems> ezcRequestItems=null;
 	        String disabledStr="true";
 	        log.debug(purpose);
@@ -466,6 +466,7 @@ public class BDController {
 	        
 	        log.debug(disabledStr);
 	        log.debug("dist"+reqDto.getReqHeader().getErhDistrubutor());
+	        log.debug("requestby"+requestBY);
 	        if(reqDto.getEzcRequestItems() == null)
 	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
 	        else
@@ -474,7 +475,7 @@ public class BDController {
 	        reqDto.setEzcRequestItems(ezcRequestItems);
 			reqDto.setReqHeader(reqDto.getReqHeader());
 			model.addAttribute("disabledStr", disabledStr);
-			model.addAttribute("matList", bdService.getBDLeftOverStock());
+			model.addAttribute("matList", bdService.getBDLeftOverStock(requestBY));
 	        model.addAttribute("reqDto", reqDto); 
 	        return "bd/bdDetailsForm";
 

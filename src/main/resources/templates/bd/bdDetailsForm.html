@@ -1,14 +1,14 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
-    <title>BD & Marketing</title>
+    <title>Promotional Materials Request</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/nomoretable.css}"/>
 </head>
 <body onload="funHide()">
 <section layout:fragment="header">
     <!-- <h1 th:text="${reDto.reqHeader.id}"></h1>
     BD & Marketing Request -->
-    <h1><span th:text="${'BD & Marketing Request : '+reqDto.reqHeader.id}" th:remove="tag"></span></h1>
+    <h1><span th:text="${'Promotional Materials Request : '+reqDto.reqHeader.id}" th:remove="tag"></span></h1>
     
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
@@ -28,6 +28,7 @@
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
             	<input hidden="hidden" name="id" th:value="*{reqHeader.id}">
+            	<input hidden="hidden" name="requestBY" th:value="*{reqHeader.erhRequestedBy}">
             	<input hidden="hidden" name="matQty" />
             	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
