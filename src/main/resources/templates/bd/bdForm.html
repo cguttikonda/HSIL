@@ -1,7 +1,7 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
-    <title>Promotional Materials</title>
+    <title>BD</title>
      <style type="text/css">
     #attachModal {
     width: 50%;
@@ -22,7 +22,7 @@
 <section layout:fragment="header">
     <h1>Promotional Materials Request</h1>
     <ol class="breadcrumb">
-        <li><a href="/"><i class="fa fa-dashboard"></i> Promotional Materials Req</a></li>
+        <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
         <li class="active">Create</li>
     </ol>
 </section>
@@ -201,7 +201,7 @@ $(document).ready(function(){
 			return ;
 		}*/
 		var totDet='';
-		for(var i=0;i<5;i++)
+		for(var i=0;i<10;i++)
 		{
 			//alert("value"+document.getElementById("stkAva_"+i).value+"index"+i)
 			if(document.getElementById("stkAva_"+i).value !='')

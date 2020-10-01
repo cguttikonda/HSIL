@@ -255,7 +255,7 @@ public class BDServiceImpl implements IBDService{
 			   }
 			} 
 	 if(matCnt>0)
-	  	useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+	  	useLeftOverStk.updateLeftOverStock("BD",matCnt);
 	  ezReqHeader.setErhStatus("SUBMITTED");
 	  ezReqHeader.setErhCity(bdRequestDetailDto.getReqHeader().getErhCity());
 	  ezReqHeader.setErhPurpose(bdRequestDetailDto.getReqHeader().getErhPurpose());
