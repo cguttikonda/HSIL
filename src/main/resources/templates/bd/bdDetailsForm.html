@@ -27,8 +27,9 @@
             <div class="box-body">
             	<input hidden="hidden" th:field="*{reqHeader.id}">
             	<input hidden="hidden" th:field="*{reqHeader.erhDistrubutor}">
+            	<input hidden="hidden" th:field="*{reqHeader.erhDistName}">
             	<input hidden="hidden" name="id" th:value="*{reqHeader.id}">
-            	<input hidden="hidden" name="requestBY" th:value="*{reqHeader.erhRequestedBy}">
+            	<input hidden="hidden" name="requestBY" th:value="*{requestby}">
             	<input hidden="hidden" name="matQty" />
             	
             	 <input hidden="hidden" th:field="*{reqHeader.erhConductedOn}" th:value="*{#dates.format(reqHeader.erhConductedOn, 'dd/MM/yyyy')}">
@@ -358,6 +359,7 @@ function checkItemQuantity(i){
 	    }	
 	 // alert("totBdQty"+totBdQty);  
 		var qty=document.getElementById("quantity"+i).value;	
+		if(totBdQty<0)totBdQty=0;
 	    	if(parseFloat(qty) > parseFloat(totBdQty))
 	    		{
 	    		

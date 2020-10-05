@@ -118,6 +118,7 @@ public class BDServiceImpl implements IBDService{
 	
 	@Override
 	public EzcRequestHeader getBDRequest(String docId) {
+		//log.debug("docid"+docId);
 		EzcRequestHeader reqHeader = reqHeaderRepo.findById(docId).orElseThrow(() -> new EntityNotFoundException());
 		return reqHeader;
 	}

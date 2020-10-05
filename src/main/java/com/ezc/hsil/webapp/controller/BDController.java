@@ -411,16 +411,19 @@ public class BDController {
 				ezcMatList.add(item); 
 			}
 	        log.debug("distributor"+ezcRequestHeader.getErhDistrubutor());
+	        log.debug("requsetby"+ezcRequestHeader.getErhRequestedBy());
 	        String distCity = "";
 	        try {
 				distCity=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getCity();
 			} catch (Exception e) {
 			}
 	        ezcRequestHeader.setErhCity(distCity);
+	        String requestby=ezcRequestHeader.getErhRequestedBy();
 	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
 	        reqDto.setReqHeader(ezcRequestHeader);
 	        reqDto.setEzReqMatList(ezcMatList);
 	        reqDto.setEzcComments(ezcComm);
+	        reqDto.setRequestby(requestby);
 	        model.addAttribute("reqDto", reqDto);
 	        model.addAttribute("matList", bdService.getBDLeftOverStock(ezcRequestHeader.getErhRequestedBy()));
 	        model.addAttribute("outStoreList", outStoreList);
@@ -466,7 +469,9 @@ public class BDController {
 	        
 	        log.debug(disabledStr);
 	        log.debug("dist"+reqDto.getReqHeader().getErhDistrubutor());
+	        log.debug("requestby"+reqDto.getReqHeader().getErhRequestedBy());
 	        log.debug("requestby"+requestBY);
+	        
 	        if(reqDto.getEzcRequestItems() == null)
 	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
 	        else
@@ -474,6 +479,7 @@ public class BDController {
 	        ezcRequestItems.add(new EzcRequestItems());
 	        reqDto.setEzcRequestItems(ezcRequestItems);
 			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setRequestby(requestBY);
 			model.addAttribute("disabledStr", disabledStr);
 			model.addAttribute("matList", bdService.getBDLeftOverStock(requestBY));
 	        model.addAttribute("reqDto", reqDto); 

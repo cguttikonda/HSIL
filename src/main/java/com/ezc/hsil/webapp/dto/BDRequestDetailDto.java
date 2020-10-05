@@ -21,6 +21,7 @@ public class BDRequestDetailDto {
 	List<EzcComments> ezcComments = new  ArrayList<EzcComments>();
 	private String contactNo="";
 	private String city="";
+	private String requestby="";
 	List purpose=null;
 	private String recordedText="";
 	private String commentReqDto="";
@@ -86,6 +87,12 @@ public class BDRequestDetailDto {
 	}
 	public void setPurpose(List purpose) {
 		this.purpose = purpose;
+	}
+	public String getRequestby() {
+		return requestby;
+	}
+	public void setRequestby(String requestby) {
+		this.requestby = requestby;
 	}
 	
 	
