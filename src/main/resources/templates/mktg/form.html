@@ -31,20 +31,29 @@
                 <div class="form-group">
                     <label for="distrubutor">Distributor</label>
                       <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select Distributor" th:field="*{distrubutor}">
-						<option selected value="">---select distributor---</option>
+						<option selected value="">---Select Distributor---</option>
 						<option th:selected="${distrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
                 </div>
                 <div class="form-group">
                     <label for="sendTo">State Head</label>
                       <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select State Head" th:field="*{sentTo}">
-						<option selected value="">---select state head---</option>
+						<option selected value="">---Select State Head---</option>
 						<option th:selected="${sentTo == users.userId}" th:each="users : *{userList}" th:value="${users.userId}" th:text="${users.firstName+' '+users.lastName+'['+users.userId+']'}"></option>
 	                </select>
                 </div>
                 <div class="form-group">
                     <label for="purpose">Text/Reason</label>
-                      <input class="form-control validate[required]" data-errormessage-value-missing="Please Enter Text/Reason" th:field="*{purpose}" maxlength="100">
+                      <!-- <input class="form-control validate[required]" data-errormessage-value-missing="Please Enter Text/Reason" th:field="*{purpose}" maxlength="100"> -->
+                      <select class="form-control select2 validate[required]" data-errormessage-value-missing="Please Select Text/Reason" th:field="*{purpose}">
+						<option selected value="">---select Text/Reason---</option>
+						<option  value="Marketing Giveaway">Marketing Giveaway</option>
+						<option  value="Cost Sharing">Cost Sharing</option>
+					  </select>
+                </div>
+                <div class="form-group">
+                    <label for="purpose">Vehicle No</label>
+                      <input class="form-control" type="text" th:field="*{vehNo}" maxlength="40">
                 </div>
                 <!-- <div class="form-group">
                     <label for="sendTo">Material</label>

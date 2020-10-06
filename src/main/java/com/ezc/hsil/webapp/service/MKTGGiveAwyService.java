@@ -55,8 +55,14 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 			Optional<MaterialMaster> matMaster = matRepo.findById(matArr[0]);
 	        if(matMaster.isPresent())
 	        {  
-	               MaterialMaster mat = matMaster.get();
-	               int stockChk = (mat.getQuantity()-mat.getBlockQty())-matDto.getQty();
+	        	   MaterialMaster mat = matMaster.get();
+	        	   int blockQty=0;
+	        	   if(mat.getBlockQty() != null)
+	        		   blockQty=mat.getBlockQty();
+	               log.debug("blockQty::"+blockQty);
+	               log.debug("inputQty::"+matDto.getQty());
+	               log.debug("dbqty::"+mat.getQuantity());
+	               int stockChk = (mat.getQuantity()-blockQty)-matDto.getQty();
 	               if(stockChk < 0)
 	            	   throw Exception;	//need to be changed to custom exception
 	               else
@@ -70,10 +76,12 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 			ezcMktGiveAway.setDistrubutor(mktgGiveAwayDto.getDistrubutor());
 			ezcMktGiveAway.setPurpose(mktgGiveAwayDto.getPurpose());
 			ezcMktGiveAway.setSentTo(mktgGiveAwayDto.getSentTo());
+			ezcMktGiveAway.setVehNo(mktgGiveAwayDto.getVehNo());
 			ezcMktGiveAway.setSentToName(mktgGiveAwayDto.getSentToName());
 			ezcMktGiveAway.setMatCode(matArr[0]);
 			ezcMktGiveAway.setQty(matDto.getQty());
 			ezcMktGiveAway.setMatDesc(matArr[1]);
+			ezcMktGiveAway.setStatus("C");
 			mktgGiveAwayRepo.save(ezcMktGiveAway);
 			
 			

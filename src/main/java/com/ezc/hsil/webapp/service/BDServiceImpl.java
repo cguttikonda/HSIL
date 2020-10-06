@@ -171,7 +171,13 @@ public class BDServiceImpl implements IBDService{
 	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
 	                       //mat.setQuantity(qty);
 	                       //int blockQty = tempItem.getApprQty();
-	                       int stockChk = (mat.getQuantity()-mat.getBlockQty())-appQty;
+	                       int blockQtyTemp=0;
+	    	        	   if(mat.getBlockQty() != null)
+	    	        		   blockQtyTemp=mat.getBlockQty();
+	    	               log.debug("blockQty::"+blockQtyTemp);
+	    	               log.debug("inputQty::"+appQty);
+	    	               log.debug("dbqty::"+mat.getQuantity());
+	                       int stockChk = (mat.getQuantity()-blockQtyTemp)-appQty;
 	    	               if(stockChk < 0)
 	    	            	   throw Exception;	//need to be changed to custom exception
 	    	               else

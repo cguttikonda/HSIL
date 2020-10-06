@@ -143,6 +143,21 @@ public class MKTGiveAwayController {
 
     }
     
+    @RequestMapping(value = "/mktg/mktgListByStatus/{status}", method = RequestMethod.GET)
+    public String listByStatus(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@PathVariable String status) {
+    	
+    	ListSelector listSelector=new ListSelector();
+    	listSelector.setStatus(status);
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+    	listSelector.setSentTo(userObj.getUserId());
+    	List<EzcMktGiveAway> list = iMKTGGiveAwyService.getRequestList(listSelector);
+        model.addAttribute("reqList", list);
+        model.addAttribute("listSelector", listSelector);
+        return "mktg/list"; 
+
+    }
+    
     @RequestMapping(value = "/mktg/ackRequest/{id}", method = RequestMethod.GET)
     public String ackRequest(@PathVariable String id , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {	
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -11,6 +11,7 @@ public class MktgGiveAwayDto {
 
 	private String purpose;
 	private String sentTo;
+	private String vehNo;
 	private String sentToName;
 	private String distrubutor;
 	private String distName;
@@ -82,6 +83,12 @@ public class MktgGiveAwayDto {
 	}
 	public void setMatList(List<MaterialQtyDto> matList) {
 		this.matList = matList;
+	}
+	public String getVehNo() {
+		return vehNo;
+	}
+	public void setVehNo(String vehNo) {
+		this.vehNo = vehNo;
 	}
 	
 	

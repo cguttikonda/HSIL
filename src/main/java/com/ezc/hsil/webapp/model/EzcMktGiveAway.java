@@ -29,6 +29,9 @@ public class EzcMktGiveAway implements java.io.Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(name="EMGA_VEH_NO",length=40)
+	private String vehNo;
+	
 	@Column(name="EMGA_PURPOSE",length=100)
 	private String purpose;
 	

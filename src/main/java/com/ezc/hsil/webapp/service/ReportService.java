@@ -17,6 +17,7 @@ import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.ReportSelector;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.RequestMaterials;
@@ -165,6 +166,14 @@ public class ReportService implements IReportService {
 			listSelector.setUser(userList);
 			dispCnt = customDto.findRequestListCnt(listSelector);
 			htMap.put("apprTpsCnt",dispCnt+"");
+			listSelector = new ListSelector();
+			listSelector.setSentTo(user);
+			listSelector.setStatus("C");
+			List<EzcMktGiveAway> mktList= customDto.findMktGiveAwayList(listSelector);
+			int mkListCnt=0;
+			if(mktList != null)
+				mkListCnt=mktList.size();
+			htMap.put("mkListCnt",mkListCnt+"");
 		}
 		if(role.contains("ROLE_ST_HEAD"))
 		{

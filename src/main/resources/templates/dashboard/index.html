@@ -56,7 +56,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tpm/tpmReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tpm/tpmReqListSts/APPROVED}" class="small-box-footer">SUBMIT REPORT <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
@@ -71,7 +71,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                 <div class="icon">
                     <i class="ion ion-chevron-right"></i>
                 </div>
-                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">SUBMIT REPORT <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
         <!-- ./col -->
@@ -87,7 +87,27 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
                     <i class="ion ion-chevron-right"></i>
                 </div>
                 
-                <a  href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
+                <a  href="#" th:href="@{/bd/bdRequestList/APPROVED}" class="small-box-footer">SUBMIT REPORT <i class="fa fa-arrow-circle-right"></i></a>
+                
+                
+                <!-- <a  sec:authorize="hasRole('ROLE_ST_HEAD')" href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a> -->
+                
+            </div>
+        </div>
+        <!-- ./col -->
+        <!-- ./col -->
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
+            <!-- small box -->
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3 th:text="${mkListCnt}"></h3>
+                    <p>NEW MARKETING GIVEAWAY's</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-chevron-right"></i>
+                </div>
+                
+                <a  href="#" th:href="@{/mktg/mktgListByStatus/C}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a>
                 
                 
                 <!-- <a  sec:authorize="hasRole('ROLE_ST_HEAD')" href="#" th:href="@{/tps/tpsReqListSts/APPROVED}" class="small-box-footer">CLICK HERE <i class="fa fa-arrow-circle-right"></i></a> -->

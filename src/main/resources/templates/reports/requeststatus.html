@@ -82,7 +82,8 @@
                     <th>Request No</th>
                     <th>Distributor</th>
                     <th>City</th>
-                    <th>Created BY</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
                     <th>Meeting Date</th>
                     <th>No Of Attendance</th>
                     <th>Approval Status</th>
@@ -102,6 +103,7 @@
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${#dates.format(row.erhRequestedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
