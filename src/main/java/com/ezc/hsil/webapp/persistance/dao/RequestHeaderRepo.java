@@ -26,7 +26,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	EzcRequestHeader findTopByErhCreatedGroupAndErhRequestedByAndErhStatusOrderByErhConductedOnDesc(String group,String requestedBy,String status);
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy  and b.leftOverQty > 0 ORDER BY b.id")
 	List<Object[]> getLeftOverStock(String requestedBy);
-	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0 ORDER BY b.id")
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName,a.erhRequestedOn from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0 ORDER BY b.id")
 	List<Object[]> getAllStock(String requestedBy);
 /*	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus=:erhStatus and a.erhReqType=:erhReqType")
 	List<Object[]> getBdRequestList(String erhStatus,String erhReqType);	
@@ -80,6 +80,8 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<Object[]> getUsedLeftQtyPerUser();
 	@Query(nativeQuery=true,value="SELECT  COUNT(*) ,ERH_REQ_TYPE,erh_requested_by,SUM(CASE WHEN ERH_STATUS!='SUBMITTED' THEN 1 ELSE 0 END) AS INPROCESS FROM ezc_request_header WHERE erh_requested_on >= NOW() - INTERVAL 1 YEAR GROUP BY ERH_REQ_TYPE,erh_requested_by")
 	List<Object[]> getAllInProcessReqPerUser();
+	@Query(value="select a.id,a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,b.id,b.apprQty,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhReqType=:reqType  and a.erhRequestedBy=:reqBY and a.erhStatus='APPROVED' ORDER BY b.id")
+	List<Object[]> getPendingList(String reqBY, String reqType);
 	
 }
                              

@@ -39,6 +39,7 @@ public class EzcRequestItems implements java.io.Serializable {
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date eriDoa;
 	private String eriContact;
+	private String eriEmailId;
 	private String eriDealer;
 	private String erilocation;
 	private String eriGift;
@@ -200,6 +201,15 @@ public class EzcRequestItems implements java.io.Serializable {
 	public void setEriQuantity(String eriQuantity) {
 		this.eriQuantity = eriQuantity;
 	}
+	@Column(name = "ERI_EMAIL_ID", length = 50)
+	public String getEriEmailId() {
+		return eriEmailId;
+	}
+
+	public void setEriEmailId(String eriEmailId) {
+		this.eriEmailId = eriEmailId;
+	}
+
 
 	
 	

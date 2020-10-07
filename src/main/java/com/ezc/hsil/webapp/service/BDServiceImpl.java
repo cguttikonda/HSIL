@@ -279,7 +279,10 @@ public class BDServiceImpl implements IBDService{
 	public List<Object[]> getBDLeftOverStock(String reqBY) {
 		return reqHeaderRepo.getLeftOverStock(reqBY);
 	}
-	
+	@Override
+	public List<Object[]> getPendingList(String reqBY,String reqType) {
+		return reqHeaderRepo.getPendingList(reqBY,reqType);
+	}
 	@Override
 	public void NullifyBDQty(String leftOverId, String reasonNullify, String commentsNullify) {
 		

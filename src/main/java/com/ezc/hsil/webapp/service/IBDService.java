@@ -18,6 +18,7 @@ public interface IBDService {
 	public List<Object[]> getBDLeftOverStock(String reqBy);
 	public void NullifyBDQty(String leftOverId,String reasonNullify,String commentsNullify);
 	public void rejectBDRequest(EzcRequestHeader ezcRequestHeader);
+	public List<Object[]>  getPendingList(String requestBY,String reqType);
 	
 	
 }

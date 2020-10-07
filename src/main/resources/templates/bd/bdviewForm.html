@@ -124,9 +124,11 @@
                 		<th>Location</th>
                 		<!-- <th>Gift Item</th> -->
                 		<th>Contact NO</th>
+                		<th>Email ID</th>
                 		<th>D.O.B</th>
                 		<th>D.O.A</th>
                 		<th>Event Name</th>
+                		<th>Quantity</th>
                 		
                 		
                 	</tr>
@@ -141,6 +143,7 @@
 					    <td data-title="Location"><span th:text="*{ezcRequestItems[__${itemStat.index}__].erilocation}" ></span></td>
 					    <!-- <td data-title="Gift"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriGift}" ></span></td> -->
 					    <td data-title="Contact No"><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriContact}" ></span></td>
+					    <td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriEmailId}" id="emailId" ></span></td>
 						<td data-title="D.O.B">
 							
 							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDob}"></span>
@@ -151,7 +154,8 @@
 							<span th:text="*{ezcRequestItems[__${itemStat.index}__].eriDoa}"></span>
 							
 						</td>
-						<td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" ></span></td>	
+						<td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriPartName}" id="eventName" ></span></td>
+						<td ><span th:text="*{ezcRequestItems[__${itemStat.index}__].eriQuantity}" id="quantity" ></span></td>		
                 		
                 		
                 	</tr>

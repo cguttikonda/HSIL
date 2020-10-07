@@ -426,6 +426,7 @@ public class BDController {
 	        reqDto.setRequestby(requestby);
 	        model.addAttribute("reqDto", reqDto);
 	        model.addAttribute("matList", bdService.getBDLeftOverStock(ezcRequestHeader.getErhRequestedBy()));
+	        model.addAttribute("pendingList", bdService.getPendingList(ezcRequestHeader.getErhRequestedBy(),"BD"));
 	        model.addAttribute("outStoreList", outStoreList);
 	       	return "bd/bdDetailsForm";
 	       
@@ -471,6 +472,7 @@ public class BDController {
 	        log.debug("dist"+reqDto.getReqHeader().getErhDistrubutor());
 	        log.debug("requestby"+reqDto.getReqHeader().getErhRequestedBy());
 	        log.debug("requestby"+requestBY);
+	      //  List<Object[]> pendList= bdService.getPendingList(requestBY,"BD");
 	        
 	        if(reqDto.getEzcRequestItems() == null)
 	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
@@ -482,6 +484,7 @@ public class BDController {
 			reqDto.setRequestby(requestBY);
 			model.addAttribute("disabledStr", disabledStr);
 			model.addAttribute("matList", bdService.getBDLeftOverStock(requestBY));
+			//model.addAttribute("pendingList", bdService.getPendingList(requestBY,"BD"));
 	        model.addAttribute("reqDto", reqDto); 
 	        return "bd/bdDetailsForm";
 
