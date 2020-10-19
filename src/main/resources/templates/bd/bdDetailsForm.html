@@ -177,7 +177,7 @@
                     	<input type="hidden" name="leftOverQty" th:id="${'leftOverQty_'+itemStat.index}" th:value="${row[4]}">
                     	<!-- <input type="number" name="allocQty" th:id="${'allocQty_'+itemStat.index}" class="form-control" min="0" th:max="${row[4]}">-->
                     	<input type="hidden" name="leftOverId" th:id="${'leftOverId_'+itemStat.index}" th:value="${row[5]}">
-                    	<button th:data-id="${row[2]+'#'+row[3]}"  type="button" class="btn btn-primary" th:onclick="|nullifyQty(this.getAttribute('data-id'),'${row[4]}', '${row[5]}')|">Nullify</button>
+                    	<button sec:authorize="hasRole('ADMIN')" th:data-id="${row[2]+'#'+row[3]}"  type="button" class="btn btn-primary" th:onclick="|nullifyQty(this.getAttribute('data-id'),'${row[4]}', '${row[5]}')|">Nullify</button>
                     </td>
                     <!-- <td th:text="${row.apprQty-row.usedQty}"></td> -->
                 </tr>
@@ -239,7 +239,7 @@
 					    <td data-title="Location"><input type="text" autocomplete="off"  class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].erilocation}" /></td>
 					    <!-- <td data-title="Gift"><input type="text"  autocomplete="off" class="form-control validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriGift}" /></td> -->
 					    <td data-title="Contact No"><input type="number" autocomplete="off"  class="form-control validate[required,funcCall[dupMobChk]] contactNo" onKeyPress="if(this.value.length==10) return false;" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriContact}" /></td>
-					     <td data-title="Email Id"><input type="text" autocomplete="off"   th:data-id="${itemStat.index}" class="form-control validate[required,funcCall[funCheckMail]] emailId"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriEmailId}"  th:id="${'emailInput'+itemStat.index}"/></td>
+					     <td data-title="Email Id"><input type="text" autocomplete="off"   th:data-id="${itemStat.index}" class="form-control validate[funcCall[funCheckMail]] emailId"  th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriEmailId}"  th:id="${'emailInput'+itemStat.index}"/></td>
 						<td data-title="D.O.B">
 							<div class="input-group date">
 							<div class="input-group-addon">

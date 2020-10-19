@@ -129,6 +129,10 @@ public class MKTGiveAwayController {
     	{
     		listSelector.setSentTo(userObj.getUserId());
     	}
+    	else if(requestWrapper.isUserInRole("ADMIN"))
+    	{
+    		
+    	}
     	else
     	{
     		userList.add(userObj.getUserId());

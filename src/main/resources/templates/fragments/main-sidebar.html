@@ -113,7 +113,7 @@
 			<a th:href="@{/reports/stockavailforall}"><i class="fa fa-cubes"></i> <span>In Field</span> 
 		</a>
 		</li>
-		<li class="treeview" sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_ST_HEAD')">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_ST_HEAD','ADMIN')">
 	<a href="#">
 	<i class="fa fa-bullhorn"></i> <span>Marketing Giveaway's</span> <span
 	class="pull-right-container"> <i

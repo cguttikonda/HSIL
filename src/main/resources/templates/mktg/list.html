@@ -95,7 +95,9 @@
                     <th>Material</th>
                     <th>Quantity</th>
                     <th></th>
+                    <th>Text/Reason</th>
                     <th>Status</th>
+                    
                     
                 </tr>
                     </thead>
@@ -115,6 +117,7 @@
 						</a>
 					</span>
                     </td>
+                    <td th:text="${row.purpose}"></td>
                     <td th:text="${row.status == 'A'?'Acknowledged':'Not Acknowledged'}"></td>
                     
                 </tr>

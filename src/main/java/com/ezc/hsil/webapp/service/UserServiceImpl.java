@@ -213,6 +213,7 @@ public class UserServiceImpl implements IUserService{
 	    	user.setLastName(accountDto.getLastName());
 	    	user.setEmail(accountDto.getEmail());
 	    	user.setRoles(new ArrayList<Roles>(Arrays.asList(userRole)));
+	    	user.setEnabled(true);
 	    	List<String> userGrpList =  accountDto.getGroup();
 	    	
 	    	//String userGrp = accountDto.getGroup();

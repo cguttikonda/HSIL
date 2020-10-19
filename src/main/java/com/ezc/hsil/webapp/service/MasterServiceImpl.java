@@ -296,8 +296,12 @@ public class MasterServiceImpl implements IMasterService {
 		Map<String, String> hmOut = new HashMap<String, String>(); 
 		if(dbMatOpt.isPresent())
 		{
+			int blockQty=0;
 			MaterialMaster matObjOld = dbMatOpt.get();
-			int stock = matObjOld.getQuantity()-matObjOld.getBlockQty();
+			if(matObjOld.getBlockQty() != null)
+				blockQty=matObjOld.getBlockQty();
+			
+			int stock = matObjOld.getQuantity()-blockQty;
 			if(qty <= stock)
 			{
 				hmOut.put("STOCK_FLG","Y");
