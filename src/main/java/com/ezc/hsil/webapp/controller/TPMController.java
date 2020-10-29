@@ -220,7 +220,7 @@ public class TPMController {
     	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
     	{
     		userList.add(userObj.getUserId());
-    		log.debug("getUserId"+userObj.getUserId());
+    		log.debug("getUserId"+userObj.getUserId()); 
     		listSelector.setUser(userList);
     	}
 		/*

@@ -125,7 +125,7 @@ public class RequestCustomDto {
 	        cq.where(predicates.toArray(new Predicate[0]));
 	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),header.get("erhStatus"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"),dealerJoin.get("erdMeetStatus"));
 	        Query query = em.createQuery(cq);
-	        return query.getResultList();
+	        return query.getResultList(); 
 	    }
 	
 	    public List<EzcMktGiveAway> findMktGiveAwayList(ListSelector listSelector) {

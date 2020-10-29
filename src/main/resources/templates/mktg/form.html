@@ -43,7 +43,7 @@
 						<option th:selected="${sentTo == users.userId}" th:each="users : *{userList}" th:value="${users.userId}" th:text="${users.firstName+' '+users.lastName+'['+users.userId+']'}"></option>
 	                </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group"> 
                     <label for="purpose">Text/Reason</label>
                       <!-- <input class="form-control validate[required]" data-errormessage-value-missing="Please Enter Text/Reason" th:field="*{purpose}" maxlength="100"> -->
                       <select class="form-control select2 validate[required]" data-errormessage-value-missing="Please Select Text/Reason" th:field="*{purpose}">
