@@ -76,8 +76,13 @@ public class MKTGiveAwayController {
     	{
     		matList.add(new MaterialQtyDto());
     	}
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		String loggedUser=(String)userObj.getUserId();
+		log.debug("loggedUser"+loggedUser);
     	mktgGiveAwayDto.setMatList(matList);
         model.addAttribute("mktgGiveAwayDto", mktgGiveAwayDto);
+        model.addAttribute("loggedUser", loggedUser);
         return "mktg/form";
 
     } 

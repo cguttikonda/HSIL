@@ -114,6 +114,8 @@ public class RequestCustomDto {
 	        List<Predicate> predicates = new ArrayList<Predicate>();
 	        if(reportSelector.getType() != null) 
 	        	predicates.add(cb.equal(header.get("erhReqType"), reportSelector.getType()));
+	        if(reportSelector.getUser() != null) 
+	        	predicates.add(cb.equal(header.get("erhRequestedBy"), reportSelector.getUser()));
 	        if(reportSelector.getFromDate() != null && reportSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), reportSelector.getFromDate(), reportSelector.getToDate()));
 	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))

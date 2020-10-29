@@ -121,7 +121,7 @@
 	</span>
 	</a>
 	<ul class="treeview-menu">
-		<li class=""><a href="#" th:href="@{/mktg/add}" sec:authorize="hasAnyRole('ROLE_OUT_STOR')"><i class="fa fa-circle-o"></i> Create</a></li>
+		<li class=""><a href="#" th:href="@{/mktg/add}" sec:authorize="hasAnyRole('ROLE_OUT_STOR','ROLE_ST_HEAD')"><i class="fa fa-circle-o"></i> Create</a></li>
 		<li><a href="#" th:href="@{/mktg/mktgRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 	</ul>
 </li>

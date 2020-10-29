@@ -214,10 +214,13 @@ public class TPMController {
     	listSelector.setType("TPM");
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
+		String loggedUser=(String)userObj.getUserId();
+		log.debug("loggedUser"+loggedUser);
 		ArrayList<String> userList=new ArrayList<String>();
     	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
     	{
     		userList.add(userObj.getUserId());
+    		log.debug("getUserId"+userObj.getUserId());
     		listSelector.setUser(userList);
     	}
 		/*

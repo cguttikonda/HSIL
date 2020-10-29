@@ -35,7 +35,8 @@
 						<option th:selected="${distrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
                 </div>
-                <div class="form-group">
+                <input hidden="hidden" sec:authorize="hasAnyRole('ROLE_ST_HEAD')" th:name="sentTo" th:id="sentTo" th:value="${loggedUser}">
+                <div class="form-group" sec:authorize="hasAnyRole('ROLE_OUT_STOR')">
                     <label for="sendTo">State Head</label>
                       <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select State Head" th:field="*{sentTo}">
 						<option selected value="">---Select State Head---</option>
