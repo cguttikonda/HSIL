@@ -114,14 +114,17 @@ public class RequestCustomDto {
 	        List<Predicate> predicates = new ArrayList<Predicate>();
 	        if(reportSelector.getType() != null) 
 	        	predicates.add(cb.equal(header.get("erhReqType"), reportSelector.getType()));
-	        if(reportSelector.getUser() != null) 
-	        	predicates.add(cb.equal(header.get("erhRequestedBy"), reportSelector.getUser()));
 	        if(reportSelector.getFromDate() != null && reportSelector.getToDate() != null)
 	        	predicates.add(cb.between(header.get("erhRequestedOn"), reportSelector.getFromDate(), reportSelector.getToDate()));
 	        if(reportSelector.getStatus() != null && !"null".equals(reportSelector.getStatus()) && !"".equals(reportSelector.getStatus()))
 	        	predicates.add(cb.equal(header.get("erhStatus"), reportSelector.getStatus()));
 	        if(reportSelector.getDispStatus() != null)
 	        	predicates.add(cb.equal(header.get("erhDispatchFlag"), reportSelector.getDispStatus()));
+	        if(reportSelector.getUser() != null && reportSelector.getUser().size() > 0)
+	        {
+	        	Expression<String> exp = header.get("erhRequestedBy");
+	        	predicates.add(exp.in(reportSelector.getUser()));
+	        }
 	        cq.where(predicates.toArray(new Predicate[0]));
 	        cq.multiselect(header.get("id"),header.get("erhReqType"),header.get("erhConductedOn"),header.get("erhRequestedBy"),header.get("erhReqName"),header.get("erhDistrubutor"),header.get("erhDistName"),header.get("erhCity"),header.get("erhNoOfAttendee"),header.get("erhStatus"),dealerJoin.get("erdMeetId"),dealerJoin.get("erdMeetDate"),dealerJoin.get("erdInstructions"),dealerJoin.get("erdNoOfAttendee"),dealerJoin.get("erdDealerName"),dealerJoin.get("erdMeetStatus"));
 	        Query query = em.createQuery(cq);

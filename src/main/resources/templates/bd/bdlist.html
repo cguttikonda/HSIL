@@ -71,7 +71,7 @@
            		<tbody>	
                 <tr th:each="row : ${reqList}">
                     <td><a th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a></td>
-                    <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
                     <td th:text="${#dates.format(row.erhRequestedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhDistrubutor}"></td>
                     <td th:text="${row.erhDistName}"></td>

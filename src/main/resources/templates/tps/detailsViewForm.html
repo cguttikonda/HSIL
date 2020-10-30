@@ -193,7 +193,8 @@
             </div>
             <div class="box-footer">
                
-                <button type="submit"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+                <button sec:authorize="hasAnyRole('ADMIN','ROLE_ST_HEAD')"  type="submit"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
+                <button sec:authorize="hasAnyRole('ROLE_ZN_HEAD')" type="button"  onclick="funBackForZH()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
             </div>
         </form>
     </div>
@@ -346,10 +347,16 @@
 
  function funBack()
 	{
-		
+		document.myForm.action ="/tps/tpsRequestList";
+	 	document.myForm.submit();
 		
 		
 	}
+	function funBackForZH()
+    {
+    	document.myForm.action ="/reports/teamTPSReport";
+	 	document.myForm.submit();
+    }
 
 	</script>
 </div>

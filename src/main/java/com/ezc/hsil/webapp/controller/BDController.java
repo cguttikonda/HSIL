@@ -190,6 +190,7 @@ public class BDController {
 			   	ezRequestHeader.setErhRequestedOn(new Date());
 			   	ezRequestHeader.setErhState("TEST"); 
 			   	ezRequestHeader.setErhStatus("NEW"); 
+			   	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 			   	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
 			   	
 			   	Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
