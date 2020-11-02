@@ -72,7 +72,7 @@ public class MKTGiveAwayController {
     	mktgGiveAwayDto.setDistList(distList);
     	mktgGiveAwayDto.setUserList(userList);
     	List<MaterialQtyDto> matList=new ArrayList<MaterialQtyDto>();
-    	for(int i=0;i<5;i++)
+    	for(int i=0;i<10;i++)
     	{
     		matList.add(new MaterialQtyDto());
     	}

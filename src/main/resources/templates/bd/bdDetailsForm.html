@@ -274,7 +274,8 @@
                 <button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
                 <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
                 <button type="button"  onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Save</button>
-                <button type="button"   onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-primary pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button"   onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-success pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Approve</button>
+                  <!-- <button type="button"   onclick="onRejectClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-danger pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Reject</button>-->
             </div>
         </form>
     </div>
@@ -544,7 +545,7 @@ function funGetAvaiableQty(i)
 							}*/
 							if (!qtyEntered) {
 								if ($("#bdQty"+j).val() !== ""
-										&& parseFloat($("#bdQty"+j).val()) > 0) {
+										&& parseFloat($("#bdQty"+j).val()) >= 0) {
 									qtyEntered = true;
 								}
 							}
