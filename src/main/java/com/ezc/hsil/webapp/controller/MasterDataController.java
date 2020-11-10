@@ -370,18 +370,24 @@ public class MasterDataController {
 		   return listOutArr;
 		}
 	@RequestMapping(value="/getExistingQuantity/{matCode}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Integer getExistingQty(@PathVariable String matCode)
+	public @ResponseBody  MaterialDto getMatDetails(@PathVariable String matCode)
 	{
 		MaterialDto matdto=masterService.getMaterialDetails(matCode);
 		Integer existingQty=0;
+		
+		String matDesc="";
 		try {
 		existingQty=matdto.getQuantity();
+		matDesc=matdto.getMaterialDesc();
 		}catch(Exception e)
 		{
 			existingQty=0;
 		}
+		
 		log.debug("existingQty"+existingQty);
-		return existingQty;
+		log.debug("matDesc"+matDesc);
+		
+		return matdto;
 	}
 	@RequestMapping(value="/getExistingCity/{city}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public @ResponseBody int getExistingCity(@PathVariable String city)

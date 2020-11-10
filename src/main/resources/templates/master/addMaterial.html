@@ -84,12 +84,20 @@ function funGetAvaQty()
   var matCode=document.getElementById("materialCode").value;
   $.ajax({
 	  url:"/master/getExistingQuantity/"+matCode,
-	  data : 'json',
+      data: 'json',
+
 		success : function(response) {
-			//alert(response);
-			document.getElementById("stkAva").value=response;
+			
+			//alert("llavya"+JSON.stringify(response.quantity));
+			
+			var quan=JSON.stringify(response.quantity);
+			var matDesc=(JSON.stringify(response.materialDesc)).toString();
+			matDesc=matDesc.replaceAll("\"", "");
+			document.getElementById("stkAva").value=quan;
+			document.getElementById("materialDesc").value=matDesc;
 		},
 		error : function(ex) {
+			//alert(ex);
 			console.log(ex);
 		}
     
