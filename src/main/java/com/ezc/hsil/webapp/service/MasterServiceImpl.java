@@ -2,6 +2,7 @@ package com.ezc.hsil.webapp.service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,6 +141,8 @@ public class MasterServiceImpl implements IMasterService {
 			mm.setMaterialCode(mDto.getMaterialCode());
 			mm.setMaterialDesc(mDto.getMaterialDesc());
 			mm.setQuantity(mDto.getQuantity());
+			mm.setCreatedON(new Date());
+			mm.setModifiedON(new Date());
 			mm.setIsActive("Y");
 			
 			matMastRep.save(mm);	
@@ -194,6 +197,7 @@ public class MasterServiceImpl implements IMasterService {
 			matMaster.setMaterialCode(matDto.getMaterialCode());
 			matMaster.setMaterialDesc(matDto.getMaterialDesc());
 			matMaster.setQuantity(matDto.getQuantity());
+			matMaster.setModifiedON(new Date());
 			matMaster.setIsActive(matDto.getIsActive());
 			
 		};

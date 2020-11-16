@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
@@ -10,6 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
@@ -29,7 +35,9 @@ import lombok.NonNull;
 	                @ColumnResult(name="EMM_MAT_DESC"),
 	                @ColumnResult(name="EMM_MAT_QUANTITY"),
 	                @ColumnResult(name="EMM_MAT_ISACTIVE"),
-	                @ColumnResult(name="EMM_BLOCK_QTY") 
+	                @ColumnResult(name="EMM_BLOCK_QTY"),
+	                @ColumnResult(name="EMM_CREATED_ON"),
+	                @ColumnResult(name="EMM_MODIFIED_ON") 
 	            }
 	        )
 	    }
@@ -67,6 +75,16 @@ public class MaterialMaster {
 	
 	@Column(name="EMM_BLOCK_QTY")
 	private Integer blockQty;
+	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@Temporal(TemporalType.DATE)
+	@Column(name="EMM_CREATED_ON")
+	private Date createdON;
+	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@Temporal(TemporalType.DATE)
+	@Column(name="EMM_MODIFIED_ON")
+	private Date modifiedON;
 	
 	public MaterialMaster() {
 		

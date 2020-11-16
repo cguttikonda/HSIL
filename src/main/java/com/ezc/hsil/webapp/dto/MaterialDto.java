@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.dto;
 
+import java.util.Date;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -8,6 +10,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -41,6 +44,12 @@ public class MaterialDto {
 	
 	private Integer blockQty;
 	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date createdON;
+	
+	
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date modifiedON;
 	
 	public MaterialDto() {}
 	

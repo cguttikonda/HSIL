@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -148,6 +149,7 @@ public class MasterDataController {
 			{
 				mDto.setIsActive("Y");
 				mDto.setQuantity(totQty);
+				mDto.setModifiedON(new Date());
 				ra.addFlashAttribute("success", "Material Updated successfully.");
 				masterService.updateMaterial(mDto);
 				
@@ -335,6 +337,8 @@ public class MasterDataController {
 			 	 matMaster.setMaterialDesc((String)objArr[1]);
 			 	 matMaster.setQuantity(qty);
 			 	 matMaster.setIsActive("Y");
+			 	 matMaster.setModifiedON(new Date());
+			 	 matMaster.setCreatedON(new Date());
 			 	 matList.add(matMaster);
 		 }
 		 masterService.addMaterialMultiple(matList);
@@ -386,7 +390,7 @@ public class MasterDataController {
 		
 		log.debug("existingQty"+existingQty);
 		log.debug("matDesc"+matDesc);
-		
+		log.debug("modON"+matdto.getModifiedON());
 		return matdto;
 	}
 	@RequestMapping(value="/getExistingCity/{city}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

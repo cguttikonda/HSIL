@@ -61,6 +61,11 @@
 					<input type="text" readonly name="stkAva" id="stkAva" class="form-control">
 					
 				</div>
+				<div class="form-group">
+					<label for="materialQuantity">Last Update ON</label>
+					<input type="text" readonly name="updateOn" id="updateOn" class="form-control">
+					
+				</div>
 
 			</div>
 			<!-- /.box-body -->
@@ -91,10 +96,31 @@ function funGetAvaQty()
 			//alert("llavya"+JSON.stringify(response.quantity));
 			
 			var quan=JSON.stringify(response.quantity);
-			var matDesc=(JSON.stringify(response.materialDesc)).toString();
-			matDesc=matDesc.replaceAll("\"", "");
-			document.getElementById("stkAva").value=quan;
+			var matDesc='';
+			var modDT='';
+			var modDate=response.modifiedON;
+			//alert(modDate);
+			if(modDate!=undefined)
+			{	
+				var dateMod=new Date(modDate);
+				var month=dateMod.getMonth()+1;
+				var day=dateMod.getDate();
+				var year=dateMod.getFullYear();
+				modDT=year+"-"+month+"-"+day;
+			}	
+			//alert(new Date(response.modifiedON)+"str"+modDT);
+			if(response.materialDesc!=undefined)
+			{
+				matDesc=(JSON.stringify(response.materialDesc)).toString();
+				matDesc=matDesc.replaceAll("\"", "");
+			}
+			
+			if(quan==undefined)quan='0';
+			var quanInt=parseInt(quan);
+			document.getElementById("stkAva").value=quanInt;
 			document.getElementById("materialDesc").value=matDesc;
+			document.getElementById("updateOn").value=modDT;
+			
 		},
 		error : function(ex) {
 			//alert(ex);
