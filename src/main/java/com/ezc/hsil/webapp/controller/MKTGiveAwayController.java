@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
@@ -23,9 +24,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
+import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.dto.MaterialQtyDto;
 import com.ezc.hsil.webapp.dto.MktgGiveAwayDto;
 import com.ezc.hsil.webapp.dto.TPMMeetDto;
@@ -86,7 +90,24 @@ public class MKTGiveAwayController {
         return "mktg/form";
 
     } 
-  
+    @RequestMapping(value="/mktg/getDistDetails/{dist}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody  DistributorDto getMatDetails(@PathVariable String dist)
+	{
+		DistributorDto distdto=masterService.getDistributorDetails(dist);
+		String city="";
+		try {
+			city=distdto.getCity();
+		
+		}catch(Exception e)
+		{
+			
+		}
+		
+		log.debug("city"+city);
+		
+		return distdto;
+	}
+
     @RequestMapping(value = "/mktg/saveRequest", method = RequestMethod.POST)
     public String save(@ModelAttribute MktgGiveAwayDto mktgGiveAwayDto,BindingResult bindingResult, final RedirectAttributes ra) {
 /*    	if(bindingResult.hasErrors())

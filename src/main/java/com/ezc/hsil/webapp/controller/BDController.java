@@ -189,7 +189,7 @@ public class BDController {
 			   	ezRequestHeader.setErhPurpose(bdReqDto.getErhPurpose());
 			   	ezRequestHeader.setErhReqType("BD");
 			   	ezRequestHeader.setErhRequestedOn(new Date());
-			   	ezRequestHeader.setErhState("TEST"); 
+			   	ezRequestHeader.setErhState(masterService.getDistributorDetails(bdReqDto.getErhDistrubutor()).getOrganisation()); 
 			   	ezRequestHeader.setErhStatus("NEW"); 
 			   	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 			   	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
@@ -414,9 +414,10 @@ public class BDController {
 			}
 	        log.debug("distributor"+ezcRequestHeader.getErhDistrubutor());
 	        log.debug("requsetby"+ezcRequestHeader.getErhRequestedBy());
-	        String distCity = "";
+	        String distCity = "",distState="";
 	        try {
 				distCity=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getCity();
+				distState=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getState();
 			} catch (Exception e) {
 			}
 	        ezcRequestHeader.setErhCity(distCity);

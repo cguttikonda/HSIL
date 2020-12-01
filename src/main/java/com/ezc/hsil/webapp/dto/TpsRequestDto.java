@@ -34,6 +34,7 @@ public class TpsRequestDto implements java.io.Serializable{
 	@NotNull
 	@Size(min=0, max=40)
 	private String city;
+	private String organisation;
 	private String instructions;
 	@NotEmpty
 	private List<EzcRequestDealers> dealerName;
@@ -78,6 +79,14 @@ public class TpsRequestDto implements java.io.Serializable{
 	}
 	public void setCity(String city) {
 		this.city = city;
+	}
+	
+	
+	public String getOrganisation() {
+		return organisation;
+	}
+	public void setOrganisation(String organisation) {
+		this.organisation = organisation;
 	}
 	public String getInstructions() {
 		return instructions;

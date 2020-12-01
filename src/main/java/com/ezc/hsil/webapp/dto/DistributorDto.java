@@ -40,8 +40,11 @@ public class DistributorDto {
 	@NotEmpty
 	@Size(min = 2)
 	private String city;
+	private String state;
 	
 	public DistributorDto() {
 		// TODO Auto-generated constructor stub
 	}
+
+	
 }

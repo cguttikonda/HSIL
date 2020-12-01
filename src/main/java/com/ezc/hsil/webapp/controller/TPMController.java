@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TPMController {
 
     @Autowired
-    ITPMService tpmService;
+    ITPMService tpmService; 
     
     @Autowired
     IMasterService masterService;
@@ -279,7 +279,7 @@ public class TPMController {
     	ezRequestHeader.setErhNoOfAttendee(tpmRequestDto.getErhNoOfAttendee());
     	ezRequestHeader.setErhReqType("TPM");
     	ezRequestHeader.setErhRequestedOn(new Date());
-    	ezRequestHeader.setErhState(""); 
+    	ezRequestHeader.setErhState(masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor()).getOrganisation()); 
     	ezRequestHeader.setErhStatus("NEW");
     	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
     	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor()).getName());

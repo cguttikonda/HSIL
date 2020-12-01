@@ -30,12 +30,18 @@
 
                 <div class="form-group">
                     <label for="distrubutor">Distributor</label>
-                      <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select Distributor" th:field="*{distrubutor}">
+                      <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select Distributor" th:field="*{distrubutor}" th:onchange="funGetDistDetails()">
 						<option selected value="">---Select Distributor---</option>
 						<option th:selected="${distrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
                 </div>
+                
+                <div class="form-group">
+                    <label for="city">City</label>
+                    <input class="form-control" type="text" name="city" id="city" value="" readonly> 
+		         </div>
                 <input hidden="hidden" sec:authorize="hasAnyRole('ROLE_ST_HEAD')" th:name="sentTo" th:id="sentTo" th:value="${loggedUser}">
+                
                 <div class="form-group" sec:authorize="hasAnyRole('ROLE_OUT_STOR')">
                     <label for="sendTo">State Head</label>
                       <select class="form-control select2 selectsel validate[required]" data-errormessage-value-missing="Please Select State Head" th:field="*{sentTo}">
@@ -218,7 +224,32 @@
 		});
 		
 	 });
-   
+    function funGetDistDetails()
+    {
+      var distrubutor=document.getElementById("distrubutor").value;
+      //alert("distrubutor"+distrubutor);
+      $.ajax({
+    	  url:"/mktg/getDistDetails/"+distrubutor,
+          data: 'json',
+
+    		success : function(response) {
+    			
+    			//alert("llavya"+JSON.stringify(response.city));
+    			var city=JSON.stringify(response.city);
+    			city=city.replaceAll("\"", "");
+    			document.getElementById("city").value=city;
+    			
+    			
+    		},
+    		error : function(ex) {
+    			//alert(ex);
+    			console.log(ex);
+    		}
+        
+      	
+      });
+      
+    }  
    </script>
 </div>
 </body>
