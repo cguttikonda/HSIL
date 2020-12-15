@@ -157,12 +157,13 @@ $(document).ready(function() {
     	 autoclose: true,
          format: 'dd/mm/yyyy'
     });
-	
-	$('#example').DataTable({
-					
-		"dom": 'T<"clear">lfrtip'
+    $('#example').DataTable({
+		
+		 dom: 'T<"clear">lBfrtip',
+        buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'TPM Report' },{ extend: 'copy', text: 'Copy',title:null }]
 	
 		}
+	
 			
 	);
 	$('#selStHd').change(function(){

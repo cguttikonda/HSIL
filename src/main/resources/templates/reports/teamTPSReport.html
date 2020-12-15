@@ -142,9 +142,11 @@ $(document).ready(function() {
 	
 	$('#example').DataTable({
 					
-		"dom": 'T<"clear">lfrtip'
+		"dom": 'T<"clear">lBfrtip',
+		  buttons: [  { extend: 'excel', text: 'Download Excel',title:null,filename:'TPS Report' },{ extend: 'copy', text: 'Copy',title:null }]
 	
 		}
+	
 			
 	);
 	$('#selStHd').change(function(){
