@@ -200,7 +200,7 @@ public class TPMController {
 
 
     @RequestMapping(value = "/tpm/tpmRequestList", method = RequestMethod.GET)
-    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    public String list(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper,@RequestParam(value = "status", required = false) String status) {
     	if(listSelector == null || listSelector.getFromDate() == null)
     	{
     		Date todayDate = new Date();
@@ -209,13 +209,14 @@ public class TPMController {
     		c.add(Calendar.MONTH, -3);
     		listSelector = new ListSelector();
     		listSelector.setFromDate(c.getTime());
-    		listSelector.setToDate(todayDate);    		
+    		listSelector.setToDate(todayDate);
+    		listSelector.setStatus(status);
     	}
     	listSelector.setType("TPM");
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		String loggedUser=(String)userObj.getUserId();
-		log.debug("loggedUser"+loggedUser);
+		log.debug("loggedUser"+loggedUser+"status"+status);
 		ArrayList<String> userList=new ArrayList<String>();
     	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
     	{

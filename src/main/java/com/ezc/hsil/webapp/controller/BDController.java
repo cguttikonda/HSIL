@@ -267,6 +267,8 @@ public class BDController {
 	    		listSelector.setToDate(todayDate);    		
 	    	}
 	    	listSelector.setType("BD");
+	    	if("APPROVED".equals(listSelector.getStatus()))
+				listSelector.setDispStatus('S');
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
 			ArrayList<String> userList=new ArrayList<String>();

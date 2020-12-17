@@ -315,6 +315,8 @@ public class TPSController {
 	    		listSelector.setToDate(todayDate); 
 	    		//listSelector.setTypeList(typeList);
 	    	}
+	    	if("APPROVED".equals(listSelector.getStatus()))
+					listSelector.setDispStatus('S');
 	    	listSelector.setType("TPS");
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
@@ -342,6 +344,8 @@ public class TPSController {
 	    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
 			ArrayList<String> userList=new ArrayList<String>();
+			if("APPROVED".equals(status))
+				listSelector.setDispStatus('S');
 	    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
 	    	{
 	    		userList.add(userObj.getUserId());
