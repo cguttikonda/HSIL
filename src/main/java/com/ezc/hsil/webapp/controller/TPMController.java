@@ -213,6 +213,8 @@ public class TPMController {
     		listSelector.setStatus(status);
     	}
     	listSelector.setType("TPM");
+    	if("APPROVED".equals(status))
+			listSelector.setDispStatus('S');
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		String loggedUser=(String)userObj.getUserId();
