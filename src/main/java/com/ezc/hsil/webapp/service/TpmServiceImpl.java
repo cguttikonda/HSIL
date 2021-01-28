@@ -168,19 +168,29 @@ public class TpmServiceImpl implements ITPMService{
 					   if(leftQty>0)
 					   { 
 						   if(leftQty>matCnt)
+						   { 
 							   remQty=leftQty-matCnt;
+							   matCnt=0;
+						   }   
 						   else
 						   {
 							   remQty=0;
 							   matCnt=matCnt-leftQty;
+							   requestMaterials.setLeftOverQty(remQty);
+							   requestMaterials.setUsedQty(apprQty-remQty);
+							   
+							   
 						   }
 					   } 
 					  else
+					  {
 						  remQty=apprQty-matCnt;
+						  matCnt=0;
+					  }
 						  
 					   requestMaterials.setLeftOverQty(remQty);
 					   requestMaterials.setUsedQty(apprQty-remQty);
-					   matCnt=0;
+					   
 				   }
 				   else
 				   {
