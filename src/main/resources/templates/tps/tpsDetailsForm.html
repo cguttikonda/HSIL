@@ -1,6 +1,51 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
+	<style type="text/css">
+.hide {
+    display: none;
+}
+.table-container {
+    height: 10em;
+}
+.scrolltable {
+    display: flex;
+    flex-flow: column;
+    height: 380px;
+    width: 100%;
+}
+.scrolltable thead {
+    /* head takes the height it requires, 
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: calc(100% - 0.9em);
+}
+.scrolltable tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+.scrolltable tbody tr {
+    width: 100%;
+}
+.scrolltable thead, table tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+    td{
+    	padding:0px !important;
+    }
+    .datepicker
+    {
+    	width:30%;
+    }
+    .input-group-addon
+    {
+    	padding:0px !important;
+    }
+    </style>
+
     <title>TPS</title>
     <link rel="stylesheet" th:href="@{/resources/dist/css/nomoretable.css}"/>
 </head>
@@ -158,9 +203,14 @@
                 
                 </div>
                 <p id="recording-instructions"></p>
-                
+                <div class="input-group" style="margin:5px;width:50%">
+                <input type="number" id="rowCnt" min=1 max=1000 class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" onclick="addNewItem()" class="btn btn-success btn-flat btn-xs">ADD ROWS</button>
+                    </span>
+              	</div>
     			<div id="no-more-tables">
-                    <table class="col-sm-12 table-bordered table-condensed cf">
+                    <table class="col-sm-12 table-bordered table-condensed cf scrolltable">
                     <thead class="cf">
                 	<tr>
 						<!-- <th>Retailer/Dealer Name</th> -->
@@ -190,7 +240,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text" autocomplete="off" class="datePickObj form-control pull-right validate[required]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}">
+							<input type="text" autocomplete="off" class="datePickObj form-control pull-right validate[required,custom[dfddmmyyyy]]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDob}" data-errormessage="Enter date in DD/MM/YYYY format">
 							</div>
 						</td>
 						<td data-title="D.O.A">
@@ -198,7 +248,7 @@
 							<div class="input-group-addon">
 							<i class="fa fa-calendar"></i>
 							</div>
-							<input type="text"  autocomplete="off" class="datePickObj form-control pull-right" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}">
+							<input type="text"  autocomplete="off" class="datePickObj form-control pull-right validate[custom[dfddmmyyyy]]" th:field="${reqDto.ezcRequestItems[__${itemStat.index}__].eriDoa}"  data-errormessage="Enter date in DD/MM/YYYY format">
 							</div>
 						</td>
                 		<td data-title=""> 
@@ -209,8 +259,24 @@
                 </table>
                 </div>
             </div>
-            <div class="box-footer">
-                <button type="button" onclick="addNewItem()" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
+            <div class="box-footer" style="padding-bottom: 5%">
+                <!-- <div class="btn-group">
+				  <button type="button" onclick="addNewItem()" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
+				  <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+				    <span class="caret"></span>
+				    <span class="sr-only">Toggle Dropdown</span>
+				  </button>
+				  <ul class="dropdown-menu" role="menu">
+				    <li><button type="button" onclick="addNewItems(50)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;Add 50 Rows</button></li>
+				    <li><button type="button" onclick="addNewItems(100)" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>&nbsp;Add 100 Rows</button></li>
+				    <li><a href="javascript:addNewItems(10)">Add 10 Rows</a></li>
+				    <li><a href="javascript:addNewItems(10)">Add 25 Rows</a></li>
+				    <li><a href="javascript:addNewItems(50)">Add 50 Rows</a></li>
+				    <li><a href="javascript:addNewItems(100)">Add 100 Rows</a></li>
+				    <li class="divider"></li>
+				    <li><a href="#">Separated link</a></li>
+				  </ul>
+				</div> -->
                 <button type="button" onclick="addItem()" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
                 <button type="button"  onclick="onSaveClick()"  class="btn btn-primary btn-sm"><i class="fa fa-save"></i>&nbsp;Save</button>
             </div>
@@ -301,9 +367,28 @@ function dupMobChk(field, rules, i, options){
 	 function addNewItem()
 	 {
 		// alert(id);
-		 	document.myForm.action ="/tps/addNewItem/";
+			var rowCnt= document.getElementById("rowCnt").value;
+			debugger;
+			if(rowCnt == "")
+			{
+				alert("Please enter row count");
+				return ;
+			}
+			else
+			{
+				//document.myForm.action ="/tps/addNewItem/";
+				document.myForm.action ="/tps/addNewItem/"+rowCnt;
+			 	document.myForm.submit();	
+			}
+		 	
+	 }
+	 function addNewItems(count)
+	 {
+		// alert(id);
+		 	document.myForm.action ="/tps/addNewItem/"+count;
 		 	document.myForm.submit();
 	 }
+	 
  
  try {
 	  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -390,8 +475,35 @@ function dupMobChk(field, rules, i, options){
 	  noteContent = $(this).val();
 	})
 
-
-
+	$('input').on('paste', function(e){
+        var $this = $(this);
+        $.each(e.originalEvent.clipboardData.items, function(i, v){
+            if (v.type === 'text/plain'){
+                v.getAsString(function(text){
+                    var x = $this.closest('td').index(),
+                        y = $this.closest('tr').index()+1,
+                        obj = {};
+                    text = text.trim('\r\n');
+                    $.each(text.split('\r\n'), function(i2, v2){
+                        $.each(v2.split('\t'), function(i3, v3){
+                            var row = y+i2, col = x+i3;
+                            obj['cell-'+row+'-'+col] = v3;
+                            $this.closest('table').find('tr:eq('+row+') td:eq('+col+') input').val(v3);
+                        });
+                    });
+                    //$('div').text(JSON.stringify(obj));
+                });
+            }
+        });
+        return false;
+       
+    });
+	function checkDate(field, rules, i, options){
+		var reg = new RegExp(/^[0-9]{2}[\/]{1}[0-9]{2}[\/]{1}[0-9]{4}$/g);
+		 if(!reg.test(field.val())){
+		   return "Invalid date format"
+		 }
+		}
 	</script>
 </div>
 </body>

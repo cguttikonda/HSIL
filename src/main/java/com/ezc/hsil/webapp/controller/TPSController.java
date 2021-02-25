@@ -429,6 +429,29 @@ public class TPSController {
 	        return "tps/tpsDetailsForm";
 
 	    }
+	  
+	  @RequestMapping(value = "/tps/addNewItem/{rowCount}", method = RequestMethod.POST)
+	    public String addNewTPSItems(TpsRequestDetailDto reqDto,@PathVariable Integer rowCount, Model model) {
+	        List<EzcRequestItems> ezcRequestItems=null;
+	        List<EzcRequestDealers> ezcRequestDealers=null;
+	       	ezcRequestDealers = reqDto.getEzcRequestDealers();
+	        
+	        if(reqDto.getEzcRequestItems() == null)
+	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
+	        else
+	        	ezcRequestItems = reqDto.getEzcRequestItems();
+	        for(int i=0;i<rowCount;i++)
+	        {
+	        	ezcRequestItems.add(new EzcRequestItems());
+	        }
+	        reqDto.setEzcRequestItems(ezcRequestItems);
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			//reqDto.setEzcRequestDealers(ezcRequestDealers);
+			
+	        model.addAttribute("reqDto", reqDto);  
+	        return "tps/tpsDetailsForm";
+
+	    }
 
 	/*
 	 * public List<EzcRequestItems> processText(List<EzcRequestItems>

@@ -95,6 +95,10 @@
                     "regex":/^\d{5}$|^\d{5}-\d{4}$/,
                     "alertText":"* Invalid zip format"
                 },
+                "dfddmmyyyy": {
+                    "regex":/^[0-9]{2}[\/]{1}[0-9]{2}[\/]{1}[0-9]{4}$/g,
+                    "alertText":"* Invalid date format"
+                },
                 "integer": {
                     "regex": /^[\-\+]?\d+$/,
                     "alertText": "* Not a valid integer"
