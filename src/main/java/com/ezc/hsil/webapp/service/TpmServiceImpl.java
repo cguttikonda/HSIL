@@ -167,7 +167,7 @@ public class TpmServiceImpl implements ITPMService{
 					  
 					   if(leftQty>0)
 					   { 
-						   if(leftQty>matCnt)
+						   if(leftQty>matCnt)  
 						   { 
 							   remQty=leftQty-matCnt;
 							   matCnt=0;
@@ -192,7 +192,7 @@ public class TpmServiceImpl implements ITPMService{
 					   requestMaterials.setUsedQty(apprQty-remQty);
 					   
 				   }
-				   else
+				   else  
 				   {
 					  int prevLeftOvernt=requestMaterials.getLeftOverQty();
 					   requestMaterials.setUsedQty(apprQty);
