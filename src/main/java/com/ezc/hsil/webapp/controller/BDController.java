@@ -32,6 +32,7 @@ import com.ezc.hsil.webapp.dto.BDRequestDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.MaterialQtyDto;
 import com.ezc.hsil.webapp.dto.TPMMeetDto;
+import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
@@ -276,7 +277,7 @@ public class BDController {
 	    	{
 	    		userList.add(userObj.getUserId());
 	    		listSelector.setUser(userList);
-	    	}
+	    	}  
 	    	List<EzcRequestHeader> list = bdService.getBDRequestListByDate(listSelector);
 	        model.addAttribute("reqList", list);
 	        model.addAttribute("listSelector", listSelector);
@@ -466,7 +467,7 @@ public class BDController {
 	       
 
 	    } 
-	  @RequestMapping(value = "/bd/addNewItem/{purpose}", method = RequestMethod.POST)
+	/*  @RequestMapping(value = "/bd/addNewItem/{purpose}", method = RequestMethod.POST)
 	    public String addNewTPMItem(@PathVariable String purpose,@RequestParam String requestBY,BDRequestDetailDto reqDto, Model model) {
 	        List<EzcRequestItems> ezcRequestItems=null;
 	        String disabledStr="true";
@@ -493,7 +494,7 @@ public class BDController {
 	        model.addAttribute("reqDto", reqDto); 
 	        return "bd/bdDetailsForm";
 
-	    }
+	    }*/
 	  @RequestMapping(value = "/bd/saveDetails", method = RequestMethod.POST)
 	    public String saveDetails(BDRequestDetailDto bdRequestDetailDto, final RedirectAttributes ra) {
 	    	bdService.createBDDetails(bdRequestDetailDto);
@@ -537,4 +538,80 @@ public class BDController {
 			bdService.rejectBDRequest(ezcRequestHeader);
 			return "ok";
 		}
+	  @RequestMapping(value = "/bd/addNewItem", method = RequestMethod.POST)
+	    public String addNewBDItem(BDRequestDetailDto reqDto, Model model,Integer leftOverStk) {
+	    	EzcRequestHeader ezcRequestHeader=reqDto.getReqHeader();
+	        List<EzcRequestItems> ezcRequestItems=null;
+	        List<RequestMaterials> ezcMatList=null;
+	        List<EzcComments> ezcComm=null;
+	        if(reqDto.getEzcRequestItems() == null)
+	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
+	        else
+	        	ezcRequestItems = reqDto.getEzcRequestItems();
+	        if(reqDto.getEzReqMatList() == null)
+	        	ezcMatList = new ArrayList<RequestMaterials>();
+	        else
+	        	ezcMatList = reqDto.getEzReqMatList(); 
+	        
+	        if(reqDto.getEzcComments() == null)
+	        	ezcComm = new ArrayList<EzcComments>();
+	        else
+	        	ezcComm = reqDto.getEzcComments();
+	        
+	        ezcRequestItems.add(new EzcRequestItems());
+	        log.debug("reqHe"+ezcRequestHeader.getErhRequestedBy());
+	        
+	      
+			 log.debug("leftOverStk"+leftOverStk);
+					  
+	        reqDto.setEzcRequestItems(ezcRequestItems);
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setEzcComments(ezcComm);
+			
+			
+	        model.addAttribute("reqDto", reqDto); 
+	        model.addAttribute("leftOverStk", leftOverStk);
+	        return "bd/bdDetailsForm";
+
+	    }
+
+	    @RequestMapping(value = "/bd/addNewItem/{rowCount}", method = RequestMethod.POST)
+	    public String addNewTPMItem(BDRequestDetailDto reqDto,@PathVariable Integer rowCount, Model model,Integer leftOverStk) {
+	    	EzcRequestHeader ezcRequestHeader=reqDto.getReqHeader();
+	        List<EzcRequestItems> ezcRequestItems=null;
+	        List<RequestMaterials> ezcMatList=null;
+	        List<EzcComments> ezcComm=null;
+	        if(reqDto.getEzcRequestItems() == null)
+	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
+	        else
+	        	ezcRequestItems = reqDto.getEzcRequestItems();
+	        if(reqDto.getEzReqMatList() == null)
+	        	ezcMatList = new ArrayList<RequestMaterials>();
+	        else
+	        	ezcMatList = reqDto.getEzReqMatList(); 
+	        
+	        if(reqDto.getEzcComments() == null)
+	        	ezcComm = new ArrayList<EzcComments>();
+	        else
+	        	ezcComm = reqDto.getEzcComments();
+	        for(int i=0;i<rowCount;i++)
+	        {
+	        	ezcRequestItems.add(new EzcRequestItems());
+	        }
+	        log.debug("reqHe"+ezcRequestHeader.getErhRequestedBy());
+	        
+	      
+			 log.debug("leftOverStk"+leftOverStk);
+					  
+	        reqDto.setEzcRequestItems(ezcRequestItems);
+			reqDto.setReqHeader(reqDto.getReqHeader());
+			reqDto.setEzcComments(ezcComm);
+			
+			
+	        model.addAttribute("reqDto", reqDto); 
+	        model.addAttribute("leftOverStk", leftOverStk);
+	        return "bd/bdDetailsForm";
+
+	    }
+
 }

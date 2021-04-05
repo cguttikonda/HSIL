@@ -210,7 +210,14 @@
 					</table>
 					</div> -->
                 <p id="recording-instructions"></p>
-                
+                <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
+                 <div class="input-group" style="margin:5px;width:50%">
+                <input type="number" id="rowCnt" min=1 max=1000 class="form-control">
+                    <span class="input-group-btn">
+                      <button type="button" onclick="addNewItem()" class="btn btn-success btn-flat btn-xs">ADD ROWS</button>
+                    </span>
+              	</div>
+              	</div>
                <div sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')">
     			<div id="no-more-tables">
                     <table class="col-sm-12 table-bordered table-condensed cf" style="margin-top: 5px;" id="bdReqTable">
@@ -271,7 +278,7 @@
                 </div>
             </div>
             <div class="box-footer">
-                <button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>
+                <!--<button type="button" sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')" onclick="addNewItem()" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp;Add Item</button>-->
                 <!-- <button type="button" onclick="addItem()" class="btn btn-primary"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button> -->
                 <button type="button"  onclick="onSaveClick()"  sec:authorize="hasAnyRole('ROLE_BD_MKT','ROLE_ST_HEAD')"  class="btn btn-primary pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Save</button>
                 <button type="button"   onclick="onSaveClickAdmin()"  sec:authorize="hasRole('ADMIN')"  class="btn btn-success pull-right subBtn"><i class="fa fa-save"></i>&nbsp;Approve</button>
@@ -604,7 +611,7 @@ function funGetAvaiableQty(i)
 		document.myForm.action = "/tpm/processSpeech";
 		document.myForm.submit();
 	}
-	function addNewItem() {
+	/*function addNewItem() {
 		// alert(document.getElementById("purpose").value);	
 		purpose = document.getElementById("purpose").value;
 		if ($("#myForm").validationEngine('validate')) {
@@ -613,7 +620,7 @@ function funGetAvaiableQty(i)
 			document.myForm.submit();
 		}
 
-	}
+	}*/
 
 	try {
 		var SpeechRecognition = window.SpeechRecognition
@@ -779,6 +786,53 @@ function funGetAvaiableQty(i)
 			
 			});
 	getStock();
+ 	function addNewItem()
+	 {
+		// alert(id);
+			var rowCnt= document.getElementById("rowCnt").value;
+			debugger;
+			if(rowCnt == "")
+			{
+				alert("Please enter row count");
+				return ;
+			}
+			else
+			{
+				
+				document.myForm.action ="/bd/addNewItem/"+rowCnt;
+			 	document.myForm.submit();	
+			}
+		 	
+	 }	
+$('input').on('paste', function(e){
+        var $this = $(this);
+        $.each(e.originalEvent.clipboardData.items, function(i, v){
+            if (v.type === 'text/plain'){
+                v.getAsString(function(text){
+                    var x = $this.closest('td').index(),
+                        y = $this.closest('tr').index()+1,
+                        obj = {};
+                    text = text.trim('\r\n');
+                    $.each(text.split('\r\n'), function(i2, v2){
+                        $.each(v2.split('\t'), function(i3, v3){
+                            var row = y+i2, col = x+i3;
+                            obj['cell-'+row+'-'+col] = v3;
+                            var count = (v3.match(/-/g) || []).length;
+                            if(count == 2)
+                            {
+                            	v3=v3.replaceAll("-","/")
+                            }
+                            $this.closest('table').find('tr:eq('+row+') td:eq('+col+') input').val(v3);
+                        });
+                    });
+                    //$('div').text(JSON.stringify(obj));
+                });
+            }
+        });
+        return false;
+       
+    });
+	
 	
 </script>
 </div>

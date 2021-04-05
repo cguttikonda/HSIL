@@ -100,7 +100,7 @@
                     		<a th:case="'BD'" th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
 						</th:block>
                     </td>
-                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhDistrubutor+'['+row.erhDistName+']'}"></td>
                     <td th:text="${row.erhCity}"></td>
                     <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
                     <td th:text="${#dates.format(row.erhRequestedOn, 'dd/MM/yyyy')}"></td>
