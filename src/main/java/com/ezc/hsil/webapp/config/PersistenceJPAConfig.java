@@ -68,10 +68,10 @@ public class PersistenceJPAConfig {
 		dataSource.setUsername(env.getProperty("jdbc.user"));
 		dataSource.setPassword(env.getProperty("jdbc.pass"));
 		
-		dataSource.setPoolName("HSIL_POOL");
+		dataSource.setPoolName(env.getProperty("jdbc.pool"));
 		dataSource.setMaximumPoolSize(10);
 		dataSource.setAutoCommit(true);
-		dataSource.setCatalog("HSIL");
+		dataSource.setCatalog(env.getProperty("jdbc.catalog"));
 		dataSource.setConnectionTimeout(Integer.parseInt(env.getProperty("hikari.connection-timeout")));
 		dataSource.setMaximumPoolSize(2);
 		dataSource.setMinimumIdle(Integer.parseInt(env.getProperty("hikari.minimum-idle")));

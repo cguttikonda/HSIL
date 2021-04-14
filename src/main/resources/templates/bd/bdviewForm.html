@@ -164,6 +164,9 @@
                 </div>
             </div>
             <div class="box-footer">
+            	<!-- <span th:text="*{reqHeader.erhDispatchFlag}"></span> -->
+            	
+            	<button sec:authorize="hasAnyRole('ADMIN')" th:if="*{reqHeader.erhStatus == 'APPROVED' && (#strings.trim(reqHeader.erhDispatchFlag) != 'Y' && #strings.trim(reqHeader.erhDispatchFlag) != 'S')}" type="button"  th:data-id="*{reqHeader.id}" onclick="javascript:funRevoke(this.getAttribute('data-id'))"  class="btn btn-danger pull-right" style="margin-left:5px"><i class="fa fa-backward"></i>&nbsp;Revoke</button>
                 <button type="button"  onclick="funBack()"  class="btn btn-primary pull-right"><i class="fa fa-arrow-left"></i>&nbsp;Back</button>
             </div>
         </form>
@@ -227,6 +230,12 @@
     {
     	document.myForm.action ="/bd/bdRequestList";
 	 	document.myForm.submit();
+    }
+    function funRevoke(docId)
+    {
+    	//document.myForm.action ="/bd/bdRequestList";
+	 	//document.myForm.submit();
+    	location.href="/request/revoke/"+docId;
     }
 	 function addNewItem()
 	 {

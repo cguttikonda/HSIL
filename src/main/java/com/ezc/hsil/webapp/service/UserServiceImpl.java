@@ -206,8 +206,13 @@ public class UserServiceImpl implements IUserService{
 	        final List<Privilages> userPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, passwordPrivilege));
 	        final Roles userRole = createRoleIfNotFound(accountDto.getRole(), adminPrivileges);
      
-	    	Users user = new Users();   	
-	    	user.setId(accountDto.getId());
+	        Optional<Users> userOpt=userRepository.findById(accountDto.getId());
+	    	Users user = new Users();
+	    	if(userOpt != null)
+	    		user = userOpt.get();
+	        
+	    	//Users user = new Users();   	
+	    	//user.setId(accountDto.getId());
 	    	user.setUserId(accountDto.getUserId());
 	    	user.setFirstName(accountDto.getFirstName());
 	    	user.setLastName(accountDto.getLastName());
@@ -239,7 +244,7 @@ public class UserServiceImpl implements IUserService{
 	    	
         	updateUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp);
         	}
-	        userRepository.save(user);
+	        //userRepository.save(user);
 	    }
 
 	    @Override

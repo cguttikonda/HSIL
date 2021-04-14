@@ -1,0 +1,94 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
+<head>
+	<style type="text/css">
+.table-container {
+    height: 10em;
+}
+table {
+    display: flex;
+    flex-flow: column;
+    height: auto;
+    width: 100%;
+}
+table thead {
+    /* head takes the height it requires, 
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: calc(100% - 0.9em);
+}
+table tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+table tbody tr {
+    width: 100%;
+}
+table thead, table tbody tr {
+    display: table;
+    table-layout: fixed;
+}
+    td{
+    	padding:0px !important;
+    }
+    </style>
+    <title>Confirmation</title>
+</head>
+<body>
+<section layout:fragment="header"> 
+    <h1>Confirmation</h1>
+    <ol class="breadcrumb">
+        <li class="active">Confirmation</li>
+    </ol>
+</section>
+<div layout:fragment="content">
+	
+    <div class="box">
+    	     <form data-toggle="validator" role="form"  id="myForm" name="myForm" th:object="${output}" th:action="@{/dashboard/index.html}" method="post" >
+            <input type="hidden" id="offline" th:value="${session.offline}"/>  
+            <div class="box-body">
+                <div class="table-responsive" style="margin-top:2%">
+					<div th:if="*{type == 'success'}" class="alert alert-success alert-dismissible">
+						<i class="icon fa fa-check"></i>
+						<span th:text="*{text}" ></span>
+					</div>
+					<div th:if="*{type == 'error'}" class="alert alert-danger alert-dismissible">
+						<i class="icon fa fa-check"></i>
+						<span th:text="*{text}" ></span>
+					</div>        
+            </div>
+            </div>
+            <div class="box-footer">
+                <a class="btn btn-success pull-right" th:href="@{/dashboard/index.html}" style="margin-left:5px"><i class="fa fa-check fa-lg"></i>&nbsp;OK</a>
+                
+            </div> 
+        </form>
+    </div>
+    
+    
+</div>
+<div layout:fragment="scriptContent">
+<script type="text/javascript">
+     
+    $(function () {
+		$("#okBtn").click(function(){
+			//Pace.restart();
+			$('#pleaseWaitDialog').modal('show');
+			if($('#offline').val() == "true")
+	    	{
+				document.myForm.action="/logout";
+	    	}
+			else
+			{
+				//document.myForm.action="/dashboard/home";
+			}
+			document.myForm.submit();
+		});
+	 });
+    
+   </script>
+</div>
+</body>
+</html>
