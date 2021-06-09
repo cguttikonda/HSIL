@@ -29,6 +29,7 @@ public class MaterialDto {
 	@NotNull
 	@Size(max=50, message="{Size.materialDto.materialDesc}")
 	private String materialDesc;
+
 	
 	@NonNull
 	//@Digits(fraction = 0, integer = 3)
@@ -50,6 +51,9 @@ public class MaterialDto {
 	
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date modifiedON;
+	
+	@NotNull
+	private String stockLoc;
 	
 	public MaterialDto() {}
 	

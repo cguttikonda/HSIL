@@ -17,6 +17,7 @@ import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.EzNullifiedStock;
 import com.ezc.hsil.webapp.model.EzcComments;
@@ -258,7 +259,9 @@ public class TpmServiceImpl implements ITPMService{
 			  }
 			  else
 			  {
-				  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
+				  MaterialMasterKey matMasterKey=new MaterialMasterKey(tempItem.getMatCode(), ezcRequestHeader.getErhOutStore());
+				  Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
+				 
 	                if(matMaster.isPresent())
 	                {  
 	                       MaterialMaster mat = matMaster.get();

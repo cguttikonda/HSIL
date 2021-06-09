@@ -91,7 +91,7 @@
        			   </tr>
                 	<tr th:each="row, itemStat : *{ezReqMatList}">
 						<td data-title="Material" sec:authorize="hasRole('ADMIN')">
-							<select th:field="*{ezReqMatList[__${itemStat.index}__].matCode}" th:data-id="${itemStat.index}"   name="selMat" th:id="${'selMat'+itemStat.index}" class="select2 form-control validate[required]"  style="width:100%">
+							<select th:field="*{ezReqMatList[__${itemStat.index}__].matCode}" th:data-id="${itemStat.index}"   name="selMat" th:id="${'selMat'+itemStat.index}" class="select2 form-control validate[required] selMat"  style="width:100%">
 								<option selected th:value="*{ezReqMatList[__${itemStat.index}__].matCode}" th:text="*{ezReqMatList[__${itemStat.index}__].matCode+'-'+ezReqMatList[__${itemStat.index}__].matDesc}" >Event</option>
 							</select>
 						</td>
@@ -759,7 +759,7 @@ function funGetAvaiableQty(i)
 	$(document).ready(
 			function() {
 					
-				$('#selMat'+i).select2(
+				$('.selMat').select2(
 						{
 							placeholder : 'Select Material',
 							ajax : {
@@ -780,7 +780,7 @@ function funGetAvaiableQty(i)
 								cache : true
 							}
 						});
-				$('#selMat'+i).on('select2:select', function (e) {
+				$('.selMat').on('select2:select', function (e) {
 					getStock();
 					});
 			

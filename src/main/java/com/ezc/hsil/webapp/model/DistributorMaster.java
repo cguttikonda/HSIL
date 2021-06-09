@@ -1,11 +1,8 @@
 package com.ezc.hsil.webapp.model;
 
-import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
@@ -13,9 +10,7 @@ import javax.persistence.Table;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 
@@ -29,7 +24,8 @@ import lombok.NonNull;
 	            	@ColumnResult(name="name"),
 	                @ColumnResult(name="contact"),
 	                @ColumnResult(name="organisation"),
-	                @ColumnResult(name="city")
+	                @ColumnResult(name="city"),
+	                @ColumnResult(name="type")
 	            }
 	        )
 	    }
@@ -55,6 +51,9 @@ public class DistributorMaster {
 	private String organisation;
 	@NonNull
 	private String city;
+	
+	@NonNull
+	private String type;
 	
 	
 	public DistributorMaster() {

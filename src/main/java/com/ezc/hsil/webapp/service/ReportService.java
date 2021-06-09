@@ -20,6 +20,7 @@ import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
@@ -117,7 +118,11 @@ public class ReportService implements IReportService {
 			  {
 				  String apprMat = reqMatObj.getMatCode();
 				  int apprQty = reqMatObj.getApprQty();
-				  Optional<MaterialMaster> matMaster = masterRepo.findById(apprMat);
+				  
+				  MaterialMasterKey matMasterKey=new MaterialMasterKey(apprMat, ezReqHeader.getErhOutStore());
+					Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
+					
+				  
 	              if(matMaster.isPresent())
 	              {  
 	                     MaterialMaster mat = matMaster.get();

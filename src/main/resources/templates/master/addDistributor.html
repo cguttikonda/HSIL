@@ -51,6 +51,17 @@
 						
 				</div>
 				<div class="form-group">
+					<label for="distributorName">Type</label>
+					 <select th:field="*{type}" type="text" class="form-control" placeholder="Enter type" th:errorclass="has-error">
+						<option value="">--select type--</option>
+						<option value="PLUMBING">PLUMBING</option>
+						<option value="COLUMN">COLUMN</option>
+						<option value="WATERTANK">WATERTANK</option>
+					</select>
+						<span th:if="${#fields.hasErrors('type')}" th:errors="*{type}"  th:errorclass="has-error">Type Error</span>
+						
+				</div>
+				<div class="form-group">
 					<label for="distributorContact">Contact No.</label>
 					 <input
 						th:field="*{phone}" type="tel" class="form-control"

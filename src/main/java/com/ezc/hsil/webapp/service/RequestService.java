@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
@@ -51,8 +52,12 @@ public class RequestService implements IRequestService {
 			Set<RequestMaterials> reqMatSet=reqHeader.getRequestMaterials();
 			for(RequestMaterials tempItem : reqMatSet) {
 				Integer appQty=tempItem.getApprQty();
-				tempItem.setApprQty(0);
-				Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
+				if(!"BD".equals(reqHeader.getErhReqType()))
+					tempItem.setApprQty(0);
+				
+				MaterialMasterKey matMasterKey=new MaterialMasterKey(tempItem.getMatCode(), reqHeader.getErhOutStore());
+				Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
+				
 				if(matMaster.isPresent())
 				{  
 					MaterialMaster mat = matMaster.get();

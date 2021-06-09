@@ -8,12 +8,13 @@ import org.springframework.data.repository.query.Param;
 
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 
-public interface MaterialMasterRepo extends JpaRepository<MaterialMaster, String> {
+public interface MaterialMasterRepo extends JpaRepository<MaterialMaster, MaterialMasterKey> {
 
 	
 	@Query(nativeQuery = true)
-	MaterialDto materialDetails(@Param("materialCode") String materialCode);
+	MaterialDto materialDetails(@Param("materialCode") String materialCode,@Param("stockLoc") String stockLoc);
 
 	@Query(nativeQuery = true,value="SELECT * FROM EZC_MATERIAL_MASTER WHERE EMM_MAT_ISACTIVE='Y'")
 	List<MaterialMaster> findAllActiveMaterials();

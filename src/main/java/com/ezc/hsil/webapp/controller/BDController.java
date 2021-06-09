@@ -420,7 +420,7 @@ public class BDController {
 	        String distCity = "",distState="";
 	        try {
 				distCity=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getCity();
-				distState=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getState();
+				//distState=masterService.getDistributorDetails(ezcRequestHeader.getErhDistrubutor()).getState();
 			} catch (Exception e) {
 			}
 	        ezcRequestHeader.setErhCity(distCity);

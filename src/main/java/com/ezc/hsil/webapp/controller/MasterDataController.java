@@ -34,7 +34,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.dto.PlaceMasterDto;
+import com.ezc.hsil.webapp.dto.StockLocationDto;
+import com.ezc.hsil.webapp.dto.StockTransferDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.util.EzExcelUtil;
@@ -116,9 +119,9 @@ public class MasterDataController {
 		}
 		
 	}
-	@PostMapping("/delete-dist/{id}")
+	@PostMapping("/delete-dist/{code}")
 	public String deleteDistributor(@PathVariable("code") String code) {
-		
+			log.debug("in controller:::code::::::"+code);		 
 			masterService.deleteDistributor(code);
 			return "redirect:/master/listDis";
 	}
@@ -126,6 +129,8 @@ public class MasterDataController {
 	@GetMapping("/addMaterial")
 	public String showMaterialForm(Model model) {
 		
+		List<EzStores> storeList=masterService.listStores();
+		model.addAttribute("storeList",storeList);
 		model.addAttribute("materialDto", new MaterialDto());
 		return "master/addMaterial"; //html
 	}
@@ -143,7 +148,7 @@ public class MasterDataController {
 			int qty=mDto.getQuantity();
 			int totQty=qty+stkAva;
 			log.debug("totQty"+totQty);
-			boolean isPresent = masterService.findById(matCode);
+			boolean isPresent = masterService.findById(matCode,mDto.getStockLoc());
 			log.debug("isPresent"+isPresent);
 			if(isPresent)
 			{
@@ -189,10 +194,10 @@ public class MasterDataController {
 		}
 		
 	}
-	@PostMapping("/delete-mat/{id}")
-	public String deleteMaterial(@PathVariable String id) {
+	@PostMapping("/delete-mat/{id}/{stockLoc}")
+	public String deleteMaterial(@PathVariable String id,@PathVariable String stockLoc) {
 		log.debug("code"+id);
-			masterService.deleteMaterial(id);
+			masterService.deleteMaterial(id,stockLoc);
 			return "redirect:/master/listMaterial";
 	}
 	@GetMapping("/addCity") 
@@ -238,7 +243,7 @@ public class MasterDataController {
         //response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
 		response.setContentType("application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xlsx\"");
-        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City"};
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City","Type"};
         return ezExcelUtil.writeExcel(distCodeArr,null,"distributors"); 
     }
 	
@@ -247,7 +252,7 @@ public class MasterDataController {
 
         response.setContentType("application/vnd.ms-excel"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"material.xls\"");
-        String [] matArr={"Material Code","Material Desc","Quantity"};
+        String [] matArr={"Material Code","Material Desc","Store","Quantity"};
         return ezExcelUtil.writeExcel(matArr,null,"material"); 
     }
 	@RequestMapping(value = "/distDown", method = RequestMethod.GET)
@@ -255,12 +260,12 @@ public class MasterDataController {
 
         response.setContentType("application/vnd.ms-excel"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"distributors.xls\"");
-        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City"};
+        String [] distCodeArr={"Distributor Code","Distributor Name","Contact No","State","City","Type"};
 
         List<DistributorMaster> distMastList= masterService.findAll();
         List<Object[]> objArrList=null;
 		try {
-			objArrList = getObjectArray(distMastList,5);
+			objArrList = getObjectArray(distMastList,6);
 		} catch (NoSuchAlgorithmException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -280,22 +285,23 @@ public class MasterDataController {
         //response.setHeader("Content-Disposition", "attachment; filename=\"material.xlsx\"");
 		response.setContentType("application/application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); 
         response.setHeader("Content-Disposition", "attachment; filename=\"material.xlsx\"");
-        String [] matCodeArr={"Material Code","Material Name","Quantity"};
+        String [] matCodeArr={"Material Code","Material Name","Store","Quantity"};
 
         List<MaterialMaster> matMastList= masterService.findMatAll();
-        List<Object[]> objArrList=null;
-		try {
-			objArrList = getObjectArray(matMastList,3);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        List<Object[]> objArrList=new ArrayList<Object[]>();
+      //objArrList = getObjectArray(matMastList,3);
+        if(matMastList != null)
+        {
+        	for(MaterialMaster matObj:matMastList)
+        	{
+        		Object[] tempArr=new Object[4];
+        		tempArr[0]=matObj.getMaterialCode();
+        		tempArr[1]=matObj.getMaterialDesc();
+        		tempArr[2]=matObj.getStockLoc();
+        		tempArr[3]=matObj.getQuantity();
+        		objArrList.add(tempArr);
+        	}
+        }
         return ezExcelUtil.writeExcel(matCodeArr,objArrList,"materials"); 
     }
 
@@ -311,6 +317,7 @@ public class MasterDataController {
 				 distMaster.setContact((String)objArr[2]);
 				 distMaster.setOrganisation((String)objArr[3]);
 				 distMaster.setCity((String)objArr[4]);
+				 distMaster.setType((String)objArr[5]);
 				 distList.add(distMaster);
 		 }
 		 masterService.addDistributorMultiple(distList);
@@ -323,7 +330,7 @@ public class MasterDataController {
 		 for(Object[] objArr:lisObjArr)
 		 {
 			 	 MaterialMaster matMaster = new MaterialMaster();
-			 	 String quan=(String)objArr[2];
+			 	 String quan=(String)objArr[3];
 			 	int qty=0;
 			 	try {
 			 		qty = Integer.parseInt(quan);
@@ -335,6 +342,7 @@ public class MasterDataController {
 			 	}
 			 	 matMaster.setMaterialCode((String)objArr[0]);
 			 	 matMaster.setMaterialDesc((String)objArr[1]);
+			 	 matMaster.setStockLoc((String)objArr[2]);
 			 	 matMaster.setQuantity(qty);
 			 	 matMaster.setIsActive("Y");
 			 	 matMaster.setModifiedON(new Date());
@@ -346,11 +354,11 @@ public class MasterDataController {
 	    }
 	
 	
-	@RequestMapping(value = "/checkStock/{material}/{qty}", method = RequestMethod.GET)
+	@RequestMapping(value = "/checkStock/{material}/{stockLoc}/{qty}", method = RequestMethod.GET)
 	@ResponseBody
-	public Map<String,String> checkMaterialStock( @PathVariable String material, @PathVariable int qty) {
+	public Map<String,String> checkMaterialStock( @PathVariable String material,@PathVariable String stockLoc, @PathVariable int qty) {
 		
-		return masterService.checkMaterialStock(material, qty);
+		return masterService.checkMaterialStock(material,stockLoc,qty);
 	}
 
 	
@@ -373,10 +381,10 @@ public class MasterDataController {
 		   }
 		   return listOutArr;
 		}
-	@RequestMapping(value="/getExistingQuantity/{matCode}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody  MaterialDto getMatDetails(@PathVariable String matCode)
+	@RequestMapping(value="/getExistingQuantity/{matCode}/{stockLoc}",method=RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody  MaterialDto getMatDetails(@PathVariable String matCode,@PathVariable String stockLoc)
 	{
-		MaterialDto matdto=masterService.getMaterialDetails(matCode);
+		MaterialDto matdto=masterService.getMaterialDetails(matCode,stockLoc);
 		Integer existingQty=0;
 		
 		String matDesc="";
@@ -408,7 +416,108 @@ public class MasterDataController {
 		return id;
 	}
 
+	@GetMapping("/addStore")
+	public String showStocKLocationForm(Model model) {
+		
+		model.addAttribute("stockLocDto", new StockLocationDto());
+		return "master/addStockLocation"; //html
+	}
+	
+	
+	
+	@PostMapping("/saveStockLocation")
+	public String saveMaterail(@Valid @ModelAttribute("stockLocDto") StockLocationDto stockLocDto, 
+			BindingResult bindingResult, RedirectAttributes ra, Model model) throws SQLException {
+		
+		
+			String locationId=stockLocDto.getLocationId();
+			log.debug("locationId"+locationId);
+			
+			EzStores storeObj = masterService.findStoreById(locationId);
+			if(storeObj == null)
+			{
+				masterService.addStore(stockLocDto);
+				ra.addFlashAttribute("success", "Store Details Saved successfully.");
+				
+				
+			}
+			else
+			{	
+				ra.addFlashAttribute("error", "Store Details "+storeObj.getLocationId()+"already exists");
+			}
+		
+		return "redirect:/master/addStore"; //html
+	}
+	@GetMapping("/listStores") 
+	public String listStores(Model model) {
+		
+		model.addAttribute("storeList", masterService.listStores());
 
-
+		return "master/listStore";
+	}
+	
+	@GetMapping("/showTransferStock")
+	public String transferStock(Model model) {
+		
+		List<EzStores> storeList=masterService.listStores();
+		model.addAttribute("storeList",storeList);
+		model.addAttribute("stockTransferDto", new StockTransferDto());
+		return "master/transferStock"; //html
+	}
+	
+	@PostMapping("/updateStockTransfer")
+	public String updateStockTransfer(@Valid @ModelAttribute("stockTranDto") StockTransferDto stockTranDto, 
+			BindingResult bindingResult, RedirectAttributes ra, Model model) throws SQLException {
+		
+		  boolean stockFlg=false;
+		  
+		  try {
+			stockFlg = masterService.transferStock(stockTranDto.getFromStore(), stockTranDto.getToStore(),
+					stockTranDto.getMaterialCode().split("#")[0], stockTranDto.getQuantity());
+		} catch (Exception e) {
+			
+		}
+		if(stockFlg) { 
+		  ra.addFlashAttribute("success","Stock Details Updated successfully.");
+		  
+		  
+		  } else { 
+			  ra.addFlashAttribute("error","Error while updating Stock."); 
+		} 
+		
+		return "redirect:/master/showTransferStock"; //html
+	}
+	
+	@GetMapping("/showReduceStock")
+	public String reduceStock(Model model) { 
+		
+		List<EzStores> storeList=masterService.listStores();
+		model.addAttribute("storeList",storeList);
+		model.addAttribute("materialDto", new MaterialDto());
+		return "master/reduceStock"; //html
+	}
+	
+	@PostMapping("/updateStockReduce")
+	public String updateStockReduce(@Valid @ModelAttribute("materialDto") MaterialDto materialDto, 
+			BindingResult bindingResult, RedirectAttributes ra, Model model) throws SQLException {
+		
+		  boolean stockFlg=false;
+		  
+		  try {
+			stockFlg = masterService.reduceStock(materialDto.getStockLoc(),materialDto.getMaterialCode().split("#")[0], materialDto.getQuantity());
+		} catch (Exception e) {
+			
+		}
+		if(stockFlg) { 
+		  ra.addFlashAttribute("success","Stock Details reduced successfully.");
+		  
+		  
+		  } else { 
+			  ra.addFlashAttribute("error","Error while reducing Stock."); 
+		} 
+		
+		return "redirect:/master/showReduceStock"; //html
+	}
+	
 }
 

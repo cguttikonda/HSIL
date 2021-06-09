@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Transfer Stock</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Transfer Stock
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="@{/dashboard/index.html}"><i class="fa fa-dashboard"></i> Material</a></li>
+			
+			<li class="active">Transfer Stock</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	</div>
+    	<div th:if="${error!= null}" class="alert alert-danger alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${error}" ></span>
+    	</div>
+		<form role="form" id="myForm" th:action="@{/master/updateStockTransfer}"
+			th:object="${stockTransferDto}" th:method="post">
+			<div class="box-body">
+				
+				<div class="form-group">
+					<label for="stockLoc">From Store</label>
+					 <select class="form-control select2 validate[required]" th:field="*{fromStore}"  id="fromStore" th:errorclass="has-error" onchange="funStoreChange()" required>
+					    <option value="">--Select From Store--</option>
+					    <option th:each="store : ${storeList}" th:value="${store.locationId}" th:text="${store.locationId+'['+store.locationName+']'}"></option>
+					    </select>
+				</div>
+				<div class="form-group">
+					<label for="stockLoc">To Store</label>
+					 <select class="form-control select2 validate[required]" th:field="*{toStore}"  id="toStore" th:errorclass="has-error" onchange="funGetAvaQty()" required>
+					    <option value="">--Select To Store--</option>
+					    <option th:each="store : ${storeList}" th:value="${store.locationId}" th:text="${store.locationId+'['+store.locationName+']'}"></option>
+					    </select>
+				</div>
+				
+				<div class="form-group">
+					<label for="materialName">Material</label>
+					 <select th:field="*{materialCode}" id="selMat" class="select2 form-control validate[required]"  style="width:100%">
+					</select>
+						
+				</div>
+				
+				<div class="form-group">
+					<label for="materialQuantity">Quantity</label>
+					<input
+						th:field="*{quantity}" id="quantity" type="number" class="form-control validate[required]" placeholder="Enter Quantity"/>
+					<span class="label label-success glyphicon glyphicon-shopping-cart"> Available : <strong><span id="availStkDisp"></span><input type="hidden" id="availStk"></strong></span>		
+				</div>
+				
+				
+				
+			</div>
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="button"  onclick="funSubmit()" class="btn btn-primary pull-right" style="margin-left:5px">Submit</button>
+			
+			</div>
+		</form>
+
+	<div th:replace="modals/uploadExcelModal.html:: uploadExcel(action='/master/matUpload',title='Excel Upload')"></div>
+	</div>
+</body>
+<div layout:fragment="scriptContent">
+<script>
+function funSubmit()
+{
+	var availStk=$('#availStk').val();
+	var quantity=$('#quantity').val();
+	var fromStore=$('#fromStore').val();
+	var toStore=$('#toStore').val();
+	if($("#myForm").validationEngine('validate'))
+	{
+		if(fromStore == toStore)
+		{
+			$('#toStore').validationEngine('showPrompt', 'From and To Store cannot be same', '');
+			return ;
+		}
+		if(quantity == 0 || quantity == "" || isNaN(quantity))
+		{
+			$('#quantity').validationEngine('showPrompt', 'Quantity must be greater than 1', '');
+			return ;
+		}
+		if(availStk == "" || isNaN(availStk) || parseInt(quantity) > parseInt(availStk))
+		{
+			$('#quantity').validationEngine('showPrompt', 'Stock transfered is greater than available', '');
+			return ;
+		}
+		$('#myForm').submit();
+	}
+}
+$(document).ready(function() {
+
+});
+$(document.body).on("change","#selMat",function(){
+	// alert(this.value);
+	var totVal=this.value;
+	var stkAvaQty=totVal.split("#")[2];
+	//alert(stkAvaQty);
+	document.getElementById("availStk").value=stkAvaQty;
+	$('#availStkDisp').html(stkAvaQty);
+	});
+function funStoreChange()
+{
+	$("#selMat").val('').trigger('change');
+	document.getElementById("availStk").value="0";
+	$('#availStkDisp').html("0");
+	$('#selMat').select2({
+	    placeholder: 'Select Material',
+	    ajax: {
+	      url: '/modal/matstock-autocomp?type=text&stockLoc='+$("#fromStore").val(),
+	      dataType: 'json',
+	      delay: 250,
+	      processResults: function (data) {
+	        return {
+	                       results: $.map(data, function (item) {
+	                          return {
+	                              text: item.materialCode+"-"+item.materialDesc,
+	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	                          }
+	                      }) 
+	                  };
+	      },
+	      cache: true
+	    }
+	});	
+}
+
+</script>
+</html>

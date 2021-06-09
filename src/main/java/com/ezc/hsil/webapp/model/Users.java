@@ -1,6 +1,7 @@
 package com.ezc.hsil.webapp.model;
 
 import java.util.Collection;
+import java.util.Set;
 
 import javax.annotation.Generated;
 import javax.persistence.Column;
@@ -46,6 +47,8 @@ public class Users extends Auditable<String> {
 	@Column(name="IS_ENABLED")
 	private boolean enabled;
 
+	@OneToMany(mappedBy="users")
+    private Set<UserDefaults> userDefaults;	
 	
 	 @ManyToMany(fetch = FetchType.EAGER)
 	 @JoinTable(name = "users_roles", joinColumns = 

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="ISO-8859-1">
+<title>Stores</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>List Stores</h1>
+		<ol class="breadcrumb">
+			<li><a th:href="@{/dashboard/index.html}"><i
+					class="fa fa-dashboard"></i>Stock</a></li>
+			<li class="active">Manage Stock</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<!-- <form role="form" th:action="@{#}"  th:method="GET" > -->
+		<div class="box">
+			<div class="box-header">
+				<!-- <h3 class="box-title">Data Table With Full Features</h3> -->
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+				<table id="example" class="table table-striped table-bordered"
+					style="width: 100%">
+					<thead>
+						<tr>
+							<th>Location Id</th>
+							<th>Name</th>
+							<th>Address</th>
+
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="storeObj:${storeList}">
+						<td th:text="${storeObj.locationId}"></td>
+						<td th:text="${storeObj.locationName}"></td>
+						<td th:text="${storeObj.address}"></td>	
+						<!-- 	<td>
+								
+								<a href="#"
+								th:data-id="${place.city}"
+								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
+								class="btn btn-danger btn-xs"> <span
+									class="glyphicon glyphicon-trash"></span>
+								</a>
+							</td> -->
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th>Location Id</th>
+							<th>Name</th>
+							<th>Address</th>
+
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<!-- /.box-body -->
+		</div>
+
+		<!-- /.box-body -->
+		<!-- 
+	</form>
+ -->
+	
+	<!-- Modals -->
+	<div th:fragment="delete-city" id="deleteCityModalHolder"></div>
+	<div th:fragment="edit-city" id="editCityModalHolder"></div>
+	
+	<!-- Models End -->
+	
+	</div>
+	
+	<!-- Script Start -->
+	<div layout:fragment="scriptContent">
+		<script th:inline="javascript">
+			$(document).ready(function() {
+				$('#example').DataTable({
+
+						"dom" : 'T<"clear">lfrtip'
+
+					}
+				);
+
+				$('#closeModal').click((e)=>{
+					
+					e.preventDefault();
+					$('#editCitytModal').modal('toggle');
+				});
+				
+						
+				
+			});	
+/* 			$( window ).on("unload",function() {
+					Pace.restart();
+			})
+ */			
+			function openModal(modelType,id){
+				if(modelType === "edit"){
+					
+					$.ajax({
+						url: "/modal/edit-city/" + id,
+						success: function(data){
+							$("#editCityModalHolder").html(data);
+							$('#editCityModal').modal({
+								backdrop: 'static'
+							});
+						}
+					});
+					
+				}
+				if(modelType === "delete"){
+					
+					$.ajax({
+						url: "/modal/delete-city/" + city,
+						success: function(data){
+							$("#deleteCityModalHolder").html(data);
+							$('#deleteCityModal').modal({
+								backdrop: 'static'
+							});
+						}
+					});
+					
+					
+				}
+				
+			}
+						
+		</script>
+	</div>
+</body>
+</html>

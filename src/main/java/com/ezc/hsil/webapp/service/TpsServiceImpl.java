@@ -19,6 +19,7 @@ import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
@@ -84,7 +85,8 @@ public class TpsServiceImpl implements ITPSService {
 		  }
 		  else
 		  {
-			  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
+			  MaterialMasterKey matMasterKey=new MaterialMasterKey(tempItem.getMatCode(), ezcRequestHeader.getErhOutStore());
+			  Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
               if(matMaster.isPresent())
               {  
                      MaterialMaster mat = matMaster.get();

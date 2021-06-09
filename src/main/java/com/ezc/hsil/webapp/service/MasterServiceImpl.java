@@ -18,12 +18,16 @@ import org.springframework.stereotype.Service;
 import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.dto.PlaceMasterDto;
+import com.ezc.hsil.webapp.dto.StockLocationDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzPlaceMaster;
+import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.persistance.dao.DistributorMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.PlaceMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.StoreRepo;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -40,6 +44,9 @@ public class MasterServiceImpl implements IMasterService {
 	
 	@Autowired
 	PlaceMasterRepo placeMasterRep;
+	
+	@Autowired
+	StoreRepo storeRepo;
 
 	@Override
 	public DistributorMaster addNewDistributor(final DistributorDto distDto) {
@@ -52,7 +59,7 @@ public class MasterServiceImpl implements IMasterService {
 			dm.setContact(distDto.getPhone());
 			dm.setOrganisation(distDto.getOrganisation());
 			dm.setCity(distDto.getCity());
-
+			dm.setType(distDto.getType());
 			distMastRepo.save(dm);
 
 		} else {
@@ -141,6 +148,7 @@ public class MasterServiceImpl implements IMasterService {
 			mm.setMaterialCode(mDto.getMaterialCode());
 			mm.setMaterialDesc(mDto.getMaterialDesc());
 			mm.setQuantity(mDto.getQuantity());
+			mm.setStockLoc(mDto.getStockLoc());
 			mm.setCreatedON(new Date());
 			mm.setModifiedON(new Date());
 			mm.setIsActive("Y");
@@ -163,8 +171,8 @@ public class MasterServiceImpl implements IMasterService {
 	} 
 
 	@Override
-	public MaterialDto getMaterialDetails(String materialCode) {
-		MaterialDto matDto = matMastRep.materialDetails(materialCode);
+	public MaterialDto getMaterialDetails(String materialCode,String stockLoc) {
+		MaterialDto matDto = matMastRep.materialDetails(materialCode,stockLoc);
 		return matDto;
 
  	}
@@ -173,20 +181,22 @@ public class MasterServiceImpl implements IMasterService {
 	public String updateMaterial(MaterialDto matDto) throws SQLException {
 
 		String materialCode = matDto.getMaterialCode();
+		String stocKLoc = matDto.getStockLoc();
 
-		
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(materialCode, stocKLoc);
 
-			Optional<MaterialMaster> OMatMaster = matMastRep.findById(materialCode);
+			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matMasterKey);
 			OMatMaster.ifPresent(processMaterial(matDto));
 			OMatMaster.orElseThrow(()->{ return new SQLException();});
 			return "";
 	}
 	@Override
-	public boolean findById(String matCode) {
+	public boolean findById(String matCode,String stockLoc) {
 
-		
 
-			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matCode);
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(matCode, stockLoc);
+
+			Optional<MaterialMaster> OMatMaster = matMastRep.findById(matMasterKey);
 			boolean inPresent=OMatMaster.isPresent();
 			
 			return inPresent;
@@ -203,14 +213,14 @@ public class MasterServiceImpl implements IMasterService {
 		};
 	}
 	@Override
-	public String deleteMaterial(String code) {
+	public String deleteMaterial(String code,String stockLoc) {
 
-
-		Optional<MaterialMaster> OMatMaster= matMastRep.findById(code);
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(code, stockLoc);
+		Optional<MaterialMaster> OMatMaster= matMastRep.findById(matMasterKey);
 			
 			if (OMatMaster.isPresent()) {
 
-				matMastRep.deleteById(code);
+				matMastRep.deleteById(matMasterKey);
 			}
 		return "";
 	}
@@ -271,7 +281,8 @@ public class MasterServiceImpl implements IMasterService {
 	public String addMaterialMultiple(List<MaterialMaster> matList) {
 		for(MaterialMaster matObj : matList)
 		{
-			Optional<MaterialMaster> dbMatOpt = matMastRep.findById(matObj.getMaterialCode());
+			MaterialMasterKey matMasterKey=new MaterialMasterKey(matObj.getMaterialCode(), matObj.getStockLoc());
+			Optional<MaterialMaster> dbMatOpt = matMastRep.findById(matMasterKey);
 			if(dbMatOpt.isPresent())
 			{
 				MaterialMaster matObjOld = dbMatOpt.get();
@@ -295,8 +306,9 @@ public class MasterServiceImpl implements IMasterService {
 	}
 
 	@Override
-	public Map<String, String> checkMaterialStock(String material, int qty) {
-		Optional<MaterialMaster> dbMatOpt = matMastRep.findById(material);
+	public Map<String, String> checkMaterialStock(String material,String stockLoc, int qty) {
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(material, stockLoc);
+		Optional<MaterialMaster> dbMatOpt = matMastRep.findById(matMasterKey);
 		Map<String, String> hmOut = new HashMap<String, String>(); 
 		if(dbMatOpt.isPresent())
 		{
@@ -317,6 +329,102 @@ public class MasterServiceImpl implements IMasterService {
 			hmOut.put("STOCK",stock+"");
 		}
 		return hmOut;
+	}
+
+	@Override
+	public EzStores addStore(StockLocationDto stockLocationDto) {
+		EzStores storeObj=new EzStores();
+		storeObj.setAddress(stockLocationDto.getLocationAddress());
+		storeObj.setLocationId(stockLocationDto.getLocationId());
+		storeObj.setLocationName(stockLocationDto.getLocationName());
+		return storeRepo.save(storeObj);
+		
+	}
+
+	@Override
+	public EzStores findStoreById(String locationId) {
+		Optional<EzStores> storeOpt = storeRepo.findById(locationId);
+		if(storeOpt.isPresent())
+			return storeOpt.get();
+		else
+			return null;
+	}
+
+	@Override
+	public List<EzStores> listStores() {
+		// TODO Auto-generated method stub
+		return storeRepo.findAll();
+	}
+
+	@Override
+	public boolean transferStock(String fromLocation, String toLocation, String material, int qty) {
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(material, fromLocation);
+		Optional<MaterialMaster> fromMatMasterOpt = matMastRep.findById(matMasterKey);
+		if(fromMatMasterOpt.isPresent())
+		{
+			int blockQty=0;
+			MaterialMaster matObjOld = fromMatMasterOpt.get();
+			if(matObjOld.getBlockQty() != null)
+				blockQty=matObjOld.getBlockQty();
+			int matOldQty = matObjOld.getQuantity();
+			int stock = matOldQty-blockQty;
+			if(stock < qty)
+				return false;
+			else
+			{
+				log.debug("Setting qty::"+qty);
+				matObjOld.setQuantity(matOldQty-qty);
+			}
+			//matMastRep.save(matObjOld);
+			MaterialMasterKey matMasterToKey=new MaterialMasterKey(material, toLocation);
+			Optional<MaterialMaster> toMatMasterOpt = matMastRep.findById(matMasterToKey);
+			if(toMatMasterOpt.isPresent())
+			{
+				MaterialMaster matObjNew = toMatMasterOpt.get();
+				int newStock = matObjNew.getQuantity();
+				log.debug("Setting newStock::"+newStock);
+				matObjNew.setQuantity(newStock+qty);
+			}
+			else
+			{
+				MaterialMaster mm = new MaterialMaster(); 
+				mm.setMaterialCode(matObjOld.getMaterialCode());
+				mm.setMaterialDesc(matObjOld.getMaterialDesc());
+				mm.setQuantity(qty);
+				mm.setStockLoc(toLocation);
+				mm.setCreatedON(new Date());
+				mm.setModifiedON(new Date());
+				mm.setIsActive("Y");
+				matMastRep.save(mm);
+			}
+		}
+		
+		
+		return true;
+	}
+
+	@Override
+	public boolean reduceStock(String store, String material, int qty) {
+		MaterialMasterKey matMasterKey=new MaterialMasterKey(material, store);
+		Optional<MaterialMaster> fromMatMasterOpt = matMastRep.findById(matMasterKey);
+		if(fromMatMasterOpt.isPresent())
+		{
+			int blockQty=0;
+			MaterialMaster matObjOld = fromMatMasterOpt.get();
+			if(matObjOld.getBlockQty() != null)
+				blockQty=matObjOld.getBlockQty();
+			int matOldQty = matObjOld.getQuantity();
+			int stock = matOldQty-blockQty;
+			log.debug("stock::"+stock);
+			log.debug("qty::"+qty);
+			if(stock < qty)
+				return false;
+			else
+			{
+				matObjOld.setQuantity(matOldQty-qty);
+			}
+		}
+		return true;
 	}
 	
 

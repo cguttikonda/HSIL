@@ -1,14 +1,14 @@
 package com.ezc.hsil.webapp.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.ColumnResult;
 import javax.persistence.ConstructorResult;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.NamedNativeQuery;
 import javax.persistence.SqlResultSetMapping;
 import javax.persistence.Table;
@@ -17,12 +17,10 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @SqlResultSetMapping(
@@ -37,14 +35,15 @@ import lombok.NonNull;
 	                @ColumnResult(name="EMM_MAT_ISACTIVE"),
 	                @ColumnResult(name="EMM_BLOCK_QTY"),
 	                @ColumnResult(name="EMM_CREATED_ON"),
-	                @ColumnResult(name="EMM_MODIFIED_ON") 
+	                @ColumnResult(name="EMM_MODIFIED_ON"),
+	                @ColumnResult(name="EMM_STOCK_LOC"),
 	            }
 	        )
 	    }
 	)
 
 @NamedNativeQuery(name="MaterialMaster.materialDetails", query="SELECT * FROM EZC_MATERIAL_MASTER mm " 
-							+  " WHERE mm.EMM_MAT_CODE = :materialCode and mm.emm_mat_isactive='Y'",  
+							+  " WHERE mm.EMM_MAT_CODE = :materialCode and mm.EMM_STOCK_LOC = :stockLoc and mm.emm_mat_isactive='Y'",  
 							resultSetMapping="MaterialDtoMapping")
 
 
@@ -53,13 +52,24 @@ import lombok.NonNull;
 @Table(name="EZC_MATERIAL_MASTER",catalog="hsil")
 @Data
 @AllArgsConstructor
-public class MaterialMaster {
+@IdClass(MaterialMasterKey.class)
+public class MaterialMaster implements Serializable{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@NonNull
 	@Column(name="EMM_MAT_CODE",length=20)
 	private String materialCode;
+	
+	@Id
+	@NonNull
+	@Column(name="EMM_STOCK_LOC",length=5)
+	private String stockLoc;
 	
 	@NonNull
 	@Column(name="EMM_MAT_DESC",length=50)

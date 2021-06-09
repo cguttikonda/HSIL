@@ -72,15 +72,15 @@ public class ModalDialogController {
     }
 	
 
-	@GetMapping(value="/edit-material/{materialCode}")
-	public String editMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
-		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
+	@GetMapping(value="/edit-material/{materialCode}/{stockLoc}")
+	public String editMaterialModal(@PathVariable("materialCode") String materialCode,@PathVariable("stockLoc") String stockLoc, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode,stockLoc));
 		model.addAttribute("city", city);
 		return "modals/editMaterial" ;
 	}
-	@GetMapping(value="/delete-material/{materialCode}")
-	public String deleteMaterialModal(@PathVariable("materialCode") String materialCode, Model model) {
-		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode));
+	@GetMapping(value="/delete-material/{materialCode}/{stockLoc}")
+	public String deleteMaterialModal(@PathVariable("materialCode") String materialCode,@PathVariable("stockLoc") String stockLoc, Model model) {
+		model.addAttribute("materialDto", masterService.getMaterialDetails(materialCode,stockLoc));
 		return "modals/deleteMaterial" ;
 	}
 	@GetMapping(value="/delete-city/{city}")
@@ -141,12 +141,17 @@ public class ModalDialogController {
 	}
 	@RequestMapping(value = "/mat-autocomp", method = RequestMethod.GET,
     produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q) {
+	public @ResponseBody List<MaterialMaster> materialAutoComplete(@RequestParam String q,@RequestParam String stockLoc) {
 		List<MaterialMaster> matList =masterService.findAllMaterialsLike(q);
 		//List<MaterialMaster> matListOut =new ArrayList<MaterialMaster>();
 		log.debug("matlist"+matList.size());
 		for(MaterialMaster matObj:matList)
 		{
+			if(stockLoc != null && !"null".equals(stockLoc) && !"".equals(stockLoc))
+			{
+				if(!matObj.getStockLoc().equals(stockLoc))
+					continue;
+			}
 			
 			int tempQty =matObj.getQuantity();
 			Integer tempBlockQty =matObj.getBlockQty();
@@ -170,6 +175,50 @@ public class ModalDialogController {
 		return matList;
 		
 	}
+	
+	@RequestMapping(value = "/matstock-autocomp", method = RequestMethod.GET,
+		    produces = MediaType.APPLICATION_JSON_VALUE)
+			public @ResponseBody List<MaterialMaster> materialStockAutoComplete(@RequestParam String q,@RequestParam String stockLoc) {
+				if(stockLoc == null || "null".equals(stockLoc) || "".equals(stockLoc))
+				{
+					return null;
+				}
+				List<MaterialMaster> matList =masterService.findAllMaterialsLike(q);
+				List<MaterialMaster> toBeRemoved =new ArrayList<MaterialMaster>(); 
+				//List<MaterialMaster> matListOut =new ArrayList<MaterialMaster>();
+				log.debug("matlist"+matList.size());
+				for(MaterialMaster matObj:matList)
+				{
+					if(stockLoc != null && !"null".equals(stockLoc) && !"".equals(stockLoc))
+					{
+						if(!matObj.getStockLoc().equals(stockLoc))
+							toBeRemoved.add(matObj);
+					}
+					
+					int tempQty =matObj.getQuantity();
+					Integer tempBlockQty =matObj.getBlockQty();
+					if(tempBlockQty==null)tempBlockQty=0;
+					int outQty =0; 
+					if(tempBlockQty > 0)
+						outQty = tempQty-tempBlockQty;
+					else
+						outQty = tempQty;
+					//log.debug("outQty"+outQty);
+					if(outQty > 0)
+					{
+						matObj.setQuantity(outQty);
+					}
+					else
+					{
+						matObj.setQuantity(0);
+					}
+					//log.debug("tempBlockQty"+tempBlockQty);
+				}
+				matList.removeAll(toBeRemoved);
+
+				return matList;
+				
+			}
 	
 	@GetMapping(value="/appr-tps/{id}")
 	public String approveTPSModal(@PathVariable("id") String id, Model model) {

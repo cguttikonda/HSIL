@@ -15,6 +15,7 @@ import com.ezc.hsil.webapp.dto.MktgGiveAwayDto;
 import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.MktgGiveAwayRepo;
 
@@ -52,7 +53,9 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 			String [] matArr=matDto.getMatCode().split("#");
 			
 			//Updating stock
-			Optional<MaterialMaster> matMaster = matRepo.findById(matArr[0]);
+			MaterialMasterKey matMasterKey=new MaterialMasterKey(matArr[0], matDto.getStockLoc());
+			Optional<MaterialMaster> matMaster = matRepo.findById(matMasterKey);
+			
 	        if(matMaster.isPresent())
 	        {  
 	        	   MaterialMaster mat = matMaster.get();

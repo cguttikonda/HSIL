@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Stock</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Add Stock Location
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="@{/dashboard/index.html}"><i class="fa fa-dashboard"></i> Stock</a></li>
+			<li class="active">Manage Stock</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	</div>
+    	<div th:if="${error!= null}" class="alert alert-danger alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${error}" ></span>
+    	</div>
+		<form role="form" id="myForm" th:action="@{/master/saveStockLocation}"
+			th:object="${stockLocDto}" th:method="post">
+			<div class="box-body">
+				<div class="form-group">
+					<label for="locationId">Location ID</label>
+					 <input
+						th:field="*{locationId}" type="text" class="form-control validate[required,length[5]] "
+						placeholder="Enter Location Id" maxlength=5/>
+						
+				</div>
+				<div class="form-group">
+					<label for="locationName">Location Name</label>
+					 <input
+						th:field="*{locationName}" type="text" class="form-control validate[required]"
+						placeholder="Enter Location Name" maxlength=20/>
+				</div>
+
+				<div class="form-group">
+					<label for="locationAddress">Location Address</label>
+					<input
+						th:field="*{locationAddress}" type="text" class="form-control"
+						placeholder="Enter Location Address"/>
+				</div>
+			</div>
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="button"  onclick="funSubmit()" class="btn btn-primary pull-right" style="margin-left:5px">Submit</button>
+				<a th:href="@{/master/listStores}" class="btn btn-primary pull-right" style="margin-left:5px">List</a>
+				
+			
+			</div>
+		</form>
+
+	</div>
+</body>
+<div layout:fragment="scriptContent">
+<script>
+$(document).ready(function() {
+	
+	
+});
+function funSubmit()
+{
+	if($("#myForm").validationEngine('validate'))
+	{
+		$('#myForm').submit();
+
+	}
+}
+</script>
+</div>
+</html>

@@ -9,7 +9,7 @@
 					th:text="|${distributorDto.name}  of  (  ${distributorDto.organisation} )|"></span>?</p>
 			</div>
 			<div class="modal-footer">
-				<form th:action="@{/master/delete-dist/{id}(id=${distributorDto.id})}" method="post">
+				<form th:action="@{/master/delete-dist/{code}(code=${distributorDto.code})}" method="post">
 					<button type="button"  class="btn btn-default" data-dismiss="modal">Cancel</button>
 		            <button type="submit" class="btn btn-danger">Delete</button>
 	        	</form>

@@ -29,6 +29,7 @@
 						<tr>
 							<th>Material Code</th>
 							<th>Description</th>
+							<th>Store</th>
 							<th>Quantity</th>
 							<th>Action</th>
 
@@ -38,6 +39,7 @@
 						<tr th:each="material:${matList}">
 							<td th:text="${material.materialCode}">Name</td>
 							<td th:text="${material.materialDesc}">description</td>
+							<td th:text="${material.stockLoc}">description</td>
 							<td th:text="${material.quantity}">0</td>
 							<td>
 								<!-- <a href="#"
@@ -48,8 +50,9 @@
 								</a> -->
 								<a href="#"
 								th:data-id="${material.materialCode}"
+								th:data-stock="${material.stockLoc}"
 								sec:authorize="hasRole('ADMIN')"
-								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'));"
+								th:onclick="javascript:openModal('delete',this.getAttribute('data-id'),this.getAttribute('data-stock'));"
 								class="btn btn-danger btn-xs"> <span
 									class="glyphicon glyphicon-trash"></span>
 								</a>
@@ -61,6 +64,7 @@
 							<th>Material Code</th>
 							<th>Description</th>
 							<th>Quantity</th>
+							<th>Store</th>
 							<th>Action</th>
 
 						</tr>
@@ -109,7 +113,7 @@
 					Pace.restart();
 			})
  */			
-			function openModal(modelType,matId){
+			function openModal(modelType,matId,stockLoc){
 				if(modelType === "edit"){
 					
 					$.ajax({
@@ -126,7 +130,7 @@
 				if(modelType === "delete"){
 					
 					$.ajax({
-						url: "/modal/delete-material/" + matId,
+						url: "/modal/delete-material/"+matId+"/"+stockLoc,
 						success: function(data){
 							$("#deleteMatModalHolder").html(data);
 							$('#deleteMatModal').modal({

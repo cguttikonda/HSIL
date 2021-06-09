@@ -29,6 +29,7 @@
 						<tr>
 							<th>Code</th>
 							<th>Distributor Name</th>
+							<th>Type</th>
 							<th>Contact</th>
 							<th>State</th>
 							<th>City</th>
@@ -40,6 +41,7 @@
 						<tr th:each="dist:${distList}">
 							<td th:text="${dist.code}">Code</td>
 							<td th:text="${dist.name}">Name</td>
+							<td th:text="${dist.type}">Type</td>
 							<td th:text="${dist.contact}">Contact</td>
 							<td th:text="${dist.organisation}">State</td>
 							<td th:text="${dist.city}">City</td>
@@ -63,6 +65,7 @@
 						<tr>
 							<th>Code</th>
 							<th>Distributor Name</th>
+							<th>Type</th>
 							<th>Contact</th>
 							<th>State</th>
 							<th>City</th>

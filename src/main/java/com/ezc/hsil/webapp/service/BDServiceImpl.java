@@ -23,6 +23,7 @@ import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.model.RequestMaterials;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.EzcCommentsRepo;
@@ -126,51 +127,43 @@ public class BDServiceImpl implements IBDService{
 	public List<EzcComments> getBDCommentRequest(String docId) {
 		return commRepo.findByRequest(docId);
 	}
+
 	@Override
 	public void submitBDDet(String id,String matQty,EzcRequestHeader ezcRequestHeader) throws java.lang.Exception
 	{
-		
+		reqMatRep.deleteByRequestId(id);
 		EzcRequestHeader ezReqHeader = bdService.getBDRequest(id);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		log.debug("id123"+id);
-		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
-		Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
+		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 		Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
 		ezReqHeader.setErhStatus("APPROVED");
 		ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 		ezReqHeader.setErhModifiedBy(userObj.getUserId());
 		ezReqHeader.setErhModifiedOn(new Date());
-		ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 		ezReqHeader.getEzcComments().addAll(ezcComments);
-		Hashtable matHt=new Hashtable();
+		Hashtable<String,String> matHt=new Hashtable<String,String>();
+		String stockLoc = ezcRequestHeader.getErhOutStore();
 		for(int i=0;i<matQty.split(",").length;i++)
 		{	
 			matHt.put(matQty.split(",")[i].split("#")[0],matQty.split(",")[i].split("#")[1]);
 		}
 		
-		  log.debug("matQty"+matQty);
-		  for(RequestMaterials tempItem : reqMatSet) {
+		  log.debug("reqMatSet"+reqMatSet);
+		  log.debug("reqMatSetsize"+reqMatSet.size());
+		  Set<String> matKeySet = matHt.keySet();
+		  
+		  for(String tempMat : matKeySet) {
 			  log.debug("matHt"+matHt);
-		      Character c1 = new Character('Y'); 
-			  //if(c1.equals(tempItem.getIsNew()))
 			  {
-				/*
-				 * RequestMaterials requestMaterials =
-				 * reqMatRep.findById(tempItem.getId()).orElseThrow(() -> new
-				 * EntityNotFoundException()); requestMaterials.setApprQty(appQty);
-				 * log.debug("matid"+tempItem.getId()); 
-				 */
-				  Integer appQty=Integer.parseInt((String)matHt.get(tempItem.getMatCode()));
+				  Integer appQty=Integer.parseInt((String)matHt.get(tempMat));
 				  log.debug("appQty"+appQty);
-				  tempItem.setApprQty(appQty);//added by goutham
-				  Optional<MaterialMaster> matMaster = masterRepo.findById(tempItem.getMatCode());
+				  MaterialMasterKey matMasterKey=new MaterialMasterKey(tempMat, stockLoc);
+				  Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
 	                if(matMaster.isPresent())
 	                {  
 	                       MaterialMaster mat = matMaster.get();
-	                       //int qty = mat.getQuantity()-tempItem.getApprQty();
-	                       //mat.setQuantity(qty);
-	                       //int blockQty = tempItem.getApprQty();
 	                       int blockQtyTemp=0;
 	    	        	   if(mat.getBlockQty() != null)
 	    	        		   blockQtyTemp=mat.getBlockQty();
@@ -179,22 +172,33 @@ public class BDServiceImpl implements IBDService{
 	    	               log.debug("dbqty::"+mat.getQuantity());
 	                       int stockChk = (mat.getQuantity()-blockQtyTemp)-appQty;
 	    	               if(stockChk < 0)
+	    	               {
+	    	            	   log.debug("Exception thrown::stockChk"+stockChk);
 	    	            	   throw Exception;	//need to be changed to custom exception
+	    	            	   
+	    	               }
 	    	               else
 	    	               {	  
-	    	            	   
-	    	       
-	                       int blockQty=appQty;
-	                       if(mat.getBlockQty() != null)
-	                    	   blockQty += mat.getBlockQty();
-	                       mat.setBlockQty(blockQty);
+		                       int blockQty=appQty;
+		                       if(mat.getBlockQty() != null)
+		                    	   blockQty += mat.getBlockQty();
+		                       mat.setBlockQty(blockQty);
+
+		                        RequestMaterials reqMat = new RequestMaterials();
+								reqMat.setMatCode(mat.getMaterialCode());
+								reqMat.setMatDesc(mat.getMaterialDesc());
+								reqMat.setApprQty(appQty);
+								reqMat.setIsNew('Y');
+								reqMatSet.add(reqMat);	
+		                       
+		                       
 	    	               }
 	                }
 			  }
 			  
 		  } 
 		  
-		  for(RequestMaterials tempItem : ezReqMatList) { 
+		  for(RequestMaterials tempItem : reqMatSet) { 
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  reqMatRep.save(tempItem); 
 			}
@@ -206,6 +210,59 @@ public class BDServiceImpl implements IBDService{
 		
  
 	}
+	
+	/*
+	 * @Override public void submitBDDet(String id,String matQty,EzcRequestHeader
+	 * ezcRequestHeader) throws java.lang.Exception {
+	 * 
+	 * EzcRequestHeader ezReqHeader = bdService.getBDRequest(id); Authentication
+	 * authentication = SecurityContextHolder.getContext().getAuthentication();
+	 * Users userObj = (Users)authentication.getPrincipal(); log.debug("id123"+id);
+	 * Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+	 * Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
+	 * Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
+	 * ezReqHeader.setErhStatus("APPROVED");
+	 * ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
+	 * ezReqHeader.setErhModifiedBy(userObj.getUserId());
+	 * ezReqHeader.setErhModifiedOn(new Date());
+	 * ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
+	 * ezReqHeader.getEzcComments().addAll(ezcComments); Hashtable matHt=new
+	 * Hashtable(); for(int i=0;i<matQty.split(",").length;i++) {
+	 * matHt.put(matQty.split(",")[i].split("#")[0],matQty.split(",")[i].split("#")[
+	 * 1]); }
+	 * 
+	 * log.debug("reqMatSet"+reqMatSet);
+	 * log.debug("reqMatSetsize"+reqMatSet.size()); for(RequestMaterials tempItem :
+	 * reqMatSet) { log.debug("matHt"+matHt); { Integer
+	 * appQty=Integer.parseInt((String)matHt.get(tempItem.getMatCode()));
+	 * log.debug("appQty"+appQty); tempItem.setApprQty(appQty);//added by goutham
+	 * Optional<MaterialMaster> matMaster =
+	 * masterRepo.findById(tempItem.getMatCode()); if(matMaster.isPresent()) {
+	 * MaterialMaster mat = matMaster.get(); int blockQtyTemp=0;
+	 * if(mat.getBlockQty() != null) blockQtyTemp=mat.getBlockQty();
+	 * log.debug("blockQty::"+blockQtyTemp); log.debug("inputQty::"+appQty);
+	 * log.debug("dbqty::"+mat.getQuantity()); int stockChk =
+	 * (mat.getQuantity()-blockQtyTemp)-appQty; if(stockChk < 0) {
+	 * log.debug("Exception thrown::stockChk"+stockChk); throw Exception; //need to
+	 * be changed to custom exception
+	 * 
+	 * } else {
+	 * 
+	 * 
+	 * int blockQty=appQty; if(mat.getBlockQty() != null) blockQty +=
+	 * mat.getBlockQty(); mat.setBlockQty(blockQty); } } }
+	 * 
+	 * }
+	 * 
+	 * for(RequestMaterials tempItem : ezReqMatList) {
+	 * tempItem.setEzcRequestHeader(ezReqHeader); reqMatRep.save(tempItem); }
+	 * for(EzcComments tempItem : ezcComments) {
+	 * tempItem.setEzcRequestHeader(ezReqHeader); commRepo.save(tempItem); }
+	 * 
+	 * 
+	 * 
+	 * }
+	 */
 	@Override
 	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto) {
 		String loggedUser="";
