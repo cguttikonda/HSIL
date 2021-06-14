@@ -268,6 +268,7 @@ function openModal(modelType,distId){
 						    });
 						}
 					});
+				/*
 				$('#selMat').select2({
 			         placeholder: 'Select Material',
 			         ajax: {
@@ -287,6 +288,7 @@ function openModal(modelType,distId){
 			           cache: true
 			         }
 			    });
+				*/
 			}
 		});
 		
@@ -559,6 +561,29 @@ function nullifyQty(mat,lefoverQty,leftoverid)
 	$('#commentsNullify').val("");
 	$('#reasonNullify').val("");
 	$('#nullifyModal').modal();
+}
+function funStoreChange()
+{
+    $('#outStore').prop('disabled', 'disabled');
+	$('#selMat').select2({
+        placeholder: 'Select Material',
+        ajax: {
+          url: '/modal/matstock-autocomp?type=text&stockLoc='+$("#outStore").val(),
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            return {
+	                       results: $.map(data, function (item) {
+	                          return {
+	                              text: item.materialCode+"-"+item.materialDesc,
+	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	                          }
+	                      }) 
+	                  };
+          },
+          cache: true
+        }
+   });
 }
 function postNullifyData(event){
 	if($("#nullifyForm").validationEngine('validate'))

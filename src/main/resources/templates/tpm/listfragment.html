@@ -1,0 +1,33 @@
+<div class="table-responsive" th:fragment="dataList(reqList)">
+                   <table class="table  table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                       <thead>			
+                <tr>
+                    <th>ID</th>
+                    <th>Month</th>
+                    <th>Distributor</th>
+                    <th>Distributor Name</th>
+                    <th>City</th>
+                    <th>Meet</th>
+                    <th>Meet Date</th>
+                    <th>Instructions</th>
+                    <th>Attendance</th>
+                    <th>Dealer Name</th>
+                </tr> 
+                    </thead>
+           		<tbody>	
+                <tr th:each="row : ${reqList}" th:if="${row[11] == null}">
+                    <td th:text="${row[1]+'-'+row[0]}"></td>
+                    <td th:text="${#dates.format(row[2], 'MM/yyyy')}"></td>
+                    <td th:text="${row[5]}"></td>
+                    <td th:text="${row[6]}"></td>
+                    <td th:text="${row[7]}"></td>
+                    <td th:text="${row[10]}"></td>
+                    <td th:text="${#dates.format(row[11], 'dd/MM/yyyy')}"></td>
+                    <td th:text="${row[12]}"></td>
+                    <td th:text="${row[13]}"></td>
+                    <td th:text="${row[14]}"></td>
+                </tr>
+            	</tbody>
+            </table>
+            </div>
+    

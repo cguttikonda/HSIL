@@ -63,6 +63,10 @@ public interface IUserService {
 	
 	List<Work_Groups> getGroupsByRole(String role);
 	
+	Work_Groups findGroupByRoleAndGroup(String role,String group);
+	
+	Work_Groups saveWorkGroup(Work_Groups workGrp);
+	
 	//List<WorkGroup_Users> getStateHeadSubGroups(String stateHeadGrp);
 	
 	List<WorkGroup_Users> getZonalHeadSubGroups(String zonalHeadGrp);

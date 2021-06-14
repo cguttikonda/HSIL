@@ -9,7 +9,7 @@ import com.ezc.hsil.webapp.model.EzcRequestHeader;
 
 public interface IUseLeftOverStockSer {
 
-	public void updateLeftOverStock(String reqBy,Integer expAttendee);
+	public void updateLeftOverStock(String reqBy,Integer expAttendee,String requestType);
 
 	
 }

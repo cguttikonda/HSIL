@@ -319,7 +319,7 @@ public class BDServiceImpl implements IBDService{
 			   }
 			} 
 	 if(matCnt>0)
-	  	useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+	  	useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt,"BD");
 	  ezReqHeader.setErhStatus("SUBMITTED");
 	  ezReqHeader.setErhCity(bdRequestDetailDto.getReqHeader().getErhCity());
 	  ezReqHeader.setErhPurpose(bdRequestDetailDto.getReqHeader().getErhPurpose());
@@ -334,7 +334,7 @@ public class BDServiceImpl implements IBDService{
 
 	@Override
 	public List<Object[]> getBDLeftOverStock(String reqBY) {
-		return reqHeaderRepo.getLeftOverStock(reqBY);
+		return reqHeaderRepo.getLeftOverStock(reqBY,"BD");
 	}
 	@Override
 	public List<Object[]> getPendingList(String reqBY,String reqType) {

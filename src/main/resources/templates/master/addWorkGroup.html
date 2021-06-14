@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>Stock</title>
+<style type="text/css">
+.has-error {
+    border-color: #dd4b39;
+    box-shadow: none
+
+}
+</style>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>
+			Add User Group
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="@{/dashboard/index.html}"><i class="fa fa-dashboard"></i> User Group</a></li>
+			<li class="active">Add</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<div th:if="${success!= null}" class="alert alert-success alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${success}" ></span>
+    	</div>
+    	<div th:if="${error!= null}" class="alert alert-danger alert-dismissible">
+    			<i class="icon fa fa-check"></i>
+    			<span th:text="${error}" ></span>
+    	</div>
+		<form role="form" id="myForm" th:action="@{/master/saveuserGroup}"
+			th:object="${userGrpAddDto}" th:method="post">
+			<div class="box-body">
+			<div class="form-group">
+					<label for="grpType">Group Type</label>
+					 <select class="form-control select2 validate[required]" th:field="*{groupType}"  id="groupType" th:errorclass="has-error" required>
+					    <option th:each="grpTypeObj : ${grpTypeList}" th:value="${grpTypeObj}" th:text="${grpTypeObj}"></option>
+					    </select>
+				</div>
+				<div class="form-group">
+					<label for="groupId">Code</label>
+					 <input
+						th:field="*{groupId}" type="text" class="form-control validate[required,length[4]] "
+						placeholder="Enter Code" maxlength=8/>
+						
+				</div>
+				<div class="form-group">
+					<label for="description">Description</label>
+					 <input
+						th:field="*{description}" type="text" class="form-control validate[required]"
+						placeholder="Enter Description" maxlength=20/>
+				</div>
+			<!-- /.box-body -->
+
+			<div class="box-footer">
+				<button type="button"  onclick="funSubmit()" class="btn btn-primary pull-right" style="margin-left:5px">Submit</button>
+			
+			</div>
+		</form>
+
+	</div>
+</body>
+<div layout:fragment="scriptContent">
+<script>
+$(document).ready(function() {
+	
+	
+});
+function funSubmit()
+{
+	if($("#myForm").validationEngine('validate'))
+	{
+		$('#myForm').submit();
+
+	}
+}
+</script>
+</div>
+</html>

@@ -51,6 +51,6 @@ public interface IMasterService {
 	List<EzStores> listStores();
 	boolean transferStock(String fromLocation,String toLocation,String material,int qty);
 	boolean reduceStock(String store,String material,int qty);
-	
+	List<Object[]> getPlumberList();
 	
 }

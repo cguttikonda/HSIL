@@ -23,9 +23,10 @@ public interface ITPMService {
 	public void rejectTPMRequest(EzcRequestHeader ezcRequestHeader);
 	public void closeTPMRequest(TpmRequestDetailDto tpmRequestDetailDto);
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
-	public List<Object[]> getLeftOverStock(String requestedBy);
+	public List<Object[]> getLeftOverStock(String requestedBy,String requestType);
 	public List<Object[]> getTPMRequestList(ListSelector listSelector);
 	public void NullifyTpmQty(String leftOverId,String reasonNullify,String commentsNullify);
 	public List<Object[]> getMeetDetailsById(String docId);
 	List<Object[]> getAllStock(String requestedBy);
+	List<Object[]> pendingRequests(String userId);
 }

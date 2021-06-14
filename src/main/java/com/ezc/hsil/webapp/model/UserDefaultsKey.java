@@ -9,12 +9,12 @@ public class UserDefaultsKey implements Serializable{
 	public UserDefaultsKey() {
 		
 	}
-	private String userId;
+	private long userId;
 	private String key;
-	public String getUserId() {
+	public long getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 	public String getKey() {
@@ -23,20 +23,12 @@ public class UserDefaultsKey implements Serializable{
 	public void setKey(String key) {
 		this.key = key;
 	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	public UserDefaultsKey(String userId, String key) {
-		super();
-		this.userId = userId;
-		this.key = key;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + (int) (userId ^ (userId >>> 32));
 		return result;
 	}
 	@Override
@@ -53,12 +45,14 @@ public class UserDefaultsKey implements Serializable{
 				return false;
 		} else if (!key.equals(other.key))
 			return false;
-		if (userId == null) {
-			if (other.userId != null)
-				return false;
-		} else if (!userId.equals(other.userId))
+		if (userId != other.userId)
 			return false;
 		return true;
+	}
+	public UserDefaultsKey(long userId, String key) {
+		super();
+		this.userId = userId;
+		this.key = key;
 	}
 			
 	

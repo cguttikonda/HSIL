@@ -24,17 +24,19 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	List<EzcRequestHeader> findByErhReqTypeAndErhRequestedOnLessThanEqualAndErhRequestedOnGreaterThanEqual(String erhReqType,Date fromDate,Date toDate);
 	EzcRequestHeader getById(int i);
 	EzcRequestHeader findTopByErhCreatedGroupAndErhRequestedByAndErhStatusOrderByErhConductedOnDesc(String group,String requestedBy,String status);
-	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy  and b.leftOverQty > 0 ORDER BY b.id")
-	List<Object[]> getLeftOverStock(String requestedBy);
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhReqType=:requestType  and b.leftOverQty > 0 ORDER BY b.id")
+	List<Object[]> getLeftOverStock(String requestedBy,String requestType);
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName,a.erhRequestedOn from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0 ORDER BY b.id")
 	List<Object[]> getAllStock(String requestedBy);
 /*	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus=:erhStatus and a.erhReqType=:erhReqType")
 	List<Object[]> getBdRequestList(String erhStatus,String erhReqType);	
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id,a.erhStatus from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and  a.erhReqType=:erhReqType and erhRequestedOn>=:fromdate  AND erhRequestedOn <=:todate")
 	List<Object[]> getBdALLRequestList(String erhReqType,Date fromdate,Date todate);	*/ 
-	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty,a.erhDistName,a.erhState,a.erhCity,a.erhReqName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
+	//@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty,a.erhDistName,a.erhState,a.erhCity,a.erhReqName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
+	@Query(value="select a.id,a.erhReqType,a.erhDistrubutor,a.erhRequestedBy,b.matCode,b.matDesc,b.apprQty,a.erhDistName,a.erhState,a.erhCity,a.erhReqName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore IN (select value from UserDefaults where userId IN (select id from Users where userId=:userId) and key='STORE')")
 	List<Object[]> getPendingDispatchDetails(String userId);
-	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
+	//@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore=:userId")
+	@Query(value="select count(a.id) from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus<>'NEW' and b.isNew='Y' and (a.erhDispatchFlag IS NULL or a.erhDispatchFlag='') and a.erhOutStore IN (select value from UserDefaults where userId IN (select id from Users where userId=:userId) and key='STORE')")
 	Long getPendingDispatchCount(String userId);
 	@Query(value="select a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,SUM(b.apprQty-b.usedQty),a.erhDistName,a.erhReqName,a.erhReqType from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id  and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0  group by a.erhRequestedBy,a.erhDistrubutor,a.erhDistName,b.matCode,b.matDesc")
 	List<Object[]> getStockAvailabilityForAll();
@@ -83,5 +85,7 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	@Query(value="select a.id,a.erhRequestedBy,a.erhDistrubutor,b.matCode,b.matDesc,b.id,b.apprQty,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhReqType=:reqType  and a.erhRequestedBy=:reqBY and a.erhStatus='APPROVED' ORDER BY b.id")
 	List<Object[]> getPendingList(String reqBY, String reqType);
 	
+	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor,a.erhDistName,a.erhReqType from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id and a.erhReqType IN ('TPM','TPS','BD')")
+	List<Object[]> getPlumberList();
 }
                              

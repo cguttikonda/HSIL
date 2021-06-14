@@ -19,7 +19,7 @@ public interface ITPSService {
 	public void rejectTPSRequest(EzcRequestHeader ezcRequestHeader);
 	public void createTPSDetails(TpsRequestDetailDto tpsRequestDetailDto);
 	public Set<RequestMaterials> getLastRequestDet(String requestedBy);
-	public List<Object[]> getLeftOverStock(String requestedBy);
+	public List<Object[]> getLeftOverStock(String requestedBy,String requestType);
 	public void NullifyTpsQty(String leftOverId,String reasonNullify,String commentsNullify);
 	
 }

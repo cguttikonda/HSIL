@@ -59,7 +59,29 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private Character erhDispatchFlag;
 	private Date erhDispDate;
 	private String erhOutStore;
+	private Date erhApprDate;
+	private Date erhAckDate;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "ERH_APPR_DATE")
+	public Date getErhApprDate() {
+		return erhApprDate;
+	}
+
+	public void setErhApprDate(Date erhApprDate) {
+		this.erhApprDate = erhApprDate;
+	}
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "ERH_ACK_DATE")
+	public Date getErhAckDate() {
+		return erhAckDate;
+	}
+
+	public void setErhAckDate(Date erhAckDate) {
+		this.erhAckDate = erhAckDate;
+	}
+
 	private Set<EzcRequestItems> ezcRequestItems = new HashSet<EzcRequestItems>(0);
 	private Set<EzcRetailerSales> ezcRetailerSales = new HashSet<EzcRetailerSales>(0);
 	private Set<EzcRequestDealers> ezcRequestDealers = new HashSet<EzcRequestDealers>(0);

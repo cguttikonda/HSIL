@@ -74,7 +74,13 @@
       <input type="text" th:field="*{email}" class="form-control"
 			placeholder="Enter E-Mail" th:errorclass="has-error" required/>
     </div>    
-  
+  <div class="form-group">
+					<label for="store">User Type(s)</label>
+					 <select class="form-control select2" multiple="multiple" data-placeholder="Select Type"  th:field="*{userCategory}">
+					    <option value="">--Select Type--</option>
+					    <option th:each="category : ${categories}" th:value="${category}" th:utext="${category}" th:selected="${userForm.userCategory.contains(category)}"></option>
+					    </select>
+				</div>
    <div class="form-group">
       <label>Role</label>
     <select class="form-control select2" th:field="*{role}" onChange='changeRole()'>
@@ -91,7 +97,7 @@
                          <option th:each="groups : ${wfGroups}"
                             th:value="${groups.name}"
                             th:utext="${groups.desc}"
-                            th:selected="${groups.name == userForm.group[0]}"
+                            th:selected="${userForm.group.contains(groups.name)}"
                             />
                   </select>
       <label>Zone</label>

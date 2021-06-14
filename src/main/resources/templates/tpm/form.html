@@ -2,6 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPM</title>
+    <style type="text/css">
+    .modal-dialog {
+  width: 90%;
+  height: 70%;
+  margin: 5%;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
 </head>
 <body>
 <section layout:fragment="header"> 
@@ -111,7 +125,23 @@
             </div> 
         </form>
     </div>
-    
+    	<div class="modal" id="pendingRegModal" th:if="${not #lists.isEmpty(reqList)}">
+    	<div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Pending Requests For Report Submission</h4>
+              </div>
+              <div class="modal-body">
+    			<div th:replace="tpm/listfragment.html :: dataList(reqList=${reqList})"></div>
+    	 		</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- <div class="modal fade" id="stockModal">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -154,6 +184,8 @@
       autoclose: true,
       format: 'dd/mm/yyyy'
     }); */
+    
+    $("#pendingRegModal").modal('show');
  $("#erhConductedOn").datepicker( {
 	 autoclose: true,
 	 format: "mm/yyyy",

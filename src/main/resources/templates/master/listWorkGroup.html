@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="ISO-8859-1">
+<title>User Groups</title>
+</head>
+<body>
+	<section layout:fragment="header">
+		<h1>List User Groups</h1>
+		<ol class="breadcrumb">
+			<li><a th:href="@{/dashboard/index.html}"><i
+					class="fa fa-dashboard"></i>User Groups</a></li>
+			<li class="active">List</li>
+		</ol>
+	</section>
+	<div layout:fragment="content">
+		<form role="form" id="myForm" th:action="@{/master/showUserGrpList}" th:object="${userGrpDto}" th:method="get">
+		<div class="box">
+			<div class="box-header">
+				<!-- <h3 class="box-title">Data Table With Full Features</h3> -->
+			</div>
+			<!-- /.box-header -->
+			<div class="box-body">
+			<div class="form-group">
+					<label for="grpType">Group Type</label>
+					 <select class="form-control select2 validate[required]" th:field="*{grpType}"  id="grpType" th:errorclass="has-error" onchange="funGrpChange()" required>
+					    <option th:each="grpTypeObj : ${grpTypeList}" th:value="${grpTypeObj}" th:text="${grpTypeObj}"></option>
+					    </select>
+				</div>
+				<table id="example" class="table table-striped table-bordered"
+					style="width: 100%">
+					<thead>
+						<tr>
+							<th>Group Id</th>
+							<th>Description</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="groupObj:*{groupList}">
+						<td th:text="${groupObj.name}"></td>
+						<td th:text="${groupObj.desc}"></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th>Group Id</th>
+							<th>Description</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+			<!-- /.box-body -->
+		</div>
+
+		<!-- /.box-body -->
+		
+	</form>
+
+	
+	<!-- Modals -->
+	<div th:fragment="delete-city" id="deleteCityModalHolder"></div>
+	<div th:fragment="edit-city" id="editCityModalHolder"></div>
+	
+	<!-- Models End -->
+	
+	</div>
+	
+	<!-- Script Start -->
+	<div layout:fragment="scriptContent">
+		<script th:inline="javascript">
+			$(document).ready(function() {
+				$('#example').DataTable({
+
+						"dom" : 'T<"clear">lfrtip'
+
+					}
+				);
+
+				$('#closeModal').click((e)=>{
+					
+					e.preventDefault();
+					$('#editCitytModal').modal('toggle');
+				});
+				
+						
+				
+			});	
+/* 			$( window ).on("unload",function() {
+					Pace.restart();
+			})
+ */			
+ 			function funGrpChange()
+ 			{
+ 				$('#myForm').submit();
+ 			}
+						
+		</script>
+	</div>
+</body>
+</html>

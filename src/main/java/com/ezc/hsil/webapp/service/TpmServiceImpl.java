@@ -1,5 +1,8 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -210,7 +213,7 @@ public class TpmServiceImpl implements ITPMService{
 				}
 			   log.debug("matCnt"+matCnt);
 			   if(matCnt>0)
-				   useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+				   useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt,"TPM");
 			   log.debug("matCnt"+matCnt); 
 		  }
 		   
@@ -249,6 +252,7 @@ public class TpmServiceImpl implements ITPMService{
 		  ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
 		  ezReqHeader.getEzcComments().addAll(ezcComments);
 		  ezReqHeader.setErhStatus("APPROVED");
+		  ezReqHeader.setErhApprDate(new Date());
 		  ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 		  for(RequestMaterials tempItem : ezReqMatList) {
 		      Character c1 = new Character('N'); 
@@ -290,7 +294,8 @@ public class TpmServiceImpl implements ITPMService{
 		  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
 		  ezReqHeader.getEzcComments().addAll(ezComments);
 		  ezReqHeader.setErhStatus("REJECTED");
-		
+		  ezReqHeader.setErhApprDate(new Date());
+		  
 		  for(EzcComments tempItem : ezComments) { 
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  commRepo.save(tempItem); 
@@ -329,8 +334,8 @@ public class TpmServiceImpl implements ITPMService{
 		}
 
 		@Override
-		public List<Object[]> getLeftOverStock(String requestedBy) {
-			return reqHeaderRepo.getLeftOverStock(requestedBy);
+		public List<Object[]> getLeftOverStock(String requestedBy,String requestType) {
+			return reqHeaderRepo.getLeftOverStock(requestedBy,requestType);
 		}
 		
 		@Override
@@ -371,6 +376,31 @@ public class TpmServiceImpl implements ITPMService{
 		public List<Object[]> getMeetDetailsById(String docId) {
 			return reqHeaderRepo.getMeetDetailsById(docId);
 		}
+
+		@Override
+		public List<Object[]> pendingRequests(String userId)
+	    {
+	    	ListSelector listSelector=null; 
+	    	if(listSelector == null || listSelector.getFromDate() == null)
+	    	{
+	    		Date todayDate = new Date();
+	    		Calendar c = Calendar.getInstance(); 
+	    		c.setTime(todayDate); 
+	    		c.add(Calendar.MONTH, -3);
+	    		listSelector = new ListSelector();
+	    		listSelector.setFromDate(c.getTime());
+	    		listSelector.setToDate(todayDate);
+	    		listSelector.setStatus("APPROVED");
+	    	}
+	    	listSelector.setType("TPM");
+	    	ArrayList<String> userList=new ArrayList<String>();
+	    	userList.add(userId);
+	    	listSelector.setUser(userList);
+	    	List<Object[]> list = this.getTPMRequestList(listSelector);
+	    	log.debug("list:::"+list.size());
+	        return list;
+	    }
+
 
 		
 

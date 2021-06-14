@@ -1,6 +1,7 @@
 package com.ezc.hsil.webapp.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,6 +253,7 @@ public class ReportService implements IReportService {
 		  Set<EzcComments> ezComments = ezcRequestHeader.getEzcComments();
 		  ezReqHeader.getEzcComments().addAll(ezComments);
 		  ezReqHeader.setErhDispatchFlag('S');
+		  ezcRequestHeader.setErhAckDate(new Date());
 		  for(EzcComments tempItem : ezComments) {  
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  commRepo.save(tempItem); 

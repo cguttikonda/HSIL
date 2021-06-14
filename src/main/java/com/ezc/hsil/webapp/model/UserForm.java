@@ -17,7 +17,8 @@ public class UserForm extends Auditable<String> {
 	private String role;
 	private String zone;
 	private List<String> group;
-	
+	private String store;
+	private List<String> userCategory;
 	
 	@NotNull
 	public List<String> getGroup() {
@@ -108,5 +109,33 @@ public class UserForm extends Auditable<String> {
 
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+	/**
+	 * @return the store
+	 */
+	public String getStore() {
+		return store;
+	}
+
+	/**
+	 * @param store the store to set
+	 */
+	public void setStore(String store) {
+		this.store = store;
+	}
+
+	/**
+	 * @return the userCategory
+	 */
+	public List<String> getUserCategory() {
+		return userCategory;
+	}
+
+	/**
+	 * @param userCategory the userCategory to set
+	 */
+	public void setUserCategory(List<String> userCategory) {
+		this.userCategory = userCategory;
 	}		
 }

@@ -60,11 +60,11 @@ public class UseLeftOverStockSer  implements IUseLeftOverStockSer{
 
 	
 	@Override
-	public void updateLeftOverStock(String reqBy,Integer expAttendee) {
+	public void updateLeftOverStock(String reqBy,Integer expAttendee,String requestType) {
 			int usedQuant=0;
 		   if(expAttendee>0)
 		   {
-			   List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(reqBy);
+			   List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(reqBy,requestType);
 			  
 			   for(int i = 0; i < leftOverStkList.size(); i++)
 			   {

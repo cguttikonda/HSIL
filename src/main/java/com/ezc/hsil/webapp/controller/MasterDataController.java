@@ -16,6 +16,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,14 +35,20 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.DistributorDto;
+import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.MaterialDto;
 import com.ezc.hsil.webapp.dto.PlaceMasterDto;
 import com.ezc.hsil.webapp.dto.StockLocationDto;
 import com.ezc.hsil.webapp.dto.StockTransferDto;
+import com.ezc.hsil.webapp.dto.UserGroupAddDto;
+import com.ezc.hsil.webapp.dto.UserGroupDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.MaterialMaster;
+import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.model.Work_Groups;
 import com.ezc.hsil.webapp.service.IMasterService;
+import com.ezc.hsil.webapp.service.IUserService;
 import com.ezc.hsil.webapp.util.EzExcelUtil;
 
 import lombok.extern.slf4j.Slf4j;
@@ -54,6 +63,9 @@ public class MasterDataController {
 
 	@Autowired
 	IMasterService masterService;
+	
+	@Autowired
+    private IUserService iUserService;
 
 	@Value("#{'${city}'.split(',')}")
 	private List<String> city;
@@ -518,6 +530,80 @@ public class MasterDataController {
 		
 		return "redirect:/master/showReduceStock"; //html
 	}
-	
+	 @RequestMapping(value = "/showPlumbers", method = RequestMethod.GET)
+	    public String showPlumbers(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+	    	
+		 	model.addAttribute("plumberList", masterService.getPlumberList());
+	        return "master/plumberMaster"; 
+
+	    }
+	 @GetMapping("/showUserGrpList")
+		public String userGroupList(@ModelAttribute("userGrpDto") UserGroupDto userGrpDto,Model model) {
+			
+		 	List<String> grpTypeList=new ArrayList<String>();
+		 	grpTypeList.add("States");
+		 	grpTypeList.add("Zones");
+		 	if(userGrpDto == null || userGrpDto.getGrpType() == null)
+		 	{
+		 		userGrpDto=new UserGroupDto();
+		 		userGrpDto.setGrpType("States");
+		 	}
+		 	String roleStr="";
+		 	if("States".equals(userGrpDto.getGrpType()))
+		 		roleStr="ROLE_REQ_CR";
+		 	else if("Zones".equals(userGrpDto.getGrpType()))
+		 		roleStr="ROLE_ZN_HEAD";
+		 	
+			List<Work_Groups> groupList=iUserService.getGroupsByRole(roleStr);
+			userGrpDto.setGroupList(groupList);
+			model.addAttribute("grpTypeList",grpTypeList);
+			model.addAttribute("userGrpDto",userGrpDto);
+			return "master/listWorkGroup"; //html
+		}
+	 @GetMapping("/showUserGrpAdd")
+		public String userGroupAdd(Model model) {
+		 
+		    UserGroupAddDto userGrpAddDto= new UserGroupAddDto();
+		 
+		 	List<String> grpTypeList=new ArrayList<String>();
+		 	grpTypeList.add("States");
+		 	grpTypeList.add("Zones");
+		 	
+			model.addAttribute("grpTypeList",grpTypeList);
+			model.addAttribute("userGrpAddDto",userGrpAddDto);
+			return "master/addWorkGroup"; //html
+		}
+	 
+	 @PostMapping("/saveuserGroup")
+		public String saveuserGroup(@Valid @ModelAttribute("userGrpAddDto") UserGroupAddDto userGrpAddDto, 
+				BindingResult bindingResult, RedirectAttributes ra, Model model) throws SQLException {
+			
+			
+				String group=userGrpAddDto.getGroupId();
+				String groupType=userGrpAddDto.getGroupType();
+				String roleStr="";
+			 	if("States".equals(groupType))
+			 		roleStr="ROLE_REQ_CR";
+			 	else if("Zones".equals(groupType))
+			 		roleStr="ROLE_ZN_HEAD";
+				log.debug("groupType"+groupType);
+				
+				Work_Groups workGrpObj = iUserService.findGroupByRoleAndGroup(roleStr, group);
+				if(workGrpObj == null)
+				{
+					workGrpObj = new Work_Groups(group,userGrpAddDto.getDescription(),roleStr);
+					iUserService.saveWorkGroup(workGrpObj);
+					ra.addFlashAttribute("success", "Workgroups Saved successfully.");
+					
+					
+				}
+				else
+				{	
+					ra.addFlashAttribute("error", "Workgroup "+workGrpObj.getName()+" already exists");
+				}
+			
+			return "redirect:/master/showUserGrpAdd"; //html
+		}
+
 }
 

@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +31,9 @@ import com.ezc.hsil.webapp.dto.PasswordDto;
 import com.ezc.hsil.webapp.dto.UserDto;
 import com.ezc.hsil.webapp.error.InvalidOldPasswordException;
 import com.ezc.hsil.webapp.model.EzStates;
+import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.Roles;
+import com.ezc.hsil.webapp.model.UserDefaults;
 import com.ezc.hsil.webapp.model.UserForm;
 import com.ezc.hsil.webapp.model.UserRoles;
 import com.ezc.hsil.webapp.model.UserZones;
@@ -40,6 +43,7 @@ import com.ezc.hsil.webapp.model.Work_Groups;
 import com.ezc.hsil.webapp.persistance.dao.EzUserCreationDefaults;
 import com.ezc.hsil.webapp.security.ActiveUserStore;
 import com.ezc.hsil.webapp.security.ISecurityUserService;
+import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.IUserService;
 import com.ezc.hsil.webapp.util.GenericResponse;
 
@@ -61,6 +65,9 @@ public class UserController {
     
     @Autowired
     private IUserService iUserService;
+    
+    @Autowired
+    private IMasterService iMasterService;
     
     @Autowired
     private MessageSource messages;
@@ -97,11 +104,15 @@ public class UserController {
     public String test(final Locale locale, final Model model) {
     	
     	log.debug(":UserCreation GET:::::::");
-    	
+    	userDefaults.initData();
     	 List<EzStates> states = userDefaults.getStates();
     	 List<UserRoles> roles = userDefaults.getRoles();
     	 List<UserZones> zones = userDefaults.getZones();
-    	    	 
+    	 List<String> categories = userDefaults.getCategories();
+    	 List<EzStores> storeList=iMasterService.listStores();
+ 		 
+    	 model.addAttribute("categories", categories);
+    	 model.addAttribute("storeList",storeList);   	 
     	 model.addAttribute("userForm", new UserForm());
 	     model.addAttribute("states", states);
 	     model.addAttribute("roles", roles);
@@ -116,15 +127,17 @@ public class UserController {
     	log.debug(":UserCreation POST:::::::");
     	
     	 if (bindingResult.hasErrors()) { 
-    		 
+    		 userDefaults.initData();
     		 List<EzStates> states = userDefaults.getStates();
         	 List<UserRoles> roles = userDefaults.getRoles();
         	 List<UserZones> zones = userDefaults.getZones();
-        
+        	 List<String> categories = userDefaults.getCategories();
+        	 
     	     model.addAttribute("states", states);
     	     model.addAttribute("roles", roles);
     	     model.addAttribute("zones", zones);
-    		 
+    	     model.addAttribute("categories", categories);
+    	     
              return "user/ezUserCreationForm";
          }
     	
@@ -140,6 +153,8 @@ public class UserController {
     	userDto.setUserId(userForm.getUserId());
     	userDto.setGroup(userForm.getGroup());
     	userDto.setZone(userForm.getZone());
+    	userDto.setStore(userForm.getStore());
+    	userDto.setUserCategory(userForm.getUserCategory());
     	userDto.setEnabled(true);
     	
     	iUserService.registerNewUserAccount(userDto);
@@ -175,14 +190,29 @@ public class UserController {
     }
     
     @GetMapping(value = "/editUser/{id}")
-    public String editUser(@PathVariable("id") Long id,final Locale locale, final Model model) {   	
+    public String editUser(@PathVariable("id") Long id,final Locale locale, final Model model) {
+    	 userDefaults.initData();
     	 List<UserRoles> roles = userDefaults.getRoles();
     	 List<UserZones> zones = userDefaults.getZones();   
-      	
+    	 List<String> categories = userDefaults.getCategories();
+    	 
     	 Optional<Users> user = iUserService.getUserByID(id); 
 		 Users lv_User = (Users)user.get();
 		 List<Roles> userRoles = (List<Roles>)lv_User.getRoles();
- 
+		 Set<UserDefaults> userDefList=lv_User.getUserDefaults();
+		 List<String> userCatList=new ArrayList<String>(); 
+		 if(userDefList != null)
+		 {
+			 for(UserDefaults userDef:userDefList)
+			 {
+				 if("CATEGORY".equals(userDef.getKey()))
+				 {
+					 String [] tempArr=userDef.getValue().split(",");
+					 for(String tempStr:tempArr)
+						 userCatList.add(tempStr);
+				 }
+			 }
+		 }
 		 Roles userRole = null;
     	 
 		 List<WorkGroup_Users> userGroupList =  iUserService.getGroupsByUserId(lv_User.getUserId());
@@ -201,7 +231,7 @@ public class UserController {
       	for(WorkGroup_Users userGroup : userGroupList)
       	{
       		userZone =userGroup.getZonalGrp(); 
-      		userGroups.add(userGroup.getId()+"");
+      		userGroups.add(userGroup.getGroupId()+"");
       	}
       	
       	List<WorkGroup_Users> zonalHDSubGroups = (List<WorkGroup_Users>) iUserService.getZonalHeadSubGroups(userZone);
@@ -228,11 +258,13 @@ public class UserController {
       	formFields.setRole(userRole.getName());
       	formFields.setGroup(userGroups);
       	formFields.setZone(userZone);
+      	formFields.setUserCategory(userCatList);
  		 
       	 model.addAttribute("userForm", formFields);
     	 model.addAttribute("roles", roles);
 	     model.addAttribute("zones", zones);
 	     model.addAttribute("wfGroups", wfGroups);
+	     model.addAttribute("categories", categories);
 	     //model.addAttribute("userRole", userRole); 
 	     //model.addAttribute("userGroup", userGroups);
 	     //model.addAttribute("userForm", user);
@@ -257,6 +289,7 @@ public class UserController {
     	userDto.setUserId(userForm.getUserId());
     	userDto.setGroup(userForm.getGroup());
     	userDto.setZone(userForm.getZone());
+    	userDto.setUserCategory(userForm.getUserCategory());
     	
     	iUserService.editUser(userDto);
      	

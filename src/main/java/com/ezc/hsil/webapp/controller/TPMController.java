@@ -84,6 +84,11 @@ public class TPMController {
     	tpmRequestDto.setDistList(distList);
     	tpmRequestDto.setPlaceList(placeList);
         model.addAttribute("tpmRequestDto", tpmRequestDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		String loggedUser=(String)userObj.getUserId();
+		List<Object[]> list=tpmService.pendingRequests(loggedUser);
+		model.addAttribute("reqList",list);
         return "tpm/form";
 
     } 
@@ -320,7 +325,7 @@ public class TPMController {
 		{
         	ezcComm.add(item); 
 		}
-        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy());
+        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy(),"TPM");
         int leftOverStk =0;
 		   for(int i = 0; i < leftOverStkList.size(); i++)
 		   {
@@ -463,7 +468,7 @@ public class TPMController {
         
         ezcRequestItems.add(new EzcRequestItems());
         log.debug("reqHe"+ezcRequestHeader.getErhRequestedBy());
-        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy());
+        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy(),"TPM");
       
 		 log.debug("leftOverStk"+leftOverStk);
 				  
@@ -502,7 +507,7 @@ public class TPMController {
         	ezcRequestItems.add(new EzcRequestItems());
         }
         log.debug("reqHe"+ezcRequestHeader.getErhRequestedBy());
-        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy());
+        List<Object[]> leftOverStkList=reqHeaderRepo.getLeftOverStock(ezcRequestHeader.getErhRequestedBy(),"TPM");
       
 		 log.debug("leftOverStk"+leftOverStk);
 				  
@@ -677,4 +682,5 @@ public class TPMController {
     	return "ok";
 	}    
 
+        
 }

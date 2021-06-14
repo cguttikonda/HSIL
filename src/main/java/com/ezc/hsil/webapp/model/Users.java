@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import javax.annotation.Generated;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -47,7 +48,7 @@ public class Users extends Auditable<String> {
 	@Column(name="IS_ENABLED")
 	private boolean enabled;
 
-	@OneToMany(mappedBy="users")
+	@OneToMany(mappedBy="users",cascade = CascadeType.ALL)
     private Set<UserDefaults> userDefaults;	
 	
 	 @ManyToMany(fetch = FetchType.EAGER)
@@ -123,6 +124,14 @@ public class Users extends Auditable<String> {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Set<UserDefaults> getUserDefaults() {
+		return userDefaults;
+	}
+
+	public void setUserDefaults(Set<UserDefaults> userDefaults) {
+		this.userDefaults = userDefaults;
 	}
 
 	@Override

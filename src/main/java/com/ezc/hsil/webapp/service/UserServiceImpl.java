@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,8 @@ import com.ezc.hsil.webapp.error.UserAlreadyExistException;
 import com.ezc.hsil.webapp.model.PasswordResetToken;
 import com.ezc.hsil.webapp.model.Privilages;
 import com.ezc.hsil.webapp.model.Roles;
+import com.ezc.hsil.webapp.model.UserDefaults;
+import com.ezc.hsil.webapp.model.UserDefaultsKey;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.model.VerificationToken;
 import com.ezc.hsil.webapp.model.WorkGroup_Users;
@@ -35,6 +39,7 @@ import com.ezc.hsil.webapp.persistance.dao.GroupRepository;
 import com.ezc.hsil.webapp.persistance.dao.PasswordResetTokenRepository;
 import com.ezc.hsil.webapp.persistance.dao.PrivilegeRepository;
 import com.ezc.hsil.webapp.persistance.dao.RoleRepository;
+import com.ezc.hsil.webapp.persistance.dao.UserDefRepository;
 import com.ezc.hsil.webapp.persistance.dao.UserRepository;
 import com.ezc.hsil.webapp.persistance.dao.VerificationTokenRepository;
 import com.ezc.hsil.webapp.persistance.dao.WorkGroupUsersRepository;
@@ -45,7 +50,10 @@ public class UserServiceImpl implements IUserService{
 
 	 @Autowired
 	    private UserRepository userRepository;
-
+	 
+	 @Autowired
+	    private UserDefRepository userDefRepo;
+	 
 	    @Autowired
 	    private VerificationTokenRepository tokenRepository;
 
@@ -97,7 +105,8 @@ public class UserServiceImpl implements IUserService{
 	        final List<Privilages> adminPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, writePrivilege, passwordPrivilege));
 	        final List<Privilages> userPrivileges = new ArrayList<Privilages>(Arrays.asList(readPrivilege, passwordPrivilege));
 	        final Roles userRole = createRoleIfNotFound(accountDto.getRole(), adminPrivileges);
-
+	        List<String> userCategories=accountDto.getUserCategory();
+	        
 	        user.setFirstName(accountDto.getFirstName());
 	        user.setLastName(accountDto.getLastName());
 	        user.setPassword(passwordEncoder.encode(accountDto.getPassword()));
@@ -109,9 +118,39 @@ public class UserServiceImpl implements IUserService{
 	        
 	        
 	        System.out.println(":::::::accountDto:::::"+accountDto.getUserId());
-	        
-	        if(userRepository.save(user)!=null)
-	        {	
+	        Users outUser=userRepository.save(user);
+	        if(outUser !=null)
+	        {
+	        	//Set<UserDefaults> userDefList=new HashSet<UserDefaults>();
+	        	String tempStore = accountDto.getStore();
+	        	if(tempStore != null && !"null".equals(tempStore) && !"".equals(tempStore))
+	        	{
+			        UserDefaults userDef=new UserDefaults();
+			        userDef.setKey("STORE");
+			        userDef.setValue(accountDto.getStore());
+			        userDef.setUsers(outUser);
+			        userDef.setUserId(outUser.getId());
+			        //userDefList.add(userDef);
+			        userDefRepo.save(userDef);
+	        	}
+	        	
+	        	if(userCategories != null && !userCategories.isEmpty())
+	        	{
+	        		String userCatStr="";
+	        		for(String tempStr:userCategories)
+	        		{
+	        			userCatStr+=tempStr+",";
+	        		}
+	        		if(userCatStr.indexOf(",") >= 0)
+	        			userCatStr=userCatStr.substring(0, userCatStr.length() - 1);
+	        		UserDefaults userDef=new UserDefaults();
+			        userDef.setKey("CATEGORY");
+			        userDef.setValue(userCatStr);
+			        userDef.setUsers(outUser);
+			        userDef.setUserId(outUser.getId());
+			        userDefRepo.save(userDef);
+	        	}
+	        	
 	        	List<String> userGrpList =  accountDto.getGroup();
 	        	//String userGrp = accountDto.getGroup();
 	        	String stHDGrp = "";
@@ -244,6 +283,24 @@ public class UserServiceImpl implements IUserService{
 	    	
         	updateUserToGroupIfNotFound(userGrp,accountDto.getUserId(),stHDGrp,zonalUserGrp);
         	}
+        	List<String> userCategories=accountDto.getUserCategory();
+        	if(userCategories != null && !userCategories.isEmpty())
+        	{
+        		String userCatStr="";
+        		for(String tempStr:userCategories)
+        		{
+        			userCatStr+=tempStr+",";
+        		}
+        		if(userCatStr.indexOf(",") >= 0)
+        			userCatStr=userCatStr.substring(0, userCatStr.length() - 1);
+        		userDefRepo.deleteById(new UserDefaultsKey(user.getId(), "CATEGORY"));
+        		UserDefaults userDef=new UserDefaults();
+		        userDef.setKey("CATEGORY");
+		        userDef.setValue(userCatStr);
+		        userDef.setUsers(user);
+		        userDef.setUserId(user.getId());
+		        userDefRepo.save(userDef);
+        	}
 	        //userRepository.save(user);
 	    }
 
@@ -261,6 +318,7 @@ public class UserServiceImpl implements IUserService{
 	            passwordTokenRepository.delete(passwordToken);
 	        }
 	        
+	        userDefRepo.deleteUserDefaults(user.getId());
 	        groupUsersRepository.deleteUserGroups(user.getUserId());
 	        userRepository.delete(user);
  
@@ -475,5 +533,20 @@ public class UserServiceImpl implements IUserService{
 		@Override
 		public List<Users> findUsersByRole(String role) {
 			return userRepository.findUsersByRole(role);
+		}
+
+		@Override
+		public Work_Groups findGroupByRoleAndGroup(String role, String group) {
+			
+			List<Work_Groups> groupList=groupRepository.findByRoleAndGroup(role,group); 
+			if(groupList == null || groupList.isEmpty())
+				return null;
+			else
+				return groupList.get(0);
+		}
+
+		@Override
+		public Work_Groups saveWorkGroup(Work_Groups workGrp) {
+			return groupRepository.save(workGrp);
 		}
 }

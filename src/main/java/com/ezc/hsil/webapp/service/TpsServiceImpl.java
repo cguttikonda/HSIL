@@ -204,7 +204,7 @@ public class TpsServiceImpl implements ITPSService {
 		   }
 		} 
 	   if(matCnt>0)
-	   		useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt);
+	   		useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt,"TPS");
 	  	log.debug("expAttendee"+expAttendee); 
 			
 		   
@@ -235,8 +235,8 @@ public class TpsServiceImpl implements ITPSService {
 		}
 	}
 	@Override
-	public List<Object[]> getLeftOverStock(String requestedBy) {
-		return reqHeaderRepo.getLeftOverStock(requestedBy);
+	public List<Object[]> getLeftOverStock(String requestedBy,String requestType) {
+		return reqHeaderRepo.getLeftOverStock(requestedBy,requestType);
 	}
 	@Override
 	public void NullifyTpsQty(String leftOverId, String reasonNullify, String commentsNullify) {

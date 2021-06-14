@@ -74,7 +74,8 @@ public class UserDto {
     private String state;
     private String zone;
     private List<String> group;
-    
+    private List<String> userCategory;
+    private String store;
     
     
     
@@ -177,5 +178,33 @@ public class UserDto {
                 .append(isUsing2FA).append(", role=").append(role).append("]");
         return builder.toString();
     }
+
+	/**
+	 * @return the store
+	 */
+	public String getStore() {
+		return store;
+	}
+
+	/**
+	 * @param store the store to set
+	 */
+	public void setStore(String store) {
+		this.store = store;
+	}
+
+	/**
+	 * @return the userCategory
+	 */
+	public List<String> getUserCategory() {
+		return userCategory;
+	}
+
+	/**
+	 * @param userCategory the userCategory to set
+	 */
+	public void setUserCategory(List<String> userCategory) {
+		this.userCategory = userCategory;
+	}
 
 }

@@ -27,6 +27,7 @@ import com.ezc.hsil.webapp.model.MaterialMasterKey;
 import com.ezc.hsil.webapp.persistance.dao.DistributorMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.MaterialMasterRepo;
 import com.ezc.hsil.webapp.persistance.dao.PlaceMasterRepo;
+import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.persistance.dao.StoreRepo;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,9 @@ public class MasterServiceImpl implements IMasterService {
 	
 	@Autowired
 	StoreRepo storeRepo;
+	
+	@Autowired
+	RequestHeaderRepo reqHeadRepo;
 
 	@Override
 	public DistributorMaster addNewDistributor(final DistributorDto distDto) {
@@ -425,6 +429,12 @@ public class MasterServiceImpl implements IMasterService {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public List<Object[]> getPlumberList() {
+		
+		return reqHeadRepo.getPlumberList();
 	}
 	
 

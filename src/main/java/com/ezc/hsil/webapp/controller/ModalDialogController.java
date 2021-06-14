@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.Users;
@@ -95,8 +96,11 @@ public class ModalDialogController {
 		Integer attendee=ezReqHead.getErhNoOfAttendee();
 		log.debug("att"+ezReqHead.getErhNoOfAttendee());
 		int leftOverStk=0;
-		List<Object[]> matLi=iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy());
-		List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
+		List<Object[]> matLi=iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy(),"TPM");
+		//List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
+		List<EzStores> outStoreList = masterService.listStores();
+		List<Object[]> list=iTPMService.pendingRequests(ezReqHead.getErhRequestedBy());
+		
 		for(int k=0;k<matLi.size();k++)
 		{	
 		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
@@ -109,10 +113,11 @@ public class ModalDialogController {
 			 * SecurityContextHolder.getContext().getAuthentication(); Users userObj =
 			 * (Users)authentication.getPrincipal();
 			 */
-			model.addAttribute("matList", iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
+			model.addAttribute("matList", iTPMService.getLeftOverStock(ezReqHead.getErhRequestedBy(),"TPM"));
 			model.addAttribute("leftOverStk", leftOverStk);
 			model.addAttribute("attendee", attendee);
 			model.addAttribute("outStoreList", outStoreList);
+			model.addAttribute("reqList", list);
 		} catch (Exception e) {
 			 
 		}
@@ -226,7 +231,7 @@ public class ModalDialogController {
 		Integer attendee=ezReqHead.getErhNoOfAttendee();
 		log.debug("att"+ezReqHead.getErhNoOfAttendee());
 		int leftOverStk=0;
-		List<Object[]> matLi=iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy());
+		List<Object[]> matLi=iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy(),"TPS");
 		List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
 		for(int k=0;k<matLi.size();k++)
 		{	
@@ -241,7 +246,7 @@ public class ModalDialogController {
 			 * SecurityContextHolder.getContext().getAuthentication(); Users userObj =
 			 * (Users)authentication.getPrincipal();
 			 */
-			model.addAttribute("matList", iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy()));
+			model.addAttribute("matList", iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy(),"TPS"));
 		} catch (Exception e) {
 			 
 		}
