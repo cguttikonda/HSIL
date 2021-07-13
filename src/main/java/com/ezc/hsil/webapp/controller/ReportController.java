@@ -501,7 +501,10 @@ public class ReportController {
 				Double costIncured = (Double)objArr[13];
 				if(costIncured == null)
 					costIncured = 0.0;
-				Double avgValue = costIncured/noOfAtt;
+				Double avgValue = 0.0;
+				if(noOfAtt > 0)
+					avgValue = costIncured/noOfAtt;
+				
 				String [] tempQtyArr = (objArr[11]+"").split("#");
 				TPMSummaryDto tpmSumDto=new TPMSummaryDto(); 
 				tpmSumDto.setRequestDate((Date)objArr[0]);
@@ -517,7 +520,10 @@ public class ReportController {
 				tpmSumDto.setExpense(costIncured);
 				tpmSumDto.setAvgCost(avgValue);
 				tpmSumDto.setGiftsRequested(checkNumInt(tempQtyArr[0]));
-				tpmSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				if(!"SUBMITTED".equals(objArr[14]+"") && checkNumInt(tempQtyArr[1]) == 0)
+					tpmSumDto.setPendingGifts(checkNumInt(tempQtyArr[0]));
+				else	
+					tpmSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
 				tpmSumDto.setVertical(objArr[9]+"");
 				
 				Users userTempObj = usersListDet.get(objArr[5]+"");
@@ -720,7 +726,9 @@ public class ReportController {
 				Double costIncured = (Double)objArr[8];
 				if(costIncured == null)
 					costIncured = 0.0;
-				Double avgValue = costIncured/noOfAtt;
+				Double avgValue = 0.0;
+				if(noOfAtt > 0)
+					avgValue = costIncured/noOfAtt;
 				String [] tempQtyArr = (objArr[11]+"").split("#");
 				TPSSummaryDto tpsSumDto=new TPSSummaryDto(); 
 				tpsSumDto.setRequestDate((Date)objArr[0]);
@@ -736,7 +744,12 @@ public class ReportController {
 				tpsSumDto.setExpense(costIncured);
 				tpsSumDto.setAvgCost(avgValue);
 				tpsSumDto.setGiftsRequested(checkNumInt(tempQtyArr[0]));
-				tpsSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				
+				if(!"SUBMITTED".equals(objArr[13]+"") && checkNumInt(tempQtyArr[1]) == 0)
+					tpsSumDto.setPendingGifts(checkNumInt(tempQtyArr[0]));
+				else	
+					tpsSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				
 				tpsSumDto.setVertical(objArr[9]+"");
 				
 				Users userTempObj = usersListDet.get(objArr[5]+"");
@@ -1305,7 +1318,257 @@ public class ReportController {
 
     	return tempVal;
     }
-   
+    
+    @RequestMapping(value = "/teamTPMMeetWiseSum", method = RequestMethod.GET)
+    public String teamTPMMeetSum(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		
+		String loggedUser =userObj.getUserId(); 
+		String loggedOnRole = new ArrayList<Roles>(userObj.getRoles()).get(0).getName();
+		
+		List<Object[]> tempUserList = null;
+		List<Users> usersList= iUserService.getUsersList();
+		List<Work_Groups> workGrpList= iUserService.getAllGroups();
+		List<WorkGroup_Users> workGrpUsersList= iUserService.getWorkGrpUsers();
+		Hashtable<String,String> workGrpHT=new Hashtable<String,String>(); 
+		Hashtable<String,Users> usersListDet=new Hashtable<String,Users>();
+		
+		for(Users userObjTemp:usersList)
+		{
+			usersListDet.put(userObjTemp.getUserId(),userObjTemp);
+		}
+		
+		for(Work_Groups grp:workGrpList)
+		{
+			workGrpHT.put(grp.getName(),grp.getDesc());
+		}
+		log.debug("workGrpHT:::"+workGrpHT);
+		List<Object[]> list = null;
+		{
+        	list = repService.getTeamTPMMeetSum(reportSelector);
+        }
+		//filter rows by role start
+		ArrayList<Object[]> toBeRemovedRows=new ArrayList<Object[]>();
+		
+		List<WorkGroup_Users> loggedOnWorkGroup=workGrpUsersList.stream().filter((e) ->  loggedUser.equals(e.getUserId())).collect(Collectors.toList());
+		if(!loggedOnWorkGroup.isEmpty())
+		{
+			String logOnZonGrp=loggedOnWorkGroup.get(0).getZonalGrp();
+			String logOnGrp=loggedOnWorkGroup.get(0).getGroupId();
+			//String logOnStateGrp=loggedOnWorkGroup.get(0).getStateGrp();
+			if(!list.isEmpty())
+			{
+				for(Object[] objArr:list)
+				{
+					Users userTempObj = usersListDet.get(objArr[5]+"");
+					List<WorkGroup_Users> tempWorkGroup=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+					if(tempWorkGroup != null && !tempWorkGroup.isEmpty())
+					{	
+						WorkGroup_Users selTempWorkGroup= tempWorkGroup.get(0);
+						if("ROLE_ZN_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getZonalGrp().equals(logOnZonGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_ST_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getGroupId().equals(logOnGrp) && !selTempWorkGroup.getStateGrp().equals(logOnGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_REQ_CR".equals(loggedOnRole))
+						{
+							//log.debug(loggedUser+":::loggedUser"+userTempObj.getUserId());
+							if(!loggedUser.equals(userTempObj.getUserId()))
+								toBeRemovedRows.add(objArr);
+						}
+					}
+				}
+				if(!toBeRemovedRows.isEmpty())
+					list.removeAll(toBeRemovedRows);
+			}
+		}
+		//filter rows by role end
+        List<TPMSummaryDto> tpmSumList = new ArrayList<TPMSummaryDto>();
+        SimpleDateFormat monthYearFmt = new SimpleDateFormat("MMM/yyyy");
+        
+        for(Object[] objArr:list)
+        {
+        	try {
+        		int noOfAtt = checkNumInt(objArr[10]+"");
+				Double costIncured = (Double)objArr[14];
+				if(costIncured == null)
+					costIncured = 0.0;
+				Double avgValue = 0.0;
+				if(noOfAtt > 0)
+					avgValue = costIncured/noOfAtt;
+				//String [] tempQtyArr = (objArr[11]+"").split("#");
+				TPMSummaryDto tpmSumDto=new TPMSummaryDto(); 
+				tpmSumDto.setRequestDate((Date)objArr[0]);
+				tpmSumDto.setRequestId(objArr[1]+"-"+objArr[2]);
+				tpmSumDto.setMonth(monthYearFmt.format((Date)objArr[0]));
+				tpmSumDto.setDistCode(objArr[3]+"");
+				tpmSumDto.setDistName(objArr[4]+"");
+				tpmSumDto.setEmpCode(objArr[5]+"");
+				tpmSumDto.setEmpName(objArr[6]+"");
+				tpmSumDto.setCity(objArr[7]+"");
+				tpmSumDto.setRetailerName(objArr[13]+"");
+				tpmSumDto.setNoOfAtt(noOfAtt);
+				tpmSumDto.setExpense(costIncured);
+				tpmSumDto.setAvgCost(avgValue);
+				//tpmSumDto.setGiftsRequested(checkNumInt(tempQtyArr[0]));
+				//tpmSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				tpmSumDto.setVertical(objArr[9]+"");
+				tpmSumDto.setMeetId(objArr[11]+"");
+				if(objArr[12] != null)
+					tpmSumDto.setMeetDate((Date)objArr[12]);
+				
+				Users userTempObj = usersListDet.get(objArr[5]+"");
+				if(userTempObj != null)
+				{
+					List<Roles> roleList = new ArrayList<Roles>(userTempObj.getRoles());
+					String tempRole = roleList.get(0).getName();
+					String tempZone = "";
+					String tempRepMgr = "";
+					String zonalHead = "";
+					String tempState = "";
+					if("ROLE_REQ_CR".equals(tempRole))
+					{
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+									else if("ROLE_ST_HEAD".equals(tempSelRole) && (tempState+"_HD_GRP").equals(workGrpUsr.getGroupId()))
+									{
+										tempRepMgr += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+					else if("ROLE_ST_HEAD".equals(tempRole))
+					{
+						tempRepMgr = userTempObj.getFirstName();
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							if(tempState != null)
+							{
+								tempState=tempState.replaceAll("_HD_GRP","");
+							}
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+						
+					tpmSumDto.setSalesPersonName(userTempObj.getFirstName());
+					tpmSumDto.setZone(tempZone);
+					tpmSumDto.setState(workGrpHT.get(tempState));
+					tpmSumDto.setReportingManager(tempRepMgr);
+					tpmSumDto.setZonalHead(zonalHead);
+					
+					
+				}
+				else
+				{
+					tpmSumDto.setSalesPersonName("");
+					tpmSumDto.setZone("");
+					tpmSumDto.setState("");
+					tpmSumDto.setReportingManager("");
+					tpmSumDto.setZonalHead("");
+				}
+				tpmSumList.add(tpmSumDto);
+			} catch (Exception e) {
+				log.debug("Exception while generating tpm summary"+e);
+			}
+        }
+        reportSelector.setUserGrp(tempUserList);
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", tpmSumList);
+        return "reports/teamTPMMeetSum"; 
+
+    }
+    
+    @RequestMapping(value = "/showDispatchGiftReport", method = RequestMethod.GET)
+    public String getDispatchedGifts(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+	List<Object[]> list = null;
+	{
+	list = repService.getDispatchedGifts(reportSelector);
+	}
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", list);
+        return "reports/dispatchGiftsReport"; 
+
+    }
     
 }
   

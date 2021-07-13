@@ -32,6 +32,8 @@ public class TpsRequestDto implements java.io.Serializable{
 	@NotNull
 	private String distrubutor;
 	@NotNull
+	private String erhVertical;
+	@NotNull
 	@Size(min=0, max=40)
 	private String city;
 	private String organisation;
@@ -41,6 +43,7 @@ public class TpsRequestDto implements java.io.Serializable{
 	
 	private List<EzPlaceMaster> placeList=new ArrayList<EzPlaceMaster>();
 	
+	List<String> userCatList=new ArrayList<String>();
 	
 	public List<EzPlaceMaster> getPlaceList() {
 		return placeList;
@@ -105,6 +108,18 @@ public class TpsRequestDto implements java.io.Serializable{
 	}
 	public void setDealerName(List<EzcRequestDealers> dealerName) {
 		this.dealerName = dealerName;
+	}
+	public String getErhVertical() {
+		return erhVertical;
+	}
+	public void setErhVertical(String erhVertical) {
+		this.erhVertical = erhVertical;
+	}
+	public List<String> getUserCatList() {
+		return userCatList;
+	}
+	public void setUserCatList(List<String> userCatList) {
+		this.userCatList = userCatList;
 	}
 	
 	

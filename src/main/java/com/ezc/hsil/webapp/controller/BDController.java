@@ -82,7 +82,8 @@ public class BDController {
 			loggedUser=(String)userObj.getUserId();
 			List<EzStores> outStoreList = masterService.listStores();
 			List<String> userCatList=userObj.getUserCategories();
-	    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+			List<DistributorMaster> distList = masterService.findAll();
+			//List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
 			List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
 	    	for(int i=0;i<10;i++)
 	    	{
@@ -90,13 +91,14 @@ public class BDController {
 	    	}
 	    	bdReqDto.setMatLoopList(matLoopList);
 			bdReqDto.setDistList(distList);
+			bdReqDto.setUserCatList(userCatList);
 		 	//model.addAttribute("matList", bdService.getBDLeftOverStock(ezReqHeader.getErhRequestedBy()));
 			
 			List<EzcRequestHeader> list=bdService.pendingRequests(loggedUser);
 	    	List<Object[]> matList=bdService.getAvailableStock(loggedUser,"BD");
 			model.addAttribute("matList",matList);
 	    	model.addAttribute("reqList",list);
-			
+	    	model.addAttribute("userCatList",userCatList);
 	        model.addAttribute("bdReqDto",bdReqDto);
 	        model.addAttribute("outStoreList",outStoreList);
 	        return "bd/bdForm";
@@ -200,7 +202,8 @@ public class BDController {
 			   	ezRequestHeader.setErhReqType("BD");
 			   	ezRequestHeader.setErhRequestedOn(new Date());
 			   	ezRequestHeader.setErhState(distMast.getOrganisation());
-			   	ezRequestHeader.setErhVerical(distMast.getType());
+			   	//ezRequestHeader.setErhVerical(distMast.getType());
+			   	ezRequestHeader.setErhVerical(bdReqDto.getErhVertical());
 			   	ezRequestHeader.setErhStatus("NEW"); 
 			   	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 			   	ezRequestHeader.setErhRequestedBy(userObj.getUserId());

@@ -1,8 +1,9 @@
 <div class="table-responsive" th:fragment="menu(selType)">
 	<ul class="nav navbar-nav">
       <li th:class="${selType == 'TPM'?'active':''}"><a th:href="@{/reports/teamTPMSum}">TPM/TMM</a></li>
+      <li th:class="${selType == 'TPMM'?'active':''}"><a th:href="@{/reports/teamTPMMeetWiseSum}">TPM/TMM Meet Wise</a></li>
       <li th:class="${selType == 'TPS'?'active':''}"><a th:href="@{/reports/teamTPSSum}">TPS/TMS</a></li>
-      <li sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')" th:class="${selType == 'BD'?'active':''}"><a th:href="@{/reports/teamBDSum}">BD/Marketing</a></li>
+      <li sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')" th:class="${selType == 'BD'?'active':''}"><a th:href="@{/reports/teamBDSum}">Promotional Materials</a></li>
       <li sec:authorize="hasAnyRole('ADMIN','ROLE_ZN_HEAD')" th:class="${selType == 'INF'?'active':''}"><a th:href="@{/reports/teamINFSum}">In Field</a></li>
     </ul>
 </div>

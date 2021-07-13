@@ -39,7 +39,10 @@
                 </th:block> 
                  <th:block th:each="row, place : *{placeList}">
                 	<input type="hidden" th:field="*{placeList[__${place.index}__].city}"/>
-                </th:block> 
+                </th:block>
+                 <th:block th:each="row, userCat : *{userCatList}">
+                	<input type="hidden" th:field="*{userCatList[__${userCat.index}__]}"/>
+                </th:block>  
                 <div th:class="${#fields.hasErrors('erhDistrubutor')}? 'form-group has-error' : 'form-group'">
                     <label for="erhDistrubutor">Distributor</label>
                       <select class="form-control select2" th:field="*{erhDistrubutor}">
@@ -47,6 +50,14 @@
 						<option th:selected="${erhDistrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
 	                <span class="help-block" th:if="${#fields.hasErrors('erhDistrubutor')}" th:errors="*{erhDistrubutor}"></span>
+                </div>
+                <div th:class="${#fields.hasErrors('erhVertical')}? 'form-group has-error' : 'form-group'">
+                    <label for="erhVertical">Vertical</label>
+                      <select class="form-control select2" th:field="*{erhVertical}">
+						<option selected value="">---select vertical---</option>
+						<option th:selected="${erhVertical == vertical}" th:each="vertical : *{userCatList}" th:value="${vertical}" th:text="${vertical}"></option>
+	                </select>
+	                <span class="help-block" th:if="${#fields.hasErrors('erhVertical')}" th:errors="*{erhVertical}"></span>
                 </div>
                 <!-- <div th:class="${#fields.hasErrors('erhCity')}? 'form-group has-error' : 'form-group'">
                     <label for="erhCity">City</label>

@@ -24,6 +24,23 @@ public class TPMSummaryDto {
 	private Integer giftsRequested;
 	private Integer pendingGifts;
 	private String vertical;
+	private String meetId;
+	private Date meetDate;
+	
+	
+	
+	public String getMeetId() {
+		return meetId;
+	}
+	public void setMeetId(String meetId) {
+		this.meetId = meetId;
+	}
+	public Date getMeetDate() {
+		return meetDate;
+	}
+	public void setMeetDate(Date meetDate) {
+		this.meetDate = meetDate;
+	}
 	public Date getRequestDate() {
 		return requestDate;
 	}

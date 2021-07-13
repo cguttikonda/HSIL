@@ -37,9 +37,13 @@ public class TpmRequestDto implements java.io.Serializable {
 	@Size(min=0, max=40)
 	private String erhCity;
 	private String erhInstructions;
+	@NotNull
+	private String erhVertical;
+	
 
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
 	private List<EzPlaceMaster> placeList=new ArrayList<EzPlaceMaster>();
+	List<String> userCatList=new ArrayList<String>();
 	
 	@Valid
 	private List<TPMMeetDto> meetList=new ArrayList<TPMMeetDto>();
@@ -133,6 +137,22 @@ public class TpmRequestDto implements java.io.Serializable {
 
 	public void setPlaceList(List<EzPlaceMaster> placeList) {
 		this.placeList = placeList;
+	}
+
+	public String getErhVertical() {
+		return erhVertical;
+	}
+
+	public void setErhVertical(String erhVertical) {
+		this.erhVertical = erhVertical;
+	}
+
+	public List<String> getUserCatList() {
+		return userCatList;
+	}
+
+	public void setUserCatList(List<String> userCatList) {
+		this.userCatList = userCatList;
 	}
 	
 	

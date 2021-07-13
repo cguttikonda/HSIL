@@ -76,15 +76,18 @@ public class TPSController {
 			//model.addAttribute("matList", tpsService.getLastRequestDet(userObj.getUserId()));
 		
     	List<String> userCatList=userObj.getUserCategories();
-    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+    	//List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+    	List<DistributorMaster> distList = masterService.findAll();
     	model.addAttribute("distList",distList);
     	List<EzPlaceMaster> placeList = masterService.findAllCities();
     	tpsRequestDto.setPlaceList(placeList);
+    	tpsRequestDto.setUserCatList(userCatList);
     	List<EzcRequestHeader> list=tpsService.pendingRequests(loggedUser);
     	List<Object[]> matList=tpsService.getAvailableStock(loggedUser,"TPS");
 		model.addAttribute("matList",matList);
     	model.addAttribute("reqList",list);
         model.addAttribute("tpsRequestDto",tpsRequestDto);
+        model.addAttribute("userCatList",userCatList);
         return "tps/tpsForm";
 
     }
@@ -137,7 +140,8 @@ public class TPSController {
 	    	ezRequestHeader.setErhStatus("NEW"); 
 	    	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
 	    	ezRequestHeader.setErhDistName(distMast.getName());
-	    	ezRequestHeader.setErhVerical(distMast.getType());
+	    	//ezRequestHeader.setErhVerical(distMast.getType());
+	    	ezRequestHeader.setErhVerical(reqDto.getErhVertical());
 	    	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 	    	Set<EzcRequestDealers> reqDealSet = new HashSet<EzcRequestDealers>(arrTempList);
 	    	for(EzcRequestDealers reqDealer : reqDealSet)

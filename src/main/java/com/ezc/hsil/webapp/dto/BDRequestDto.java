@@ -18,9 +18,12 @@ public class BDRequestDto  implements java.io.Serializable {
 	@NotNull
 	private String erhDistrubutor;
 	@NotNull
+	private String erhVertical;
+	@NotNull
 	private String erhPurpose;
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
 	private List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
+	List<String> userCatList=new ArrayList<String>();
 	private String outstore;
 	
 	
@@ -105,4 +108,25 @@ public class BDRequestDto  implements java.io.Serializable {
 		this.matLoopList = matLoopList;
 	}
 
+
+	public String getErhVertical() {
+		return erhVertical;
+	}
+
+
+	public void setErhVertical(String erhVertical) {
+		this.erhVertical = erhVertical;
+	}
+
+
+	public List<String> getUserCatList() {
+		return userCatList;
+	}
+
+
+	public void setUserCatList(List<String> userCatList) {
+		this.userCatList = userCatList;
+	}
+
+	
 }

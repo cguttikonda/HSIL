@@ -90,10 +90,12 @@ public class TPMController {
 		
     	TpmRequestDto tpmRequestDto = new TpmRequestDto();
     	List<String> userCatList=userObj.getUserCategories();
-    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+    	//List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+    	List<DistributorMaster> distList = masterService.findAll();
     	List<EzPlaceMaster> placeList = masterService.findAllCities();
     	tpmRequestDto.setDistList(distList);
     	tpmRequestDto.setPlaceList(placeList);
+    	tpmRequestDto.setUserCatList(userCatList);
         model.addAttribute("tpmRequestDto", tpmRequestDto);
         
 		List<Object[]> list=tpmService.pendingRequests(loggedUser);
@@ -106,6 +108,8 @@ public class TPMController {
 		model.addAttribute("reqList",filteredList);
 		List<Object[]> matList=tpmService.getAvailableStock(loggedUser,"TPM");
 		model.addAttribute("matList",matList);
+		log.debug("userCatList::"+userCatList.size());
+		model.addAttribute("userCatList",userCatList);
         return "tpm/form";
 
     } 
@@ -309,7 +313,8 @@ public class TPMController {
     	ezRequestHeader.setErhStatus("NEW");
     	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
     	ezRequestHeader.setErhDistName(distMast.getName());
-    	ezRequestHeader.setErhVerical(distMast.getType());
+    	//ezRequestHeader.setErhVerical(distMast.getType());
+    	ezRequestHeader.setErhVerical(tpmRequestDto.getErhVertical());
     	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
     	List<TPMMeetDto> meetList= tpmRequestDto.getMeetList();
     	Set<EzcRequestDealers> reqDealerList= new HashSet<EzcRequestDealers>(); 

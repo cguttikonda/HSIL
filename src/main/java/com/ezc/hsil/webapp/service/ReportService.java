@@ -326,4 +326,14 @@ public class ReportService implements IReportService {
 		return reqHeaderRepo.getINFSummary(reportSelector.getFromDate(), reportSelector.getToDate());
 	}
 	
+	@Override
+	public List<Object[]> getTeamTPMMeetSum(ReportSelector reportSelector) {
+		return reqHeaderRepo.getTPMMeetSum(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+	
+	@Override
+	public List<Object[]> getDispatchedGifts(ReportSelector reportSelector) {
+		return reqHeaderRepo.getDispatchedGifts(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+	
 }
