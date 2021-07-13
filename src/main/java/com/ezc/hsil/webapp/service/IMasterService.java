@@ -25,6 +25,7 @@ public interface IMasterService {
 
 	DistributorMaster addNewDistributor(DistributorDto distDto);
 	List<DistributorMaster> findAll();
+	List<DistributorMaster> findAllByCat(List<String> catList);
 	List<MaterialMaster> findMatAll();
 	DistributorDto getDistributorDetails(String code);
 	String updateDistributor(DistributorDto distDto) throws SQLException;

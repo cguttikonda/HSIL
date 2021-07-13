@@ -34,5 +34,9 @@ public interface IReportService {
 	public List<Object[]> getNoofPlumbersPerUser();
 	public List<Object[]> getUsedLeftQtyPerUser();
 	public List<Object[]> getAllInProcessReqPerUser();
+	public List<Object[]> getTeamTPSSummary(ReportSelector reportSelector);
+	public List<Object[]> getTeamTPMSummary(ReportSelector reportSelector);
+	public List<Object[]> getTeamBDSummary(ReportSelector reportSelector);
+	public List<Object[]> getTeamINFSummary(ReportSelector reportSelector);
 	
 }

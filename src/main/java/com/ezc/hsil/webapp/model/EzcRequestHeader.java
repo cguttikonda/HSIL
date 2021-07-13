@@ -61,6 +61,8 @@ public class EzcRequestHeader implements java.io.Serializable {
 	private String erhOutStore;
 	private Date erhApprDate;
 	private Date erhAckDate;
+	private Double erhPrdInv;
+	private String erhVerical;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ERH_APPR_DATE")
@@ -381,6 +383,36 @@ public class EzcRequestHeader implements java.io.Serializable {
 
 	public void setErhOutStore(String erhOutStore) {
 		this.erhOutStore = erhOutStore;
+	}
+
+	/**
+	 * @return the erhPrdInv
+	 */
+	@Column(name="ERH_PRD_INV")
+	public Double getErhPrdInv() {
+		return erhPrdInv;
+	}
+
+	/**
+	 * @param erhPrdInv the erhPrdInv to set
+	 */
+	public void setErhPrdInv(Double erhPrdInv) {
+		this.erhPrdInv = erhPrdInv;
+	}
+
+	/**
+	 * @return the erhVerical
+	 */
+	@Column(name = "ERH_VERTICAL", length = 20)
+	public String getErhVerical() {
+		return erhVerical;
+	}
+
+	/**
+	 * @param erhVerical the erhVerical to set
+	 */
+	public void setErhVerical(String erhVerical) {
+		this.erhVerical = erhVerical;
 	}
 	
  

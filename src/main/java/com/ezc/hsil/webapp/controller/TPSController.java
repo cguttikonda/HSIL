@@ -33,9 +33,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TpsRequestDetailDto;
 import com.ezc.hsil.webapp.dto.TpsRequestDto;
+import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzPlaceMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
@@ -67,16 +69,21 @@ public class TPSController {
 	@RequestMapping("/tps/add")
 	public String add(Model model) {
 		TpsRequestDto tpsRequestDto = new TpsRequestDto();
-		try {
+	
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			Users userObj = (Users)authentication.getPrincipal();
-			model.addAttribute("matList", tpsService.getLastRequestDet(userObj.getUserId()));
-		} catch (Exception e) {
-			
-		}
-    	model.addAttribute("distList",masterService.findAll());
+			String loggedUser=(String)userObj.getUserId();
+			//model.addAttribute("matList", tpsService.getLastRequestDet(userObj.getUserId()));
+		
+    	List<String> userCatList=userObj.getUserCategories();
+    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
+    	model.addAttribute("distList",distList);
     	List<EzPlaceMaster> placeList = masterService.findAllCities();
     	tpsRequestDto.setPlaceList(placeList);
+    	List<EzcRequestHeader> list=tpsService.pendingRequests(loggedUser);
+    	List<Object[]> matList=tpsService.getAvailableStock(loggedUser,"TPS");
+		model.addAttribute("matList",matList);
+    	model.addAttribute("reqList",list);
         model.addAttribute("tpsRequestDto",tpsRequestDto);
         return "tps/tpsForm";
 
@@ -112,6 +119,7 @@ public class TPSController {
     		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         	Users userObj = (Users)authentication.getPrincipal();
 	    	
+        	DistributorDto distMast=masterService.getDistributorDetails(reqDto.getDistrubutor());
 	    	EzcRequestHeader ezRequestHeader = new EzcRequestHeader();
 	    	List<EzcRequestDealers> arrTempList =reqDto.getDealerName();
 	    	
@@ -125,10 +133,11 @@ public class TPSController {
 	    	ezRequestHeader.setErhNoOfAttendee(reqDto.getNoOfAttendee());
 	    	ezRequestHeader.setErhReqType("TPS");
 	    	ezRequestHeader.setErhRequestedOn(new Date());
-	    	ezRequestHeader.setErhState(masterService.getDistributorDetails(reqDto.getDistrubutor()).getOrganisation()); 
+	    	ezRequestHeader.setErhState(distMast.getOrganisation()); 
 	    	ezRequestHeader.setErhStatus("NEW"); 
 	    	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
-	    	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(reqDto.getDistrubutor()).getName());
+	    	ezRequestHeader.setErhDistName(distMast.getName());
+	    	ezRequestHeader.setErhVerical(distMast.getType());
 	    	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 	    	Set<EzcRequestDealers> reqDealSet = new HashSet<EzcRequestDealers>(arrTempList);
 	    	for(EzcRequestDealers reqDealer : reqDealSet)
@@ -346,7 +355,7 @@ public class TPSController {
 			ArrayList<String> userList=new ArrayList<String>();
 			if("APPROVED".equals(status))
 				listSelector.setDispStatus('S');
-	    	if(requestWrapper.isUserInRole("ROLE_ST_HEAD"))
+			if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
 	    	{
 	    		userList.add(userObj.getUserId());
 	    		listSelector.setUser(userList);
@@ -552,12 +561,20 @@ public class TPSController {
 	        return "tps/tpsDetailsForm";
 
 	    }
+	  @RequestMapping(value = "/tps/submitDetails", method = RequestMethod.POST)
+	    public String submitDetails(TpsRequestDetailDto tpsRequestDetailDto,final RedirectAttributes ra) {
+			
+	    	tpsService.submitTPSDetails(tpsRequestDetailDto);
+	        ra.addFlashAttribute("successFlash", "Success");
+	        return "redirect:/tps/tpsRequestList";
+
+	    }
 	  @RequestMapping(value = "/tps/saveDetails", method = RequestMethod.POST)
 	    public String saveDetails(TpsRequestDetailDto tpsRequestDetailDto,final RedirectAttributes ra) {
 			
-	    	tpsService.createTPSDetails(tpsRequestDetailDto);
-	        ra.addFlashAttribute("successFlash", "Success");
-	        return "redirect:/tps/tpsRequestList";
+	    	tpsService.saveTPSDetails(tpsRequestDetailDto);
+	    	ra.addFlashAttribute("alertMsg", "Saved Details Successfully");
+	        return "redirect:/tps/addDetails/"+tpsRequestDetailDto.getReqHeader().getId();
 
 	    }
 	  @RequestMapping(value = "/tps/nullify-qty", method = RequestMethod.POST)

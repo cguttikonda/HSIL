@@ -24,6 +24,7 @@ public class ReportSelector {
 	private String selUser;
 	private String selStHd;
 	private String selDist;
+	private String selVertical;
 	
 	public Date getFromDate() {
 		return fromDate;
@@ -84,6 +85,18 @@ public class ReportSelector {
 	}
 	public void setSelDist(String selDist) {
 		this.selDist = selDist;
+	}
+	/**
+	 * @return the selVertical
+	 */
+	public String getSelVertical() {
+		return selVertical;
+	}
+	/**
+	 * @param selVertical the selVertical to set
+	 */
+	public void setSelVertical(String selVertical) {
+		this.selVertical = selVertical;
 	}
 	
 	

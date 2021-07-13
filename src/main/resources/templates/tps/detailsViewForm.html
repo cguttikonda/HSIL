@@ -347,15 +347,16 @@
 
  function funBack()
 	{
-		document.myForm.action ="/tps/tpsRequestList";
-	 	document.myForm.submit();
-		
+		//document.myForm.action ="/tps/tpsRequestList";
+	 	//document.myForm.submit();
+		window.history.go(-1);
 		
 	}
 	function funBackForZH()
     {
-    	document.myForm.action ="/reports/teamTPSReport";
-	 	document.myForm.submit();
+    	//document.myForm.action ="/reports/teamTPSReport";
+	 	//document.myForm.submit();
+		window.history.go(-1);
     }
 	function funRevoke(docId)
     {

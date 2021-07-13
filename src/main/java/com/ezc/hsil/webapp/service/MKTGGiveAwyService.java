@@ -53,7 +53,7 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 			String [] matArr=matDto.getMatCode().split("#");
 			
 			//Updating stock
-			MaterialMasterKey matMasterKey=new MaterialMasterKey(matArr[0], matDto.getStockLoc());
+			MaterialMasterKey matMasterKey=new MaterialMasterKey(matArr[0], mktgGiveAwayDto.getOutstore());
 			Optional<MaterialMaster> matMaster = matRepo.findById(matMasterKey);
 			
 	        if(matMaster.isPresent())
@@ -84,7 +84,16 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 			ezcMktGiveAway.setMatCode(matArr[0]);
 			ezcMktGiveAway.setQty(matDto.getQty());
 			ezcMktGiveAway.setMatDesc(matArr[1]);
-			ezcMktGiveAway.setStatus("C");
+			if("Marketing Giveaway".equals(mktgGiveAwayDto.getPurpose()))
+				ezcMktGiveAway.setStatus("A");
+			else
+				ezcMktGiveAway.setStatus("C");
+			ezcMktGiveAway.setVertical(mktgGiveAwayDto.getVertical());
+			try {
+				ezcMktGiveAway.setPrdInv(Double.parseDouble(mktgGiveAwayDto.getPrdInv()));
+			} catch (Exception e) {
+				
+			}
 			mktgGiveAwayRepo.save(ezcMktGiveAway);
 			
 			
@@ -105,15 +114,29 @@ public class MKTGGiveAwyService implements IMKTGGiveAwyService {
 	}
 
 	@Override
-	public void acknowledgeRequest(Integer id, String ackBy) {
+	public void acknowledgeRequest(Integer id, String ackBy,String ackComments) {
 		Optional<EzcMktGiveAway> mktGiveAway = mktgGiveAwayRepo.findById(id);
 		if(mktGiveAway.isPresent())
         {  
 			EzcMktGiveAway mktGiveAwayObj = mktGiveAway.get();
-			mktGiveAwayObj.setStatus("A");   
+			mktGiveAwayObj.setStatus("A");
+			mktGiveAwayObj.setAckComments(ackComments);
 			mktGiveAwayObj.setModifiedBy(ackBy);
 			mktGiveAwayObj.setModifiedOn(new Date());
         }
+	}
+
+	@Override
+	public EzcMktGiveAway getRequestDetails(Integer id) {
+		Optional<EzcMktGiveAway> mktGiveAway = mktgGiveAwayRepo.findById(id);
+		if(mktGiveAway.isPresent())
+        {  
+			EzcMktGiveAway mktGiveAwayObj = mktGiveAway.get();
+			return mktGiveAwayObj;
+        }
+		else
+			return null;
+		
 	}
 
 }

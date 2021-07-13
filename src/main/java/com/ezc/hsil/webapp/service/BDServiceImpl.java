@@ -1,5 +1,7 @@
 package com.ezc.hsil.webapp.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -20,6 +22,7 @@ import com.ezc.hsil.webapp.dto.RequestCustomDto;
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.model.EzNullifiedStock;
 import com.ezc.hsil.webapp.model.EzcComments;
+import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.MaterialMaster;
@@ -138,6 +141,7 @@ public class BDServiceImpl implements IBDService{
 		log.debug("id123"+id);
 		Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 		Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
+		
 		ezReqHeader.setErhStatus("APPROVED");
 		ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
 		ezReqHeader.setErhModifiedBy(userObj.getUserId());
@@ -145,6 +149,7 @@ public class BDServiceImpl implements IBDService{
 		ezReqHeader.getEzcComments().addAll(ezcComments);
 		Hashtable<String,String> matHt=new Hashtable<String,String>();
 		String stockLoc = ezcRequestHeader.getErhOutStore();
+		log.debug("bd:::stockLoc::::"+stockLoc);
 		for(int i=0;i<matQty.split(",").length;i++)
 		{	
 			matHt.put(matQty.split(",")[i].split("#")[0],matQty.split(",")[i].split("#")[1]);
@@ -210,67 +215,21 @@ public class BDServiceImpl implements IBDService{
 		
  
 	}
-	
-	/*
-	 * @Override public void submitBDDet(String id,String matQty,EzcRequestHeader
-	 * ezcRequestHeader) throws java.lang.Exception {
-	 * 
-	 * EzcRequestHeader ezReqHeader = bdService.getBDRequest(id); Authentication
-	 * authentication = SecurityContextHolder.getContext().getAuthentication();
-	 * Users userObj = (Users)authentication.getPrincipal(); log.debug("id123"+id);
-	 * Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
-	 * Set<RequestMaterials> ezReqMatList = ezcRequestHeader.getRequestMaterials();
-	 * Set<EzcComments> ezcComments = ezcRequestHeader.getEzcComments();
-	 * ezReqHeader.setErhStatus("APPROVED");
-	 * ezReqHeader.setErhOutStore(ezcRequestHeader.getErhOutStore());
-	 * ezReqHeader.setErhModifiedBy(userObj.getUserId());
-	 * ezReqHeader.setErhModifiedOn(new Date());
-	 * ezReqHeader.getRequestMaterials().addAll(ezReqMatList);
-	 * ezReqHeader.getEzcComments().addAll(ezcComments); Hashtable matHt=new
-	 * Hashtable(); for(int i=0;i<matQty.split(",").length;i++) {
-	 * matHt.put(matQty.split(",")[i].split("#")[0],matQty.split(",")[i].split("#")[
-	 * 1]); }
-	 * 
-	 * log.debug("reqMatSet"+reqMatSet);
-	 * log.debug("reqMatSetsize"+reqMatSet.size()); for(RequestMaterials tempItem :
-	 * reqMatSet) { log.debug("matHt"+matHt); { Integer
-	 * appQty=Integer.parseInt((String)matHt.get(tempItem.getMatCode()));
-	 * log.debug("appQty"+appQty); tempItem.setApprQty(appQty);//added by goutham
-	 * Optional<MaterialMaster> matMaster =
-	 * masterRepo.findById(tempItem.getMatCode()); if(matMaster.isPresent()) {
-	 * MaterialMaster mat = matMaster.get(); int blockQtyTemp=0;
-	 * if(mat.getBlockQty() != null) blockQtyTemp=mat.getBlockQty();
-	 * log.debug("blockQty::"+blockQtyTemp); log.debug("inputQty::"+appQty);
-	 * log.debug("dbqty::"+mat.getQuantity()); int stockChk =
-	 * (mat.getQuantity()-blockQtyTemp)-appQty; if(stockChk < 0) {
-	 * log.debug("Exception thrown::stockChk"+stockChk); throw Exception; //need to
-	 * be changed to custom exception
-	 * 
-	 * } else {
-	 * 
-	 * 
-	 * int blockQty=appQty; if(mat.getBlockQty() != null) blockQty +=
-	 * mat.getBlockQty(); mat.setBlockQty(blockQty); } } }
-	 * 
-	 * }
-	 * 
-	 * for(RequestMaterials tempItem : ezReqMatList) {
-	 * tempItem.setEzcRequestHeader(ezReqHeader); reqMatRep.save(tempItem); }
-	 * for(EzcComments tempItem : ezcComments) {
-	 * tempItem.setEzcRequestHeader(ezReqHeader); commRepo.save(tempItem); }
-	 * 
-	 * 
-	 * 
-	 * }
-	 */
+
 	@Override
-	public void createBDDetails(BDRequestDetailDto bdRequestDetailDto) {
-		String loggedUser="";
+	public void submitBDDetails(BDRequestDetailDto bdRequestDetailDto) {
+		
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(bdRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
 		List<EzcRequestItems> ezReqItemList = bdRequestDetailDto.getEzcRequestItems();
 		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
 		String comments=bdRequestDetailDto.getCommentReqDto();
 		Set<EzcComments> commSet = new HashSet<EzcComments>();
+		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
+		 for(EzcRequestItems delItem:ezReqItems)
+			{
+				delItem.setEzcRequestHeader(null);
+			}
+		 ezReqItems.removeAll(ezReqItems);
 		int matCnt = 0;
 		 if(comments!= null)
 			{
@@ -300,7 +259,14 @@ public class BDServiceImpl implements IBDService{
 			  }
 			}
 		 log.debug("matCnt"+matCnt);
-		  for(RequestMaterials requestMaterials : reqMatSet) { 
+		 for(RequestMaterials requestMaterials : reqMatSet) { 
+			   int apprQty =requestMaterials.getApprQty();
+			   requestMaterials.setUsedQty(apprQty);
+			   requestMaterials.setLeftOverQty(0);
+		 }
+		 
+/*		  
+		 for(RequestMaterials requestMaterials : reqMatSet) { 
 			   int apprQty =requestMaterials.getApprQty();
 			   log.debug("apprQty"+apprQty);
 			   if(apprQty > matCnt)
@@ -320,6 +286,7 @@ public class BDServiceImpl implements IBDService{
 			} 
 	 if(matCnt>0)
 	  	useLeftOverStk.updateLeftOverStock(ezReqHeader.getErhRequestedBy(),matCnt,"BD");
+*/	 
 	  ezReqHeader.setErhStatus("SUBMITTED");
 	  ezReqHeader.setErhCity(bdRequestDetailDto.getReqHeader().getErhCity());
 	  ezReqHeader.setErhPurpose(bdRequestDetailDto.getReqHeader().getErhPurpose());
@@ -330,7 +297,41 @@ public class BDServiceImpl implements IBDService{
 	  
 	  
 	}
-	
+
+	@Override
+	public void saveBDDetails(BDRequestDetailDto bdRequestDetailDto) {
+		
+		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(bdRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
+		List<EzcRequestItems> ezReqItemList = bdRequestDetailDto.getEzcRequestItems();
+		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
+		 for(EzcRequestItems delItem:ezReqItems)
+			{
+				delItem.setEzcRequestHeader(null);
+			}
+		 ezReqItems.removeAll(ezReqItems);
+		
+		
+	  ezReqHeader.setErhCity(bdRequestDetailDto.getReqHeader().getErhCity());
+	  ezReqHeader.setErhPurpose(bdRequestDetailDto.getReqHeader().getErhPurpose());
+	  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
+	  
+	  for(EzcRequestItems tempItem : ezReqItemList) {
+			
+		  if(tempItem.getEriDealer() != null && !"null".equals(tempItem.getEriDealer()) && !"".equals(tempItem.getEriDealer()))
+		  {
+			  String quan=tempItem.getEriQuantity();
+			  log.debug("quan"+quan);
+			  if(quan == null || "null".equals(quan) || "".equals(quan))quan="0";
+			// 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  reqDealRep.save(tempItem);
+		  }
+		}
+	  
+	  
+	  
+	}
+
 
 	@Override
 	public List<Object[]> getBDLeftOverStock(String reqBY) {
@@ -380,6 +381,32 @@ public class BDServiceImpl implements IBDService{
 		  commRepo.save(tempItem); 
 		}		
 	}
-
-
+	
+	@Override
+	public List<EzcRequestHeader> pendingRequests(String userId)
+    {
+    	ListSelector listSelector=null; 
+    	if(listSelector == null || listSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		listSelector = new ListSelector();
+    		listSelector.setFromDate(c.getTime());
+    		listSelector.setToDate(todayDate);
+    		listSelector.setStatus("APPROVED");
+    	}
+    	listSelector.setType("BD");
+    	ArrayList<String> userList=new ArrayList<String>();
+    	userList.add(userId);
+    	listSelector.setUser(userList);
+    	List<EzcRequestHeader> list = this.getBDRequestListByDate(listSelector);
+    	log.debug("list:::"+list.size());
+        return list;
+    }
+	@Override
+	public List<Object[]> getAvailableStock(String requestedBy,String requestType) {
+		return reqHeaderRepo.getAvailableStock(requestedBy,requestType);
+	}
 }

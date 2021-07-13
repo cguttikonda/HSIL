@@ -92,11 +92,13 @@
                     <th>Sent On</th>
                     <th>Distributor</th>
                     <th>Distributor Name</th>
+                    <th>Vertical</th>
                     <th>Material</th>
                     <th>Quantity</th>
                     <th></th>
                     <th>Text/Reason</th>
                     <th>Status</th>
+                    <th>Remarks</th>
                     
                     
                 </tr>
@@ -108,18 +110,28 @@
                     <td th:text="${#dates.format(row.createdOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.distrubutor}"></td>
                     <td th:text="${row.distName}"></td>
+                    <td th:text="${row.vertical}"></td>
                     <td th:text="${row.matDesc+'['+row.matCode+']'}"></td>
                     <td th:text="${row.qty}"></td>
-                    <td>
+                    <!-- <td>
                     <span sec:authorize="hasRole('ROLE_ST_HEAD')" th:if="${row.status == 'C'}">
 						<a th:href="${'/mktg/ackRequest/'+{row.id}}"
 						class="btn btn-success btn-xs"> <span class="glyphicon glyphicon-ok">ACKNOWLEDGE</span>
 						</a>
 					</span>
-                    </td>
+                    </td> -->
+                    <td>          	
+                    	<span sec:authorize="hasRole('ROLE_ST_HEAD')" th:if="${row.status == 'C'}">
+							<a href="#"
+							th:data-id="${row.id}"
+							onclick="javascript:openModal('ack',this.getAttribute('data-id'))"
+							class="btn btn-success btn-xs"> <span
+								class="glyphicon glyphicon-ok">ACKNOWLEDGE</span>
+							</a>
+						</span></td>
                     <td th:text="${row.purpose}"></td>
                     <td th:text="${row.status == 'A'?'Acknowledged':'Not Acknowledged'}"></td>
-                    
+                    <td th:text="${row.ackComments}"></td>
                 </tr>
             	</tbody>
             </table>
@@ -127,7 +139,7 @@
         </div>
     </div>
     
-    
+<div th:fragment="mktack-det" id="mktModalHolder"></div>    
 </div>
 <div layout:fragment="scriptContent">
 
@@ -150,6 +162,46 @@ $(document).ready(function() {
 	);
 	 
 });
+function openModal(modelType,distId){
+	
+	if(modelType === "ack"){
+		
+	
+		$.ajax({
+			url: "/modal/mktackmodal/" + distId,
+			success: function(data){
+				$("#mktModalHolder").html(data);
+				$('#mktAckModal').modal({
+					backdrop: 'static'
+				});
+				$("#dispDate").datepicker({
+			    	 autoclose: true,
+			         format: 'dd/mm/yyyy'
+			    });
+			}
+		});
+		
+	}
+}
+function mktAckReq(event){
+	var formdata = $('#mktackform').serialize(); 
+	if($("#mktackform").validationEngine('validate'))
+		{
+		
+		Pace.restart();
+	$.ajax({			
+		type : "POST",
+		url : "/mktg/ackRequest", 
+		data : formdata,
+		success : function(response) {
+				location.href="/mktg/mktgRequestList"
+		},
+		error : function(ex) {
+			console.log(ex);
+		}
+	});
+		}
+}
 
 </script>
 

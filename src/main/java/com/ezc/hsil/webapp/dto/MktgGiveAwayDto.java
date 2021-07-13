@@ -17,6 +17,10 @@ public class MktgGiveAwayDto {
 	private String distName;
 	private String createdBy;
 	private Date createdOn;
+	private String outstore;
+	private String prdInv; 
+	private String vertical; 
+
 	private List<MaterialQtyDto> matList=new ArrayList<MaterialQtyDto>();
 	
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
@@ -89,6 +93,42 @@ public class MktgGiveAwayDto {
 	}
 	public void setVehNo(String vehNo) {
 		this.vehNo = vehNo;
+	}
+	/**
+	 * @return the outstore
+	 */
+	public String getOutstore() {
+		return outstore;
+	}
+	/**
+	 * @param outstore the outstore to set
+	 */
+	public void setOutstore(String outstore) {
+		this.outstore = outstore;
+	}
+	/**
+	 * @return the prdInv
+	 */
+	public String getPrdInv() {
+		return prdInv;
+	}
+	/**
+	 * @param prdInv the prdInv to set
+	 */
+	public void setPrdInv(String prdInv) {
+		this.prdInv = prdInv;
+	}
+	/**
+	 * @return the vertical
+	 */
+	public String getVertical() {
+		return vertical;
+	}
+	/**
+	 * @param vertical the vertical to set
+	 */
+	public void setVertical(String vertical) {
+		this.vertical = vertical;
 	}
 	
 	

@@ -116,7 +116,7 @@
 						</span>
 						</span>
 						<span th:if="${row.erhReqType == 'TPS'}">
-                    	<span sec:authorize="hasRole('ROLE_ST_HEAD')" th:if="${row.erhStatus == 'APPROVED' && listSelector.getStatus() == 'APPROVED'}">
+                    	<span sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_REQ_CR')" th:if="${row.erhStatus == 'APPROVED' && listSelector.getStatus() == 'APPROVED'}">
 							<a th:href="${'/tps/addDetails/' + {row.id}}"
 							class="btn btn-success btn-xs"> <span
 								class="glyphicon glyphicon-ok">SUBMIT</span>
@@ -213,8 +213,9 @@ function openModal(modelType,distId){
 				$("#addMatRow").click(function(){
 					if($("#appr-tps-form").validationEngine('validate'))
 					{
+						var desc = $("#selMat").val().split("#")[0]+"-"+$("#selMat").val().split("#")[1];
 						$('#tpsReqTable').show();
-						$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+						$('#tpsReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+desc+'</td><td><input type="hidden" name="apprQty" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
 						$('.deleteItem').click(function(){
 					    	$(this).closest("tr").remove();
 					    });
@@ -331,6 +332,7 @@ function approveTPSReq(event){
 		return ;
 	}
 	$('#saveBtn').hide();
+	$('#outStore').prop('disabled', '');
 	Pace.restart();
 	var formdata = $('#appr-tps-form').serialize();
 	//alert("ok1");
@@ -421,7 +423,29 @@ function checkQty()
 		return ;
 	
 }
-
+function funStoreChange()
+{
+    $('#outStore').prop('disabled', 'disabled');
+	$('#selMat').select2({
+        placeholder: 'Select Material',
+        ajax: {
+          url: '/modal/matstock-autocomp?type=text&stockLoc='+$("#outStore").val(),
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            return {
+	                       results: $.map(data, function (item) {
+	                          return {
+	                              text: item.materialCode+"-"+item.materialDesc,
+	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	                          }
+	                      }) 
+	                  };
+          },
+          cache: true
+        }
+   });
+}
 </script>
 
 

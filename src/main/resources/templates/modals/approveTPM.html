@@ -56,6 +56,9 @@
 					<th>Expected Attendes</th>
 					<td th:text="*{erhNoOfAttendee}">
 					<input type="hidden"	name="noOfAttend" th:value="*{erhNoOfAttendee}">				
+					</td>
+					<th>Sales Person</th>
+					<td th:text="*{erhReqName+'['+erhRequestedBy+']'}">
 					</td>	
 					</tr>
 
@@ -116,7 +119,17 @@
                     </div>
                   </div>
                 </div>
-                	
+                	<table class="table table-bordered" id="tpmReqTable">
+					<thead>
+						<tr>
+							<th>Material</th>
+							<th>Quantity</th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+					</tbody>
+					</table>
 					<table class="table table-bordered" >
 					<thead>
 						<tr>

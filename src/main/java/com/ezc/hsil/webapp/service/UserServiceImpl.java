@@ -293,7 +293,10 @@ public class UserServiceImpl implements IUserService{
         		}
         		if(userCatStr.indexOf(",") >= 0)
         			userCatStr=userCatStr.substring(0, userCatStr.length() - 1);
-        		userDefRepo.deleteById(new UserDefaultsKey(user.getId(), "CATEGORY"));
+        		UserDefaultsKey userDefKey=new UserDefaultsKey(user.getId(), "CATEGORY");
+        		if (userDefRepo.existsById(userDefKey)) 
+        			userDefRepo.deleteById(userDefKey);
+        		
         		UserDefaults userDef=new UserDefaults();
 		        userDef.setKey("CATEGORY");
 		        userDef.setValue(userCatStr);
@@ -548,5 +551,11 @@ public class UserServiceImpl implements IUserService{
 		@Override
 		public Work_Groups saveWorkGroup(Work_Groups workGrp) {
 			return groupRepository.save(workGrp);
+		}
+
+		@Override
+		public List<WorkGroup_Users> getWorkGrpUsers() {
+			// TODO Auto-generated method stub
+			return groupUsersRepository.findAll();
 		}
 }

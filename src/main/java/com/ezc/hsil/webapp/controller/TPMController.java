@@ -3,13 +3,16 @@ package com.ezc.hsil.webapp.controller;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -31,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
@@ -42,6 +46,7 @@ import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.EzcRequestItems;
 import com.ezc.hsil.webapp.model.RequestMaterials;
+import com.ezc.hsil.webapp.model.UserDefaults;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.persistance.dao.RequestHeaderRepo;
 import com.ezc.hsil.webapp.service.IMasterService;
@@ -78,17 +83,29 @@ public class TPMController {
 		 * 
 		 * }
 		 */
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		String loggedUser=(String)userObj.getUserId();
+		
+		
     	TpmRequestDto tpmRequestDto = new TpmRequestDto();
-    	List<DistributorMaster> distList = masterService.findAll();
+    	List<String> userCatList=userObj.getUserCategories();
+    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
     	List<EzPlaceMaster> placeList = masterService.findAllCities();
     	tpmRequestDto.setDistList(distList);
     	tpmRequestDto.setPlaceList(placeList);
         model.addAttribute("tpmRequestDto", tpmRequestDto);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Users userObj = (Users)authentication.getPrincipal();
-		String loggedUser=(String)userObj.getUserId();
+        
 		List<Object[]> list=tpmService.pendingRequests(loggedUser);
-		model.addAttribute("reqList",list);
+		
+		List<Object[]> filteredList = null;
+		
+		if(list != null)
+			filteredList = list.stream().filter(p -> p[11] == null).collect(Collectors.toList());
+		
+		model.addAttribute("reqList",filteredList);
+		List<Object[]> matList=tpmService.getAvailableStock(loggedUser,"TPM");
+		model.addAttribute("matList",matList);
         return "tpm/form";
 
     } 
@@ -225,7 +242,7 @@ public class TPMController {
 		String loggedUser=(String)userObj.getUserId();
 		log.debug("loggedUser"+loggedUser+"status"+status);
 		ArrayList<String> userList=new ArrayList<String>();
-    	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
+    	if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
     	{
     		userList.add(userObj.getUserId());
     		log.debug("getUserId"+userObj.getUserId()); 
@@ -254,7 +271,7 @@ public class TPMController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users userObj = (Users)authentication.getPrincipal();
 		ArrayList<String> userList=new ArrayList<String>();
-    	if(requestWrapper.isUserInRole("ROLE_REQ_CR"))
+		if(requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD"))
     	{
     		userList.add(userObj.getUserId());
     		listSelector.setUser(userList);
@@ -279,6 +296,7 @@ public class TPMController {
     	{
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	Users userObj = (Users)authentication.getPrincipal();
+    	DistributorDto distMast=masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor());
     	EzcRequestHeader ezRequestHeader = new EzcRequestHeader();
     	ezRequestHeader.setErhCity(tpmRequestDto.getErhCity());
     	ezRequestHeader.setErhConductedOn(tpmRequestDto.getErhConductedOn());
@@ -287,10 +305,11 @@ public class TPMController {
     	ezRequestHeader.setErhNoOfAttendee(tpmRequestDto.getErhNoOfAttendee());
     	ezRequestHeader.setErhReqType("TPM");
     	ezRequestHeader.setErhRequestedOn(new Date());
-    	ezRequestHeader.setErhState(masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor()).getOrganisation()); 
+    	ezRequestHeader.setErhState(distMast.getOrganisation()); 
     	ezRequestHeader.setErhStatus("NEW");
     	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
-    	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(tpmRequestDto.getErhDistrubutor()).getName());
+    	ezRequestHeader.setErhDistName(distMast.getName());
+    	ezRequestHeader.setErhVerical(distMast.getType());
     	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
     	List<TPMMeetDto> meetList= tpmRequestDto.getMeetList();
     	Set<EzcRequestDealers> reqDealerList= new HashSet<EzcRequestDealers>(); 
@@ -333,10 +352,9 @@ public class TPMController {
 			   leftOverStk=leftOverStk+(Integer)leftOverStkList.get(i)[4];
 		   } 
 		 log.debug("leftOverStk"+leftOverStk);
-		/*
-		 * for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems()) {
-		 * ezcRequestItems.add(item); }
-		 */
+		
+		  
+		 
 		 int apprQty=0;
 		 int leftQty=0;
 		 int usedQty=0;
@@ -358,6 +376,14 @@ public class TPMController {
 				meetDealer = dealerObj; 
 			}
 		}
+		
+		for(EzcRequestItems item : ezcRequestHeader.getEzcRequestItems()) {
+			if(meetDealer.getId().intValue() == item.getEriDealerId().intValue())
+			{
+			  ezcRequestItems.add(item);
+			}
+		  }
+		
         reqDto.setEzcRequestItems(ezcRequestItems);
         reqDto.setReqHeader(ezcRequestHeader);
         reqDto.setMeetDealer(meetDealer);
@@ -366,7 +392,7 @@ public class TPMController {
         model.addAttribute("reqDto", reqDto);
         model.addAttribute("leftOverStk", leftOverStk);
         
-        if("APPROVED".equals(ezcRequestHeader.getErhStatus()) && requestWrapper.isUserInRole("ROLE_REQ_CR"))
+        if("APPROVED".equals(ezcRequestHeader.getErhStatus()) && (requestWrapper.isUserInRole("ROLE_REQ_CR") || requestWrapper.isUserInRole("ROLE_ST_HEAD")))
         	return "tpm/detailsForm";
         else
         	return "tpm/detailsEditForm";
@@ -524,100 +550,20 @@ public class TPMController {
     
     @RequestMapping(value = "/tpm/saveDetails", method = RequestMethod.POST)
     public String saveDetails(TpmRequestDetailDto tpmRequestDetailDto, final RedirectAttributes ra) {
-    	tpmService.createTPMDetails(tpmRequestDetailDto);
+    	tpmService.saveTPMDetails(tpmRequestDetailDto);
+        ra.addFlashAttribute("alertMsg", "Saved Details Successfully");
+        return "redirect:/tpm/addDetails/"+tpmRequestDetailDto.getReqHeader().getId()+"/"+tpmRequestDetailDto.getMeetDealer().getErdMeetId()+"";
+
+    }
+    
+    @RequestMapping(value = "/tpm/submitDetails", method = RequestMethod.POST)
+    public String submitDetails(TpmRequestDetailDto tpmRequestDetailDto, final RedirectAttributes ra) {
+    	tpmService.submitTPMDetails(tpmRequestDetailDto);
         ra.addFlashAttribute("successFlash", "Success");
         return "redirect:/tpm/tpmReqListSts/APPROVED";
 
     }
-    /*
-    public List<EzcRequestItems> processText(List<EzcRequestItems> ezcRequestItems,String text)
-    {
-    	if(text != null && !"null".equals(text) && !"".equals(text))
-    	{
-	    	text = text.toUpperCase();
-	    	String [] requestArr = text.split("NEXT");
-	    	for(String string :requestArr)
-	    	{
-	    		//System.out.print("::"""+retTxt(string));
-	    		String name="",mobile="";
-				Date dob=null,doa=null;
-	    		int i=0;
-	    		int cnt = 0;
-	    	    boolean nameFound = false;
-	            boolean mobileFound = false;
-	    	    while (i < string.length())
-	            {
-	                //System.out.print(":::"+string.charAt(i)+"::"+Character.isDigit(string.charAt(i)));
-	                if(!nameFound)
-	                {
-	                    if(!Character.isDigit(string.charAt(i)))
-	                    {
-	                        name += string.charAt(i);
-	                    }
-	                    else
-	                    {
-	                        nameFound = true;
-	                        i--;
-	                    }
-	                    //System.out.print("nameFound:::"+mobileFound);
-	                }
-	                else if(!mobileFound)
-	                {
-	                    
-	                    //System.out.print(cnt);    
-	                    if(Character.isDigit(string.charAt(i)))
-	                    {
-	                        cnt++;
-	                        mobile+=string.charAt(i);
-	                        if(cnt == 10)
-	                        {
-	                            mobileFound = true;
-	                        }
-	                    }
-	                }
-	                else if(nameFound && mobileFound)
-	                {
-	                    break;
-	                }
-	                
-	                i++; 
-	            }
-				  int dateCnt =0;
-				  SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); 
-				  String mobStr = string.substring(i,string.length()); 
-				  mobStr = mobStr.trim();
-				  String [] mobStrArr = mobStr.split(" ");
-				  if(mobStrArr != null && mobStrArr.length > 0) {
-					  try {
-						dob= sdf.parse(mobStrArr[dateCnt++].replace("TH","")+"-"+mobStrArr[dateCnt++].substring(0,3)+"-"+mobStrArr[dateCnt++]);
-					} catch (ParseException e) {
-						log.info("parse exception dob::"+e);
-					}
-				  catch (NullPointerException e) {
-					}
-					  log.info("dob::"+dob);
-					  try {
-							doa= sdf.parse(mobStrArr[dateCnt++].replace("TH","")+"-"+mobStrArr[dateCnt++].substring(0,3)+"-"+mobStrArr[dateCnt++]);
-						} catch (ParseException e) {
-							log.info("parse exception doa::"+e);
-						}
-					  catch (NullPointerException e) {
-						}
-					  log.info("doa::"+doa);
-				  }
-				 
-	            
-	    		EzcRequestItems ezcRequestItemsObj = new EzcRequestItems();
-	    		ezcRequestItemsObj.setEriPlumberName(name);
-	    		ezcRequestItemsObj.setEriContact(mobile);
-	    		ezcRequestItemsObj.setEriDob(dob);
-	    		ezcRequestItemsObj.setEriDoa(doa);
-	    		ezcRequestItems.add(ezcRequestItemsObj);
-	    	}
-    	}	
-    	return ezcRequestItems;
-    }
-    */
+    
     public List<EzcRequestItems> processText(List<EzcRequestItems> ezcRequestItems,String text)
     {
     	try {

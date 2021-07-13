@@ -47,7 +47,7 @@ width: 5000px;
                  
                  </tr>      		
                 <tr>
-                    <th>Zone</th>
+          <!--           <th>Zone</th> -->
                     <th>Area</th>
                     <th>Emp Code</th>
                     <th>Emp Name</th>
@@ -91,7 +91,7 @@ width: 5000px;
            		<tbody>
            		<tr th:each="row:${overallRepLt}">
         		
-        		<td th:text="${row.zone}"></td>
+        		<!-- <td th:text="${row.zone}"></td> -->
         		<td th:text="${row.Area}"></td>
         		<td th:text="${row.empCode}"></td>
         		<td th:text="${row.empName}"></td>
@@ -150,7 +150,7 @@ width: 5000px;
         col_1: "select",
         col_2: "select",
         col_3: "select",
-        col_4: "select",
+        col_4: "none",
         col_5: "none",
         col_6: "none",
         col_7: "none",
@@ -185,7 +185,6 @@ width: 5000px;
         col_36: "none",
         col_37: "none",
         col_38: "none",
-        col_39: "none",
         btn: true  
     } ; 
     var tf03 = setFilterGrid("example",2,table3Filters);  

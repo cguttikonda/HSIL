@@ -29,11 +29,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ezc.hsil.webapp.dto.BDRequestDetailDto;
 import com.ezc.hsil.webapp.dto.BDRequestDto;
+import com.ezc.hsil.webapp.dto.DistributorDto;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.MaterialQtyDto;
 import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDetailDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzStores;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
@@ -72,16 +74,15 @@ public class BDController {
 	 @RequestMapping("/bd/add")
 	 public String add(Model model) {
 		 BDRequestDto bdReqDto = new BDRequestDto();
-		List<DistributorMaster> distList = masterService.findAll();
+		
 		 String loggedUser="";
-			try {
-				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-				Users userObj = (Users)authentication.getPrincipal();
-				loggedUser=(String)userObj.getUserId();
-				
-			} catch (Exception e) {
-				
-			} 
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			Users userObj = (Users)authentication.getPrincipal();
+			loggedUser=(String)userObj.getUserId();
+			List<EzStores> outStoreList = masterService.listStores();
+			List<String> userCatList=userObj.getUserCategories();
+	    	List<DistributorMaster> distList = masterService.findAllByCat(userCatList);
 			List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
 	    	for(int i=0;i<10;i++)
 	    	{
@@ -90,7 +91,14 @@ public class BDController {
 	    	bdReqDto.setMatLoopList(matLoopList);
 			bdReqDto.setDistList(distList);
 		 	//model.addAttribute("matList", bdService.getBDLeftOverStock(ezReqHeader.getErhRequestedBy()));
+			
+			List<EzcRequestHeader> list=bdService.pendingRequests(loggedUser);
+	    	List<Object[]> matList=bdService.getAvailableStock(loggedUser,"BD");
+			model.addAttribute("matList",matList);
+	    	model.addAttribute("reqList",list);
+			
 	        model.addAttribute("bdReqDto",bdReqDto);
+	        model.addAttribute("outStoreList",outStoreList);
 	        return "bd/bdForm";
 
 	    }
@@ -167,7 +175,7 @@ public class BDController {
 	 @RequestMapping(value = "/bd/saveRequest", method = RequestMethod.POST)
 	 public String save(@Valid @ModelAttribute("bdReqDto") BDRequestDto bdReqDto,BindingResult bindingResult,@RequestParam(value = "leftOverMat", required = false) String [] leftOverMat,@RequestParam(value = "allocQty", required = false) Integer [] allocQty,@RequestParam(value = "leftOverId", required = false) Integer [] leftOverId,final RedirectAttributes ra)
 	 {
-		 log.debug("in controller");
+		 log.debug("in controller::"+bdReqDto.getOutstore());
 		/* if(bindingResult.hasErrors())
 	    	{
 			 log.debug("in controller has err");
@@ -178,7 +186,8 @@ public class BDController {
 	    		log.debug("in controller no err"+bdReqDto.getMatLoopList()+bdReqDto.getMatLoopList().size());	
 				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 				Users userObj = (Users)authentication.getPrincipal();
- 	
+				DistributorDto distMast=masterService.getDistributorDetails(bdReqDto.getErhDistrubutor());
+				
 			   	EzcRequestHeader ezRequestHeader = new EzcRequestHeader();
 			   	
 			   	
@@ -186,14 +195,16 @@ public class BDController {
 			   	
 			   	ezRequestHeader.setErhNoOfAttendee(bdReqDto.getBdQty());
 			   	ezRequestHeader.setErhDistrubutor(bdReqDto.getErhDistrubutor());
-			   	ezRequestHeader.setErhDistName(masterService.getDistributorDetails(bdReqDto.getErhDistrubutor()).getName());
+			   	ezRequestHeader.setErhDistName(distMast.getName());
 			   	ezRequestHeader.setErhPurpose(bdReqDto.getErhPurpose());
 			   	ezRequestHeader.setErhReqType("BD");
 			   	ezRequestHeader.setErhRequestedOn(new Date());
-			   	ezRequestHeader.setErhState(masterService.getDistributorDetails(bdReqDto.getErhDistrubutor()).getOrganisation()); 
+			   	ezRequestHeader.setErhState(distMast.getOrganisation());
+			   	ezRequestHeader.setErhVerical(distMast.getType());
 			   	ezRequestHeader.setErhStatus("NEW"); 
 			   	ezRequestHeader.setErhReqName(userObj.getFirstName()+" "+userObj.getLastName());
 			   	ezRequestHeader.setErhRequestedBy(userObj.getUserId());
+			   	ezRequestHeader.setErhOutStore(bdReqDto.getOutstore());
 			   	
 			   	Set<RequestMaterials> reqMatSet = new HashSet<RequestMaterials>();
 				
@@ -343,17 +354,6 @@ public class BDController {
 			
 			}
 			
-		/*
-		 * if(leftOverId != null && leftOverId.length > 0 && allocQty != null &&
-		 * allocQty.length > 0) { for(int i=0;i<leftOverId.length;i++) { if(allocQty[i]
-		 * != null && allocQty[i] > 0) { RequestMaterials reqMat = new
-		 * RequestMaterials(); reqMat.setMatCode(leftOverMat[i].split("#")[0]);
-		 * reqMat.setMatDesc(leftOverMat[i].split("#")[1]);
-		 * reqMat.setApprQty(allocQty[i]); reqMat.setIsNew('N');
-		 * reqMat.setAllocId(leftOverId[i]); reqMatSet.add(reqMat); } }
-		 * 
-		 * }
-		 */
 	    	ezcRequestHeader.setRequestMaterials(reqMatSet);
 	    	ezcRequestHeader.setEzcComments(commSet);
 	    	ezcRequestHeader.setErhOutStore(outStore);
@@ -401,7 +401,7 @@ public class BDController {
 			} catch (Exception e) {
 				
 			} 
-			List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
+			List<EzStores> outStoreList = masterService.listStores();
 	        List<RequestMaterials> ezcMatList=new ArrayList<RequestMaterials>();
 	        List<EzcRequestItems> ezcRequestItems=new ArrayList<EzcRequestItems>();
 	        List<EzcComments> ezcComm=new ArrayList<EzcComments>();
@@ -415,6 +415,13 @@ public class BDController {
 			{
 				ezcMatList.add(item); 
 			}
+	        if("NEW".equals(ezcRequestHeader.getErhStatus()))
+	        {
+	        	ezcMatList.add(new RequestMaterials());
+	        	ezcMatList.add(new RequestMaterials());
+	        	ezcMatList.add(new RequestMaterials());
+	        }
+	        
 	        log.debug("distributor"+ezcRequestHeader.getErhDistrubutor());
 	        log.debug("requsetby"+ezcRequestHeader.getErhRequestedBy());
 	        String distCity = "",distState="";
@@ -426,14 +433,21 @@ public class BDController {
 	        ezcRequestHeader.setErhCity(distCity);
 	        String requestby=ezcRequestHeader.getErhRequestedBy();
 	        BDRequestDetailDto reqDto = new BDRequestDetailDto();
+	        List<EzcRequestItems> reqItems = new ArrayList<EzcRequestItems>();
+	        if(!ezcRequestHeader.getEzcRequestItems().isEmpty())
+	        	reqItems.addAll(ezcRequestHeader.getEzcRequestItems());
+	        
 	        reqDto.setReqHeader(ezcRequestHeader);
+	        reqDto.setEzcRequestItems(reqItems);
 	        reqDto.setEzReqMatList(ezcMatList);
 	        reqDto.setEzcComments(ezcComm);
 	        reqDto.setRequestby(requestby);
+	        List<EzcRequestHeader> list=bdService.pendingRequests(ezcRequestHeader.getErhRequestedBy());
 	        model.addAttribute("reqDto", reqDto);
 	        model.addAttribute("matList", bdService.getBDLeftOverStock(ezcRequestHeader.getErhRequestedBy()));
 	        model.addAttribute("pendingList", bdService.getPendingList(ezcRequestHeader.getErhRequestedBy(),"BD"));
 	        model.addAttribute("outStoreList", outStoreList);
+	        model.addAttribute("reqList", list);
 	       	return "bd/bdDetailsForm";
 	       
 
@@ -467,41 +481,22 @@ public class BDController {
 	       
 
 	    } 
-	/*  @RequestMapping(value = "/bd/addNewItem/{purpose}", method = RequestMethod.POST)
-	    public String addNewTPMItem(@PathVariable String purpose,@RequestParam String requestBY,BDRequestDetailDto reqDto, Model model) {
-	        List<EzcRequestItems> ezcRequestItems=null;
-	        String disabledStr="true";
-	        log.debug(purpose);
-	        if("Event".equals(purpose.trim()))disabledStr="false";
-	        
-	        log.debug(disabledStr);
-	        log.debug("dist"+reqDto.getReqHeader().getErhDistrubutor());
-	        log.debug("requestby"+reqDto.getReqHeader().getErhRequestedBy());
-	        log.debug("requestby"+requestBY);
-	      //  List<Object[]> pendList= bdService.getPendingList(requestBY,"BD");
-	        
-	        if(reqDto.getEzcRequestItems() == null)
-	        	ezcRequestItems = new ArrayList<EzcRequestItems>();
-	        else
-	        	ezcRequestItems = reqDto.getEzcRequestItems();
-	        ezcRequestItems.add(new EzcRequestItems());
-	        reqDto.setEzcRequestItems(ezcRequestItems);
-			reqDto.setReqHeader(reqDto.getReqHeader());
-			reqDto.setRequestby(requestBY);
-			model.addAttribute("disabledStr", disabledStr);
-			model.addAttribute("matList", bdService.getBDLeftOverStock(requestBY));
-			//model.addAttribute("pendingList", bdService.getPendingList(requestBY,"BD"));
-	        model.addAttribute("reqDto", reqDto); 
-	        return "bd/bdDetailsForm";
 
-	    }*/
 	  @RequestMapping(value = "/bd/saveDetails", method = RequestMethod.POST)
 	    public String saveDetails(BDRequestDetailDto bdRequestDetailDto, final RedirectAttributes ra) {
-	    	bdService.createBDDetails(bdRequestDetailDto);
+	    	bdService.saveBDDetails(bdRequestDetailDto);
+	        ra.addFlashAttribute("alertMsg", "Saved Details Successfully");
+	        return "redirect:/bd/addDetails/"+bdRequestDetailDto.getReqHeader().getId();
+
+	    }
+	  @RequestMapping(value = "/bd/submitDetails", method = RequestMethod.POST)
+	    public String submitDetails(BDRequestDetailDto bdRequestDetailDto, final RedirectAttributes ra) {
+	    	bdService.submitBDDetails(bdRequestDetailDto);
 	        ra.addFlashAttribute("successFlash", "Success");
 	        return "redirect:/bd/bdRequestList";
 
 	    }
+	  
 	  @RequestMapping(value = "/bd/nullify-qty", method = RequestMethod.POST)
 		public @ResponseBody String NullifyBDQty(@RequestParam String leftOverId,@RequestParam(value = "reasonNullify", required = false) String  reasonNullify,@RequestParam(value = "commentsNullify", required = false) String  commentsNullify) {
 		  bdService.NullifyBDQty(leftOverId,reasonNullify,commentsNullify);

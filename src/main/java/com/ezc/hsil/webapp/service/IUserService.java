@@ -74,4 +74,6 @@ public interface IUserService {
 	List<WorkGroup_Users> getStateHeadSubGroups(String stateHDGrp);
 	
 	List<Users> findUsersByRole(String role);
+	
+	List<WorkGroup_Users> getWorkGrpUsers();
 }

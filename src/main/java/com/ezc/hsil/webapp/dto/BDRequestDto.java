@@ -21,6 +21,20 @@ public class BDRequestDto  implements java.io.Serializable {
 	private String erhPurpose;
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
 	private List<MaterialQtyDto> matLoopList=new ArrayList<MaterialQtyDto>();
+	private String outstore;
+	
+	
+	
+	public String getOutstore() {
+		return outstore;
+	}
+
+
+	public void setOutstore(String outstore) {
+		this.outstore = outstore;
+	}
+
+
 	public BDRequestDto() {
 	}
 

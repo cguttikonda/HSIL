@@ -11,7 +11,7 @@
 .scrolltable {
     display: flex;
     flex-flow: column;
-    height: 380px;
+    max-height: 380px;
     width: 100%;
 }
 .scrolltable thead {
@@ -29,7 +29,7 @@
 .scrolltable tbody tr {
     width: 100%;
 }
-.scrolltable thead, table tbody tr {
+.scrolltable thead, .scrolltable tbody tr {
     display: table;
     table-layout: fixed;
 }
@@ -58,6 +58,10 @@
     </ol>
 </section>
 <div layout:fragment="content">
+<div th:if="${alertMsg!= null}" class="alert alert-success alert-dismissible">
+   			<i class="icon fa fa-check"></i>
+   			<span th:text="${alertMsg}" ></span>
+   	</div>
     <div class="box">
         <div class="box-header with-border">
             <h3 class="box-title">Report</h3>
@@ -65,7 +69,7 @@
                 <a href="/tpm/list" type="button" class="btn btn-box-tool"><i class="fa fa-list-ul"></i></a>
             </div>
         </div>
-        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tps/saveDetails}" method="post" name="myForm" id="myForm">
+        <form data-toggle="validator" role="form"  th:object="${reqDto}" th:action="@{/tps/submitDetails}" method="post" name="myForm" id="myForm">
             <div class="box-body">
            
             
@@ -278,7 +282,8 @@
 				  </ul>
 				</div> -->
                 <button type="button" onclick="addItem()" class="btn btn-primary btn-sm"><i class="fa fa-arrow-circle-right"></i>&nbsp;Process Voice Data</button>
-                <button type="button"  onclick="onSaveClick()"  class="btn btn-primary btn-sm"><i class="fa fa-save"></i>&nbsp;Save</button>
+                <button type="button" onclick="onSaveClick('SAVE')"  class="btn btn-primary btn-sm"><i class="fa fa-save"></i>&nbsp;Save To Local</button>
+                <button type="button" onclick="onSaveClick('SUBMIT')"  class="btn btn-primary btn-sm"><i class="fa fa-save"></i>&nbsp;Submit</button>
             </div>
         </form>
     </div>
@@ -336,15 +341,21 @@ function dupMobChk(field, rules, i, options){
     $('.deleteItem').click(function(){
     	$(this).closest("tr").remove();
     });
-    function onSaveClick()
+ 
+    function onSaveClick(btnType)
     {
-		if($("#myForm").validationEngine('validate'))
-		{
-		
-			document.myForm.submit();
-		}
+    	if(btnType == "SAVE")
+    	{
+    		document.myForm.action="/tps/saveDetails";
+    		document.myForm.submit();
+    	}
+    	else if(btnType == "SUBMIT" && $("#myForm").validationEngine('validate'))
+    	{
+    		document.myForm.action="/tps/submitDetails";
+    		document.myForm.submit();
+    	}
 
-    } 
+    }
     
     function readOutLoud() {
      	var message = $("#sampleTxt").text();

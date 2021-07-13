@@ -32,6 +32,7 @@
 	<!-- sidebar menu: : style can be found in sidebar.less -->
 	<ul class="sidebar-menu">
 		<li  sec:authorize="hasRole('ADMIN')"><a href="#" th:href="@{/reports/monthWiseReport}"><i class="fa fa-circle-o"></i>Dashboard</a></li>
+		<li  sec:authorize="hasAnyRole('ADMIN','ROLE_ST_HEAD','ROLE_ZN_HEAD','ROLE_REQ_CR')"><a href="#" th:href="@{/reports/teamTPMSum}"><i class="fa fa-circle-o"></i>Summary Dashboard</a></li>
 		<li  sec:authorize="hasRole('ROLE_IN_STOR')">
 			<a th:href="@{/master/addMaterial}"><i class="fa fa-gift"></i> <span>Add Stock</span> 
 		</a>
@@ -159,7 +160,7 @@
 						class="fa fa-circle-o"></i> Create</a></li>
 				<li><a href="#" th:href="@{/bd/bdRequestList}"><i class="fa fa-circle-o"></i> List</a></li>
 			</ul></li>
-		<li class="treeview" sec:authorize="hasRole('ROLE_REQ_CR')"><a href="#">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')"><a href="#">
 				<i class="fa fa-edit"></i> <span>TPM/TMM Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -172,7 +173,7 @@
 			</ul></li>
 		<!-- TPS/TPM End -->
 		 
-		<li class="treeview" sec:authorize="hasAnyRole('ROLE_ST_HEAD')"><a href="#">
+		<li class="treeview" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')"><a href="#">
 				<i class="fa fa-edit"></i> <span>TPS/TMS Request</span> <span
 				class="pull-right-container"> <i
 					class="fa fa-angle-left pull-right"></i>
@@ -187,7 +188,7 @@
 			</li>
 		
 		
-			<li sec:authorize="hasRole('ROLE_ST_HEAD')"><a href="#" th:href="@{/bd/add}"><i class="fa fa-gift"></i>Promotional & Product <br>Sample Request</a></li> 
+			<li sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_ZN_HEAD')"><a href="#" th:href="@{/bd/add}"><i class="fa fa-gift"></i>Promotional & Product <br>Sample Request</a></li> 
 		
 		
 		<li  sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_BD_MKT')">

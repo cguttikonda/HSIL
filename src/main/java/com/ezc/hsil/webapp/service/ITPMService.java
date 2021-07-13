@@ -13,7 +13,8 @@ import com.ezc.hsil.webapp.model.RequestMaterials;
 
 public interface ITPMService {
 
-	public void createTPMDetails(TpmRequestDetailDto tpmRequestDetailDto);
+	public void submitTPMDetails(TpmRequestDetailDto tpmRequestDetailDto);
+	public void saveTPMDetails(TpmRequestDetailDto tpmRequestDetailDto);
 	public EzcRequestHeader createTPMRequest(EzcRequestHeader ezcRequestHeader);
 	public List<EzcComments> getTPMCommentRequest(String docId);
 	public List<EzcRequestHeader> getTPMRequestList(String status); 
@@ -29,4 +30,5 @@ public interface ITPMService {
 	public List<Object[]> getMeetDetailsById(String docId);
 	List<Object[]> getAllStock(String requestedBy);
 	List<Object[]> pendingRequests(String userId);
+	List<Object[]> getAvailableStock(String requestedBy, String requestType);
 }

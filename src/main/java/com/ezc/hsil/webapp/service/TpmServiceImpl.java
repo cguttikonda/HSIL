@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -84,7 +85,7 @@ public class TpmServiceImpl implements ITPMService{
 			return commRepo.findByRequest(docId);
 		}
 		@Override
-		public void createTPMDetails(TpmRequestDetailDto tpmRequestDetailDto) {
+		public void submitTPMDetails(TpmRequestDetailDto tpmRequestDetailDto) {
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpmRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
 		List<EzcRequestItems> ezReqItemList = tpmRequestDetailDto.getEzcRequestItems();
 		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
@@ -96,7 +97,30 @@ public class TpmServiceImpl implements ITPMService{
 		  ezReqHeader.setErhCostIncured(tpmRequestDetailDto.getReqHeader().getErhCostIncured());
 		  //ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
 		  
+		  if(ezcommList != null)
+		  {
+			  for(EzcComments comm:ezcommList)
+			  {
+				  commSet.add(comm);
+			  }
+		  }
 		  
+		  EzcRequestDealers ezcRequestDealers = tpmRequestDetailDto.getMeetDealer();
+			Set<EzcRequestItems> toBeRemovedSet =
+					ezReqItems.stream()
+			               .filter(reqItem -> ezcRequestDealers.getId().equals(reqItem.getEriDealerId()))
+			               .collect(Collectors.toSet());
+			
+			//ezReqItems.removeAll(toBeRemovedSet);
+			if(toBeRemovedSet != null)
+			{
+				for(EzcRequestItems delItem:toBeRemovedSet)
+				{
+					delItem.setEzcRequestHeader(null);
+				}
+				ezReqItems.removeAll(toBeRemovedSet);
+			}
+ 
 		 
 		  if(comments!= null)
 			{
@@ -112,7 +136,7 @@ public class TpmServiceImpl implements ITPMService{
 			  commRepo.save(tempItem); 
 			}
 		  boolean isCompleted = true; 
-		  EzcRequestDealers ezcRequestDealers = tpmRequestDetailDto.getMeetDealer();
+		  
 		  int matCnt=0;
 		  for(EzcRequestItems tempItem : ezReqItemList) {
 			  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
@@ -339,6 +363,11 @@ public class TpmServiceImpl implements ITPMService{
 		}
 		
 		@Override
+		public List<Object[]> getAvailableStock(String requestedBy,String requestType) {
+			return reqHeaderRepo.getAvailableStock(requestedBy,requestType);
+		}
+		
+		@Override
 		public List<Object[]> getAllStock(String requestedBy) {
 			return reqHeaderRepo.getAllStock(requestedBy);
 		}
@@ -400,6 +429,56 @@ public class TpmServiceImpl implements ITPMService{
 	    	log.debug("list:::"+list.size());
 	        return list;
 	    }
+
+		@Override
+		public void saveTPMDetails(TpmRequestDetailDto tpmRequestDetailDto) {
+			EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpmRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
+			List<EzcRequestItems> ezReqItemList = tpmRequestDetailDto.getEzcRequestItems();
+			Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
+			Set<EzcRequestDealers> reqDealersSet = ezReqHeader.getEzcRequestDealers();
+			EzcRequestDealers ezcRequestDealers = tpmRequestDetailDto.getMeetDealer();
+			
+			Set<EzcRequestItems> toBeRemovedSet =
+					ezReqItems.stream()
+			               .filter(reqItem -> ezcRequestDealers.getId().equals(reqItem.getEriDealerId()))
+			               .collect(Collectors.toSet());
+			
+			//ezReqItems.removeAll(toBeRemovedSet);
+			if(toBeRemovedSet != null)
+			{
+				for(EzcRequestItems delItem:toBeRemovedSet)
+				{
+					delItem.setEzcRequestHeader(null);
+				}
+				ezReqItems.removeAll(toBeRemovedSet);
+			}
+			  
+			  
+			  for(EzcRequestItems tempItem : ezReqItemList) {
+				  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
+				  {
+					  tempItem.setEriDealerId(ezcRequestDealers.getId());
+					  tempItem.setEzcRequestHeader(ezReqHeader);
+					  ezReqItems.add(tempItem);
+				  }
+				}
+			  log.debug("ezReqItems::after"+ezReqItems.size());
+			  log.debug("reqDealersSet size"+reqDealersSet.size()); 
+			  for(EzcRequestDealers tempItem : reqDealersSet) {
+				  log.debug("dealer:::::"+ezcRequestDealers.getId()+"tempItem::::"+tempItem.getId());
+				  //if(ezcRequestDealers.getId()==tempItem.getId())
+				  if(ezcRequestDealers.getId().equals(tempItem.getId()))
+				  {
+					  tempItem.setErdDealerName(ezcRequestDealers.getErdDealerName());
+					  tempItem.setErdMeetDate(ezcRequestDealers.getErdMeetDate());
+					  tempItem.setErdCostIncured(ezcRequestDealers.getErdCostIncured());
+					  tempItem.setErdMeetStatus("SAVED");
+				  }
+				}
+			 }
+
+			
+		
 
 
 		

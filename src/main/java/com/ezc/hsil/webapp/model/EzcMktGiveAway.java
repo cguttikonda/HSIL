@@ -63,7 +63,7 @@ public class EzcMktGiveAway implements java.io.Serializable {
 	
 	@Column(name="EMGA_MAT_CODE",length=20)
 	private String matCode;
-	
+	 
 	@Column(name="EMGA_MAT_DESC",length=50)
 	private String matDesc;
 	
@@ -73,7 +73,15 @@ public class EzcMktGiveAway implements java.io.Serializable {
 	@Column(name="EMGA_STATUS",length=4)
 	private String status; 
 	
-	 
+	@Column(name="EMGA_PRD_INV")
+	private Double prdInv; 
+	
+	@Column(name="EMGA_VERTICAL",length=20)
+	private String vertical;
+	
+	@Column(name="EMGA_ACK_COMMENTS",length=1000)
+	private String ackComments;
+	
 	public EzcMktGiveAway() {
 	}
 

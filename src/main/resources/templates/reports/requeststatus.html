@@ -80,14 +80,20 @@
                        <thead>			
                 <tr>
                     <th>Request No</th>
-                    <th>Distributor</th>
+                    <th>Distributor Code</th>
+                    <th>Distributor Name</th>
                     <th>City</th>
-                    <th>Created By</th>
-                    <th>Created On</th>
+                    <th>Employee Code</th>
+                    <th>Employee Name</th>
+                    <th>Category</th>
+                    <th>Request On</th>
                     <th>Meeting Date</th>
                     <th>No Of Attendance</th>
                     <th>Approval Status</th>
                     <th>Dispatch Status</th>
+                    <th>Approved On</th>
+                    <th>Dispatched On</th>
+                    <th>Acknowledged On</th>
                 </tr>
                     </thead>
            		<tbody>	
@@ -100,20 +106,26 @@
                     		<a th:case="'BD'" th:href="${'/bd/viewDetails/' + {row.id}}" th:text="${row.erhCreatedGroup+'-'+row.id}"></a>
 						</th:block>
                     </td>
-                    <td th:text="${row.erhDistrubutor+'['+row.erhDistName+']'}"></td>
+                    <td th:text="${row.erhDistrubutor}"></td>
+                    <td th:text="${row.erhDistName}"></td>
                     <td th:text="${row.erhCity}"></td>
-                    <td th:text="${row.erhRequestedBy+'['+row.erhReqName+']'}"></td>
+                    <td th:text="${row.erhRequestedBy}"></td>
+                    <td th:text="${row.erhReqName}"></td>
+                    <td th:text="${row.erhReqType}"></td>
                     <td th:text="${#dates.format(row.erhRequestedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${#dates.format(row.erhConductedOn, 'dd/MM/yyyy')}"></td>
                     <td th:text="${row.erhNoOfAttendee}"></td>
                     <td th:text="${row.erhStatus}"></td>
                     <td>
                     	<th:block th:switch="${row.erhDispatchFlag}">
-                    		<span th:case="'Y'" class="label label-success">Shipped</span>
+                    		<span t:case="'Y'" class="label label-success">Shipped</span>
 						    <span th:case="null" class="label label-warning">Pending</span>
 						    <span th:case="S" class="label label-danger">Delivered</span>
 						</th:block>
                     </td>
+                    <td th:text="${#dates.format(row.erhApprDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(row.erhDispDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(row.erhAckDate, 'dd/MM/yyyy')}"></td>
                 </tr>
             	</tbody>
             </table>

@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,9 +37,11 @@ import com.ezc.hsil.webapp.dto.MktgGiveAwayDto;
 import com.ezc.hsil.webapp.dto.TPMMeetDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
+import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.EzcRequestDealers;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.UserDefaults;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IMKTGGiveAwyService;
 import com.ezc.hsil.webapp.service.IMasterService;
@@ -69,20 +73,32 @@ public class MKTGiveAwayController {
     @RequestMapping("/mktg/add")
     public String add(Model model) {
 	
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		String loggedUser=(String)userObj.getUserId();
+		String store="";
+		Set<UserDefaults> userDefSet= userObj.getUserDefaults();
+		for(UserDefaults userDef:userDefSet)
+		{
+			if("STORE".equals(userDef.getKey()))
+			{
+				store = userDef.getValue();
+				break;
+			}
+		}
     	MktgGiveAwayDto mktgGiveAwayDto = new MktgGiveAwayDto();
     	List<DistributorMaster> distList = masterService.findAll();
     	List<Users> userList = userService.findUsersByRole("ROLE_ST_HEAD");
     	log.debug("userList:::::::"+userList);
     	mktgGiveAwayDto.setDistList(distList);
     	mktgGiveAwayDto.setUserList(userList);
+    	mktgGiveAwayDto.setOutstore(store);
     	List<MaterialQtyDto> matList=new ArrayList<MaterialQtyDto>();
     	for(int i=0;i<10;i++)
     	{
     		matList.add(new MaterialQtyDto());
     	}
-    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Users userObj = (Users)authentication.getPrincipal();
-		String loggedUser=(String)userObj.getUserId();
+    	
 		log.debug("loggedUser"+loggedUser);
     	mktgGiveAwayDto.setMatList(matList);
         model.addAttribute("mktgGiveAwayDto", mktgGiveAwayDto);
@@ -120,10 +136,12 @@ public class MKTGiveAwayController {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     	Users userObj = (Users)authentication.getPrincipal();
     	Users stateHeadDet=userService.findUserByUserId(mktgGiveAwayDto.getSentTo());
+    	DistributorDto distMast=masterService.getDistributorDetails(mktgGiveAwayDto.getDistrubutor());
     	
     	mktgGiveAwayDto.setCreatedBy(userObj.getUserId());
     	mktgGiveAwayDto.setSentToName(stateHeadDet.getFirstName()+" "+stateHeadDet.getLastName());
-    	mktgGiveAwayDto.setDistName(masterService.getDistributorDetails(mktgGiveAwayDto.getDistrubutor()).getName());
+    	mktgGiveAwayDto.setDistName(distMast.getName());
+    	mktgGiveAwayDto.setVertical(distMast.getType());
     	try {
 			iMKTGGiveAwyService.createMKTData(mktgGiveAwayDto); 
 			ra.addFlashAttribute("success","Details Saved Successfully.");
@@ -187,7 +205,7 @@ public class MKTGiveAwayController {
         return "mktg/list"; 
 
     }
-    
+/*    
     @RequestMapping(value = "/mktg/ackRequest/{id}", method = RequestMethod.GET)
     public String ackRequest(@PathVariable String id , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {	
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -196,6 +214,13 @@ public class MKTGiveAwayController {
         return "redirect:/mktg/mktgRequestList"; 
 
     }
-
+*/
+    @RequestMapping(value = "/mktg/ackRequest", method = RequestMethod.POST)
+    public @ResponseBody String ackRequest(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "ackComments", required = false) String ackComments) {
+           Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	   		Users userObj = (Users)authentication.getPrincipal();
+	   		iMKTGGiveAwyService.acknowledgeRequest(Integer.parseInt(id), userObj.getUserId(),ackComments);
+	        return "ok";
+    }   
 
 }

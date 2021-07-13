@@ -26,6 +26,10 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	EzcRequestHeader findTopByErhCreatedGroupAndErhRequestedByAndErhStatusOrderByErhConductedOnDesc(String group,String requestedBy,String status);
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.leftOverQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhReqType=:requestType  and b.leftOverQty > 0 ORDER BY b.id")
 	List<Object[]> getLeftOverStock(String requestedBy,String requestType);
+	
+	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhReqType=:requestType  and b.apprQty-b.usedQty > 0 ORDER BY b.id")
+	List<Object[]> getAvailableStock(String requestedBy,String requestType);
+	
 	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty-b.usedQty,b.id,a.erhDistName,a.erhRequestedOn from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhRequestedBy=:requestedBy and a.erhStatus IN ('SUBMITTED','APPROVED') and b.apprQty-b.usedQty > 0 ORDER BY b.id")
 	List<Object[]> getAllStock(String requestedBy);
 /*	@Query(value="select a.id,a.erhDistrubutor,b.matCode,b.matDesc,b.apprQty,b.leftOverQty,b.id from EzcRequestHeader a,RequestMaterials b where a.id=b.ezcRequestHeader.id and a.erhStatus=:erhStatus and a.erhReqType=:erhReqType")
@@ -87,5 +91,15 @@ public interface RequestHeaderRepo extends JpaRepository<EzcRequestHeader, Integ
 	
 	@Query(value="select b.eriPlumberName,a.erhState,b.eriDob,b.eriDoa,a.erhDistrubutor,a.erhDistName,a.erhReqType from EzcRequestHeader a,EzcRequestItems b where a.id=b.ezcRequestHeader.id and a.erhReqType IN ('TPM','TPS','BD')")
 	List<Object[]> getPlumberList();
+	@Query(nativeQuery = true,value="SELECT A.ERH_REQUESTED_ON,A.ERH_REQ_TYPE,A.ID,A.ERH_DISTRIBUTOR,A.ERH_DIST_NAME,A.ERH_REQUESTED_BY,A.ERH_REQ_NAME,A.ERH_CITY,A.ERH_COST_INCURED,A.ERH_VERTICAL,(SELECT COUNT(ID) FROM EZC_REQUEST_ITEMS WHERE ERI_REQ_ID=A.ID) AS ATTENDES,(SELECT CONCAT(CAST(SUM(ERM_APPR_QTY) AS CHAR(20)),'#',CAST(SUM(ERM_LEFTOVER_QTY) AS CHAR(20))) FROM EZC_REQUEST_MATERIALS WHERE ERM_REQ_ID=A.ID) AS APPR_QTY,(SELECT GROUP_CONCAT(ERD_DEALER_NAME SEPARATOR ',') FROM EZC_REQUEST_DEALERS WHERE ERD_REQ_ID=A.ID) AS RETAILER FROM EZC_REQUEST_HEADER A WHERE A.ERH_STATUS='SUBMITTED' AND A.ERH_REQ_TYPE='TPS' AND (A.ERH_REQUESTED_ON >= :fromDate AND A.ERH_REQUESTED_ON <= :toDate)")
+	List<Object[]> getTPSSummary(Date fromDate,Date toDate);
+	@Query(nativeQuery = true,value="SELECT A.ERH_REQUESTED_ON,A.ERH_REQ_TYPE,A.ID,A.ERH_DISTRIBUTOR,A.ERH_DIST_NAME,A.ERH_REQUESTED_BY,A.ERH_REQ_NAME,A.ERH_CITY,A.ERH_COST_INCURED,A.ERH_VERTICAL,(SELECT COUNT(ID) FROM EZC_REQUEST_ITEMS WHERE ERI_REQ_ID=A.ID) AS ATTENDES,(SELECT CONCAT(CAST(SUM(ERM_APPR_QTY) AS CHAR(20)),'#',CAST(SUM(ERM_LEFTOVER_QTY) AS CHAR(20))) FROM EZC_REQUEST_MATERIALS WHERE ERM_REQ_ID=A.ID) AS APPR_QTY,(SELECT GROUP_CONCAT(ERD_DEALER_NAME SEPARATOR ',') FROM EZC_REQUEST_DEALERS WHERE ERD_REQ_ID=A.ID) AS RETAILER,(SELECT SUM(ERD_COST_INCURED) FROM EZC_REQUEST_DEALERS WHERE ERD_REQ_ID=A.ID) AS COST_INCURED FROM EZC_REQUEST_HEADER A WHERE A.ERH_STATUS='SUBMITTED' AND A.ERH_REQ_TYPE='TPM' AND (A.ERH_REQUESTED_ON >= :fromDate AND A.ERH_REQUESTED_ON <= :toDate)")
+	List<Object[]> getTPMSummary(Date fromDate,Date toDate);
+	@Query(nativeQuery = true,value="SELECT A.ERH_REQUESTED_ON,A.ERH_REQ_TYPE,A.ID,A.ERH_CITY,A.ERH_REQUESTED_BY,A.ERH_REQ_NAME,A.ERH_DISTRIBUTOR,A.ERH_DIST_NAME,A.ERH_PURPOSE,B.ERM_MAT_CODE,B.ERM_MAT_DESC,B.ERM_APPR_QTY,B.ERM_USED_QTY FROM EZC_REQUEST_HEADER A,EZC_REQUEST_MATERIALS B WHERE A.ID=B.ERM_REQ_ID AND A.ERH_REQ_TYPE='BD' AND A.ERH_STATUS='SUBMITTED' AND (A.ERH_REQUESTED_ON >= :fromDate AND A.ERH_REQUESTED_ON <= :toDate)")
+	List<Object[]> getBDSummary(Date fromDate,Date toDate);
+	@Query(nativeQuery = true,value="SELECT A.ERH_REQ_TYPE,A.ID,A.ERH_CITY,A.ERH_REQUESTED_BY,A.ERH_REQ_NAME,A.ERH_DISTRIBUTOR,A.ERH_DIST_NAME,A.ERH_VERTICAL,A.ERH_REQUESTED_ON,A.ERH_APPR_DATE,A.ERH_DISP_DATE,A.ERH_ACK_DATE,B.ERM_MAT_CODE,B.ERM_MAT_DESC,B.ERM_APPR_QTY-B.ERM_USED_QTY FROM EZC_REQUEST_HEADER A,EZC_REQUEST_MATERIALS B WHERE A.ID=B.ERM_REQ_ID  AND (A.ERH_REQUESTED_ON >= :fromDate AND A.ERH_REQUESTED_ON <= :toDate) AND B.ERM_APPR_QTY-B.ERM_USED_QTY > 0")
+	List<Object[]> getINFSummary(Date fromDate,Date toDate);
+	
+
 }
-                             
+      

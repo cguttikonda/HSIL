@@ -46,7 +46,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ROLE_REQ_CR')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">
@@ -61,7 +61,7 @@ Roles: <span sec:authentication="principal.roles">[ROLE_USER, ROLE_ADMIN]</span>
         </div>
         <!-- ./col -->
         <!-- ./col -->
-         <div class="col-lg-4 col-xs-12" sec:authorize="hasRole('ROLE_ST_HEAD')">
+         <div class="col-lg-4 col-xs-12" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')">
             <!-- small box -->
             <div class="small-box bg-aqua">
                 <div class="inner">

@@ -3,7 +3,7 @@ package com.ezc.hsil.webapp.dto;
 public class MaterialQtyDto {
 	private String matCode;
 	private String matDesc;
-	private String stockLoc;
+	
 	private int qty;
 	public String getMatCode() {
 		return matCode;
@@ -23,17 +23,6 @@ public class MaterialQtyDto {
 	public void setQty(int qty) {
 		this.qty = qty;
 	}
-	/**
-	 * @return the stockLoc
-	 */
-	public String getStockLoc() {
-		return stockLoc;
-	}
-	/**
-	 * @param stockLoc the stockLoc to set
-	 */
-	public void setStockLoc(String stockLoc) {
-		this.stockLoc = stockLoc;
-	}
+	
 	
 }

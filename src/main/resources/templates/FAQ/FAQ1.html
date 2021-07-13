@@ -14,62 +14,137 @@
 </section>
 <div layout:fragment="content">
 	
-    <div class="box">
- 
-     <div class="box-body" sec:authorize="hasAnyRole('ROLE_ST_HEAD','ROLE_BD_MKT')">
+<!--     <div class="box">
+
+          <div class="box-body" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
      <div id="faq" role="tablist" aria-multiselectable="true">
 			
-			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_ST_HEAD')">
-			<div class="panel-heading" role="tab" id="questionOne">
+
+		</div>
+     
+     </div>
+ --> 
+     <div class="box-body" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+     <div id="faq" role="tablist" aria-multiselectable="true">
+			<div class="panel panel-primary" >
+			<div class="panel-heading" role="tab" id="tpmReqCrQ">
 			<h5 class="panel-title">
-			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne">
-			HOW TO CREATE TPS Request?
+			<a data-toggle="collapse" data-parent="#faq" href="#tpmReqCrA" aria-expanded="false" aria-controls="tpmReqCrQ">
+			How to create TPM/TMM Request?
 			</a>
 			</h5>
 			</div>
-			<div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div id="tpmReqCrA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="tpmReqCrA">
 			<div class="panel-body">
 			Follow the link
-			TPS Request-->Create
-			<div><img th:src="@{/resources/images/TPSReq.png}" alt="User Image" /></div>
+			TPM/TMM Request-->Create
+			<div><img class="img-responsive" th:src="@{/resources/images/TPMReq.png}" alt="User Image" /></div>
 			</div>
 			
 			</div>
 			</div>
+			
+			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+			<div class="panel-heading" role="tab" id="tpmReqSubQ">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#tpmReqSubA" aria-expanded="false" aria-controls="answerOne">
+			How to submit TPM/TMM Report?
+			</a>
+			</h5>
+			</div>
+			<div id="tpmReqSubA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Click On TPM Approved link in dashboard and click on submit
+			<div><img class="img-responsive" th:src="@{/resources/images/tpmReqSub.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>			
+			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+			<div class="panel-heading" role="tab" id="tpsReqCrQ">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#tpsReqCrA" aria-expanded="false" aria-controls="answerOne">
+			How to create TPS/TMS Request?
+			</a>
+			</h5>
+			</div>
+			<div id="tpsReqCrA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Follow the link
+			TPS/TMS Request-->Create
+			<div><img class="img-responsive" th:src="@{/resources/images/TPSReq.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>
+			
+			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+			<div class="panel-heading" role="tab" id="tpsReqSubQ">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#tpsReqSubA" aria-expanded="false" aria-controls="answerOne">
+			How to submit TPS/TMS Report?
+			</a>
+			</h5>
+			</div>
+			<div id="tpsReqSubA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Click On TPS Approved link in dashboard and click on submit
+			<div><img class="img-responsive" th:src="@{/resources/images/tpsReqSub.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>				
 
 			
 			<div class="panel panel-primary" >
-			<div class="panel-heading" role="tab" id="questionOne">
+			<div class="panel-heading" role="tab" id="bdReqCrQ">
 			<h5 class="panel-title">
-			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerBD">
-			HOW TO CREATE BD Request?
+			<a data-toggle="collapse" data-parent="#faq" href="#bdReqCrA" aria-expanded="false" aria-controls="#bdReqCrA">
+			How to create Promotional & Product Sample Request?
 			</a>
 			</h5>
 			</div>
-			<div id="answerBD" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionBD">
+			<div id="bdReqCrA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="bdReqCrA">
 			<div class="panel-body">
 			Follow the link
-			TPS Request-->Request for Additional Gifts
-			<div><img th:src="@{/resources/images/BDReq.png}" alt="User Image" /></div>
+			Promotional & Product Sample Request
+			<div><img class="img-responsive" th:src="@{/resources/images/BDReq.png}" alt="User Image" /></div>
+			</div>
+			
+			</div>
+			</div>
+			
+			<div class="panel panel-primary" sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD','ROLE_BD_MKT')">
+			<div class="panel-heading" role="tab" id="bdReqSubQ">
+			<h5 class="panel-title">
+			<a data-toggle="collapse" data-parent="#faq" href="#bdReqSubA" aria-expanded="false" aria-controls="answerOne">
+			How to submit Promotional & Product Sample Report?
+			</a>
+			</h5>
+			</div>
+			<div id="bdReqSubA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
+			<div class="panel-body">
+			Click On Promotional & Product Sample Report Approved link in dashboard and click on submit
+			<div><img class="img-responsive" th:src="@{/resources/images/bdReqSub.png}" alt="User Image" /></div>
 			</div>
 			
 			</div>
 			</div>
 
 			<div class="panel panel-primary">
-			<div class="panel-heading" role="tab" id="questionTwo">
+			<div class="panel-heading" role="tab" id="ackQ">
 			<h5 class="panel-title">
-			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
-			How to Acknowledge the request??
+			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#ackA" aria-expanded="false" aria-controls="ackQ">
+			How to Acknowledge the request?
 			
 			</a>
 			
 			</h5>
 			</div>
-			<div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
+			<div id="ackA" class="panel-collapse collapse" role="tabpanel" aria-labelledby="ackA">
 			<div class="panel-body">
 			Click on Dispatch Acknowledge link.
-			<div><img th:src="@{/resources/images/acknowledge.png}" alt="User Image" /></div>
+			<div><img class="img-responsive" th:src="@{/resources/images/acknowledge.png}" alt="User Image" /></div>
 			
 			</div>
 			</div>
@@ -79,51 +154,7 @@
 		</div>
      
      </div>
-          <div class="box-body" sec:authorize="hasAnyRole('ROLE_REQ_CR')">
-     <div id="faq" role="tablist" aria-multiselectable="true">
-			
-			<div class="panel panel-primary" >
-			<div class="panel-heading" role="tab" id="questionOne">
-			<h5 class="panel-title">
-			<a data-toggle="collapse" data-parent="#faq" href="#answerOne" aria-expanded="false" aria-controls="answerOne">
-			HOW TO CREATE TPM Request?
-			</a>
-			</h5>
-			</div>
-			<div id="answerOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionOne">
-			<div class="panel-body">
-			Follow the link
-			TPM Request-->Create
-			<div><img th:src="@{/resources/images/TPMReq.png}" alt="User Image" /></div>
-			</div>
-			
-			</div>
-			</div>
 
-			
-			<div class="panel panel-primary">
-			<div class="panel-heading" role="tab" id="questionTwo">
-			<h5 class="panel-title">
-			<a class="collapsed" data-toggle="collapse" data-parent="#faq" href="#answerTwo" aria-expanded="false" aria-controls="answerTwo">
-			How to Acknowledge the request??
-			
-			</a>
-			
-			</h5>
-			</div>
-			<div id="answerTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="questionTwo">
-			<div class="panel-body">
-			Click on Dispatch Acknowledge link.
-			<div><img th:src="@{/resources/images/acknowledge.png}" alt="User Image" /></div>
-			
-			</div>
-			</div>
-			</div>
-
-
-		</div>
-     
-     </div>
     <div class="box-body" sec:authorize="hasAnyRole('ADMIN')">
    	  <div id="faq" role="tablist" aria-multiselectable="true">
 		<div class="panel panel-primary" >
@@ -138,9 +169,9 @@
 				<div class="panel-body">
 				Follow the link
 				<b>MasterData-->Distributor-->AddDistributor</b>
-				<div><img th:src="@{/resources/images/disData.png}" alt="User Image" /></div>
+				<div><img class="img-responsive" th:src="@{/resources/images/disData.png}" alt="User Image" /></div>
 				<b>To Upload Mass Data</b>
-				<div><img th:src="@{/resources/images/UploadDis.png}" alt="User Image" /></div>
+				<div><img class="img-responsive" th:src="@{/resources/images/UploadDis.png}" alt="User Image" /></div>
 				</div>
 			
 			</div>
@@ -161,9 +192,9 @@
 			<div class="panel-body">
 				Follow the link
 				<b>MasterData-->Stock-->AddStock</b>
-				<div><img th:src="@{/resources/images/stk.png}" alt="User Image" /></div>
+				<div><img class="img-responsive" th:src="@{/resources/images/stk.png}" alt="User Image" /></div>
 				<b>To Upload Mass Data</b>
-				<div><img th:src="@{/resources/images/stkUpl.png}" alt="User Image" /></div>
+				<div><img class="img-responsive" th:src="@{/resources/images/stkUpl.png}" alt="User Image" /></div>
 
 			
 			</div>
@@ -184,7 +215,7 @@
 			<div class="panel-body">
 				Follow the link
 				<b>MasterData-->User Creation-->Add</b>
-				<div><img th:src="@{/resources/images/UserCreation.png}" alt="User Image" /></div>
+				<div><img class="img-responsive" th:src="@{/resources/images/UserCreation.png}" alt="User Image" /></div>
 			
 			</div>
 			</div>

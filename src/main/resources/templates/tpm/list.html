@@ -139,7 +139,7 @@
                     <td th:text="${row[14]}"></td>
                     <td>
                     
-                    	<span sec:authorize="hasRole('ROLE_REQ_CR')" th:if="${row[9] == 'APPROVED' && row[15] != 'COMPLETED' && listSelector.getStatus() == 'APPROVED'}">
+                    	<span sec:authorize="hasAnyRole('ROLE_REQ_CR','ROLE_ST_HEAD')" th:if="${row[9] == 'APPROVED' && row[15] != 'COMPLETED' && listSelector.getStatus() == 'APPROVED'}">
                     	
 							<a th:href="${'/tpm/addDetails/' + {row[0]}+'/'+{row[10]}}"
 							class="btn btn-success btn-xs"> <span class="glyphicon glyphicon-ok">SUBMIT</span>
@@ -261,8 +261,9 @@ function openModal(modelType,distId){
 				$("#addMatRow").click(function(){
 						if($("#appr-tpm-form").validationEngine('validate'))
 						{
+							var desc = $("#selMat").val().split("#")[0]+"-"+$("#selMat").val().split("#")[1];
 							$('#tpmReqTable').show();
-							$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+$("#selMat").val().replace("#","-")+'</td><td><input type="hidden" name="apprQty" id="apprQty'+index+'" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
+							$('#tpmReqTable tr:last').after('<tr><td><input type="hidden" class="apprMat" name="apprMat" value="'+$("#selMat").val()+'">'+desc+'</td><td><input type="hidden" name="apprQty" id="apprQty'+index+'" value="'+$("#selQty").val()+'">'+$("#selQty").val()+'</td><td><i class="fa fa-trash deleteItem"></i></td></tr>');
 							$('.deleteItem').click(function(){
 						    	$(this).closest("tr").remove();
 						    });
@@ -438,6 +439,7 @@ function approveTPMReq(event){
 		return ;
 	}
 	$('#saveBtn').hide();
+	$('#outStore').prop('disabled', false);
 	Pace.restart();
 	var formdata = $('#appr-tpm-form').serialize(); 
 	$.ajax({
@@ -564,7 +566,7 @@ function nullifyQty(mat,lefoverQty,leftoverid)
 }
 function funStoreChange()
 {
-    $('#outStore').prop('disabled', 'disabled');
+	$('#outStore').prop('disabled', '');
 	$('#selMat').select2({
         placeholder: 'Select Material',
         ajax: {

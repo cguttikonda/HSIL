@@ -110,6 +110,7 @@ public class ReportService implements IReportService {
 			  ezReqHeader.getEzcComments().addAll(ezComments);
 			  ezReqHeader.setErhDispatchFlag('Y');
 			  ezReqHeader.setErhDispDate(ezcRequestHeader.getErhDispDate());
+			  ezReqHeader.setErhPrdInv(ezcRequestHeader.getErhPrdInv());
 			  for(EzcComments tempItem : ezComments) { 
 				  tempItem.setEzcRequestHeader(ezReqHeader);	
 				  commRepo.save(tempItem); 
@@ -149,7 +150,7 @@ public class ReportService implements IReportService {
 			long dispCnt = reqHeaderRepo.getPendingDispatchCount(user);
 			htMap.put("pendDispCnt",dispCnt+"");
 		}
-		if(role.contains("ROLE_REQ_CR"))
+		if(role.contains("ROLE_REQ_CR") || role.contains("ROLE_ST_HEAD"))
 		{
 			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
 			htMap.put("ackDispCnt",dispCnt+"");
@@ -161,7 +162,7 @@ public class ReportService implements IReportService {
 			dispCnt = customDto.findRequestListCnt(listSelector);
 			htMap.put("apprTpmCnt",dispCnt+"");
 		}
-		if(role.contains("ROLE_ST_HEAD"))
+		if(role.contains("ROLE_REQ_CR") || role.contains("ROLE_ST_HEAD"))
 		{
 			long dispCnt = reqHeaderRepo.getToAckDispCnt(user);
 			htMap.put("ackDispCnt",dispCnt+"");
@@ -305,4 +306,24 @@ public class ReportService implements IReportService {
 		return reqHeaderRepo.getPlumberMaster(dist);
 	}
 
+	@Override
+	public List<Object[]> getTeamTPSSummary(ReportSelector reportSelector) {
+		return reqHeaderRepo.getTPSSummary(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+	
+	@Override
+	public List<Object[]> getTeamTPMSummary(ReportSelector reportSelector) {
+		return reqHeaderRepo.getTPMSummary(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+
+	@Override
+	public List<Object[]> getTeamBDSummary(ReportSelector reportSelector) {
+		return reqHeaderRepo.getBDSummary(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+	
+	@Override
+	public List<Object[]> getTeamINFSummary(ReportSelector reportSelector) {
+		return reqHeaderRepo.getINFSummary(reportSelector.getFromDate(), reportSelector.getToDate());
+	}
+	
 }

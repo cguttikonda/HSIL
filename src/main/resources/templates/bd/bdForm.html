@@ -15,12 +15,27 @@
   min-height: 100%;
   border-radius: 0;
 }
+
+    </style>
+        <style type="text/css">
+    .modal-dialog {
+  width: 90%;
+  height: 70%;
+  margin: 5%;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
     </style>
     
 </head>
 <body>
 <section layout:fragment="header">
-    <h1>Promotional Materials Request</h1>
+    <h1>Promotional & Products Sample Request</h1>
     <ol class="breadcrumb">
         <li><a href="/"><i class="fa fa-dashboard"></i> BD</a></li>
         <li class="active">Create</li>
@@ -66,7 +81,13 @@
                  <option selected value="Cost Sharing" sec:authorize="hasAnyRole('ROLE_ST_HEAD')">Cost Sharing</option>
                  </select> 
                  </div>
-              
+              	<div th:class="${#fields.hasErrors('outstore')}? 'form-group has-error' : 'form-group'">
+                    <label for="outstore">OutStore</label>
+						  <select class="form-control validate[required]" id="outStore" th:field="*{outstore}" onchange="funStoreChange()">
+						  	    <option value="" disabled selected>--Select Store--</option>
+							<option th:each="store : ${outStoreList}" th:value="${store.locationId}" th:text="${store.locationId+'['+store.locationName+']'}"></option>
+		                </select>
+				</div>
                <!--   <div th:class="${#fields.hasErrors('bdQty')}? 'form-group has-error' : 'form-group'">
                     <label for="bdQty">Quantity</label>
                     <input type="number"  class="form-control validate[required,custom[number],min[1],funcCall[geThan[stkAva]]]" th:field="*{bdQty}" id="" />
@@ -122,6 +143,41 @@
                  <!--  <button type="button" id="attach" class="btn btn-primary pull-right" style="margin-left:5px"><i class="fa fa-plus"></i>&nbsp;Attach</button> -->
             </div>
         </form>
+<div class="modal" id="pendingRegModal" th:if="${not #lists.isEmpty(reqList) || not #lists.isEmpty(matList)}">
+    	<div class="modal-dialog">
+            <div class="modal-content">
+              <!-- <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Pending Requests For Report Submission</h4>
+              </div> -->
+              <div class="modal-body">
+                <h4 class="modal-title">Pending Requests For Report Submission</h4>
+    			<div th:replace="bd/bdlistfrag.html :: dataList(reqList=${reqList})"></div>
+    			<h4>Available Stock</h4>
+    			<table  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" th:if="${!matList.empty}">
+	                <thead>			
+	                <tr>
+	                    <th>Material</th>
+	                    <th>Distributor</th>
+	                    <th>Available Qty</th>
+	                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row, itemStat : ${matList}" th:id="${'row_'+row[5]}">
+                    <td th:text="${row[2]+'-'+row[3]}"></td>
+                    <td th:text="${row[1]+'-'+row[6]}"></td>
+                    <td th:text="${row[4]}"></td>
+                </tr>
+            	</tbody>
+            </table>
+    	 		</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>    
     </div>
     <div th:fragment="att-file" id="attachFileModalHolder"></div>
 </div>
@@ -167,40 +223,10 @@ function funMatChange(val,index)
 }
 $(document).ready(function(){
 	$('.select2').select2();
+	$("#pendingRegModal").modal('show');
 	$("#save").click(function(){
 		Pace.restart();
-		/*var leftOverCnt=parseInt($("#leftOverCnt").val());
-		var qtyEntered = false;
-		for(i=0;i<leftOverCnt;i++)
-		{
-				if($("#allocQty_"+i).val() !== "" && parseFloat($("#allocQty_"+i).val()) > 0)
-				{
-					qtyEntered = true;
-				}
-				else
-				{
-					continue;
-				}
-				if(parseFloat($("#allocQty_"+i).val()) > parseFloat($("#leftOverQty_"+i).val()))
-				{
-					$('#allocQty_'+i).validationEngine('showPrompt', 'Allocated Qty is greater than leftover qty', '');
-					return ;
-				}
-		}
 		
-		if(!qtyEntered)
-		{
-			if($("#bdQty").val() !== "" && parseFloat($("#bdQty").val()) > 0)
-			{
-				qtyEntered =true;
-			}
-		}
-		
-		if(!qtyEntered)
-		{
-			$('#bdQty').validationEngine('showPrompt', 'Please provide Quantity', '');
-			return ;
-		}*/
 		var totDet='';
 		for(var i=0;i<10;i++)
 		{
@@ -287,6 +313,8 @@ $(document).ready(function(){
 			
 			Pace.restart();
 			$("#save").hide();
+			//alert("test");
+			$('#outStore').prop('disabled', '');
 			document.myForm.submit();		
 		}
 		//$("#save").hide();
@@ -299,27 +327,7 @@ $(document).ready(function(){
 		
 	});
 	
-	//$('#selMat').select2({
-		$('.selMat').select2({
-			         placeholder: 'Select Material',
-			         ajax: {
-			           url: '/modal/mat-autocomp?type=text',
-			           dataType: 'json',
-			           delay: 250,
-			           processResults: function (data) {
-			             return {
-	 	    	                       results: $.map(data, function (item) {
-	 	    	                          return {
-	 	    	                              text: item.materialCode+"-"+item.materialDesc,
-	 	    	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
-	 	    	                              
-	 	    	                          }
-	 	    	                      }) 
-			 	                  };
-			           },
-			           cache: true
-			         }
-			    });
+	
 	
 });
 		
@@ -383,6 +391,29 @@ function funSubmit()
     uploadSingleFile(fileAttch[0]);
 	
 	
+}
+function funStoreChange()
+{
+    $('#outStore').prop('disabled', 'disabled');
+	$('.selMat').select2({
+        placeholder: 'Select Material',
+        ajax: {
+          url: '/modal/matstock-autocomp?type=text&stockLoc='+$("#outStore").val(),
+          dataType: 'json',
+          delay: 250,
+          processResults: function (data) {
+            return {
+	                       results: $.map(data, function (item) {
+	                          return {
+	                              text: item.materialCode+"-"+item.materialDesc,
+	                              id: item.materialCode+"#"+item.materialDesc+"#"+item.quantity
+	                          }
+	                      }) 
+	                  };
+          },
+          cache: true
+        }
+   });
 }
 
 

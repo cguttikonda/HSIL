@@ -2,6 +2,7 @@ package com.ezc.hsil.webapp.controller;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,14 +30,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.OverallReportDto;
 import com.ezc.hsil.webapp.dto.ReportSelector;
+import com.ezc.hsil.webapp.dto.TPMSummaryDto;
+import com.ezc.hsil.webapp.dto.TPSSummaryDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
 import com.ezc.hsil.webapp.model.DistributorMaster;
 import com.ezc.hsil.webapp.model.EzcComments;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
+import com.ezc.hsil.webapp.model.Roles;
 import com.ezc.hsil.webapp.model.Users;
+import com.ezc.hsil.webapp.model.WorkGroup_Users;
+import com.ezc.hsil.webapp.model.Work_Groups;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.IReportService;
 import com.ezc.hsil.webapp.service.ITPMService;
+import com.ezc.hsil.webapp.service.IUserService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -52,6 +60,9 @@ public class ReportController {
     
     @Autowired
     IMasterService iMasterService;
+    
+    @Autowired
+    IUserService iUserService;
 
     @RequestMapping(value = "/requeststatus", method = RequestMethod.GET)
     public String requestStatus(ListSelector listSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
@@ -150,8 +161,16 @@ public class ReportController {
     }
     
     @RequestMapping(value = "/dispatchupdate", method = RequestMethod.POST)
-    public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments,@RequestParam @DateTimeFormat(pattern="dd/MM/yyyy") Date dispDate) {
-
+    public @ResponseBody String dispatchUpdate(@RequestParam(value = "id", required = false) String id,@RequestParam(value = "dispComments", required = false) String dispComments,@RequestParam(value = "prdInv", required = false) String prdInv,@RequestParam @DateTimeFormat(pattern="dd/MM/yyyy") Date dispDate) {
+    Double prdInvVal=0.0;	
+    try
+    {
+    	log.debug("prdInv:::"+prdInv);
+    	prdInvVal = Double.parseDouble(prdInv); 
+    }catch(Exception e)
+    {
+    	
+    }
     String loggedUser="";
     EzcRequestHeader ezcRequestHeader = new EzcRequestHeader(); 
            ezcRequestHeader.setId(id);
@@ -176,6 +195,7 @@ public class ReportController {
            }
                   ezcRequestHeader.setEzcComments(comments);
                   ezcRequestHeader.setErhDispDate(dispDate);
+                  ezcRequestHeader.setErhPrdInv(prdInvVal);
                   repService.dispatchUpdate(ezcRequestHeader);
            return "ok";
     }
@@ -387,7 +407,494 @@ public class ReportController {
         return "reports/teamTPSReport"; 
 
     }
-    
+    @RequestMapping(value = "/teamTPMSum", method = RequestMethod.GET)
+    public String teamTPMSummary(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		
+		String loggedUser =userObj.getUserId(); 
+		String loggedOnRole = new ArrayList<Roles>(userObj.getRoles()).get(0).getName();
+		
+		List<Object[]> tempUserList = null;
+		List<Users> usersList= iUserService.getUsersList();
+		List<Work_Groups> workGrpList= iUserService.getAllGroups();
+		List<WorkGroup_Users> workGrpUsersList= iUserService.getWorkGrpUsers();
+		Hashtable<String,String> workGrpHT=new Hashtable<String,String>(); 
+		Hashtable<String,Users> usersListDet=new Hashtable<String,Users>();
+		
+		for(Users userObjTemp:usersList)
+		{
+			usersListDet.put(userObjTemp.getUserId(),userObjTemp);
+		}
+		
+		for(Work_Groups grp:workGrpList)
+		{
+			workGrpHT.put(grp.getName(),grp.getDesc());
+		}
+		log.debug("workGrpHT:::"+workGrpHT);
+		List<Object[]> list = null;
+		{
+        	list = repService.getTeamTPMSummary(reportSelector);
+        }
+		//filter rows by role start
+		ArrayList<Object[]> toBeRemovedRows=new ArrayList<Object[]>();
+		
+		List<WorkGroup_Users> loggedOnWorkGroup=workGrpUsersList.stream().filter((e) ->  loggedUser.equals(e.getUserId())).collect(Collectors.toList());
+		if(!loggedOnWorkGroup.isEmpty())
+		{
+			String logOnZonGrp=loggedOnWorkGroup.get(0).getZonalGrp();
+			String logOnGrp=loggedOnWorkGroup.get(0).getGroupId();
+			//String logOnStateGrp=loggedOnWorkGroup.get(0).getStateGrp();
+			if(!list.isEmpty())
+			{
+				for(Object[] objArr:list)
+				{
+					Users userTempObj = usersListDet.get(objArr[5]+"");
+					List<WorkGroup_Users> tempWorkGroup=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+					if(tempWorkGroup != null && !tempWorkGroup.isEmpty())
+					{	
+						WorkGroup_Users selTempWorkGroup= tempWorkGroup.get(0);
+						if("ROLE_ZN_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getZonalGrp().equals(logOnZonGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_ST_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getGroupId().equals(logOnGrp) && !selTempWorkGroup.getStateGrp().equals(logOnGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_REQ_CR".equals(loggedOnRole))
+						{
+							//log.debug(loggedUser+":::loggedUser"+userTempObj.getUserId());
+							if(!loggedUser.equals(userTempObj.getUserId()))
+								toBeRemovedRows.add(objArr);
+						}
+					}
+				}
+				if(!toBeRemovedRows.isEmpty())
+					list.removeAll(toBeRemovedRows);
+			}
+		}
+		//filter rows by role end
+        List<TPMSummaryDto> tpmSumList = new ArrayList<TPMSummaryDto>();
+        SimpleDateFormat monthYearFmt = new SimpleDateFormat("MMM/yyyy");
+        
+        for(Object[] objArr:list)
+        {
+        	try {
+        		int noOfAtt = checkNumInt(objArr[10]+"");
+				Double costIncured = (Double)objArr[13];
+				if(costIncured == null)
+					costIncured = 0.0;
+				Double avgValue = costIncured/noOfAtt;
+				String [] tempQtyArr = (objArr[11]+"").split("#");
+				TPMSummaryDto tpmSumDto=new TPMSummaryDto(); 
+				tpmSumDto.setRequestDate((Date)objArr[0]);
+				tpmSumDto.setRequestId(objArr[1]+"-"+objArr[2]);
+				tpmSumDto.setMonth(monthYearFmt.format((Date)objArr[0]));
+				tpmSumDto.setDistCode(objArr[3]+"");
+				tpmSumDto.setDistName(objArr[4]+"");
+				tpmSumDto.setEmpCode(objArr[5]+"");
+				tpmSumDto.setEmpName(objArr[6]+"");
+				tpmSumDto.setCity(objArr[7]+"");
+				tpmSumDto.setRetailerName(objArr[12]+"");
+				tpmSumDto.setNoOfAtt(noOfAtt);
+				tpmSumDto.setExpense(costIncured);
+				tpmSumDto.setAvgCost(avgValue);
+				tpmSumDto.setGiftsRequested(checkNumInt(tempQtyArr[0]));
+				tpmSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				tpmSumDto.setVertical(objArr[9]+"");
+				
+				Users userTempObj = usersListDet.get(objArr[5]+"");
+				if(userTempObj != null)
+				{
+					List<Roles> roleList = new ArrayList<Roles>(userTempObj.getRoles());
+					String tempRole = roleList.get(0).getName();
+					String tempZone = "";
+					String tempRepMgr = "";
+					String zonalHead = "";
+					String tempState = "";
+					if("ROLE_REQ_CR".equals(tempRole))
+					{
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+									else if("ROLE_ST_HEAD".equals(tempSelRole) && (tempState+"_HD_GRP").equals(workGrpUsr.getGroupId()))
+									{
+										tempRepMgr += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+					else if("ROLE_ST_HEAD".equals(tempRole))
+					{
+						tempRepMgr = userTempObj.getFirstName();
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							if(tempState != null)
+							{
+								tempState=tempState.replaceAll("_HD_GRP","");
+							}
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+						
+					tpmSumDto.setSalesPersonName(userTempObj.getFirstName());
+					tpmSumDto.setZone(tempZone);
+					tpmSumDto.setState(workGrpHT.get(tempState));
+					tpmSumDto.setReportingManager(tempRepMgr);
+					tpmSumDto.setZonalHead(zonalHead);
+					
+					
+				}
+				else
+				{
+					tpmSumDto.setSalesPersonName("");
+					tpmSumDto.setZone("");
+					tpmSumDto.setState("");
+					tpmSumDto.setReportingManager("");
+					tpmSumDto.setZonalHead("");
+				}
+				tpmSumList.add(tpmSumDto);
+			} catch (Exception e) {
+				log.debug("Exception while generating tpm summary"+e);
+			}
+        }
+        reportSelector.setUserGrp(tempUserList);
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", tpmSumList);
+        return "reports/teamTPMSummary"; 
+
+    }    
+    @RequestMapping(value = "/teamTPSSum", method = RequestMethod.GET)
+    public String teamTPSSummary(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		Users userObj = (Users)authentication.getPrincipal();
+		
+		String loggedUser =userObj.getUserId(); 
+		String loggedOnRole = new ArrayList<Roles>(userObj.getRoles()).get(0).getName();
+		
+		List<Object[]> tempUserList = null;
+		List<Users> usersList= iUserService.getUsersList();
+		List<Work_Groups> workGrpList= iUserService.getAllGroups();
+		List<WorkGroup_Users> workGrpUsersList= iUserService.getWorkGrpUsers();
+		Hashtable<String,String> workGrpHT=new Hashtable<String,String>(); 
+		Hashtable<String,Users> usersListDet=new Hashtable<String,Users>();
+		
+		for(Users userObjTemp:usersList)
+		{
+			usersListDet.put(userObjTemp.getUserId(),userObjTemp);
+		}
+		
+		for(Work_Groups grp:workGrpList)
+		{
+			workGrpHT.put(grp.getName(),grp.getDesc());
+		}
+		log.debug("workGrpHT:::"+workGrpHT);
+		List<Object[]> list = null;
+		{
+        	list = repService.getTeamTPSSummary(reportSelector);
+        }
+		//filter rows by role start
+		ArrayList<Object[]> toBeRemovedRows=new ArrayList<Object[]>();
+		
+		List<WorkGroup_Users> loggedOnWorkGroup=workGrpUsersList.stream().filter((e) ->  loggedUser.equals(e.getUserId())).collect(Collectors.toList());
+		if(!loggedOnWorkGroup.isEmpty())
+		{
+			String logOnZonGrp=loggedOnWorkGroup.get(0).getZonalGrp();
+			String logOnGrp=loggedOnWorkGroup.get(0).getGroupId();
+			//String logOnStateGrp=loggedOnWorkGroup.get(0).getStateGrp();
+			if(!list.isEmpty())
+			{
+				for(Object[] objArr:list)
+				{
+					Users userTempObj = usersListDet.get(objArr[5]+"");
+					List<WorkGroup_Users> tempWorkGroup=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+					if(tempWorkGroup != null && !tempWorkGroup.isEmpty())
+					{	
+						WorkGroup_Users selTempWorkGroup= tempWorkGroup.get(0);
+						if("ROLE_ZN_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getZonalGrp().equals(logOnZonGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_ST_HEAD".equals(loggedOnRole))
+						{
+							if(!selTempWorkGroup.getGroupId().equals(logOnGrp) && !selTempWorkGroup.getStateGrp().equals(logOnGrp))
+								toBeRemovedRows.add(objArr);
+						}
+						else if("ROLE_REQ_CR".equals(loggedOnRole))
+						{
+							//log.debug(loggedUser+":::loggedUser"+userTempObj.getUserId());
+							if(!loggedUser.equals(userTempObj.getUserId()))
+								toBeRemovedRows.add(objArr);
+						}
+					}
+				}
+				if(!toBeRemovedRows.isEmpty())
+					list.removeAll(toBeRemovedRows);
+			}
+		}
+		//filter rows by role end
+        List<TPSSummaryDto> tpsSumList = new ArrayList<TPSSummaryDto>();
+        SimpleDateFormat monthYearFmt = new SimpleDateFormat("MMM/yyyy");
+        
+        for(Object[] objArr:list)
+        {
+        	try {
+        		int noOfAtt = checkNumInt(objArr[10]+"");
+				Double costIncured = (Double)objArr[8];
+				if(costIncured == null)
+					costIncured = 0.0;
+				Double avgValue = costIncured/noOfAtt;
+				String [] tempQtyArr = (objArr[11]+"").split("#");
+				TPSSummaryDto tpsSumDto=new TPSSummaryDto(); 
+				tpsSumDto.setRequestDate((Date)objArr[0]);
+				tpsSumDto.setRequestId(objArr[1]+"-"+objArr[2]);
+				tpsSumDto.setMonth(monthYearFmt.format((Date)objArr[0]));
+				tpsSumDto.setDistCode(objArr[3]+"");
+				tpsSumDto.setDistName(objArr[4]+"");
+				tpsSumDto.setEmpCode(objArr[5]+"");
+				tpsSumDto.setEmpName(objArr[6]+"");
+				tpsSumDto.setCity(objArr[7]+"");
+				tpsSumDto.setRetailerName(objArr[12]+"");
+				tpsSumDto.setNoOfAtt(noOfAtt);
+				tpsSumDto.setExpense(costIncured);
+				tpsSumDto.setAvgCost(avgValue);
+				tpsSumDto.setGiftsRequested(checkNumInt(tempQtyArr[0]));
+				tpsSumDto.setPendingGifts(checkNumInt(tempQtyArr[1]));
+				tpsSumDto.setVertical(objArr[9]+"");
+				
+				Users userTempObj = usersListDet.get(objArr[5]+"");
+				if(userTempObj != null)
+				{
+					List<Roles> roleList = new ArrayList<Roles>(userTempObj.getRoles());
+					String tempRole = roleList.get(0).getName();
+					String tempZone = "";
+					String tempRepMgr = "";
+					String zonalHead = "";
+					String tempState = "";
+					if("ROLE_REQ_CR".equals(tempRole))
+					{
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+									else if("ROLE_ST_HEAD".equals(tempSelRole) && (tempState+"_HD_GRP").equals(workGrpUsr.getGroupId()))
+									{
+										tempRepMgr += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+					else if("ROLE_ST_HEAD".equals(tempRole))
+					{
+						tempRepMgr = userTempObj.getFirstName();
+						List<WorkGroup_Users> selGrpUsersList=workGrpUsersList.stream().filter((e) ->  userTempObj.getUserId().equals(e.getUserId())).collect(Collectors.toList());
+						//log.debug("selGrpUsersList::::"+selGrpUsersList.size());
+						if(selGrpUsersList != null)
+						{
+							WorkGroup_Users selUserGrp=selGrpUsersList.get(0);
+							tempState = selUserGrp.getGroupId();
+							if(tempState != null)
+							{
+								tempState=tempState.replaceAll("_HD_GRP","");
+							}
+							tempZone = selUserGrp.getZonalGrp();
+							if(tempZone != null)
+							{
+								tempZone=tempZone.replaceAll("_ZONE_GRP","");
+							}
+							List<WorkGroup_Users> selGrpUsersZoneList=workGrpUsersList.stream().filter((e) ->  selUserGrp.getZonalGrp().equals(e.getZonalGrp())).collect(Collectors.toList());
+							if(selGrpUsersZoneList != null)
+							{
+								for(WorkGroup_Users workGrpUsr:selGrpUsersZoneList)
+								{
+									Users tempSelUser=usersListDet.get(workGrpUsr.getUserId());
+									List<Roles> roleListSel = new ArrayList<Roles>(tempSelUser.getRoles());
+									String tempSelRole = roleListSel.get(0).getName();
+									if("ROLE_ZN_HEAD".equals(tempSelRole))
+									{
+										zonalHead += tempSelUser.getFirstName()+",";
+									}
+										
+								}
+							}
+						}
+					}
+						
+					tpsSumDto.setSalesPersonName(userTempObj.getFirstName());
+					tpsSumDto.setZone(tempZone);
+					tpsSumDto.setState(workGrpHT.get(tempState));
+					tpsSumDto.setReportingManager(tempRepMgr);
+					tpsSumDto.setZonalHead(zonalHead);
+					
+					
+				}
+				else
+				{
+					tpsSumDto.setSalesPersonName("");
+					tpsSumDto.setZone("");
+					tpsSumDto.setState("");
+					tpsSumDto.setReportingManager("");
+					tpsSumDto.setZonalHead("");
+				}
+				tpsSumList.add(tpsSumDto);
+			} catch (Exception e) {
+				log.debug("Exception while generating tps summary"+e);
+			}
+        }
+        reportSelector.setUserGrp(tempUserList);
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", tpsSumList);
+        return "reports/teamTPSSummary"; 
+
+    }
+    @RequestMapping(value = "/teamBDSum", method = RequestMethod.GET)
+    public String teamBDSummary(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+	List<Object[]> list = null;
+	{
+	list = repService.getTeamBDSummary(reportSelector);
+	}
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", list);
+        return "reports/teamBDSummary"; 
+
+    }
+    @RequestMapping(value = "/teamINFSum", method = RequestMethod.GET)
+    public String teamINFSummary(ReportSelector reportSelector , Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    	if(reportSelector == null || reportSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		reportSelector = new ReportSelector();
+    		reportSelector.setFromDate(c.getTime());
+    		reportSelector.setToDate(todayDate);    		
+    	}
+    	else
+    	{
+    		log.debug(":::reportSelector.setFromDate::"+reportSelector.getFromDate());
+    	}
+	List<Object[]> list = null;
+	{
+	list = repService.getTeamINFSummary(reportSelector);
+	}
+        model.addAttribute("reportSelector", reportSelector);
+        model.addAttribute("reqList", list);
+        return "reports/teamINFSummary"; 
+
+    }
     @RequestMapping(value = "/plumbermaster", method = RequestMethod.GET)
     public String plumberMaster(ReportSelector reportSelector,Model model) {
     	String selDist = reportSelector.getSelDist();
@@ -439,7 +946,7 @@ public class ReportController {
                      else
                      {
                            String val=plumberHt.get(key);
-                           val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+                           val=(checkNumInt(val)+checkNumInt(value))+"";
                            plumberHt.put(key, val);
                      }
               }
@@ -453,7 +960,7 @@ public class ReportController {
                      else
                      {
                            String val=meetHt.get(key);
-                           val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+                           val=(checkNumInt(val)+checkNumInt(value))+"";
                            meetHt.remove(key);
                            meetHt.put(key, val);
                      }
@@ -469,7 +976,7 @@ public class ReportController {
                      else
                      {
                            String val=leftQtytHT.get(key);
-                           val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+                           val=(checkNumInt(val)+checkNumInt(value))+"";
                            leftQtytHT.remove(key);
                            leftQtytHT.put(key, val);
                      }
@@ -485,7 +992,7 @@ public class ReportController {
                      else
                      {
                            String val=usedQtytHT.get(key);
-                           val=(Integer.parseInt(val)+Integer.parseInt(value))+"";
+                           val=(checkNumInt(val)+checkNumInt(value))+"";
                            usedQtytHT.remove(key);
                            usedQtytHT.put(key, val);
                      }
@@ -584,45 +1091,45 @@ public class ReportController {
               String decKeyTPM=keyVal+"TPM12";
               String decKeyTPS=keyVal+"TPS12";
               log.debug("aprTP4"+keyVal);
-            if(headerHT.containsKey(janKeyTPM))janTPM=Integer.parseInt((String)headerHT.get(janKeyTPM));
-            if(headerHT.containsKey(janKeyTPS))janTPS=Integer.parseInt((String)headerHT.get(janKeyTPM));
-            if(headerHT.containsKey(febKeyTPM))febTPM=Integer.parseInt((String)headerHT.get(febKeyTPM));
-            if(headerHT.containsKey(febKeyTPS))febTPS=Integer.parseInt((String)headerHT.get(febKeyTPS));
-            if(headerHT.containsKey(marKeyTPM))marTPM=Integer.parseInt((String)headerHT.get(marKeyTPM));
-            if(headerHT.containsKey(marKeyTPS))marTPS=Integer.parseInt((String)headerHT.get(marKeyTPS));
-            if(headerHT.containsKey(aprKeyTPM))aprTPM=Integer.parseInt((String)headerHT.get(aprKeyTPM));
-            if(headerHT.containsKey(aprKeyTPS))aprTPS=Integer.parseInt((String)headerHT.get(aprKeyTPS));
-            if(headerHT.containsKey(mayKeyTPM))mayTPM=Integer.parseInt((String)headerHT.get(mayKeyTPM));
-            if(headerHT.containsKey(mayKeyTPS))mayTPS=Integer.parseInt((String)headerHT.get(mayKeyTPS));
-            if(headerHT.containsKey(junKeyTPM))junTPM=Integer.parseInt((String)headerHT.get(junKeyTPM));
-            if(headerHT.containsKey(junKeyTPS))junTPS=Integer.parseInt((String)headerHT.get(junKeyTPS));
+            if(headerHT.containsKey(janKeyTPM))janTPM=checkNumInt((String)headerHT.get(janKeyTPM));
+            if(headerHT.containsKey(janKeyTPS))janTPS=checkNumInt((String)headerHT.get(janKeyTPM));
+            if(headerHT.containsKey(febKeyTPM))febTPM=checkNumInt((String)headerHT.get(febKeyTPM));
+            if(headerHT.containsKey(febKeyTPS))febTPS=checkNumInt((String)headerHT.get(febKeyTPS));
+            if(headerHT.containsKey(marKeyTPM))marTPM=checkNumInt((String)headerHT.get(marKeyTPM));
+            if(headerHT.containsKey(marKeyTPS))marTPS=checkNumInt((String)headerHT.get(marKeyTPS));
+            if(headerHT.containsKey(aprKeyTPM))aprTPM=checkNumInt((String)headerHT.get(aprKeyTPM));
+            if(headerHT.containsKey(aprKeyTPS))aprTPS=checkNumInt((String)headerHT.get(aprKeyTPS));
+            if(headerHT.containsKey(mayKeyTPM))mayTPM=checkNumInt((String)headerHT.get(mayKeyTPM));
+            if(headerHT.containsKey(mayKeyTPS))mayTPS=checkNumInt((String)headerHT.get(mayKeyTPS));
+            if(headerHT.containsKey(junKeyTPM))junTPM=checkNumInt((String)headerHT.get(junKeyTPM));
+            if(headerHT.containsKey(junKeyTPS))junTPS=checkNumInt((String)headerHT.get(junKeyTPS));
               log.debug("aprTP3"+aprTPM);
-            if(headerHT.containsKey(julKeyTPM))julTPM=Integer.parseInt((String)headerHT.get(julKeyTPM));
-            if(headerHT.containsKey(julKeyTPS))julTPS=Integer.parseInt((String)headerHT.get(julKeyTPS));
-            if(headerHT.containsKey(augKeyTPM))augTPM=Integer.parseInt((String)headerHT.get(augKeyTPM));
-            if(headerHT.containsKey(augKeyTPS))augTPS=Integer.parseInt((String)headerHT.get(augKeyTPS));
-            if(headerHT.containsKey(sepKeyTPM))sepTPM=Integer.parseInt((String)headerHT.get(sepKeyTPM));
-            if(headerHT.containsKey(sepKeyTPS))sepTPS=Integer.parseInt((String)headerHT.get(sepKeyTPS));
-            if(headerHT.containsKey(octKeyTPM))octTPM=Integer.parseInt((String)headerHT.get(octKeyTPM));
-            if(headerHT.containsKey(octKeyTPS))octTPS=Integer.parseInt((String)headerHT.get(octKeyTPS));
-            if(headerHT.containsKey(novKeyTPM))novTPM=Integer.parseInt((String)headerHT.get(novKeyTPM));
-            if(headerHT.containsKey(novKeyTPS))novTPS=Integer.parseInt((String)headerHT.get(novKeyTPS));
-            if(headerHT.containsKey(decKeyTPM))decTPM=Integer.parseInt((String)headerHT.get(decKeyTPM));
-            if(headerHT.containsKey(decKeyTPS))decTPS=Integer.parseInt((String)headerHT.get(decKeyTPS));
-              if(meetHt.containsKey(keyTPM))meetTPM=Integer.parseInt((String)meetHt.get(keyTPM));
-              if(meetHt.containsKey(keyTPS))meetTPS=Integer.parseInt((String)meetHt.get(keyTPS));
+            if(headerHT.containsKey(julKeyTPM))julTPM=checkNumInt((String)headerHT.get(julKeyTPM));
+            if(headerHT.containsKey(julKeyTPS))julTPS=checkNumInt((String)headerHT.get(julKeyTPS));
+            if(headerHT.containsKey(augKeyTPM))augTPM=checkNumInt((String)headerHT.get(augKeyTPM));
+            if(headerHT.containsKey(augKeyTPS))augTPS=checkNumInt((String)headerHT.get(augKeyTPS));
+            if(headerHT.containsKey(sepKeyTPM))sepTPM=checkNumInt((String)headerHT.get(sepKeyTPM));
+            if(headerHT.containsKey(sepKeyTPS))sepTPS=checkNumInt((String)headerHT.get(sepKeyTPS));
+            if(headerHT.containsKey(octKeyTPM))octTPM=checkNumInt((String)headerHT.get(octKeyTPM));
+            if(headerHT.containsKey(octKeyTPS))octTPS=checkNumInt((String)headerHT.get(octKeyTPS));
+            if(headerHT.containsKey(novKeyTPM))novTPM=checkNumInt((String)headerHT.get(novKeyTPM));
+            if(headerHT.containsKey(novKeyTPS))novTPS=checkNumInt((String)headerHT.get(novKeyTPS));
+            if(headerHT.containsKey(decKeyTPM))decTPM=checkNumInt((String)headerHT.get(decKeyTPM));
+            if(headerHT.containsKey(decKeyTPS))decTPS=checkNumInt((String)headerHT.get(decKeyTPS));
+              if(meetHt.containsKey(keyTPM))meetTPM=checkNumInt((String)meetHt.get(keyTPM));
+              if(meetHt.containsKey(keyTPS))meetTPS=checkNumInt((String)meetHt.get(keyTPS));
               log.debug("keyTPM"+keyTPM);
               if(inProcesstHT.containsKey(keyTPM))
-                     {inProcessTPM=Integer.parseInt((String)inProcesstHT.get(keyTPM));
+                     {inProcessTPM=checkNumInt((String)inProcesstHT.get(keyTPM));
                      log.debug("inProcessTPM"+inProcessTPM);
                      }
-       if(inProcesstHT.containsKey(keyTPS))inProcessTPS=Integer.parseInt((String)inProcesstHT.get(keyTPS));
-              if(plumberHt.containsKey(keyTPM))plumTPM=Integer.parseInt((String)plumberHt.get(keyTPM));
-              if(plumberHt.containsKey(keyTPS))plumTPS=Integer.parseInt((String)plumberHt.get(keyTPS));
-          if(usedQtytHT.containsKey(keyTPM))usedQtyTPM=Integer.parseInt((String)usedQtytHT.get(keyTPM));
-          if(usedQtytHT.containsKey(keyTPS))usedQtyTPS=Integer.parseInt((String)usedQtytHT.get(keyTPS));
-          if(leftQtytHT.containsKey(keyTPM))leftQtyTPM=Integer.parseInt((String)leftQtytHT.get(keyTPM));
-          if(leftQtytHT.containsKey(keyTPS))leftQtyTPS=Integer.parseInt((String)leftQtytHT.get(keyTPS));
+       if(inProcesstHT.containsKey(keyTPS))inProcessTPS=checkNumInt((String)inProcesstHT.get(keyTPS));
+              if(plumberHt.containsKey(keyTPM))plumTPM=checkNumInt((String)plumberHt.get(keyTPM));
+              if(plumberHt.containsKey(keyTPS))plumTPS=checkNumInt((String)plumberHt.get(keyTPS));
+          if(usedQtytHT.containsKey(keyTPM))usedQtyTPM=checkNumInt((String)usedQtytHT.get(keyTPM));
+          if(usedQtytHT.containsKey(keyTPS))usedQtyTPS=checkNumInt((String)usedQtytHT.get(keyTPS));
+          if(leftQtytHT.containsKey(keyTPM))leftQtyTPM=checkNumInt((String)leftQtytHT.get(keyTPM));
+          if(leftQtytHT.containsKey(keyTPS))leftQtyTPS=checkNumInt((String)leftQtytHT.get(keyTPS));
 
           if(janTPM>2)janTPMBGC="green";
           else
@@ -788,7 +1295,16 @@ public class ReportController {
 
     }
     
+    public int checkNumInt(String chkVal)
+    {
+    	int tempVal=0;
+    	try
+    	{
+    		tempVal = Integer.parseInt(chkVal); 
+    	}catch(Exception e) {}
 
+    	return tempVal;
+    }
    
     
 }

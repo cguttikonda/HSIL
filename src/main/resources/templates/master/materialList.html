@@ -30,7 +30,9 @@
 							<th>Material Code</th>
 							<th>Description</th>
 							<th>Store</th>
-							<th>Quantity</th>
+							<th>Total Qty</th>
+							<th>Blocked Qty</th>
+							<th>Available Qty</th>
 							<th>Action</th>
 
 						</tr>
@@ -41,6 +43,8 @@
 							<td th:text="${material.materialDesc}">description</td>
 							<td th:text="${material.stockLoc}">description</td>
 							<td th:text="${material.quantity}">0</td>
+							<td th:text="${material.blockQty == null?0:material.blockQty}">0</td>
+							<td th:text="${material.quantity}-${material.blockQty == null?0:material.blockQty}">0</td>
 							<td>
 								<!-- <a href="#"
 								th:data-id="${material.materialCode}"

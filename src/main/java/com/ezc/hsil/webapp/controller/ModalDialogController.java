@@ -3,10 +3,13 @@ package com.ezc.hsil.webapp.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +20,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ezc.hsil.webapp.model.EzStores;
+import com.ezc.hsil.webapp.model.EzcMktGiveAway;
 import com.ezc.hsil.webapp.model.EzcRequestHeader;
 import com.ezc.hsil.webapp.model.MaterialMaster;
 import com.ezc.hsil.webapp.model.Users;
 import com.ezc.hsil.webapp.service.IBDService;
+import com.ezc.hsil.webapp.service.IMKTGGiveAwyService;
 import com.ezc.hsil.webapp.service.IMasterService;
 import com.ezc.hsil.webapp.service.ITPMService;
 import com.ezc.hsil.webapp.service.ITPSService;
@@ -47,6 +52,9 @@ public class ModalDialogController {
 	
 	@Autowired
     private IBDService iBDService;
+	
+	@Autowired
+    private IMKTGGiveAwyService iMKTService;
 	
 	
 	@Value("#{'${city}'.split(',')}")
@@ -101,6 +109,13 @@ public class ModalDialogController {
 		List<EzStores> outStoreList = masterService.listStores();
 		List<Object[]> list=iTPMService.pendingRequests(ezReqHead.getErhRequestedBy());
 		
+		List<Object[]> filteredList = null;
+		
+		if(list != null)
+			filteredList = list.stream().filter(p -> p[11] == null).collect(Collectors.toList());
+		
+		
+		
 		for(int k=0;k<matLi.size();k++)
 		{	
 		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
@@ -117,7 +132,7 @@ public class ModalDialogController {
 			model.addAttribute("leftOverStk", leftOverStk);
 			model.addAttribute("attendee", attendee);
 			model.addAttribute("outStoreList", outStoreList);
-			model.addAttribute("reqList", list);
+			model.addAttribute("reqList", filteredList);
 		} catch (Exception e) {
 			 
 		}
@@ -227,18 +242,20 @@ public class ModalDialogController {
 	
 	@GetMapping(value="/appr-tps/{id}")
 	public String approveTPSModal(@PathVariable("id") String id, Model model) {
+		
 		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
 		Integer attendee=ezReqHead.getErhNoOfAttendee();
 		log.debug("att"+ezReqHead.getErhNoOfAttendee());
 		int leftOverStk=0;
 		List<Object[]> matLi=iTPSService.getLeftOverStock(ezReqHead.getErhRequestedBy(),"TPS");
-		List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
+		//List<Users> outStoreList = iUserService.findUsersByRole("ROLE_OUT_STOR");
+		List<EzStores> outStoreList = masterService.listStores();
 		for(int k=0;k<matLi.size();k++)
 		{	
 		log.debug("matli"+matLi.get(k)[4]);
 		leftOverStk=leftOverStk+(Integer)matLi.get(k)[4];
 		}
-		
+		List<EzcRequestHeader> list=iTPSService.pendingRequests(ezReqHead.getErhRequestedBy());
 		log.debug("leftOverStk"+leftOverStk);
 		try {
 			/*
@@ -250,6 +267,7 @@ public class ModalDialogController {
 		} catch (Exception e) {
 			 
 		}
+		model.addAttribute("reqList",list);
 		model.addAttribute("tpsDetails", ezReqHead);
 		model.addAttribute("leftOverStk", leftOverStk);
 		model.addAttribute("attendee", attendee);
@@ -269,6 +287,13 @@ public class ModalDialogController {
 		EzcRequestHeader ezReqHead = iTPSService.getTPSRequest(id);
 		model.addAttribute("reqDetails", ezReqHead);
 		return "modals/dispatchAckDet" ; 
+	}
+	
+	@GetMapping(value="/mktackmodal/{id}")
+	public String mktAckModal(@PathVariable("id") Integer id, Model model) {
+		EzcMktGiveAway mktObj = iMKTService.getRequestDetails(id);
+		model.addAttribute("reqDetails", mktObj);
+		return "modals/mktAckModal" ; 
 	}
 	
 	@GetMapping(value="/att-file")

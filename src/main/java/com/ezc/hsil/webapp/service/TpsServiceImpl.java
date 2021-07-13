@@ -1,4 +1,7 @@
 package com.ezc.hsil.webapp.service;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -133,13 +136,14 @@ public class TpsServiceImpl implements ITPSService {
 	}
 	
 	@Override
-	public void createTPSDetails(TpsRequestDetailDto tpsRequestDetailDto) {
+	public void submitTPSDetails(TpsRequestDetailDto tpsRequestDetailDto) {
 		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpsRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
 		List<EzcRequestItems> ezReqItemList = tpsRequestDetailDto.getEzcRequestItems();
 		List<EzcRequestDealers> ezReqDeal = tpsRequestDetailDto.getEzcRequestDealers();
 		Set<EzcRequestDealers> ezReqDealSet=new  HashSet<EzcRequestDealers>();
 		Set<EzcRequestDealers> fromDBReqDeal=requestDealerRepo.findByRequest(tpsRequestDetailDto.getReqHeader().getId());
 		Set<RequestMaterials> reqMatSet = ezReqHeader.getRequestMaterials();
+		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
 		 for(EzcRequestDealers tempItem : fromDBReqDeal) { 
 			  log.debug("id delete"+tempItem.getId());	
 			  requestDealerRepo.deleteById(tempItem.getId()); 
@@ -148,6 +152,12 @@ public class TpsServiceImpl implements ITPSService {
 			  tempItem.setEzcRequestHeader(ezReqHeader);	
 			  requestDealerRepo.save(tempItem); 
 			}
+		 for(EzcRequestItems delItem:ezReqItems)
+			{
+				delItem.setEzcRequestHeader(null);
+			}
+		 ezReqItems.removeAll(ezReqItems);
+		 
 		 for(EzcRequestDealers tempItem : ezReqDeal) {
 			 ezReqDealSet.add(tempItem); 
 
@@ -267,6 +277,70 @@ public class TpsServiceImpl implements ITPSService {
 	
 	}
 
-	
+	@Override
+	public List<EzcRequestHeader> pendingRequests(String userId)
+    {
+    	ListSelector listSelector=null; 
+    	if(listSelector == null || listSelector.getFromDate() == null)
+    	{
+    		Date todayDate = new Date();
+    		Calendar c = Calendar.getInstance(); 
+    		c.setTime(todayDate); 
+    		c.add(Calendar.MONTH, -12);
+    		listSelector = new ListSelector();
+    		listSelector.setFromDate(c.getTime());
+    		listSelector.setToDate(todayDate);
+    		listSelector.setStatus("APPROVED");
+    	}
+    	listSelector.setType("TPS");
+    	ArrayList<String> userList=new ArrayList<String>();
+    	userList.add(userId);
+    	listSelector.setUser(userList);
+    	List<EzcRequestHeader> list = this.getTPSRequestListByDate(listSelector);
+    	log.debug("list:::"+list.size());
+        return list;
+    }
+	@Override
+	public List<Object[]> getAvailableStock(String requestedBy,String requestType) {
+		return reqHeaderRepo.getAvailableStock(requestedBy,requestType);
+	}
+	@Override
+	public void saveTPSDetails(TpsRequestDetailDto tpsRequestDetailDto) {
+		EzcRequestHeader ezReqHeader = reqHeaderRepo.findById(tpsRequestDetailDto.getReqHeader().getId()).orElseThrow(() -> new EntityNotFoundException());
+		List<EzcRequestItems> ezReqItemList = tpsRequestDetailDto.getEzcRequestItems();
+		List<EzcRequestDealers> ezReqDeal = tpsRequestDetailDto.getEzcRequestDealers();
+		Set<EzcRequestDealers> ezReqDealSet=new  HashSet<EzcRequestDealers>();
+		Set<EzcRequestDealers> fromDBReqDeal=requestDealerRepo.findByRequest(tpsRequestDetailDto.getReqHeader().getId());
+		Set<EzcRequestItems> ezReqItems = ezReqHeader.getEzcRequestItems();
+		 for(EzcRequestDealers tempItem : fromDBReqDeal) { 
+			  log.debug("id delete"+tempItem.getId());	
+			  requestDealerRepo.deleteById(tempItem.getId()); 
+			}
+		 for(EzcRequestDealers tempItem : ezReqDeal) { 
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  requestDealerRepo.save(tempItem); 
+			}
+		 for(EzcRequestItems delItem:ezReqItems)
+			{
+				delItem.setEzcRequestHeader(null);
+			}
+		 ezReqItems.removeAll(ezReqItems);
+		 for(EzcRequestDealers tempItem : ezReqDeal) {
+			 ezReqDealSet.add(tempItem); 
+
+		 }
+	  ezReqHeader.setEzcRequestDealers(ezReqDealSet);
+	  ezReqHeader.setErhCostIncured(tpsRequestDetailDto.getReqHeader().getErhCostIncured());
+	  ezReqHeader.setErhVenue(tpsRequestDetailDto.getReqHeader().getErhVenue());
+	  ezReqHeader.setEzcRequestItems(new HashSet<EzcRequestItems>(ezReqItemList));
+	  for(EzcRequestItems tempItem : ezReqItemList) {
+		  if(tempItem.getEriPlumberName() != null && !"null".equals(tempItem.getEriPlumberName()) && !"".equals(tempItem.getEriPlumberName()))
+          {
+			  tempItem.setEzcRequestHeader(ezReqHeader);	
+			  reqDealRep.save(tempItem);
+          }
+		}
+	  
+	}
 
 }

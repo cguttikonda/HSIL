@@ -436,6 +436,11 @@ public class MasterServiceImpl implements IMasterService {
 		
 		return reqHeadRepo.getPlumberList();
 	}
+
+	@Override
+	public List<DistributorMaster> findAllByCat(List<String> catList) {
+		return distMastRepo.findByTypeIn(catList);
+	}
 	
 
 }

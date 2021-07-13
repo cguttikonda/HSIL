@@ -2,6 +2,20 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout">
 <head>
     <title>TPS</title>
+        <style type="text/css">
+    .modal-dialog {
+  width: 90%;
+  height: 70%;
+  margin: 5%;
+  padding: 0;
+}
+
+.modal-content {
+  height: auto;
+  min-height: 100%;
+  border-radius: 0;
+}
+    </style>
 </head>
 <body>
 <section layout:fragment="header">
@@ -92,9 +106,46 @@
             </div>
         </form>
     </div>
+    <div class="modal" id="pendingRegModal" th:if="${not #lists.isEmpty(reqList) || not #lists.isEmpty(matList)}">
+    	<div class="modal-dialog">
+            <div class="modal-content">
+              <!-- <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Pending Requests For Report Submission</h4>
+              </div> -->
+              <div class="modal-body">
+                <h4 class="modal-title">Pending Requests For Report Submission</h4>
+    			<div th:replace="tps/tpslistfrag.html :: dataList(reqList=${reqList})"></div>
+    			<h4>Available Stock</h4>
+    			<table  class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%" th:if="${!matList.empty}">
+	                <thead>			
+	                <tr>
+	                    <th>Material</th>
+	                    <th>Distributor</th>
+	                    <th>Available Qty</th>
+	                </tr>
+                    </thead>
+           		<tbody>	
+                <tr th:each="row, itemStat : ${matList}" th:id="${'row_'+row[5]}">
+                    <td th:text="${row[2]+'-'+row[3]}"></td>
+                    <td th:text="${row[1]+'-'+row[6]}"></td>
+                    <td th:text="${row[4]}"></td>
+                </tr>
+            	</tbody>
+            </table>
+    	 		</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success pull-right" data-dismiss="modal">Continue</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
 </div>
 <div layout:fragment="scriptContent">
 <script type="text/javascript">
+
  $('#plannedOn').datepicker({
       autoclose: true,
       format: 'dd/mm/yyyy'
@@ -104,6 +155,7 @@
 		$("#subBtn").click(function(){
 			Pace.restart();
 		});
+		$("#pendingRegModal").modal('show');
 	 });
  function loadRetailers(val)
  {

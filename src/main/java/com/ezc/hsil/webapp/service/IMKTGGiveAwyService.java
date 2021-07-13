@@ -11,5 +11,6 @@ public interface IMKTGGiveAwyService {
 	public void createMKTData(MktgGiveAwayDto mktgGiveAwayDto) throws Exception; 
 	public List<EzcMktGiveAway> getMKTGListByDate(ListSelector listSelector);
 	public List<EzcMktGiveAway> getRequestList(ListSelector listSelector);
-	public void acknowledgeRequest(Integer id,String ackBy);
+	public void acknowledgeRequest(Integer id,String ackBy,String ackComments);
+	public EzcMktGiveAway getRequestDetails(Integer id);
 }
