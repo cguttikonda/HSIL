@@ -120,9 +120,9 @@
                     <td th:text="${row.erhStatus}"></td>
                     <td>
                     	<th:block th:switch="${row.erhDispatchFlag}">
-                    		<span t:case="'Y'" class="label label-success">Shipped</span>
-						    <span th:case="null" class="label label-warning">Pending</span>
-						    <span th:case="S" class="label label-danger">Delivered</span>
+                    		<span th:case="'Y'" class="label label-warning">Shipped</span>
+						    <span th:case="null" class="label label-danger">Pending</span>
+						    <span th:case="S" class="label label-success">Delivered</span>
 						</th:block>
                     </td>
                     <td th:text="${#dates.format(row.erhApprDate, 'dd/MM/yyyy')}"></td>

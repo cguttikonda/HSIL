@@ -43,7 +43,9 @@ public class RequestService implements IRequestService {
 		Optional<EzcRequestHeader> reqHeaderOpt=reqHeaderRepo.findById(docId);
 		if(reqHeaderOpt.isPresent())
 		{
+			String tempOutStore="";
 			EzcRequestHeader reqHeader=reqHeaderOpt.get();
+			tempOutStore=reqHeader.getErhOutStore();
 			reqHeader.setErhOutStore("");
 			reqHeader.setErhModifiedBy(userObj.getUserId());
 			reqHeader.setErhModifiedOn(new Date());
@@ -55,7 +57,7 @@ public class RequestService implements IRequestService {
 				if(!"BD".equals(reqHeader.getErhReqType()))
 					tempItem.setApprQty(0);
 				
-				MaterialMasterKey matMasterKey=new MaterialMasterKey(tempItem.getMatCode(), reqHeader.getErhOutStore());
+				MaterialMasterKey matMasterKey=new MaterialMasterKey(tempItem.getMatCode(), tempOutStore);
 				Optional<MaterialMaster> matMaster = masterRepo.findById(matMasterKey);
 				
 				if(matMaster.isPresent())
@@ -64,9 +66,9 @@ public class RequestService implements IRequestService {
 					int blockQtyTemp=0;
 					if(mat.getBlockQty() != null)
 						blockQtyTemp=mat.getBlockQty();
-					log.debug("blockQty::"+blockQtyTemp);
-					log.debug("inputQty::"+appQty);
-					log.debug("dbqty::"+mat.getQuantity());
+					log.debug("revoke:::blockQty::"+blockQtyTemp);
+					log.debug("revoke:::inputQty::"+appQty);
+					log.debug("revoke:::dbqty::"+mat.getQuantity());
 					if(blockQtyTemp >= appQty)
 					{	  
 						int blockQty=0;

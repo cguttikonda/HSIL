@@ -87,12 +87,18 @@ public class MKTGiveAwayController {
 			}
 		}
     	MktgGiveAwayDto mktgGiveAwayDto = new MktgGiveAwayDto();
+    	List<String> userCatList=new ArrayList<String>();
+    	userCatList.add("PLUMBING");
+    	userCatList.add("COLUMN");
+    	userCatList.add("WATERTANK");
+    	
     	List<DistributorMaster> distList = masterService.findAll();
     	List<Users> userList = userService.findUsersByRole("ROLE_ST_HEAD");
     	log.debug("userList:::::::"+userList);
     	mktgGiveAwayDto.setDistList(distList);
     	mktgGiveAwayDto.setUserList(userList);
     	mktgGiveAwayDto.setOutstore(store);
+    	mktgGiveAwayDto.setUserCatList(userCatList);
     	List<MaterialQtyDto> matList=new ArrayList<MaterialQtyDto>();
     	for(int i=0;i<10;i++)
     	{
@@ -141,7 +147,7 @@ public class MKTGiveAwayController {
     	mktgGiveAwayDto.setCreatedBy(userObj.getUserId());
     	mktgGiveAwayDto.setSentToName(stateHeadDet.getFirstName()+" "+stateHeadDet.getLastName());
     	mktgGiveAwayDto.setDistName(distMast.getName());
-    	mktgGiveAwayDto.setVertical(distMast.getType());
+    	//mktgGiveAwayDto.setVertical(distMast.getType());
     	try {
 			iMKTGGiveAwyService.createMKTData(mktgGiveAwayDto); 
 			ra.addFlashAttribute("success","Details Saved Successfully.");

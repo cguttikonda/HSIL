@@ -20,7 +20,17 @@ width: 5000px;
     <div class="box" >
         <div class="box-body no-padding">
         
- <!-- <form role="form"  th:object="${reportSelector}" th:action="@{/reports/monthWiseReport}" method="get" name="myForm" id="myForm"> -->
+ <form role="form"  th:object="${reportYrSel}" th:action="@{/reports/monthWiseReport}" method="get" name="myForm" id="myForm">
+ <div class="row">
+ <div class="col-md-4">
+ <a style="margin-bottom: 10px;margin-top: 10px;" href="#" onclick="fnExcelReport();" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>DOWNLOAD EXCEL</a>
+ </div>
+  <div class="col-md-8">
+      <select class="form-control select2 pull-left" th:field="*{selYear}" style="width:50%;margin-top:1%" onchange="funSubmit()">
+			<option th:selected="${reportYrSel.selYear == tmpYr}" th:each="tmpYr : *{yearArr}" th:value="${tmpYr}" th:text="${tmpYr}"></option>
+              </select>
+ </div>
+ </div>
  <div class="table-responsive">
                    <table id="example" class="table  table-bordered dt-responsive nowrap" width="100%">
                        <thead>	
@@ -136,8 +146,8 @@ width: 5000px;
            		</tbody>	
                    </table>
                    </div>
-                   <a style="margin-left: 25%;margin-bottom: 10px;margin-top: 10px;" href="#" onclick="fnExcelReport();" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>DOWNLOAD EXCEL</a>
                    
+ 		</form>                  
         </div>
     </div>
 
@@ -242,6 +252,10 @@ function fnExcelReport()
         sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));  
 
     return (sa);
+}
+function funSubmit()
+{
+	document.myForm.submit();	
 }
 </script>
 

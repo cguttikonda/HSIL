@@ -36,7 +36,13 @@
 						<option th:selected="${distrubutor == dist.code}" th:each="dist : *{distList}" th:value="${dist.code}" th:text="${dist.code+'-'+dist.name}"></option>
 	                </select>
                 </div>
-                
+                <div class="form-group">
+                    <label for="vertical">Vertical</label>
+                      <select class="form-control select2 validate[required]" th:field="*{vertical}">
+						<option selected value="">---select vertical---</option>
+						<option th:selected="${vertical == vert}" th:each="vert : *{userCatList}" th:value="${vert}" th:text="${vert}"></option>
+	                </select>
+                </div>
                 <div class="form-group">
                     <label for="city">City</label>
                     <input class="form-control" type="text" name="city" id="city" value="" readonly> 

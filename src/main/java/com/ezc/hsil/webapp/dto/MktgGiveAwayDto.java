@@ -25,7 +25,7 @@ public class MktgGiveAwayDto {
 	
 	private List<DistributorMaster> distList=new ArrayList<DistributorMaster>();
 	private List<Users> userList =new ArrayList<Users>();
-	
+	private List<String> userCatList =new ArrayList<String>();
 	
 	public List<DistributorMaster> getDistList() {
 		return distList;
@@ -129,6 +129,18 @@ public class MktgGiveAwayDto {
 	 */
 	public void setVertical(String vertical) {
 		this.vertical = vertical;
+	}
+	/**
+	 * @return the userCatList
+	 */
+	public List<String> getUserCatList() {
+		return userCatList;
+	}
+	/**
+	 * @param userCatList the userCatList to set
+	 */
+	public void setUserCatList(List<String> userCatList) {
+		this.userCatList = userCatList;
 	}
 	
 	

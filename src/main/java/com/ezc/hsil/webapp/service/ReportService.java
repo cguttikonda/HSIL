@@ -74,14 +74,14 @@ public class ReportService implements IReportService {
 	}
 	
 	@Override
-	public List<Object[]> getAllReqMonthWise()
+	public List<Object[]> getAllReqMonthWise(Integer selYear)
 	{
-		return reqHeaderRepo.getAllReqMonthWise();
+		return reqHeaderRepo.getAllReqMonthWise(selYear);
 	}
 	@Override
-	public List<Object[]> getAllMeetsMonthWise()
+	public List<Object[]> getAllMeetsMonthWise(Integer selYear)
 	{
-		return reqHeaderRepo.getAllMeetsMonthWise();
+		return reqHeaderRepo.getAllMeetsMonthWise(selYear);
 	}
 	@Override
 	public List<Object[]> getUserDefaults()
@@ -89,19 +89,19 @@ public class ReportService implements IReportService {
 		return reqHeaderRepo.getUserDefaults();
 	}
 	@Override
-	public List<Object[]> getNoofPlumbersPerUser()
+	public List<Object[]> getNoofPlumbersPerUser(Integer selYear)
 	{
-		return reqHeaderRepo.getNoofPlumbersPerUser();
+		return reqHeaderRepo.getNoofPlumbersPerUser(selYear);
 	}
 	@Override
-	public List<Object[]> getUsedLeftQtyPerUser()
+	public List<Object[]> getUsedLeftQtyPerUser(Integer selYear)
 	{
-		return reqHeaderRepo.getUsedLeftQtyPerUser();
+		return reqHeaderRepo.getUsedLeftQtyPerUser(selYear);
 	}
 	@Override
-	public List<Object[]> getAllInProcessReqPerUser()
+	public List<Object[]> getAllInProcessReqPerUser(Integer selYear)
 	{
-		return reqHeaderRepo.getAllInProcessReqPerUser();
+		return reqHeaderRepo.getAllInProcessReqPerUser(selYear);
 	}
 	@Override
 		public void dispatchUpdate(EzcRequestHeader ezcRequestHeader) {

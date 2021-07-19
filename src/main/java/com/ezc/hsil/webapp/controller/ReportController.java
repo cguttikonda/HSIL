@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ezc.hsil.webapp.dto.ListSelector;
 import com.ezc.hsil.webapp.dto.OverallReportDto;
 import com.ezc.hsil.webapp.dto.ReportSelector;
+import com.ezc.hsil.webapp.dto.ReportYrSelector;
 import com.ezc.hsil.webapp.dto.TPMSummaryDto;
 import com.ezc.hsil.webapp.dto.TPSSummaryDto;
 import com.ezc.hsil.webapp.dto.TpmRequestDto;
@@ -928,15 +929,31 @@ public class ReportController {
 
     }
     @GetMapping(value="/monthWiseReport")
-    public String overAllReport(Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
-       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public String overAllReport(ReportYrSelector reportYrSel,Model model,SecurityContextHolderAwareRequestWrapper requestWrapper) {
+    		
+    		  final Integer curYr =  Calendar.getInstance().get(Calendar.YEAR);
+    		  List<Integer> yrList=new ArrayList<Integer>();
+    		  if(reportYrSel.getSelYear() == null || reportYrSel.getSelYear() == 0)
+    		  {
+    			  reportYrSel = new ReportYrSelector();
+    			  reportYrSel.setSelYear(curYr);
+    		  }
+    		  log.debug("Selected year:::"+reportYrSel.getSelYear());
+    		  int tempYr = 2019;
+    		  while(tempYr <= curYr)
+    		  {
+    			  yrList.add(tempYr);
+    			  tempYr++;
+    		  }
+    		  reportYrSel.setYearArr(yrList);
+    		  Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
               Users userObj = (Users)authentication.getPrincipal();
-              List<Object[]> reqHeaderLt= repService.getAllReqMonthWise();
-              List<Object[]> reqDealerLt = repService.getAllMeetsMonthWise();
+              List<Object[]> reqHeaderLt= repService.getAllReqMonthWise(reportYrSel.getSelYear());
+              List<Object[]> reqDealerLt = repService.getAllMeetsMonthWise(reportYrSel.getSelYear());
               List<Object[]> userDefaults=repService.getUserDefaults();
-              List<Object[]> noofPlumb=repService.getNoofPlumbersPerUser();
-              List<Object[]> usedLeftQty=repService.getUsedLeftQtyPerUser();
-              List<Object[]> inProcessLt=repService.getAllInProcessReqPerUser();
+              List<Object[]> noofPlumb=repService.getNoofPlumbersPerUser(reportYrSel.getSelYear());
+              List<Object[]> usedLeftQty=repService.getUsedLeftQtyPerUser(reportYrSel.getSelYear());
+              List<Object[]> inProcessLt=repService.getAllInProcessReqPerUser(reportYrSel.getSelYear());
               
               List<OverallReportDto> overallRepLt=new ArrayList<OverallReportDto>();
               //OverallReportDto compRep=new OverallReportDto();
@@ -1304,6 +1321,7 @@ public class ReportController {
             log.debug("Value of "+key+" is: "+reportHt.get(key));
         }
         model.addAttribute("overallRepLt", overallRepLt);
+        model.addAttribute("reportYrSel", reportYrSel);
         return "reports/monthWiseReport"; 
 
     }

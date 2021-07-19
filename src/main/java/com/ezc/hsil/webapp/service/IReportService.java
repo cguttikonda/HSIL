@@ -28,12 +28,12 @@ public interface IReportService {
 	public List<Object[]> getTPSMonthWise(List<String> userList);
 	public List<Object[]> getBDMonthWise(List<String> userList);
 	public List<Object[]> getAllMKTUsers();
-	public List<Object[]> getAllReqMonthWise();
-	public List<Object[]> getAllMeetsMonthWise();
+	public List<Object[]> getAllReqMonthWise(Integer selYear);
+	public List<Object[]> getAllMeetsMonthWise(Integer selYear);
 	public List<Object[]> getUserDefaults();
-	public List<Object[]> getNoofPlumbersPerUser();
-	public List<Object[]> getUsedLeftQtyPerUser();
-	public List<Object[]> getAllInProcessReqPerUser();
+	public List<Object[]> getNoofPlumbersPerUser(Integer selYear);
+	public List<Object[]> getUsedLeftQtyPerUser(Integer selYear);
+	public List<Object[]> getAllInProcessReqPerUser(Integer selYear);
 	public List<Object[]> getTeamTPSSummary(ReportSelector reportSelector);
 	public List<Object[]> getTeamTPMSummary(ReportSelector reportSelector);
 	public List<Object[]> getTeamBDSummary(ReportSelector reportSelector);
